@@ -13,4 +13,4 @@ export const DialogFormModule = [
   DialogFormBodyComponent,
   DialogFormHeaderComponent,
   DialogFormFooterComponent
-];
+] as const;

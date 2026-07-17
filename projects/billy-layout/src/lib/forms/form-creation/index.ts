@@ -13,4 +13,4 @@ export const FormCreationModule = [
   ConsultLineComponent,
   InputPrefixeSuffixeComponent,
   LabelClipboardComponent
-];
+] as const;
