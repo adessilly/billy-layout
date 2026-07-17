@@ -1,0 +1,49 @@
+.viewer {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  position: relative;
+
+  .viewer-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 0 0 9px 9px;
+
+    img {
+      max-width: 100%;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .viewer-loading {
+      padding: 48px 0;
+      color: #9ca3af;
+      font-size: 22px;
+    }
+  }
+}
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+:host-context(.dark-mode) {
+
+  .viewer {
+    border-color: #49545a;
+    background: #212e31;
+
+    .viewer-body {
+      background: #1a2528;
+
+      img {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .viewer-loading {
+        color: #7a8a90;
+      }
+    }
+  }
+}

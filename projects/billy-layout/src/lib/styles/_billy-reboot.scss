@@ -1,0 +1,162 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  billy-reboot — normalisation globale du design system BILLy
+//
+//  Le DS entier dépend de ce reboot (en particulier `* { box-sizing: border-box }` :
+//  aucun autre fichier n'en pose). Extrait de la couche de compat Bootstrap
+//  (billy-legacy.scss, app-side) lors de l'isolation en librairie : les valeurs
+//  reproduisent le rendu calculé du stack Bootstrap+Angle d'origine — ne pas les
+//  « moderniser » sans re-vérifier la parité visuelle des pages métier.
+//
+//  Consommation : `@use 'billy-reboot';` (via includePaths → billy-layout/styles).
+//  Aujourd'hui chargé par billy-legacy.scss (même position de cascade qu'avant
+//  l'extraction) ; le jour où la couche de compat disparaît, ce fichier devra être
+//  chargé depuis styles.scss.
+//
+//  Prérequis fonts (chargées par l'application, cf. index.html) :
+//  « Source Sans Pro » (base des pages métier). Le shell et les composants du DS
+//  utilisent « Plus Jakarta Sans ».
+// ════════════════════════════════════════════════════════════════════════════
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 0.875rem; // 14px
+  font-weight: 400;
+  line-height: 1.52857;
+  color: #656565;
+  text-align: left;
+  background-color: #f5f7fa;
+}
+
+*:focus {
+  outline: 0 !important;
+}
+
+[tabindex='-1']:focus {
+  outline: 0 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 0.65625rem;
+  line-height: 1.1;
+}
+
+h1, h2, h3, h4 { font-weight: bold; }
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.875rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 0.875rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+}
+
+ol, ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 2rem; // indentation par défaut BS5 (le rendu d'origine)
+}
+
+hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: inherit;
+  border: 0;
+  border-top: 1px solid #e4eaec;
+  opacity: 0.25; // base BS5 (l'app n'emploie pas <hr> ; fidélité de reproduction)
+}
+
+a {
+  color: #5d9cec;
+  text-decoration: none;
+  background-color: transparent;
+  outline: none !important;
+
+  &:hover { color: #1b72e2; }
+  &.text-muted:hover,
+  &.text-muted:focus { color: #748690; }
+}
+
+strong, b { font-weight: bolder; }
+
+// Reboot BS : le texte secondaire garde ses proportions relatives (sinon un
+// <small> repasse à 100% — régression sur achat-ai-review-panel).
+small { font-size: 80%; }
+
+sub, sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+sub { bottom: -0.25em; }
+sup { top: -0.5em; }
+
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+img { vertical-align: middle; border-style: none; }
+
+button, input, optgroup, select, textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button, input { overflow: visible; }
+button, select { text-transform: none; }
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+}
+
+button:not(:disabled),
+[type='button']:not(:disabled),
+[type='reset']:not(:disabled),
+[type='submit']:not(:disabled) {
+  cursor: pointer;
+}
+
+textarea { overflow: auto; resize: vertical; }
+
+fieldset {
+  min-width: 0;
+  padding-bottom: 20px;
+  margin: 0 0 20px;
+  border: 0;
+  border-bottom: 1px dashed #eee;
+
+  &:last-child { border-bottom: 0; }
+  .form-group { margin-bottom: 0; }
+}
+
+table {
+  border-collapse: collapse;
+}

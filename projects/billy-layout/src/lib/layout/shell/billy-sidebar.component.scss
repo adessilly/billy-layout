@@ -1,0 +1,111 @@
+// Le host doit être un conteneur flex qui s'étire sur toute la hauteur du
+// body du shell, sinon le nav garde une hauteur auto et le pied de version
+// (margin-top: auto) reste collé au dernier élément du menu.
+:host {
+  display: flex;
+  flex: none;
+}
+
+.billy-sidebar {
+  width: 250px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: width .3s cubic-bezier(.4, 0, .2, 1);
+
+  &.collapsed {
+    width: 80px;
+  }
+}
+
+.billy-sidebar-heading {
+  padding: 14px 12px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #9AA7B4;
+  white-space: nowrap;
+  transition: opacity .2s ease;
+
+  .billy-sidebar.collapsed & {
+    padding: 14px 0 6px;
+    text-align: center;
+    opacity: .35;
+  }
+}
+
+.billy-sidebar-version {
+  margin-top: auto;
+  padding: 14px 12px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  border-top: 1px solid #E7ECF1;
+}
+
+.billy-sidebar-version-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #12B4DD;
+  flex: none;
+  box-shadow: 0 0 0 3px #E6F7FC;
+}
+
+.billy-sidebar-version-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94A3B8;
+
+  .billy-sidebar.collapsed & {
+    font-size: 11px;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .billy-sidebar {
+    position: fixed;
+    top: 66px;
+    left: 0;
+    bottom: 0;
+    z-index: 40;
+    width: 250px !important;
+    background: #F4F6F8;
+    box-shadow: 0 24px 48px -18px rgba(16, 42, 67, .3);
+    transform: translateX(-100%);
+    transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+
+    &.mobile-open {
+      transform: none;
+    }
+  }
+}
+
+:host-context(body.dark-mode) {
+  .billy-sidebar-heading {
+    color: #64747c;
+  }
+
+  .billy-sidebar-version {
+    border-top-color: #49545a;
+  }
+
+  .billy-sidebar-version-dot {
+    box-shadow: 0 0 0 3px rgba(18, 180, 221, .18);
+  }
+
+  @media (max-width: 767.98px) {
+    .billy-sidebar {
+      background: #1e292b;
+    }
+  }
+}

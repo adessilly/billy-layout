@@ -1,0 +1,233 @@
+// Composant autonome : thème entièrement porté par les tokens --billy-*
+// (src/styles-tokens.scss dans BILLy) avec valeurs de repli — le dark mode
+// est automatique, aucune dépendance de style vers l'application.
+
+:host {
+  display: block;
+}
+
+.dpc {
+  width: 296px;
+  padding: 12px;
+  user-select: none;
+  font-size: 14px;
+  color: var(--billy-input-color, #374151);
+}
+
+// ── En-tête ──────────────────────────────────────────────────────────────────
+
+.dpc-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.dpc-nav,
+.dpc-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--billy-text-soft, #6b7280);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background: var(--billy-accent-soft, #e6f7fc);
+    color: var(--billy-accent-strong, #0e97bb);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+    border-radius: 8px;
+  }
+}
+
+.dpc-nav {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.dpc-title {
+  flex: 1;
+  gap: 6px;
+  height: 32px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--billy-input-color, #374151);
+
+  &__caret {
+    color: var(--billy-text-muted, #9ca3af);
+    transition: transform 0.15s ease;
+
+    &--open { transform: rotate(180deg); }
+  }
+}
+
+// ── Grille des jours ─────────────────────────────────────────────────────────
+
+.dpc-grid {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 4px 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    color: var(--billy-text-muted, #9ca3af);
+  }
+
+  td {
+    padding: 1px;
+    text-align: center;
+  }
+}
+
+.dpc-day {
+  position: relative;
+  width: 100%;
+  height: 34px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 13.5px;
+  color: var(--billy-input-color, #374151);
+  cursor: pointer;
+  transition: background 0.1s ease, color 0.1s ease;
+
+  &:hover { background: var(--billy-accent-soft, #e6f7fc); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--billy-surface, #fff), 0 0 0 4px var(--billy-focus-border, #66afe9);
+  }
+
+  &--out { color: var(--billy-text-muted, #9ca3af); }
+
+  &--today:not(.dpc-day--selected) {
+    font-weight: 700;
+    color: var(--billy-accent-strong, #0e97bb);
+
+    // point sous le chiffre : repère « aujourd'hui »
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--billy-accent, #12b4dd);
+      transform: translateX(-50%);
+    }
+  }
+
+  &--selected {
+    background: var(--billy-accent, #12b4dd);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(18, 180, 221, 0.35);
+  }
+}
+
+// ── Vue mois ─────────────────────────────────────────────────────────────────
+
+.dpc-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.dpc-month {
+  height: 40px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 13.5px;
+  text-transform: capitalize;
+  color: var(--billy-input-color, #374151);
+  cursor: pointer;
+  transition: background 0.1s ease, color 0.1s ease;
+
+  &:hover { background: var(--billy-accent-soft, #e6f7fc); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--billy-surface, #fff), 0 0 0 4px var(--billy-focus-border, #66afe9);
+  }
+
+  &--current {
+    background: var(--billy-accent, #12b4dd);
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+// ── Pied ─────────────────────────────────────────────────────────────────────
+
+.dpc-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--billy-divider, #f3f4f6);
+}
+
+.dpc-today-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 100px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--billy-accent-strong, #0e97bb);
+  cursor: pointer;
+  transition: background 0.12s ease;
+
+  &:hover { background: var(--billy-accent-soft, #e6f7fc); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+}
+
+.dpc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// ── Mobile : cibles tactiles plus généreuses ─────────────────────────────────
+
+@media (max-width: 640px) {
+  .dpc {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 14px 16px;
+  }
+
+  .dpc-day { height: 42px; font-size: 15px; }
+  .dpc-month { height: 46px; font-size: 14.5px; }
+  .dpc-nav { width: 40px; height: 40px; }
+  .dpc-title { height: 40px; font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dpc-nav, .dpc-title, .dpc-title__caret, .dpc-day, .dpc-month, .dpc-today-btn { transition: none; }
+}

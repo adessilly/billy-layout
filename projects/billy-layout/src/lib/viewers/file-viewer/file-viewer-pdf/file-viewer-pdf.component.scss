@@ -1,0 +1,95 @@
+.viewer {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  position: relative;
+
+  & .viewer-body {
+    background: #f9fafb;
+    overflow-x: auto;
+    padding: 12px;
+    border-radius: 0 0 9px 9px;
+
+    pdf-viewer {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+// Regroupe nav / zoom en petits blocs compacts.
+.viewer-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.viewer-page-indicator {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+// Bouton compact projeté dans la toolbar (styles portés par ce composant).
+.viewer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+:host-context(.dark-mode) {
+
+  .viewer {
+    border-color: #49545a;
+    background: #212e31;
+
+    & .viewer-body {
+      background: #1a2528;
+    }
+  }
+
+  .viewer-page-indicator {
+    color: #9ca3af;
+  }
+
+  .viewer-btn {
+    background: #212e31;
+    border-color: #49545a;
+    color: #9ca3af;
+
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
+  }
+}

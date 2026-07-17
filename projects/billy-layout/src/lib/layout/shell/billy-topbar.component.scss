@@ -1,0 +1,192 @@
+.billy-topbar {
+  height: 66px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 22px;
+  background: transparent;
+  position: relative;
+  // Au-dessus du chrome des pages (barres sticky z-index 3-20), en dessous
+  // des overlays applicatifs (action-bar 200, action-sheet 500, modales).
+  z-index: 50;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+// ── Hamburger animé ────────────────────────────────────────────────────────
+.billy-topbar-burger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  cursor: pointer;
+  transition: background .18s ease, transform .12s ease;
+
+  span {
+    width: 19px;
+    height: 2px;
+    border-radius: 2px;
+    background: #475569;
+    transition: width .24s cubic-bezier(.4, 0, .2, 1), background .2s ease;
+  }
+
+  &:hover {
+    background: #EAEFF3;
+
+    span:nth-child(1) { width: 13px; }
+    span:nth-child(3) { width: 11px; }
+  }
+
+  &:active {
+    transform: scale(.9);
+  }
+
+  &.collapsed span {
+    background: #0E97BB;
+  }
+}
+
+// ── Logo ───────────────────────────────────────────────────────────────────
+.billy-topbar-logo {
+  display: flex;
+  align-items: center;
+  flex: none;
+
+  img {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    box-shadow: 0 4px 10px -4px rgba(18, 180, 221, .55);
+  }
+}
+
+// ── Recherche ──────────────────────────────────────────────────────────────
+// Alignée à gauche, juste après le logo : réduite à une icône au repos, elle
+// s'élargit au focus (cf. billy-search.component). `flex: none` pour ne pas
+// s'étirer et laisser la largeur être pilotée par le composant lui-même.
+.billy-topbar-search {
+  flex: none;
+  min-width: 0;
+}
+
+// ── Actions à droite ───────────────────────────────────────────────────────
+.billy-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.billy-topbar-divider {
+  width: 1px;
+  height: 26px;
+  background: #DFE5EA;
+  margin: 0 6px;
+  flex: none;
+}
+
+// Boutons d'action : s'applique aussi aux composants de notification
+// existants (li.nav-item > a.nav-link) projetés dans la topbar.
+.billy-topbar-actions ::ng-deep li {
+  list-style: none;
+}
+
+.billy-topbar-actions ::ng-deep .nav-item > .nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: #64748B;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+
+  &:hover {
+    background: #EAEFF3;
+    color: #334155;
+  }
+
+  .badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #EF4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border: 2px solid #F4F6F8;
+  }
+}
+
+// Menu du compte : dimensionnement de l'avatar géré par le composant lui-même.
+// (::ng-deep : l'élément est projeté depuis l'application, il ne porte pas
+// l'attribut de scope de la topbar. Ciblé par l'attribut de slot pour ne pas
+// dépendre du nom du composant applicatif.)
+.billy-topbar-actions ::ng-deep [shell-account] {
+  margin-left: 6px;
+}
+
+@media (max-width: 767.98px) {
+  .billy-topbar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .billy-topbar-search {
+    display: none;
+  }
+}
+
+// ── Dark mode ──────────────────────────────────────────────────────────────
+:host-context(body.dark-mode) {
+  .billy-topbar-burger {
+    span {
+      background: #ced0d2;
+    }
+
+    &:hover {
+      background: #2a373b;
+    }
+
+    &.collapsed span {
+      background: #4fc3e0;
+    }
+  }
+
+  .billy-topbar-divider {
+    background: #49545a;
+  }
+
+  .billy-topbar-actions ::ng-deep .nav-item > .nav-link {
+    color: #9fb0ba;
+
+    &:hover {
+      background: #2a373b;
+      color: #ced0d2;
+    }
+
+    .badge {
+      border-color: #1e292b;
+    }
+  }
+}

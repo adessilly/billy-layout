@@ -1,0 +1,35 @@
+@if (visibleActions.length > 0) {
+  <div class="hab">
+
+    <!-- Actions neutres : segmented button group -->
+    @if (groupedActions.length > 0) {
+      <div class="hab-group">
+        @for (action of groupedActions; track action.label) {
+          <button
+            class="hab-seg"
+            [title]="action.title"
+            [disabled]="action.disabled"
+            (click)="action.click()">
+            <span class="hab-seg__icon"><i [class]="action.icon"></i></span>
+            <span class="hab-label">{{ action.label }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Actions mises en avant : pilules autonomes -->
+    @for (action of standaloneActions; track action.label) {
+      <button
+        class="hab-btn"
+        [class.hab-btn--primary]="action.variant === 'primary'"
+        [class.hab-btn--danger]="action.variant === 'danger'"
+        [title]="action.title"
+        [disabled]="action.disabled"
+        (click)="action.click()">
+        <span class="hab-btn__icon"><i [class]="action.icon"></i></span>
+        <span class="hab-label">{{ action.label }}</span>
+      </button>
+    }
+
+  </div>
+}

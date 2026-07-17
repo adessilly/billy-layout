@@ -1,0 +1,27 @@
+<div class="attachment-button-container"
+     (clickOutside)="closeList()"
+     [listenClickOutside]="showList()">
+  <button
+    type="button"
+    class="attachment-button"
+    [class.has-files]="fileCount > 0"
+    [class.max-files]="fileCount >= MAX_FILES"
+    [class.list-open]="showList()"
+    (click)="onButtonClick()"
+    [title]="getTooltip()">
+    <i class="fa-solid fa-paperclip"></i>
+    @if(fileCount > 0) {
+      <span class="badge-count">{{ fileCount }}</span>
+    }
+  </button>
+
+  @if(showList()) {
+    <billy-attachment-button-list
+      [files]="files()"
+      [maxFiles]="MAX_FILES"
+      (deleteFile)="deleteFile($event)"
+      (addFiles)="triggerFileInput()"
+      (close)="closeList()"
+    />
+  }
+</div>

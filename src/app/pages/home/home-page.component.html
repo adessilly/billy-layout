@@ -1,0 +1,164 @@
+<div class="site-page home site-motion">
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <section class="hero">
+
+    <div class="hero-copy">
+      <div class="hero-eyebrow">
+        <span class="hero-dot"></span>
+        Design system BILLy · sans Bootstrap
+      </div>
+      <h1 class="hero-title">
+        billy&#8209;layout<span class="hero-cursor"></span>
+      </h1>
+      <p class="hero-pitch">
+        Le shell applicatif, les {{ entryCount }} composants qui habillent
+        BILLy — extraits en librairie Angular autonome. Ce site est lui-même
+        construit avec la librairie&nbsp;: la topbar, la sidebar, la cloche et
+        chaque carte que vous voyez en font partie.
+      </p>
+      <div class="hero-ctas">
+        <a class="hero-cta hero-cta--primary" routerLink="/composants">
+          <billy-icon name="open" [size]="17" [strokeWidth]="2" />
+          Explorer les composants
+        </a>
+        <a class="hero-cta" routerLink="/guidelines">
+          <billy-icon name="agenda" [size]="17" [strokeWidth]="2" />
+          Guidelines UX
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value">{{ entryCount }}</span>
+          <span class="hero-stat-label">fiches composants</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">{{ categories.length }}</span>
+          <span class="hero-stat-label">catégories</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">0</span>
+          <span class="hero-stat-label">dépendance Bootstrap</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maquette d'écran BILLy qui s'assemble (SVG + motion design). -->
+    <div class="hero-visual" aria-hidden="true">
+      <svg viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
+
+        <!-- halo d'accent -->
+        <circle class="hv-halo" cx="300" cy="200" r="170" />
+
+        <!-- fenêtre applicative -->
+        <g class="hv-window">
+          <rect x="70" y="40" width="380" height="320" rx="18" class="hv-frame" />
+
+          <!-- topbar -->
+          <g class="hv-piece hv-topbar">
+            <rect x="70" y="40" width="380" height="46" rx="18" class="hv-bar" />
+            <rect x="70" y="68" width="380" height="18" class="hv-bar hv-bar-flat" />
+            <circle cx="98" cy="63" r="9" class="hv-accent-fill" />
+            <rect x="118" y="57" width="120" height="12" rx="6" class="hv-line" />
+            <circle cx="398" cy="63" r="7" class="hv-line-fill" />
+            <circle cx="422" cy="63" r="7" class="hv-accent-fill hv-pulse" />
+          </g>
+
+          <!-- sidebar -->
+          <g class="hv-piece hv-sidebar">
+            <rect x="86" y="100" width="86" height="244" rx="12" class="hv-card" />
+            <rect x="98" y="116" width="62" height="10" rx="5" class="hv-line" />
+            <rect x="98" y="140" width="62" height="10" rx="5" class="hv-accent-soft-fill" />
+            <rect x="98" y="164" width="62" height="10" rx="5" class="hv-line" />
+            <rect x="98" y="188" width="62" height="10" rx="5" class="hv-line" />
+            <rect x="98" y="212" width="42" height="10" rx="5" class="hv-line" />
+          </g>
+
+          <!-- page header -->
+          <g class="hv-piece hv-header">
+            <rect x="188" y="104" width="160" height="16" rx="8" class="hv-title" />
+            <rect x="188" y="128" width="104" height="9" rx="4.5" class="hv-line" />
+            <rect x="356" y="104" width="78" height="26" rx="13" class="hv-accent-fill hv-cta" />
+            <rect x="372" y="114" width="46" height="6" rx="3" fill="#fff" opacity=".85" />
+          </g>
+
+          <!-- cartes de liste -->
+          <g class="hv-piece hv-card1">
+            <rect x="188" y="152" width="246" height="54" rx="12" class="hv-card" />
+            <circle cx="212" cy="179" r="11" class="hv-accent-soft-fill" />
+            <rect x="232" y="168" width="110" height="9" rx="4.5" class="hv-line" />
+            <rect x="232" y="184" width="70" height="8" rx="4" class="hv-line hv-soft" />
+            <rect x="366" y="170" width="52" height="16" rx="8" class="hv-accent-soft-fill" />
+          </g>
+          <g class="hv-piece hv-card2">
+            <rect x="188" y="216" width="246" height="54" rx="12" class="hv-card" />
+            <circle cx="212" cy="243" r="11" class="hv-accent-soft-fill" />
+            <rect x="232" y="232" width="90" height="9" rx="4.5" class="hv-line" />
+            <rect x="232" y="248" width="120" height="8" rx="4" class="hv-line hv-soft" />
+            <rect x="366" y="234" width="52" height="16" rx="8" class="hv-warn-fill" />
+          </g>
+
+          <!-- save-bar -->
+          <g class="hv-piece hv-savebar">
+            <rect x="188" y="286" width="246" height="42" rx="12" class="hv-card" />
+            <rect x="204" y="299" width="74" height="16" rx="8" class="hv-line" />
+            <rect x="352" y="297" width="68" height="20" rx="10" class="hv-accent-fill" />
+            <rect x="366" y="304" width="40" height="6" rx="3" fill="#fff" opacity=".85" />
+          </g>
+        </g>
+
+        <!-- toast flottant -->
+        <g class="hv-piece hv-toast">
+          <rect x="330" y="18" width="164" height="44" rx="12" class="hv-card hv-elevated" />
+          <circle cx="352" cy="40" r="10" class="hv-success-fill" />
+          <path d="M347.5 40l3.2 3.2 6-6.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <rect x="370" y="31" width="96" height="8" rx="4" class="hv-line" />
+          <rect x="370" y="45" width="64" height="7" rx="3.5" class="hv-line hv-soft" />
+        </g>
+
+        <!-- pastille datepicker flottante -->
+        <g class="hv-piece hv-chip">
+          <rect x="24" y="250" width="112" height="70" rx="14" class="hv-card hv-elevated" />
+          <rect x="38" y="264" width="84" height="8" rx="4" class="hv-accent-soft-fill" />
+          <g class="hv-dots">
+            <circle cx="46" cy="288" r="4" class="hv-line-fill" />
+            <circle cx="64" cy="288" r="4" class="hv-line-fill" />
+            <circle cx="82" cy="288" r="4" class="hv-accent-fill" />
+            <circle cx="100" cy="288" r="4" class="hv-line-fill" />
+            <circle cx="46" cy="304" r="4" class="hv-line-fill" />
+            <circle cx="64" cy="304" r="4" class="hv-line-fill" />
+            <circle cx="82" cy="304" r="4" class="hv-line-fill" />
+          </g>
+        </g>
+
+      </svg>
+    </div>
+
+  </section>
+
+  <!-- ── Catégories ───────────────────────────────────────────────────── -->
+  <section class="cats">
+    <h2 class="cats-title">Les composants, par catégorie</h2>
+    <p class="cats-sub">L’arborescence du site est le miroir de <code>src/lib/</code> et de <code>docs/</code>.</p>
+
+    <div class="cats-grid">
+      @for (category of categories; track category.slug; let i = $index) {
+        <a class="cat-card" [routerLink]="['/c', category.slug]" [style.--stagger]="i">
+          <span class="cat-icon">
+            <billy-icon [name]="category.icon" [size]="22" [strokeWidth]="1.8" />
+          </span>
+          <span class="cat-texts">
+            <span class="cat-head">
+              <span class="cat-label">{{ category.label }}</span>
+              <span class="cat-count">{{ category.entries.length }}</span>
+            </span>
+            <span class="cat-intro">{{ category.intro }}</span>
+          </span>
+          <billy-icon class="cat-chevron" name="chevron-right" [size]="17" [strokeWidth]="2" />
+        </a>
+      }
+    </div>
+  </section>
+
+</div>

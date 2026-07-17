@@ -1,0 +1,116 @@
+// Pastille d'état d'un champ « code ».
+// Les couleurs de succès n'existent pas dans les tokens (le design system ne
+// connaît que l'accent et le danger) : elles sont posées ici, en variables, et
+// réajustées en dark mode.
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+
+  --cs-ok:      #16a34a;
+  --cs-neutral: var(--billy-text-muted, #9ca3af);
+  --cs-track:   var(--billy-divider, #f3f4f6);
+}
+
+:host-context(body.dark-mode) {
+  --cs-ok:    #4ade80;
+  --cs-track: #2a3a3e;
+}
+
+.cs-svg {
+  width: 100%;
+  height: 100%;
+}
+
+// ── Saisie en cours : anneau de progression ─────────────────────────────────
+.cs-track,
+.cs-ring {
+  fill: none;
+  stroke-width: 2;
+}
+
+.cs-track {
+  stroke: var(--cs-track);
+}
+
+.cs-ring {
+  stroke: var(--billy-accent, #12b4dd);
+  stroke-linecap: round;
+  stroke-dasharray: 1;                       // pathLength="1" → 1 tour = 1
+  transform: rotate(-90deg);                 // départ à midi
+  transform-origin: center;
+  transition: stroke-dashoffset 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+// ── Disque des états stables ────────────────────────────────────────────────
+.cs-disc {
+  animation: cs-pop 0.32s cubic-bezier(0.34, 1.5, 0.64, 1);
+  transform-origin: center;
+}
+
+.cs-mark,
+.cs-dot {
+  animation: cs-fade 0.25s ease-out 0.08s backwards;
+}
+
+.cs-mark {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+// ── Vérifié : la coche se dessine ───────────────────────────────────────────
+:host(.cs--valid) {
+  .cs-disc { fill: var(--cs-ok); }
+
+  .cs-check {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;                     // pathLength="1"
+    stroke-dashoffset: 1;
+    animation: cs-draw 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards;
+  }
+}
+
+// ── Format conforme, clé non vérifiable : information, pas alerte ───────────
+:host(.cs--unverified) {
+  .cs-disc { fill: var(--billy-accent, #12b4dd); }
+  .cs-mark { stroke: #fff; }
+  .cs-dot  { fill: #fff; }
+}
+
+// ── Invalide ────────────────────────────────────────────────────────────────
+:host(.cs--invalid) {
+  .cs-disc { fill: var(--billy-danger, #dc2626); }
+  .cs-mark { stroke: #fff; }
+  .cs-dot  { fill: #fff; }
+}
+
+@keyframes cs-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes cs-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes cs-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-ring  { transition: none; }
+  .cs-disc,
+  .cs-check,
+  .cs-mark,
+  .cs-dot   { animation: none; stroke-dashoffset: 0; }
+}

@@ -1,0 +1,32 @@
+:host {
+  cursor: pointer;
+}
+
+span.label-container {
+  position: relative;
+
+  & .icon-zone {
+    display: inline;
+    & i {
+      margin-right: 5px;
+    }
+    & i.copy-icon {
+      opacity: 0.3;
+    }
+  }
+
+  &:hover {
+    color: #5d9cec;
+    & i.copy-label {
+      opacity: 0.8;
+    }
+  }
+
+  & span {
+    position: absolute;
+    font-size: 0.8em;
+    font-style: italic;
+    width: 200px;
+    top: 2px;
+  }
+}

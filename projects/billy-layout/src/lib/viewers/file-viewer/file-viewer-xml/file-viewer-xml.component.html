@@ -1,0 +1,21 @@
+@let fichierTpl = fichier();
+@if (visible() && fichierTpl) {
+  <div class="viewer">
+    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fichierTpl.fileName" icon="fa-solid fa-file-code" (closeViewer)="hide()">
+      <button type="button" class="viewer-btn" [title]="copied() ? 'Copié !' : 'Copier le contenu'" (click)="copyToClipboard()">
+        <i [class]="copied() ? 'fa-solid fa-check' : 'fa-solid fa-copy'"></i>
+      </button>
+    </billy-file-viewer-toolbar>
+    <div class="viewer-body">
+      @if (loading()) {
+        <div class="viewer-loading">
+          <i class="fa-solid fa-sync fa-spin"></i>
+        </div>
+      } @else if (xmlHtml()) {
+        <pre class="xml-content"><code [innerHTML]="xmlHtml()"></code></pre>
+      } @else {
+        <div class="viewer-empty">Impossible d'afficher ce fichier.</div>
+      }
+    </div>
+  </div>
+}

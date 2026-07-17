@@ -1,0 +1,33 @@
+<div class="app-loading" [class.app-loading--active]="loading()" [attr.aria-busy]="loading()" aria-live="polite">
+  <div class="app-loading__spinner" role="status" aria-label="Chargement en cours">
+    <svg viewBox="0 0 44 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="billyLoadingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="var(--billy-accent, #12b4dd)" />
+          <stop offset="100%" stop-color="var(--billy-accent-strong, #0e97bb)" />
+        </linearGradient>
+      </defs>
+
+      <!-- Facture qui se rédige -->
+      <g class="app-loading__doc">
+        <!-- Corps du document -->
+        <rect x="6" y="3" width="32" height="46" rx="4"
+              fill="var(--billy-surface, #fff)"
+              stroke="url(#billyLoadingGrad)" stroke-width="2" />
+
+        <!-- En-tête / titre -->
+        <rect class="app-loading__line" style="--i: 0" x="11" y="11" width="14" height="3.5" rx="1.75" />
+
+        <!-- Lignes de la facture -->
+        <rect class="app-loading__line app-loading__line--muted" style="--i: 1" x="11" y="20" width="22" height="2.5" rx="1.25" />
+        <rect class="app-loading__line app-loading__line--muted" style="--i: 2" x="11" y="26" width="22" height="2.5" rx="1.25" />
+        <rect class="app-loading__line app-loading__line--muted" style="--i: 3" x="11" y="32" width="15" height="2.5" rx="1.25" />
+
+        <!-- Ligne de total mise en avant -->
+        <rect class="app-loading__line" style="--i: 4" x="11" y="41" width="11" height="3.5" rx="1.75" />
+        <circle class="app-loading__euro" cx="31" cy="42.75" r="3.5" fill="url(#billyLoadingGrad)" />
+        <text class="app-loading__euro-sign" x="31" y="43" text-anchor="middle" dominant-baseline="central">€</text>
+      </g>
+    </svg>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="ftb-wrapper"
+     [class.ftb--toggle]="variant() === 'toggle'"
+     [class.ftb--chips]="variant() === 'chips'"
+     [style.--ftb-color]="activeColor() ?? null">
+
+  @for (opt of options(); track opt.value) {
+    <button
+      type="button"
+      class="ftb-btn"
+      [class.active]="value() === opt.value"
+      [style.--opt-color]="opt.activeColor ?? null"
+      [style.--opt-bg]="opt.activeBg ?? null"
+      (click)="select(opt.value)">
+      @if (opt.icon) { <i [class]="opt.icon"></i> }
+      <span>{{ opt.label }}</span>
+    </button>
+  }
+
+</div>

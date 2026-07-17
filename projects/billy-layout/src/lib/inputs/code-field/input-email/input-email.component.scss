@@ -1,0 +1,50 @@
+@use 'billy-code-field' as code;
+
+@include code.billy-code-field;
+
+// Une adresse n'est pas un code : ni chasse fixe, ni interlettrage élargi —
+// « rn » et « m » doivent rester distincts, mais du texte reste du texte.
+.cfd-input--text {
+  font-weight: 500;
+  letter-spacing: normal;
+  font-variant-numeric: normal;
+}
+
+// ── Correction proposée ──────────────────────────────────────────────────────
+// Prend la place du message : c'est le message, en cliquable.
+.cfd-suggest {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--billy-accent-strong, #0e97bb);
+  font-size: 11px;
+  font-family: inherit;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  animation: cfd-suggest-in 0.25s ease-out;
+
+  strong {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &:hover strong { text-decoration-thickness: 2px; }
+
+  &:focus-visible {
+    outline: 2px solid var(--billy-focus-border, #66afe9);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@keyframes cfd-suggest-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cfd-suggest { animation: none; }
+}

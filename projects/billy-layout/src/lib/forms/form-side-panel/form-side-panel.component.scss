@@ -1,0 +1,51 @@
+:host {
+  display: contents;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  // au-dessus de la save-bar sticky (z-index 1001), sous les toasts/modales (9000+)
+  z-index: 1050;
+  animation: fadeIn 0.2s ease;
+}
+
+.panel {
+  position: fixed;
+  top: 0px;
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  background: #fff;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  z-index: 1051;
+  animation: slideInRight 0.25s ease;
+  display: flex;
+  flex-direction: column;
+
+  &--wide { width: 440px; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .panel,
+  .panel--wide {
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+}
+
+:host-context(.dark-mode) .panel {
+  background: #172224;
+}

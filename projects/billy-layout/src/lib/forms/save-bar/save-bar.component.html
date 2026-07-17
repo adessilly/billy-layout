@@ -1,0 +1,31 @@
+<div class="left-zone">
+  <ng-content></ng-content>
+</div>
+
+<div class="right-zone">
+  @if(cancelVisible()) {
+    <button (click)="askCancel()"
+      type="button" class="sb-btn sb-btn--cancel">
+      @if(iconCancel()) {
+        <i [class]="iconCancel()"></i>
+      }
+      <span>{{ labelCancel() }}</span>
+    </button>
+  }
+
+  @if(saveVisible()) {
+    <button [disabled]="disabled()" (click)="askSave()"
+        type="submit" class="sb-btn sb-btn--save {{ classSave() }}">
+        @if(loading()) {
+          <i class="fa-solid fa-spinner fa-pulse fa-fw"></i>
+          <span>{{ labelSaveLoading() }}</span>
+        }
+        @else {
+          @if(iconSave()) {
+            <i [class]="iconSave()"></i>
+          }
+          <span>{{ labelSave() }}</span>
+        }
+    </button>
+  }
+</div>

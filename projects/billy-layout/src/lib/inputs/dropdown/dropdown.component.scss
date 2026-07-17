@@ -1,0 +1,188 @@
+@use 'billy-forms' as forms;
+
+// Tout le thème (couleurs, dark mode) vient des tokens --billy-* (src/styles-tokens.scss).
+// Personnalisable par instance via CSS custom properties :
+//   billy-dropdown { --dropdown-height: 30px; --dropdown-radius: 100px; --dropdown-font-size: 13px; }
+
+:host {
+  display: block;
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+// ── Déclencheur ───────────────────────────────────────────────────────────────
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--dropdown-height, 35px);
+  padding: 0 12px;
+  font-size: var(--dropdown-font-size, 14px);
+  text-align: left;
+  cursor: pointer;
+  @include forms.billy-input;
+  border-radius: var(--dropdown-radius, var(--billy-input-radius, 8px));
+
+  &:hover:not(:disabled) { border-color: var(--billy-input-border-hover, #9ca3af); }
+
+  &:focus-visible,
+  &--open {
+    @include forms.billy-focus;
+  }
+
+  &:disabled {
+    background: var(--billy-input-disabled-bg, #f3f4f6);
+    color: var(--billy-input-disabled-color, #9ca3af);
+    cursor: not-allowed;
+  }
+
+  &__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--placeholder { color: var(--billy-text-muted, #9ca3af); }
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--billy-text-muted, #9ca3af);
+    transition: transform 0.15s ease;
+
+    &--open { transform: rotate(180deg); }
+  }
+}
+
+// ── Panneau (position: fixed pour échapper aux overflow:hidden parents) ──────
+
+.dropdown-panel {
+  position: fixed;
+  z-index: 2000; // au-dessus des side-panels (1051), sous les toasts (9000+)
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: var(--billy-surface-shadow, 0 10px 30px rgba(17, 24, 39, 0.12));
+  overflow: hidden;
+  animation: dropdown-in 0.13s ease;
+
+  &--up { animation-name: dropdown-in-up; }
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes dropdown-in-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+// ── Recherche ─────────────────────────────────────────────────────────────────
+
+.dropdown-search {
+  position: relative;
+  padding: 8px;
+  border-bottom: 1px solid var(--billy-divider, #f3f4f6);
+
+  &__icon {
+    position: absolute;
+    left: 19px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--billy-text-muted, #9ca3af);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    height: 32px;
+    padding: 0 30px;
+    font-size: 13px;
+    @include forms.billy-input;
+    border-radius: 7px;
+  }
+
+  &__clear {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: var(--billy-input-border, #e5e7eb);
+    color: var(--billy-addon-color, #6b7280);
+    font-size: 10px;
+    cursor: pointer;
+
+    &:hover { color: var(--billy-addon-hover-color, #374151); }
+  }
+}
+
+// ── Liste d'options ───────────────────────────────────────────────────────────
+
+.dropdown-list {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-size: 14px;
+  color: var(--billy-input-color, #374151);
+  cursor: pointer;
+
+  &__text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    b {
+      font-weight: 700;
+      color: var(--billy-accent-strong, #0e97bb);
+    }
+  }
+
+  &__check {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--billy-accent, #12b4dd);
+  }
+
+  &--active { background: var(--billy-accent-soft, #e6f7fc); }
+
+  &--selected { color: var(--billy-accent-strong, #0e97bb); font-weight: 600; }
+}
+
+.dropdown-empty {
+  padding: 14px 10px;
+  font-size: 13px;
+  color: var(--billy-text-muted, #9ca3af);
+  text-align: center;
+}

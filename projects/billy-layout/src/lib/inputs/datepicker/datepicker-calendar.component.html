@@ -1,0 +1,81 @@
+<div class="dpc" (keydown)="onCalendarKeydown($event)">
+
+  <div class="dpc-header">
+    <button type="button" class="dpc-nav" (click)="goPrev()"
+      [attr.aria-label]="view() === 'days' ? 'Mois précédent' : 'Année précédente'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <button type="button" class="dpc-title" (click)="toggleView()"
+      [attr.aria-label]="view() === 'days' ? title() + ' — choisir le mois et l\'année' : 'Revenir aux jours'"
+      [attr.aria-expanded]="view() === 'months'">
+      {{ title() }}
+      <svg class="dpc-title__caret" [class.dpc-title__caret--open]="view() === 'months'"
+        viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </button>
+
+    <button type="button" class="dpc-nav" (click)="goNext()"
+      [attr.aria-label]="view() === 'days' ? 'Mois suivant' : 'Année suivante'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 6l6 6-6 6"/>
+      </svg>
+    </button>
+  </div>
+
+  @if (view() === 'days') {
+    <table class="dpc-grid" role="grid" [attr.aria-label]="title()">
+      <thead>
+        <tr>
+          @for (weekday of weekdays(); track weekday.long) {
+            <th scope="col" [attr.aria-label]="weekday.long">
+              <span aria-hidden="true">{{ weekday.short }}</span>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody (keydown)="onGridKeydown($event)">
+        @for (week of weeks(); track $index) {
+          <tr role="row">
+            @for (day of week; track day.date.getTime()) {
+              <td role="gridcell" [attr.aria-selected]="day.isSelected">
+                <button type="button" class="dpc-day"
+                  [class.dpc-day--out]="!day.inMonth"
+                  [class.dpc-day--today]="day.isToday"
+                  [class.dpc-day--selected]="day.isSelected"
+                  [tabindex]="isFocusTarget(day.date) ? 0 : -1"
+                  [attr.aria-label]="day.ariaLabel"
+                  [attr.aria-current]="day.isToday ? 'date' : null"
+                  (click)="pickDay(day.date)">
+                  {{ day.date.getDate() }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="dpc-months" role="listbox" aria-label="Choisir un mois" (keydown)="onMonthsKeydown($event)">
+      @for (month of monthNames(); track $index) {
+        <button type="button" class="dpc-month" role="option"
+          [class.dpc-month--current]="$index === viewMonth().month"
+          [attr.aria-selected]="$index === viewMonth().month"
+          [tabindex]="$index === monthTabIndex() ? 0 : -1"
+          (click)="pickMonth($index)">
+          {{ month }}
+        </button>
+      }
+    </div>
+  }
+
+  <div class="dpc-footer">
+    <button type="button" class="dpc-today-btn" (click)="pickToday()">Aujourd'hui</button>
+  </div>
+
+  <span class="dpc-sr-only" aria-live="polite">{{ title() }}</span>
+
+</div>

@@ -1,0 +1,16 @@
+<nav class="action-bar" aria-label="Navigation principale">
+  <div class="tab-row">
+    <div class="tab-pill" [class.tab-pill-off]="activeIndex() < 0"
+         [style.transform]="pillTransform()" aria-hidden="true"></div>
+    @for (tab of tabs(); track tab.icon; let i = $index) {
+      <button type="button" class="tab" (click)="tab.go()"
+              [class.is-active]="activeIndex() === i"
+              [attr.aria-current]="activeIndex() === i ? 'page' : null">
+        <span class="tab-icon">
+          <billy-icon [name]="tab.icon" [size]="23" [strokeWidth]="2" />
+        </span>
+        <span class="tab-label">{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+</nav>

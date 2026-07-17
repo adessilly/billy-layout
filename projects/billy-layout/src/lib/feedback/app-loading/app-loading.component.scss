@@ -1,0 +1,104 @@
+.app-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: wait;
+
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+
+  &--active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+.app-loading__spinner {
+  width: 44px;
+  flex: 0 0 auto;
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 10px rgba(14, 151, 187, 0.18));
+  }
+}
+
+/* Le document flotte doucement */
+.app-loading__doc {
+  transform-origin: 22px 26px;
+  animation: billy-doc-float 2.4s ease-in-out infinite;
+}
+
+/* Chaque ligne « s'écrit » de la gauche vers la droite, en cascade */
+.app-loading__line {
+  fill: var(--billy-accent-strong, #0e97bb);
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: billy-line-write 2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+.app-loading__line--muted {
+  fill: var(--billy-accent-border, #a5dff2);
+}
+
+/* La pastille € apparaît une fois le total « écrit » */
+.app-loading__euro {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: billy-euro-pop 2s ease-in-out infinite;
+}
+
+.app-loading__euro-sign {
+  fill: #fff;
+  font-size: 5px;
+  font-weight: 700;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  animation: billy-euro-pop 2s ease-in-out infinite;
+}
+
+@keyframes billy-doc-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-2.5px) rotate(-1.5deg); }
+}
+
+@keyframes billy-line-write {
+  0%        { transform: scaleX(0); opacity: 0.25; }
+  30%, 70%  { transform: scaleX(1); opacity: 1; }
+  100%      { transform: scaleX(0); opacity: 0.25; }
+}
+
+@keyframes billy-euro-pop {
+  0%, 40%   { transform: scale(0); opacity: 0; }
+  55%       { transform: scale(1.15); opacity: 1; }
+  70%       { transform: scale(1); opacity: 1; }
+  85%, 100% { transform: scale(0); opacity: 0; }
+}
+
+/* Respecte les préférences d'accessibilité : on fige, on garde juste un pouls léger */
+@media (prefers-reduced-motion: reduce) {
+  .app-loading__doc,
+  .app-loading__line,
+  .app-loading__euro,
+  .app-loading__euro-sign {
+    animation: none;
+  }
+  .app-loading__doc { animation: billy-doc-float 3s ease-in-out infinite; }
+}
+
+/* Mode sombre (classe globale `body.dark-mode`) */
+:host-context(body.dark-mode) .app-loading {
+  background: rgba(20, 28, 31, 0.72);
+}

@@ -1,0 +1,11 @@
+<div class="ajout-tile ajout-tile-manual" (click)="onClick($event)">
+  <div class="ajout-tile-icon">
+    <i [class]="icon()"></i>
+  </div>
+  <div class="ajout-tile-content">
+    <span class="ajout-tile-title">{{ label() }}</span>
+    @if (subtitle()) {
+      <span class="ajout-tile-subtitle">{{ subtitle() }}</span>
+    }
+  </div>
+</div>

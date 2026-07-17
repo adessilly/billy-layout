@@ -1,0 +1,75 @@
+<div class="dropdown" clickOutside [listenClickOutside]="isOpen()" (clickOutside)="close()">
+
+  <button #trigger
+    type="button"
+    class="dropdown-trigger"
+    [id]="id()"
+    [disabled]="isDisabled()"
+    [class.dropdown-trigger--open]="isOpen()"
+    role="combobox"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-required]="required() || null"
+    (click)="toggle()"
+    (keydown)="onTriggerKeydown($event)">
+    <span class="dropdown-trigger__label" [class.dropdown-trigger__label--placeholder]="!selectedOption()">
+      {{ selectedOption()?.text ?? placeholder() }}
+    </span>
+    <i class="fa-solid fa-chevron-down dropdown-trigger__chevron" [class.dropdown-trigger__chevron--open]="isOpen()"></i>
+  </button>
+
+  @if (isOpen()) {
+    <div class="dropdown-panel"
+      [class.dropdown-panel--up]="panelPos().openUp"
+      [style.left.px]="panelPos().left"
+      [style.width.px]="panelPos().width"
+      [style.top.px]="panelPos().openUp ? null : panelPos().top"
+      [style.bottom.px]="panelPos().openUp ? panelPos().bottom : null"
+      (keydown)="onPanelKeydown($event)">
+
+      @if (searchable()) {
+        <div class="dropdown-search">
+          <i class="fa-solid fa-magnifying-glass dropdown-search__icon"></i>
+          <input #searchInput
+            type="text"
+            placeholder="Rechercher…"
+            autocomplete="off"
+            [value]="searchText()"
+            (input)="onSearchInput($any($event.target).value)">
+          @if (searchText()) {
+            <button type="button" class="dropdown-search__clear" tabindex="-1" (click)="onSearchInput('')">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          }
+        </div>
+      }
+
+      <ul #list class="dropdown-list" role="listbox" tabindex="-1">
+        @for (item of filteredView(); track item.option.id; let i = $index) {
+          <li class="dropdown-option"
+            role="option"
+            [class.dropdown-option--active]="i === activeIndex()"
+            [class.dropdown-option--selected]="item.option === selectedOption()"
+            [attr.aria-selected]="item.option === selectedOption()"
+            (mouseenter)="activeIndex.set(i)"
+            (click)="pick(item.option)">
+            <span class="dropdown-option__text">
+              @if (item.seg) {
+                {{ item.seg.before }}<b>{{ item.seg.match }}</b>{{ item.seg.after }}
+              } @else {
+                {{ item.option.text }}
+              }
+            </span>
+            @if (item.option === selectedOption()) {
+              <i class="fa-solid fa-check dropdown-option__check"></i>
+            }
+          </li>
+        } @empty {
+          <li class="dropdown-empty">Aucun résultat</li>
+        }
+      </ul>
+
+    </div>
+  }
+
+</div>

@@ -1,0 +1,34 @@
+@switch (status()) {
+
+  @case ('partial') {
+    <svg class="cs-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle class="cs-track" cx="12" cy="12" r="9"/>
+      <circle class="cs-ring" cx="12" cy="12" r="9" pathLength="1"
+              [style.stroke-dashoffset]="dashoffset()"/>
+    </svg>
+  }
+
+  @case ('valid') {
+    <svg class="cs-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle class="cs-disc" cx="12" cy="12" r="9"/>
+      <path class="cs-check" pathLength="1" d="M7.9 12.3 10.8 15.2 16.3 9.3"/>
+    </svg>
+  }
+
+  @case ('unverified') {
+    <svg class="cs-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle class="cs-disc" cx="12" cy="12" r="9"/>
+      <path class="cs-mark" d="M12 11.4v4.4"/>
+      <circle class="cs-dot" cx="12" cy="8.5" r="0.95"/>
+    </svg>
+  }
+
+  @case ('invalid') {
+    <svg class="cs-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle class="cs-disc" cx="12" cy="12" r="9"/>
+      <path class="cs-mark" d="M12 7.6v4.9"/>
+      <circle class="cs-dot" cx="12" cy="15.9" r="0.95"/>
+    </svg>
+  }
+
+}

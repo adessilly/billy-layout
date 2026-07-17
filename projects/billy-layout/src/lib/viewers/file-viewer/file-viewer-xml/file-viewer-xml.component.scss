@@ -1,0 +1,150 @@
+.viewer {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  position: relative;
+
+  .viewer-body {
+    position: relative;
+    background: #f9fafb;
+    border-radius: 0 0 9px 9px;
+    max-height: 600px;
+    overflow: auto;
+
+    .xml-content {
+      margin: 0;
+      padding: 16px;
+      font-family: 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      white-space: pre;
+      tab-size: 2;
+      color: #334155;
+
+      code {
+        font: inherit;
+      }
+    }
+
+    .viewer-loading {
+      padding: 48px 0;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 22px;
+    }
+
+    .viewer-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+  }
+}
+
+// Coloration syntaxique (clair)
+.xml-tag {
+  color: #2563eb;
+}
+
+.xml-attr {
+  color: #7c3aed;
+}
+
+.xml-value {
+  color: #059669;
+}
+
+.xml-prolog {
+  color: #9ca3af;
+}
+
+.xml-comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+// Bouton compact projeté dans la toolbar.
+.viewer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+:host-context(.dark-mode) {
+
+  .viewer {
+    border-color: #49545a;
+    background: #212e31;
+
+    .viewer-body {
+      background: #1a2528;
+
+      .xml-content {
+        color: #cbd5e1;
+      }
+
+      .viewer-loading {
+        color: #7a8a90;
+      }
+
+      .viewer-empty {
+        color: #7a8a90;
+      }
+    }
+  }
+
+  .xml-tag {
+    color: #60a5fa;
+  }
+
+  .xml-attr {
+    color: #c4b5fd;
+  }
+
+  .xml-value {
+    color: #6ee7b7;
+  }
+
+  .xml-prolog {
+    color: #7a8a90;
+  }
+
+  .xml-comment {
+    color: #7a8a90;
+  }
+
+  .viewer-btn {
+    background: #212e31;
+    border-color: #49545a;
+    color: #9ca3af;
+
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
+  }
+}

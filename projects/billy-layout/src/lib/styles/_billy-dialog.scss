@@ -1,0 +1,140 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLy — coque des dialogues modaux (remplace .modal* de Bootstrap)
+// Moteur associé : src/app/shared/utils/dialog-utils.ts (classe Dialog).
+//
+// Feuille globale (et non styles de composant) pour deux raisons :
+//  - les dialogues sont déplacés sous <body> à l'ouverture ;
+//  - trois composants partagent la coque (dialog-form, delete, ai-extract) :
+//    la scoper reviendrait à la dupliquer trois fois.
+//
+// La géométrie reprend celle de Bootstrap (500px, modal-xl, marges) pour que la
+// migration ne déplace aucun dialogue ; les couleurs viennent des tokens
+// --billy-* de styles-tokens.scss, donc le dark mode est automatique.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Racine : plein écran, sert à la fois de fond, de zone de clic-pour-fermer et
+// de conteneur de défilement. `display` est piloté en JS (none ↔ block) : c'est
+// ce passage qui rejoue les animations d'illustration des dialogues.
+.billy-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  display: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 0.5);
+  opacity: 0;
+  transition: opacity 0.15s linear;
+}
+
+.billy-modal.is-open {
+  opacity: 1;
+}
+
+// Enveloppe centrée. `pointer-events: none` laisse les clics de la gouttière
+// atteindre la racine (= fermeture au clic sur le fond) ; le contenu les
+// reprend à son compte.
+.billy-modal-dialog {
+  position: relative;
+  width: auto;
+  max-width: 500px;
+  margin: 1.75rem auto;
+  pointer-events: none;
+  transform: translateY(-30px);
+  transition: transform 0.25s ease-out;
+}
+
+.billy-modal.is-open .billy-modal-dialog {
+  transform: none;
+}
+
+@media (max-width: 575.98px) {
+  .billy-modal-dialog {
+    margin: 0.5rem;
+  }
+}
+
+.billy-modal-dialog--centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 3.5rem);
+}
+
+@media (max-width: 575.98px) {
+  .billy-modal-dialog--centered {
+    min-height: calc(100% - 1rem);
+  }
+}
+
+// Équivalent de .modal-xl : élargi par paliers, comme Bootstrap.
+@media (min-width: 992px) {
+  .billy-modal-dialog--large { max-width: 800px; }
+}
+
+@media (min-width: 1200px) {
+  .billy-modal-dialog--large { max-width: 1140px; }
+}
+
+// Carte du dialogue : même langage visuel que billy-card (surface, bord fin,
+// rayon 16px, ombre douce).
+.billy-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 16px;
+  box-shadow: var(
+    --billy-surface-shadow,
+    0 10px 30px rgba(17, 24, 39, 0.12),
+    0 2px 8px rgba(17, 24, 39, 0.06)
+  );
+}
+
+.billy-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.billy-modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+}
+
+.billy-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.billy-modal-title {
+  margin-bottom: 0;
+  line-height: 1.5;
+  font-weight: lighter;
+
+  > i { margin-right: 10px; }
+}
+
+// Verrou de défilement, posé par Dialog tant qu'un dialogue est ouvert.
+body.billy-dialog-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .billy-modal,
+  .billy-modal-dialog {
+    transition: none;
+  }
+
+  .billy-modal-dialog {
+    transform: none;
+  }
+}

@@ -1,0 +1,306 @@
+// Confirmation de suppression : coque alignée sur billy-dialog-form (radius 16px,
+// tokens --billy-* → dark mode automatique — la modale vit sous <body>, seuls
+// les attributs _ngcontent suivent, donc pas de :host ici).
+
+.del-modal {
+  // Au-dessus des overlays dialog-form (suppression demandée depuis un dialogue).
+  z-index: 9000;
+}
+
+.del-dialog {
+  max-width: 420px;
+}
+
+.del-content {
+  --del-danger: var(--billy-danger, #dc2626);
+
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 16px;
+  background: var(--billy-surface, #fff);
+  box-shadow: var(
+    --billy-surface-shadow,
+    0 10px 30px rgba(17, 24, 39, 0.12),
+    0 2px 8px rgba(17, 24, 39, 0.06)
+  );
+  overflow: hidden;
+  text-align: center;
+}
+
+// Entrée : léger pop, à la place du glissement vers le bas de .billy-modal-dialog.
+.del-modal .del-dialog {
+  transform: translateY(14px) scale(0.96);
+  transition: transform 0.25s ease-out;
+}
+.del-modal.is-open .del-dialog {
+  transform: none;
+}
+
+// ── Croix de fermeture (même recette que dialog-form-header) ───────────────
+.del-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--billy-text-muted, #9ca3af);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.del-close:hover {
+  background: var(--billy-divider, #f3f4f6);
+  color: var(--billy-section-title, #374151);
+}
+.del-close:active { transform: scale(0.92); }
+.del-close:focus-visible {
+  outline: 2px solid var(--billy-focus-border, #66afe9);
+  outline-offset: 1px;
+}
+
+// ── Illustration ────────────────────────────────────────────────────────────
+.del-hero {
+  padding: 26px 0 0;
+  background: radial-gradient(120% 90% at 50% 0%, var(--billy-danger-ring, rgba(220, 38, 38, 0.08)), transparent 75%);
+}
+
+.del-svg {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.del-halo {
+  fill: var(--billy-danger-ring, rgba(220, 38, 38, 0.08));
+}
+
+.del-ring {
+  fill: none;
+  stroke: var(--del-danger);
+  stroke-width: 1.25;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.del-paper {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+
+  rect {
+    fill: var(--billy-surface, #fff);
+    stroke: var(--billy-text-muted, #9ca3af);
+    stroke-width: 1.75;
+  }
+  line {
+    stroke: var(--billy-text-muted, #9ca3af);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+}
+
+.del-can-body,
+.del-lid-plate,
+.del-lid-handle {
+  fill: rgba(220, 38, 38, 0.1);
+  stroke: var(--del-danger);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.del-groove {
+  stroke: var(--del-danger);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.del-can {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+}
+
+.del-lid {
+  transform-box: fill-box;
+  transform-origin: 92% 70%;
+}
+
+// Les animations se rejouent à chaque ouverture : le display none→block posé
+// par Dialog (dialog-utils.ts) réinitialise les keyframes.
+.del-modal.is-open {
+  .del-svg   { animation: del-pop 0.35s ease-out both; }
+  .del-lid   { animation: del-lid 1.9s cubic-bezier(0.34, 1.3, 0.64, 1) 0.25s both; }
+  .del-paper { animation: del-paper 1.9s ease-in 0.25s both; }
+  .del-can   { animation: del-can 1.9s ease-in-out 0.25s both; }
+  .del-ring-1 { animation: del-ring 2.8s ease-out 0.9s infinite; }
+  .del-ring-2 { animation: del-ring 2.8s ease-out 1.9s infinite; }
+}
+
+@keyframes del-pop {
+  from { transform: scale(0.75); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes del-lid {
+  0%        { transform: rotate(0); }
+  16%, 52%  { transform: rotate(-38deg) translate(-2px, -5px); }
+  72%       { transform: rotate(0); }
+  79%       { transform: rotate(2.5deg); }
+  88%       { transform: rotate(-1.5deg); }
+  100%      { transform: rotate(0); }
+}
+
+@keyframes del-paper {
+  0%, 14%   { transform: translate(-5px, -24px) rotate(-14deg); opacity: 0; }
+  26%       { transform: translate(-3px, -14px) rotate(-8deg); opacity: 1; }
+  48%       { transform: translate(0, 4px) rotate(3deg); opacity: 1; }
+  60%, 100% { transform: translate(1px, 12px) rotate(6deg); opacity: 0; }
+}
+
+@keyframes del-can {
+  0%, 68%   { transform: rotate(0); }
+  76%       { transform: rotate(-2deg); }
+  84%       { transform: rotate(1.5deg); }
+  92%, 100% { transform: rotate(0); }
+}
+
+@keyframes del-ring {
+  0%   { transform: scale(0.92); opacity: 0.5; }
+  75%, 100% { transform: scale(1.3); opacity: 0; }
+}
+
+// ── Contenu ─────────────────────────────────────────────────────────────────
+.del-body {
+  padding: 10px 28px 4px;
+}
+
+.del-title {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--billy-section-title, #374151);
+}
+
+.del-message {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--billy-text-soft, #6b7280);
+}
+
+.del-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border: 1px solid var(--billy-section-border, #eceff3);
+  border-radius: 12px;
+  background: var(--billy-section-bg, #fafbfc);
+}
+
+.del-item-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--billy-section-title, #374151);
+  overflow-wrap: anywhere;
+}
+
+.del-item-prix {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--del-danger);
+}
+
+.del-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--billy-text-muted, #9ca3af);
+
+  i { color: #f59e0b; font-size: 12px; }
+}
+
+// ── Actions ─────────────────────────────────────────────────────────────────
+.del-actions {
+  display: flex;
+  gap: 10px;
+  padding: 18px 24px 24px;
+}
+
+.del-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease, box-shadow 0.15s ease;
+}
+.del-btn:focus-visible {
+  outline: 2px solid var(--billy-focus-border, #66afe9);
+  outline-offset: 2px;
+}
+.del-btn:active { transform: scale(0.98); }
+
+.del-btn-cancel {
+  background: transparent;
+  border-color: var(--billy-input-border, #e5e7eb);
+  color: var(--billy-text-soft, #6b7280);
+}
+.del-btn-cancel:hover {
+  background: var(--billy-divider, #f3f4f6);
+  color: var(--billy-section-title, #374151);
+}
+
+.del-btn-danger {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+}
+.del-btn-danger:hover {
+  background: linear-gradient(180deg, #f05252, #e02d2d);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.38);
+  transform: translateY(-1px);
+}
+.del-btn-danger:active { transform: scale(0.98); }
+
+// ── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .del-actions {
+    // Empilé : l'action destructrice en premier, Annuler dessous.
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .del-body { padding-inline: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .del-modal.is-open .del-svg,
+  .del-modal.is-open .del-lid,
+  .del-modal.is-open .del-paper,
+  .del-modal.is-open .del-can,
+  .del-modal.is-open .del-ring {
+    animation: none;
+  }
+  .del-modal .del-dialog { transition: none; transform: none; }
+}

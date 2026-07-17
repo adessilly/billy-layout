@@ -1,0 +1,174 @@
+// Barre d'actions de formulaire (sauvegarder / annuler + ng-content).
+// Même langage visuel que les panneaux (mixin billy-card) : surface blanche,
+// bord fin --billy-surface-border, coins 16px, ombre douce --billy-card-shadow.
+// Reste une barre « flottante » collante : on ajoute un léger halo vers le haut
+// pour la détacher du contenu qui défile dessous.
+// S'appuie sur les tokens --billy-* (dark mode automatique sous body.dark-mode).
+
+:host {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  z-index: 1001;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  // Aligné sur billy-card : mêmes bord / rayon / surface que les billy-form-panel.
+  padding: 14px 18px;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 16px;
+  // ombre de carte + halo vers le haut : la barre « flotte » au-dessus du scroll
+  box-shadow: var(--billy-card-shadow, 0 1px 2px rgba(17, 24, 39, 0.04)),
+    0 -6px 20px rgba(17, 24, 39, 0.05);
+
+  &.no-theme {
+    border: none;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+.left-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.right-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+// ── Boutons ────────────────────────────────────────────────────────────────
+// min-width sur un sélecteur d'élément (faible spécificité) pour que les
+// overrides consommateurs (ex. .btn-send-facture) puissent l'élargir.
+button {
+  min-width: 128px;
+}
+
+.right-zone .sb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  border: 1px solid transparent;
+  border-radius: var(--billy-input-radius, 8px);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  i {
+    font-size: 0.85em;
+  }
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  // Reprend le halo de focus que .btn de Bootstrap posait.
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+}
+
+// Annuler / retour : bouton fantôme discret
+.sb-btn--cancel {
+  background: transparent;
+  border-color: var(--billy-input-border, #e5e7eb);
+  color: var(--billy-text-muted, #6b7280);
+
+  &:hover {
+    background: var(--billy-addon-hover-bg, #f3f4f6);
+    border-color: var(--billy-input-border-hover, #9ca3af);
+    color: var(--billy-input-color, #374151);
+  }
+}
+
+// Sauvegarder : prend sa couleur d'une variante (classSave) et gagne un relief
+.sb-btn--save {
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(17, 24, 39, 0.16);
+  }
+}
+
+// ── Variantes de couleur (passées via [classSave]) ──────────────────────────
+// Reprennent les teintes qu'avaient .btn-info / .btn-warning dans le thème, mais
+// sans dépendre de Bootstrap. Ce sont les seules que les consommateurs utilisent.
+.sb-btn--info {
+  background: #23b7e5;
+  border-color: #23b7e5;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #18a0ca;
+    border-color: #1797be;
+    color: #fff;
+  }
+}
+
+.sb-btn--warning {
+  background: #ff902b;
+  border-color: #ff902b;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #ff7c05;
+    border-color: #f77600;
+    color: #fff;
+  }
+}
+
+// ── Mobile : barre givrée pleine largeur ─────────────────────────────────────
+@media screen and (max-width: 767px) {
+  :host:not(.no-theme) {
+    border: none;
+    border-top: 1px solid var(--billy-divider, #f3f4f6);
+    border-radius: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--billy-surface, #fff) 82%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 -8px 24px rgba(17, 24, 39, 0.08);
+  }
+
+  .right-zone {
+    flex: 1 1 auto;
+  }
+
+  .right-zone .sb-btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

@@ -1,0 +1,207 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// billy-tabs — segmented control BILLy (charte : accent cyan --billy-*)
+//
+// Responsive : quand la place manque (classe .is-compact posée par le TS),
+// les libellés des onglets inactifs se replient — seul l'actif garde le sien.
+// La pastille active est un indicateur absolu qui glisse entre les onglets.
+// ═══════════════════════════════════════════════════════════════════════════
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+// ── Barre d'onglets ──────────────────────────────────────────────────────────
+.app-tabs-bar {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  // Fondus latéraux quand la barre défile (dernier recours en très étroit).
+  &.has-fade-right {
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+  &.has-fade-left {
+    mask-image: linear-gradient(to right, transparent, #000 28px);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 28px);
+  }
+  &.has-fade-left.has-fade-right {
+    mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  }
+}
+
+// ── Indicateur coulissant (pastille active) ──────────────────────────────────
+.app-tabs-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: var(--billy-accent-soft, #e6f7fc);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(14, 151, 187, 0.12);
+  opacity: 0;
+  pointer-events: none;
+
+  &.is-ready {
+    opacity: 1;
+    transition:
+      transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.2s ease;
+  }
+}
+
+// ── Boutons ──────────────────────────────────────────────────────────────────
+.app-tab-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--billy-text-muted, #9ca3af);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    padding 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover:not(.is-active) {
+    color: var(--billy-input-color, #374151);
+    background: var(--billy-divider, #f3f4f6);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+
+  &.is-active {
+    color: var(--billy-accent-strong, #0e97bb);
+    // Fond porté par l'indicateur coulissant dès qu'il est mesuré ;
+    // fond statique en secours avant la première mesure.
+    background: var(--billy-accent-soft, #e6f7fc);
+    box-shadow: 0 1px 2px rgba(14, 151, 187, 0.12);
+  }
+}
+
+.app-tabs-bar.has-indicator .app-tab-btn.is-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.app-tab-btn__icon {
+  font-size: 12.5px;
+  opacity: 0.9;
+}
+
+// Repli animé du libellé : la colonne 1fr → 0fr s'anime, l'intérieur est
+// masqué par overflow. La marge remplace le gap icône/libellé pour pouvoir
+// s'animer elle aussi.
+.app-tab-btn__label {
+  display: grid;
+  grid-template-columns: 1fr;
+  transition:
+    grid-template-columns 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    margin 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.18s ease;
+}
+
+.app-tab-btn__icon + .app-tab-btn__label {
+  margin-left: 8px;
+}
+
+.app-tab-btn__label-in {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+// ── Mode compact : icônes seules, sauf l'onglet actif ────────────────────────
+.app-tabs-bar.is-compact .app-tab-btn:not(.is-active) {
+  padding-inline: 12px;
+
+  .app-tab-btn__label {
+    grid-template-columns: 0fr;
+    margin-left: 0;
+    opacity: 0;
+  }
+}
+
+// ── Variante dense (barres d'en-tête) ────────────────────────────────────────
+.app-tabs-bar--sm {
+  gap: 3px;
+  padding: 4px;
+  border-radius: 12px;
+
+  .app-tabs-indicator { border-radius: 8px; }
+
+  .app-tab-btn {
+    padding: 7px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .app-tab-btn__icon { font-size: 12px; }
+
+  .app-tab-btn__icon + .app-tab-btn__label { margin-left: 7px; }
+
+  &.is-compact .app-tab-btn:not(.is-active) {
+    padding-inline: 10px;
+
+    .app-tab-btn__label { margin-left: 0; }
+  }
+}
+
+// ── Corps ────────────────────────────────────────────────────────────────────
+.app-tabs-body {
+  padding-top: 22px;
+}
+
+.app-tabs-body--none {
+  display: none;
+}
+
+// ── Accessibilité : animations coupées si demandé ────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .app-tabs-indicator.is-ready,
+  .app-tab-btn,
+  .app-tab-btn__label {
+    transition: none;
+  }
+}
+
+// ── Dark mode ────────────────────────────────────────────────────────────────
+// La plupart des couleurs viennent des tokens --billy-* (déjà thémés). Il ne
+// reste que les ombres à neutraliser.
+:host-context(.dark-mode) {
+  .app-tabs-bar {
+    box-shadow: none;
+  }
+
+  .app-tabs-indicator,
+  .app-tab-btn.is-active {
+    box-shadow: none;
+  }
+}

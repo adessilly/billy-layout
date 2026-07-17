@@ -1,0 +1,230 @@
+:host {
+  display: block;
+}
+
+.doc-search {
+  position: relative;
+}
+
+// ── Champ ────────────────────────────────────────────────────────────────────
+// Deux états (même ergonomie que la recherche globale de billy-client) : au
+// repos une simple icône de 40px ; au focus le champ se déploie en douceur.
+.doc-search-field {
+  display: flex;
+  align-items: center;
+  gap: 0;                      // Replié : pas d'espace parasite → icône centrée.
+  width: 40px;                 // Replié : juste l'icône.
+  height: 40px;
+  padding: 0;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--billy-text-soft);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    width .32s cubic-bezier(.22, 1, .36, 1),
+    padding .32s cubic-bezier(.22, 1, .36, 1),
+    background .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease,
+    color .2s ease;
+
+  // Survol au repos : léger fond pour signaler la cliquabilité.
+  &:not(.expanded):hover {
+    background: var(--billy-addon-hover-bg);
+    color: var(--billy-input-color);
+  }
+
+  &.expanded {
+    gap: 10px;
+    width: min(340px, calc(100vw - 220px));
+    padding: 0 14px;
+    justify-content: flex-start;
+    background: var(--billy-input-bg);
+    border-color: var(--billy-surface-border);
+    color: var(--billy-text-muted);
+    box-shadow: 0 1px 2px rgba(16, 42, 67, .04);
+    cursor: text;
+  }
+
+  &.expanded.focused {
+    border-color: var(--billy-accent);
+    box-shadow: 0 0 0 3px rgba(18, 180, 221, .14);
+  }
+}
+
+.doc-search-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s ease;
+}
+
+// Repliée, l'icône « respire » au survol pour inviter au clic.
+.doc-search-field:not(.expanded):hover .doc-search-icon {
+  transform: scale(1.08);
+}
+
+.doc-search-input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--billy-input-color);
+  opacity: 0;
+  transition: opacity .18s ease;
+
+  // Replié : l'input ne prend aucune place et n'est pas cliquable.
+  .doc-search-field:not(.expanded) & {
+    flex: none;
+    width: 0;
+    pointer-events: none;
+  }
+
+  .doc-search-field.expanded & {
+    opacity: 1;
+    transition: opacity .22s ease .08s;
+  }
+
+  &::placeholder { color: var(--billy-input-placeholder); }
+
+  // Croix native de <input type="search"> masquée : on gère la nôtre.
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+.doc-search-clear {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--billy-text-muted);
+  font-size: 17px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+
+  &:hover { color: var(--billy-input-color); }
+}
+
+// Badge du raccourci clavier (⌘K / Ctrl+K), visible champ déployé et vide.
+.doc-search-kbd {
+  flex: none;
+  display: flex;
+  gap: 3px;
+
+  kbd {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--billy-text-soft);
+    background: var(--billy-section-bg);
+    border: 1px solid var(--billy-surface-border);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 5px;
+    min-width: 18px;
+    text-align: center;
+  }
+}
+
+// ── Panneau de résultats ─────────────────────────────────────────────────────
+.doc-search-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(400px, calc(100vw - 24px));
+  z-index: 60;
+  background: var(--billy-surface);
+  border: 1px solid var(--billy-surface-border);
+  border-radius: 14px;
+  box-shadow: var(--billy-surface-shadow);
+  padding: 6px;
+  animation: docSearchIn .18s ease;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+@keyframes docSearchIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.doc-search-none {
+  padding: 16px 12px;
+  font-size: 13px;
+  color: var(--billy-text-soft);
+  text-align: center;
+}
+
+.doc-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+
+  &.active {
+    background: var(--billy-accent-soft);
+
+    .doc-search-chevron { opacity: 1; transform: translateX(0); }
+  }
+}
+
+.doc-search-cat {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--billy-accent-strong);
+  background: var(--billy-accent-soft);
+  border: 1px solid var(--billy-accent-border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  min-width: 62px;
+  text-align: center;
+}
+
+.doc-search-texts {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-search-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--site-heading, #1f2937);
+}
+
+.doc-search-sub {
+  font-size: 11.5px;
+  color: var(--billy-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-search-chevron {
+  color: var(--billy-accent);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .15s ease, transform .15s ease;
+}

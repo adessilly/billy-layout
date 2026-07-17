@@ -1,0 +1,323 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Empty state — illustration animée + titre + CTA
+// ═══════════════════════════════════════════════════════════════════════════
+
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 36px 20px 60px;
+  text-align: center;
+}
+
+.empty-svg {
+  width: 220px;
+  height: 187px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 10px 28px rgba(99, 102, 241, 0.12));
+  animation: es-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// Ombre portée teintée par concept
+.empty-wrap--achat  .empty-svg { filter: drop-shadow(0 10px 28px rgba(255, 122, 89, 0.16)); }
+.empty-wrap--vente  .empty-svg { filter: drop-shadow(0 10px 28px rgba(16, 185, 129, 0.15)); }
+.empty-wrap--devis  .empty-svg { filter: drop-shadow(0 10px 28px rgba(245, 158, 11, 0.16)); }
+.empty-wrap--client .empty-svg { filter: drop-shadow(0 10px 28px rgba(124, 58, 237, 0.14)); }
+.empty-wrap--recherche .empty-svg { filter: drop-shadow(0 10px 28px rgba(100, 116, 139, 0.14)); }
+
+.empty-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+  animation: es-enter 0.5s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.empty-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+  max-width: 260px;
+  white-space: pre-line;
+  animation: es-enter 0.5s 0.14s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.35);
+  margin-top: 6px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: es-enter 0.5s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Motion design des illustrations
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Flottement principal de la scène
+.es-float {
+  animation: es-float 5s ease-in-out infinite;
+}
+
+// Étincelles qui scintillent
+.es-sparkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: es-twinkle 2.6s ease-in-out infinite;
+}
+
+// Points décoratifs qui ondulent
+.es-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: es-bob-soft 4.2s ease-in-out infinite;
+
+  &.es-dot--2 { animation-delay: -1.4s; }
+  &.es-dot--3 { animation-delay: -2.6s; }
+}
+
+// Badge qui pulse (payé, +, horloge…)
+.es-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: es-pop 2.8s ease-in-out infinite;
+}
+
+// ── Achat : rayon de scan + pièce ──
+.es-scan {
+  animation: es-scan 3.4s ease-in-out infinite;
+}
+
+.es-coin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: es-coin 3.8s ease-in-out infinite;
+}
+
+// ── Vente : flèche qui se dessine + barres ──
+.es-draw {
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+  animation: es-draw 3.6s ease-in-out infinite;
+
+  &.es-draw--head {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation-name: es-draw-head;
+  }
+}
+
+.es-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: es-grow 3.6s ease-in-out infinite;
+
+  &.es-bar--2 { animation-delay: -0.4s; }
+}
+
+// ── Devis : signature manuscrite + stylo + aiguille ──
+.es-sign {
+  stroke-dasharray: 82;
+  stroke-dashoffset: 82;
+  animation: es-sign 4.2s ease-in-out infinite;
+}
+
+.es-pen {
+  transform-box: view-box;
+  transform-origin: 141px 83px;
+  animation: es-pen 4.2s ease-in-out infinite;
+}
+
+.es-hand {
+  transform-box: view-box;
+  transform-origin: 150px 42px;
+  animation: es-spin 7s linear infinite;
+}
+
+// ── Client : orbite + avatars qui respirent ──
+.es-orbit {
+  transform-box: view-box;
+  transform-origin: 100px 86px;
+  animation: es-spin 30s linear infinite;
+}
+
+.es-bob {
+  animation: es-bob-soft 4.6s ease-in-out infinite;
+
+  &.es-bob--l { animation-delay: -1.5s; }
+  &.es-bob--r { animation-delay: -3s; }
+}
+
+// ── Récurrences : arc en rotation ──
+.es-rotor {
+  transform-box: view-box;
+  transform-origin: 100px 87px;
+  animation: es-spin 9s linear infinite;
+}
+
+// ── Recherche : loupe qui balaie ──
+.es-sweep {
+  animation: es-sweep 4.6s ease-in-out infinite;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Keyframes
+// ═══════════════════════════════════════════════════════════════════════════
+
+@keyframes es-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes es-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+@keyframes es-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.7) rotate(-10deg); }
+  50%      { opacity: 1;    transform: scale(1.15) rotate(10deg); }
+}
+
+@keyframes es-bob-soft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+@keyframes es-pop {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+
+@keyframes es-scan {
+  0%       { transform: translateY(0); opacity: 0; }
+  8%       { opacity: 1; }
+  88%      { opacity: 1; }
+  100%     { transform: translateY(86px); opacity: 0; }
+}
+
+@keyframes es-coin {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-7px) rotate(8deg); }
+}
+
+@keyframes es-draw {
+  0%        { stroke-dashoffset: 70; opacity: 0; }
+  8%        { opacity: 1; }
+  45%, 80%  { stroke-dashoffset: 0; opacity: 1; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes es-draw-head {
+  0%, 35%   { stroke-dashoffset: 30; opacity: 0; }
+  40%       { opacity: 1; }
+  60%, 80%  { stroke-dashoffset: 0; opacity: 1; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes es-grow {
+  0%, 100% { transform: scaleY(0.85); }
+  50%      { transform: scaleY(1); }
+}
+
+@keyframes es-sign {
+  0%        { stroke-dashoffset: 82; opacity: 1; }
+  55%, 85%  { stroke-dashoffset: 0; opacity: 1; }
+  97%       { stroke-dashoffset: 0; opacity: 0; }
+  100%      { stroke-dashoffset: 82; opacity: 0; }
+}
+
+@keyframes es-pen {
+  0%        { transform: rotate(-4deg) translate(-30px, 8px); }
+  55%, 100% { transform: rotate(2deg) translate(0, 0); }
+}
+
+@keyframes es-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes es-sweep {
+  0%, 100% { transform: translate(-14px, 2px) rotate(-3deg); }
+  50%      { transform: translate(10px, -4px) rotate(3deg); }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Accessibilité & dark mode
+// ═══════════════════════════════════════════════════════════════════════════
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-svg,
+  .empty-title,
+  .empty-subtitle,
+  .empty-cta,
+  .es-float,
+  .es-sparkle,
+  .es-dot,
+  .es-pop,
+  .es-scan,
+  .es-coin,
+  .es-draw,
+  .es-bar,
+  .es-sign,
+  .es-pen,
+  .es-hand,
+  .es-orbit,
+  .es-bob,
+  .es-rotor,
+  .es-sweep {
+    animation: none !important;
+  }
+
+  .es-draw,
+  .es-sign {
+    stroke-dashoffset: 0;
+  }
+
+  .es-scan {
+    display: none;
+  }
+}
+
+:host-context(body.dark-mode) {
+  .empty-title { color: #f3f4f6; }
+  .empty-subtitle { color: #9ca3af; }
+
+  .empty-svg { filter: none; }
+
+  .es-glow { opacity: 0.09; }
+
+  .es-card {
+    fill: #1f2937;
+    stroke: #374151;
+  }
+
+  .es-line { fill: #374151; }
+  .es-line-stroke { stroke: #4b5563; }
+}

@@ -1,0 +1,17 @@
+<div class="ajout-tile ajout-tile-import" (click)="trigger()" [class.is-loading]="loading()">
+  <div class="ajout-tile-icon">
+    @if (loading()) {
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    } @else {
+      <i class="fa-solid fa-file-arrow-up"></i>
+    }
+  </div>
+  <div class="ajout-tile-content">
+    <span class="ajout-tile-title">
+      @if (loading()) { Chargement... } @else { {{ label() }} }
+    </span>
+    <span class="ajout-tile-subtitle">{{ subtitle() }}</span>
+  </div>
+</div>
+
+<input #fileInput type="file" [attr.accept]="accept()" style="display:none" (change)="onFileChange($event)" />

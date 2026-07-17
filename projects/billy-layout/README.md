@@ -1,64 +1,94 @@
-# BillyLayout
+# billy-layout
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.0.
+Layout + design system BILLy : shell applicatif (topbar, sidebar, notifications,
+barre de navigation mobile), tokens & mixins SCSS, champs de formulaire,
+panneaux, dialogues et composants de feedback.
 
-## Code scaffolding
+Extraite de billy-client sans dépendance Bootstrap ni dépendance au code
+métier — voir `library-migration.md` à la racine du workspace pour l'historique
+et les décisions.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**📚 Documentation développeur : [docs/README.md](docs/README.md)** — une fiche
+par composant (API, exemples, theming, pièges).
+**🧭 Guidelines UX : [docs/ux-guidelines.md](docs/ux-guidelines.md)** — conventions
+d'assemblage des écrans (boutons de header, listes, consult-card, save-bar).
 
-```bash
-ng generate component component-name
+> La documentation est **embarquée dans le paquet publié** : une fois la librairie
+> installée, tout est lisible dans `node_modules/billy-layout/docs/` (assistants IA
+> compris — commencez par `docs/README.md` puis `docs/ux-guidelines.md`).
+
+## Arborescence
+
+`src/lib/` est organisé par catégories (miroir de `docs/`) :
+
+| Dossier | Contenu |
+|---|---|
+| `core/` | briques transverses : billy-icon, click-outside, autofocus, utils TVA/IBAN/email |
+| `layout/` | shell applicatif (topbar/sidebar/notifications) + action-bar mobile |
+| `inputs/` | champs de saisie CVA : datepicker, dropdown, code-field, input-emails, input-password, button-switch, attachment-button |
+| `forms/` | structure de formulaires : form-creation, default-form-signal, save-bar, form-side-panel |
+| `buttons/` | tuiles d'action : button-ajout, button-upload |
+| `dialogs/` | moteur `Dialog`, dialog-form, delete-dialog |
+| `feedback/` | toastr, snackbar, loaders, empty-state |
+| `display/` | billy-panel, consult-card, page-header, header-action-bar, tabs, filter-toggle-buttons |
+| `viewers/` | visionneuses de fichiers (pdf/image/xml) |
+| `styles/` | SCSS partagés : tokens, reboot, mixins (assets publiés sous `styles/`) |
+
+## Consommation dans le workspace
+
+- **TypeScript** : `import { … } from 'billy-layout'` — le `tsconfig.json` racine
+  mappe le paquet sur `projects/billy-layout/src/public-api.ts` (compilation par
+  les sources, pas besoin de builder la lib en dev).
+- **SCSS** : les feuilles partagées vivent dans `src/lib/styles/` et sont
+  résolues par `stylePreprocessorOptions.includePaths` (angular.json) :
+
+  ```scss
+  @use 'billy-forms' as forms;   // mixins des champs/boutons
+  @use 'billy-cards' as cards;   // mixins des cartes/sections
+  @use 'billy-code-field' as code;
+  @use 'billy-tokens';           // variables CSS --billy-* (:root + dark)
+  @use 'billy-dialog';           // coque modale .billy-modal*
+  @use 'billy-reboot';           // normalisation globale (box-sizing…)
+  ```
+
+  À la publication, ces fichiers sont expédiés dans `billy-layout/styles/`
+  (assets ng-packagr) : un consommateur externe ajoute ce dossier à ses
+  `includePaths`.
+
+## Prérequis côté application
+
+- **Fonts** (chargées par l'application, cf. `src/index.html`) :
+  « Plus Jakarta Sans » (shell + design system). « Source Sans Pro » n'est
+  requise que par la couche de compat legacy de billy-client (`billy-reboot`
+  l'utilise comme police de base des pages métier).
+- **Tokens & thème** : charger `billy-tokens` dans les styles globaux ; le mode
+  sombre repose sur la classe `body.dark-mode`, gérée par `BillyDarkModeService`
+  (clé localStorage `billy_dark_mode`).
+- **Providers** (voir `app.config.ts` de billy-client pour l'exemple complet) :
+  - `BILLY_SHELL_CONFIG` — liens du menu, version, homeLink, logout, badges,
+    synchro des notifications ;
+  - `BILLY_DIALOG_ROUTER` (optionnel) — fermeture des overlays routés pour
+    `billy-dialog-form` ;
+  - `BILLY_FILE_SOURCE` — source de contenu des viewers `app-file-viewer-*`.
+
+## Shell : slots
+
+`<billy-shell>` projette trois zones métier vers la topbar :
+
+```html
+<billy-shell>
+  <app-billy-search shell-search />
+  <billy-notifications shell-notifications>
+    <!-- catégories : composants qui étendent BillyNotifCategory -->
+  </billy-notifications>
+  <app-billy-account-menu shell-account />
+  <router-outlet />
+</billy-shell>
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Build & publication
 
 ```bash
-ng generate --help
+ng build billy-layout   # ng-packagr → dist/billy-layout (FESM + DTS + styles/)
+cd dist/billy-layout && npm publish
 ```
-
-## Building
-
-To build the library, run:
-
-```bash
-ng build billy-layout
-```
-
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
-
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-
-   ```bash
-   cd dist/billy-layout
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

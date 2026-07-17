@@ -1,0 +1,33 @@
+<div #bar class="app-tabs-bar" role="tablist"
+  [class.app-tabs-bar--sm]="size() === 'sm'"
+  [class.is-compact]="compact()"
+  [class.has-indicator]="indicatorReady()"
+  [class.has-fade-left]="fadeLeft()"
+  [class.has-fade-right]="fadeRight()"
+  (keydown)="onKeydown($event)"
+  (scroll)="updateFades()">
+
+  <span class="app-tabs-indicator" aria-hidden="true"
+    [class.is-ready]="indicatorReady()"
+    [style.transform]="indicatorTransform()"
+    [style.width.px]="indicator().w"
+    [style.height.px]="indicator().h"></span>
+
+  @for (def of defs(); track $index; let i = $index) {
+    <button #btn type="button" class="app-tab-btn" role="tab"
+      [class.is-active]="i === activeIndex()"
+      [attr.aria-selected]="i === activeIndex()"
+      [tabindex]="i === activeIndex() ? 0 : -1"
+      [attr.title]="compact() && i !== activeIndex() ? def.label : null"
+      (click)="select(i)">
+      @if (def.icon) {
+        <i class="app-tab-btn__icon" [class]="def.icon" aria-hidden="true"></i>
+      }
+      <span class="app-tab-btn__label"><span class="app-tab-btn__label-in">{{ def.label }}</span></span>
+    </button>
+  }
+</div>
+
+<div class="app-tabs-body" [class.app-tabs-body--none]="headless()">
+  <ng-content></ng-content>
+</div>
