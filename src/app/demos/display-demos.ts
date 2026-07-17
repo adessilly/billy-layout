@@ -7,6 +7,7 @@ import {
   FilterToggleOption,
   HeaderAction,
   HeaderActionBarComponent,
+  NavCardComponent,
   PageHeaderComponent,
   TabComponent,
   TabsComponent,
@@ -101,6 +102,46 @@ export class BillyPanelDemoComponent {
 })
 export class ConsultCardDemoComponent {
   readonly toastr = inject(ToastrService);
+}
+
+/** billy-nav-card : la tuile de navigation des grilles d'accueil. */
+@Component({
+  selector: 'demo-nav-card',
+  imports: [NavCardComponent, DemoStageComponent],
+  template: `
+    <demo-stage titre="Une grille de points d'entrée" description="Sélecteur d'attribut sur <a> ou <button> : la navigation reste portée par l'hôte. Pastille-icône, badge de comptage, chevron au survol et apparition en cascade ([stagger]). Les cartes de la page d'accueil sont ce composant." [center]="false">
+      <div class="nc-grid">
+        <button type="button" billy-nav-card
+                label="Ventes" icon="ventes" [badge]="12"
+                description="Factures, notes de crédit et suivi des paiements."
+                [stagger]="0" (click)="note('Ventes')"></button>
+        <button type="button" billy-nav-card
+                label="Achats" icon="achats" [badge]="0"
+                description="Un badge à 0 s'affiche — null le masque."
+                [stagger]="1" (click)="note('Achats')"></button>
+        <button type="button" billy-nav-card
+                label="Agenda" icon="agenda" [chevron]="false"
+                description="Sans badge ni chevron : juste la tuile."
+                [stagger]="2" (click)="note('Agenda')"></button>
+      </div>
+    </demo-stage>
+  `,
+  styles: `
+    .nc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+  `,
+})
+export class NavCardDemoComponent {
+
+  private readonly toastr = inject(ToastrService);
+
+  note(destination: string): void {
+    this.toastr.info(`Navigation vers « ${destination} » (simulée).`, 'nav-card');
+  }
+
 }
 
 /** billy-page-header : l'en-tête de page (celui du site est le même). */

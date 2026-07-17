@@ -36,7 +36,6 @@ comment structurer une page de liste, quand utiliser consult-card et save-bar.
 
 - [input-line](forms/input-line.md) — ligne label + champ projeté (obligatoire, infobulle).
 - [consult-line](forms/consult-line.md) — pendant lecture seule d'input-line.
-- [form-panel](forms/form-panel.md) — carte de formulaire titrée (slot `header-extra`).
 - [input-prefixe-suffixe](forms/input-prefixe-suffixe.md) — groupe champ + préfixe/suffixe cliquables.
 - [label-clipboard](forms/label-clipboard.md) — libellé copiable dans le presse-papier.
 - [default-form-signal](forms/default-form-signal.md) — classe de base signals des formulaires add/edit.
@@ -67,6 +66,7 @@ comment structurer une page de liste, quand utiliser consult-card et save-bar.
 
 - [billy-panel](display/billy-panel.md) — coque de panneau flottant (ancrage par le parent).
 - [consult-card](display/consult-card.md) — carte de consultation (slot `[card-actions]`, règle anti-imbrication).
+- [nav-card](display/nav-card.md) — tuile de navigation `a[billy-nav-card]`/`button[billy-nav-card]` (pastille-icône, badge, chevron, apparition en cascade).
 - [page-header](display/page-header.md) — en-tête de page (titre, retour, zone de boutons).
 - [header-action-bar](display/header-action-bar.md) — barre d'actions d'en-tête (`HeaderAction`).
 - [tabs](display/tabs.md) — `<billy-tabs<T>>` / `<billy-tab>` (mode projeté ou piloté, onglets montés en permanence).

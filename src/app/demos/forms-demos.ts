@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ConsultLineComponent,
-  FormPanelComponent,
   FormSidePanelComponent,
   InputLineComponent,
   InputPrefixeSuffixeComponent,
@@ -51,37 +50,6 @@ export class InputLineDemoComponent {
   styles: `.cl-center { margin: 0 auto; }`,
 })
 export class ConsultLineDemoComponent {}
-
-/** billy-form-panel : carte de formulaire titrée. */
-@Component({
-  selector: 'demo-form-panel',
-  imports: [FormsModule, FormPanelComponent, InputLineComponent, DemoStageComponent],
-  template: `
-    <demo-stage titre="Une section de formulaire" description="Carte titrée avec slot header-extra ; les sous-panneaux (subpanel) s'imbriquent en gris." [center]="false">
-      <billy-form-panel titre="Coordonnées du client">
-        <div class="fp-grid">
-          <billy-input-line label="Nom" [mandatory]="true">
-            <input class="demo-field" [(ngModel)]="nom" placeholder="Dupont" />
-          </billy-input-line>
-          <billy-input-line label="Ville">
-            <input class="demo-field" [(ngModel)]="ville" placeholder="Bruxelles" />
-          </billy-input-line>
-        </div>
-      </billy-form-panel>
-    </demo-stage>
-  `,
-  styles: `
-    .fp-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0 20px;
-    }
-  `,
-})
-export class FormPanelDemoComponent {
-  readonly nom = signal('');
-  readonly ville = signal('');
-}
 
 /** billy-input-prefixe-suffixe : groupe champ + addons cliquables. */
 @Component({

@@ -105,7 +105,7 @@ pages et dialogues de consultation, onglets du compte, gestionnaires de fichiers
   (compte-form, achat-document). Jamais de panneau dans un panneau sans nécessité.
 - **Non** :
   - dans un **formulaire** → sections maison sur les mixins `billy-cards`
-    (pattern compte-form/client-form) ou [form-panel](forms/form-panel.md) ;
+    (pattern compte-form/client-form) ;
   - pour un élément **répété dans une liste** → carte de liste (`invoice-card`) ;
   - pour un panneau flottant ancré (menu compte) → [billy-panel](display/billy-panel.md) ;
   - exception assumée : `invoice-document` garde son visuel de facture spécifique.
@@ -160,7 +160,7 @@ Les règles de placement :
 | Ajouter depuis une liste vide | CTA d'`billy-empty-state` | Corps de liste (relais du header) |
 | Tuile d'ajout/import sur l'accueil | `billy-button-ajout` / `billy-button-upload` | home-actions uniquement |
 | Bloc d'information en lecture | `billy-consult-card` (+ slot `[card-actions]`) | Pages/dialogues de consultation |
-| Sections d'un formulaire | mixins `billy-cards` ou `billy-form-panel` | Formulaires |
+| Sections d'un formulaire | mixins `billy-cards` | Formulaires |
 | Conclure un formulaire pleine page | `billy-save-bar` sticky | Dernier enfant du `<form>` |
 | Conclure un dialogue/panneau | `billy-save-bar.no-theme` | Footer du conteneur |
 | Filtres d'une liste | `*-filter-bar` (briques : filter-toggle-buttons, dropdown) | Premier bloc de `.data-list` |

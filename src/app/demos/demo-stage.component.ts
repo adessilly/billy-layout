@@ -33,7 +33,6 @@ import { Component, input } from '@angular/core';
       border: 1px solid var(--billy-surface-border);
       border-radius: 16px;
       box-shadow: var(--billy-card-shadow);
-      overflow: hidden;
       margin-bottom: 16px;
     }
 
@@ -72,6 +71,7 @@ import { Component, input } from '@angular/core';
       padding: 30px;
       background-image: radial-gradient(var(--billy-divider) 1px, transparent 1px);
       background-size: 18px 18px;
+      border-radius: 0 0 16px 16px;
     }
 
     .stage-canvas--center {

@@ -144,19 +144,13 @@
 
     <div class="cats-grid">
       @for (category of categories; track category.slug; let i = $index) {
-        <a class="cat-card" [routerLink]="['/c', category.slug]" [style.--stagger]="i">
-          <span class="cat-icon">
-            <billy-icon [name]="category.icon" [size]="22" [strokeWidth]="1.8" />
-          </span>
-          <span class="cat-texts">
-            <span class="cat-head">
-              <span class="cat-label">{{ category.label }}</span>
-              <span class="cat-count">{{ category.entries.length }}</span>
-            </span>
-            <span class="cat-intro">{{ category.intro }}</span>
-          </span>
-          <billy-icon class="cat-chevron" name="chevron-right" [size]="17" [strokeWidth]="2" />
-        </a>
+        <a billy-nav-card
+           [routerLink]="['/c', category.slug]"
+           [label]="category.label"
+           [icon]="category.icon"
+           [description]="category.intro"
+           [badge]="category.entries.length"
+           [stagger]="i"></a>
       }
     </div>
   </section>

@@ -28,7 +28,6 @@ export const DEMO_LOADERS: Record<string, () => Promise<Type<unknown>>> = {
 
   'forms/input-line': () => import('./forms-demos').then(m => m.InputLineDemoComponent),
   'forms/consult-line': () => import('./forms-demos').then(m => m.ConsultLineDemoComponent),
-  'forms/form-panel': () => import('./forms-demos').then(m => m.FormPanelDemoComponent),
   'forms/input-prefixe-suffixe': () => import('./forms-demos').then(m => m.InputPrefixeSuffixeDemoComponent),
   'forms/label-clipboard': () => import('./forms-demos').then(m => m.LabelClipboardDemoComponent),
   'forms/save-bar': () => import('./forms-demos').then(m => m.SaveBarDemoComponent),
@@ -49,6 +48,7 @@ export const DEMO_LOADERS: Record<string, () => Promise<Type<unknown>>> = {
 
   'display/billy-panel': () => import('./display-demos').then(m => m.BillyPanelDemoComponent),
   'display/consult-card': () => import('./display-demos').then(m => m.ConsultCardDemoComponent),
+  'display/nav-card': () => import('./display-demos').then(m => m.NavCardDemoComponent),
   'display/page-header': () => import('./display-demos').then(m => m.PageHeaderDemoComponent),
   'display/header-action-bar': () => import('./display-demos').then(m => m.HeaderActionBarDemoComponent),
   'display/tabs': () => import('./display-demos').then(m => m.TabsDemoComponent),

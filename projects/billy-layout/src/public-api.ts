@@ -82,6 +82,7 @@ export * from './lib/feedback/empty-state/empty-state.component';
 // ── display (panneaux & structure de page) ───────────────────────────────────
 export * from './lib/display/billy-panel/billy-panel.component';
 export * from './lib/display/consult-card/consult-card.component';
+export * from './lib/display/nav-card/nav-card.component';
 export * from './lib/display/page-header/page-header.component';
 export * from './lib/display/header-action-bar/header-action-bar.component';
 export * from './lib/display/header-action-bar/header-action';

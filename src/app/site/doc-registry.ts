@@ -70,7 +70,6 @@ export const DOC_CATEGORIES: DocCategory[] = [
     entries: [
       { slug: 'input-line', label: 'input-line', summary: 'Ligne label + champ projeté (obligatoire, infobulle).', tags: ['ligne', 'label'] },
       { slug: 'consult-line', label: 'consult-line', summary: 'Pendant lecture seule d’input-line.', tags: ['consultation'] },
-      { slug: 'form-panel', label: 'form-panel', summary: 'Carte de formulaire titrée (slot header-extra).', tags: ['carte', 'panneau'] },
       { slug: 'input-prefixe-suffixe', label: 'input-prefixe-suffixe', summary: 'Groupe champ + préfixe/suffixe cliquables.', tags: ['addon'] },
       { slug: 'label-clipboard', label: 'label-clipboard', summary: 'Libellé copiable dans le presse-papier.', tags: ['copie', 'presse-papier'] },
       { slug: 'default-form-signal', label: 'default-form-signal', summary: 'Classe de base signals des formulaires add/edit.', tags: ['formulaire', 'signals'] },
@@ -121,6 +120,7 @@ export const DOC_CATEGORIES: DocCategory[] = [
     entries: [
       { slug: 'billy-panel', label: 'billy-panel', summary: 'Coque de panneau flottant (ancrage par le parent).', tags: ['panneau', 'flottant'] },
       { slug: 'consult-card', label: 'consult-card', summary: 'Carte de consultation (slot [card-actions], règle anti-imbrication).', tags: ['carte'] },
+      { slug: 'nav-card', label: 'nav-card', summary: 'Tuile de navigation a[billy-nav-card] (pastille-icône, badge, chevron, cascade).', tags: ['carte', 'navigation', 'tuile'] },
       { slug: 'page-header', label: 'page-header', summary: 'En-tête de page (titre, retour, zone de boutons).', tags: ['titre', 'header'] },
       { slug: 'header-action-bar', label: 'header-action-bar', summary: 'Barre d’actions d’en-tête (HeaderAction).', tags: ['actions', 'boutons'] },
       { slug: 'tabs', label: 'tabs', summary: 'billy-tabs / billy-tab (mode projeté ou piloté, onglets montés en permanence).', tags: ['onglets'] },

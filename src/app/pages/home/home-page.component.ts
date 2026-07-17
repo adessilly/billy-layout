@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BillyIconComponent } from 'billy-layout';
+import { BillyIconComponent, NavCardComponent } from 'billy-layout';
 import { DOC_CATEGORIES, DOC_ENTRY_COUNT } from '../../site/doc-registry';
 
 /**
@@ -9,7 +9,7 @@ import { DOC_CATEGORIES, DOC_ENTRY_COUNT } from '../../site/doc-registry';
  */
 @Component({
   selector: 'site-home-page',
-  imports: [RouterLink, BillyIconComponent],
+  imports: [RouterLink, BillyIconComponent, NavCardComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
 })
