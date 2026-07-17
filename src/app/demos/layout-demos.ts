@@ -97,10 +97,11 @@ export class SidebarDemoComponent {
   imports: [DemoStageComponent],
   template: `
     <demo-stage titre="La cloche, en haut à droite" description="La cloche de ce site projette une catégorie de démonstration (« À découvrir ») qui étend BillyNotifCategory : compteur, navigation à deux niveaux et synchro globale simulée.">
-      <div class="notif-arrow" aria-hidden="true">
-        <svg viewBox="0 0 120 90" width="120">
-          <path d="M14 76 C 40 70, 84 54, 102 16" fill="none" stroke="var(--billy-accent)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 7" class="na-path" />
-          <path d="M94 24 L103 13 L106 27" fill="none" stroke="var(--billy-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <div class="notif-cue" aria-hidden="true">
+        <span class="notif-cue__label">La cloche 🔔<br />est ici, en haut</span>
+        <svg class="notif-cue__arrow" viewBox="0 0 84 64" width="72" height="55">
+          <path d="M6 54 C 30 52, 62 40, 74 12" fill="none" stroke="var(--billy-accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.5 8" class="na-path" />
+          <path d="M64 12 L75 7 L74 20" fill="none" stroke="var(--billy-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </div>
       <div class="demo-note">
@@ -110,15 +111,34 @@ export class SidebarDemoComponent {
     </demo-stage>
   `,
   styles: `
-    .notif-arrow { display: flex; justify-content: center; }
+    .notif-cue {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .notif-cue__label {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--billy-accent);
+      white-space: nowrap;
+    }
+
+    .notif-cue__arrow { display: block; }
 
     .na-path {
       stroke-dashoffset: 0;
-      animation: naDash 1.6s ease infinite;
+      animation: naDash 1.4s linear infinite;
     }
 
     @keyframes naDash {
-      from { stroke-dashoffset: 26; }
+      from { stroke-dashoffset: 17; }
       to { stroke-dashoffset: 0; }
     }
   `,
