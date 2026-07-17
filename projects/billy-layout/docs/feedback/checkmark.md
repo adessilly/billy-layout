@@ -1,79 +1,124 @@
-# billy-checkmark — CheckmarkComponent & billy-checkmark-loading — CheckmarkLoadingComponent
+# billy-checkmark, billy-checkmark-failed & billy-checkmark-loading
 
-> Catégorie `feedback` · sources `projects/billy-layout/src/lib/feedback/checkmark/` et `projects/billy-layout/src/lib/feedback/checkmark-loading/` · standalone components
+> Catégorie `feedback` · sources `projects/billy-layout/src/lib/feedback/checkmark/`, `checkmark-failed/` et `checkmark-loading/` · standalone components
 
-Deux composants jumeaux purement décoratifs (aucun input, aucun output) utilisés en tandem : le spinner circulaire pendant une opération, la coche verte animée à son succès. Dans `src/app`, ils ne sont utilisés qu'à un seul endroit : `src/app/auth/pages/peppol-facture/peppol-send-animation-icon/peppol-send-animation-icon.component.html`, l'animation d'envoi d'une facture sur le réseau Peppol.
+Trois composants jumeaux utilisés en tandem autour d'une opération asynchrone : le spinner circulaire pendant l'opération, la coche verte animée à son succès, la croix rouge à son échec. Les trois partagent exactement la même géométrie SVG (viewBox 64 × 64, anneau de rayon 23, trait 3, extrémités arrondies) : superposés, le passage du spinner à la coche ou à la croix est visuellement continu, sans saut.
+
+Usage app connu : `src/app/auth/pages/peppol-facture/peppol-send-animation-icon/` (animation d'envoi d'une facture Peppol).
+
+---
+
+## API commune
+
+```ts
+import {
+  CheckmarkComponent,        // billy-checkmark
+  CheckmarkFailedComponent,  // billy-checkmark-failed
+  CheckmarkLoadingComponent, // billy-checkmark-loading
+  CheckmarkColor,
+} from 'billy-layout';
+```
+
+Les trois composants exposent les mêmes inputs :
+
+| Input | Type | Défaut | Rôle |
+|---|---|---|---|
+| `label` | `string` | `'Succès'` / `'Échec'` / `'Chargement en cours'` | Libellé annoncé aux lecteurs d'écran (`role="img"` + `aria-label` sur le SVG). |
+| `color` | `CheckmarkColor` | `'success'` (coche, spinner) · `'danger'` (croix) | Couleur du design system. |
+
+```ts
+export type CheckmarkColor = 'success' | 'accent' | 'danger' | 'warning' | 'info';
+```
+
+Correspondance des couleurs (alignée sur la palette du toastr et les tokens `_billy-tokens.scss` — `accent`, `danger` et `info` suivent donc le dark mode) :
+
+| Valeur | Couleur |
+|---|---|
+| `success` | `#16a34a` |
+| `accent` | `var(--billy-accent)` (`#12b4dd`) |
+| `danger` | `var(--billy-danger)` (`#dc2626`) |
+| `warning` | `#d97706` |
+| `info` | `var(--billy-accent-strong)` (`#0e97bb`) |
+
+### Variables CSS de theming
+
+| Variable | Défaut | Portée |
+|---|---|---|
+| `--billy-checkmark-size` | `156px` | Taille (largeur = hauteur) des trois composants. |
+| `--billy-checkmark-color` | `#16a34a` | Couleur de la coche et du spinner quand `color` vaut `success` (défaut). |
+| `--billy-checkmark-failed-color` | `var(--billy-danger, #dc2626)` | Couleur de la croix quand `color` vaut `danger` (défaut). |
+| `--billy-checkmark-loading-color` | `var(--billy-checkmark-color, #16a34a)` | Surcharge spécifique du spinner. |
+| `--billy-checkmark-check-color` | `#fff` | Couleur du trait de la coche et de la croix. |
+
+Un `color` explicite (autre que le défaut) prend le pas sur ces variables : l'input pose un attribut `data-color` sur l'hôte, résolu en SCSS via `:host([data-color='…'])`.
+
+### Exemple d'utilisation
+
+```html
+@if (loading()) {
+  <billy-checkmark-loading />
+  <span class="checkmark-message">En cours d'envoi...</span>
+} @else if (success()) {
+  <billy-checkmark />
+  <span class="checkmark-message">Envoyé avec succès !</span>
+} @else if (error()) {
+  <billy-checkmark-failed />
+  <span class="checkmark-message">L'envoi a échoué.</span>
+}
+```
+
+Pour une transition sans rupture, superposer le spinner et la marque finale (le spinner reste monté et s'estompe pendant que la coche/croix se dessine par-dessus) :
+
+```html
+<div class="stack">
+  <billy-checkmark-loading class="layer" [class.layer--hidden]="done()" />
+  @if (done()) {
+    <billy-checkmark class="layer" />
+  }
+</div>
+```
+
+```scss
+.stack { display: grid; place-items: center; }
+.layer { grid-area: 1 / 1; transition: opacity 0.4s ease-out; }
+.layer--hidden { opacity: 0; }
+```
 
 ---
 
 ## billy-checkmark — CheckmarkComponent
 
-### Rôle
+Coche de succès animée. Séquence de motion (~1,4 s), jouée une fois au montage :
 
-Coche de succès animée « à la Stripe » : un cercle vert se dessine, la coche se trace, puis le disque se remplit de vert avec un léger rebond. Animation jouée une seule fois au montage (pas de replay sans recréer le composant).
+1. **0 → 0,55 s** : l'anneau se trace depuis midi (dash-offset, courbe `cubic-bezier(0.65, 0, 0.35, 1)`).
+2. **0,4 → 0,85 s** : le disque plein « pop » du centre avec rebond élastique (`cubic-bezier(0.34, 1.56, 0.64, 1)`) et ombre portée colorée.
+3. **0,68 → 1,03 s** : la coche se dessine (extrémités rondes).
+4. **0,7 → 1,2 s** : léger rebond d'ensemble (scale 1,07 à 40 %).
+5. **0,78 s →** : un halo s'élargit et s'estompe, et six éclats « comètes » (dash-offset qui traverse le trait) fusent vers l'extérieur, légèrement décalés (30 ms entre chaque).
 
-### API
+## billy-checkmark-failed — CheckmarkFailedComponent
 
-```ts
-import { CheckmarkComponent } from 'billy-layout';
-```
+Croix d'échec animée, même langage que la coche mais vocabulaire « erreur » :
 
-Sélecteur : `billy-checkmark`. **Aucun input, aucun output, aucune méthode** — la classe est vide, tout est dans le template SVG et le SCSS.
-
-### Exemple d'utilisation
-
-Usage réel (`peppol-send-animation-icon.component.html`) :
-
-```html
-@if(loading()) {
-  <billy-checkmark-loading></billy-checkmark-loading>
-  <span class="checkmark-message">En cours d'envoi...</span>
-}
-@else if(success()) {
-  <billy-checkmark></billy-checkmark>
-  <span class="checkmark-message">Envoyé avec succès !</span>
-}
-```
-
-### Styles & theming
-
-- Taille fixe **156 × 156 px** (classe `.checkmark`), centrée via `style="margin:auto"` sur le SVG.
-- Couleurs codées en dur en SCSS : vert `#59c771`, blanc `#fff`. Aucun token `--billy-*`, pas de variante dark mode.
-- Séquence d'animations : tracé du cercle (`stroke` 0,6 s, dash-offset), tracé de la coche (0,3 s, délai 0,8 s), remplissage du disque (`fill` via `box-shadow: inset … 130px`, délai 0,4 s) et `scale` avec rebond (délai 0,9 s). Courbe `cubic-bezier(0.65, 0, 0.45, 1)`.
-- Pas de gestion `prefers-reduced-motion`.
-
-### Pièges & notes
-
-- Le SCSS contient un sélecteur `body { width: 100vw; height: 100vh; … }` hérité du CodePen d'origine — inoffensif car les styles de composant sont encapsulés (il ne matche jamais), mais à ne pas copier tel quel ailleurs.
-- Taille et couleurs non paramétrables : pour une autre taille, surcharger `.checkmark` depuis le parent (ou faire évoluer le composant).
-- L'animation se joue au montage : pour la rejouer, détruire/recréer le composant (c'est ce que fait le `@else if` de l'exemple).
-
----
+1. Anneau tracé et disque « pop » identiques à la coche (en rouge `danger` par défaut).
+2. **0,68 s puis 0,84 s** : les deux branches de la croix se dessinent l'une après l'autre.
+3. **0,72 → 1,17 s** : shake horizontal (±3 px amortis) — pas de rebond ni d'éclats, réservés au succès.
+4. **0,9 s →** : halo qui s'élargit et s'estompe.
 
 ## billy-checkmark-loading — CheckmarkLoadingComponent
 
-### Rôle
+Spinner circulaire indéterminé type Material : une piste discrète (opacité 0,15) et un arc qui s'étire et se contracte (`stroke-dasharray`/`offset` animés, 1,4 s) pendant que l'ensemble tourne (1,8 s linéaire). Pour une roue de progression *déterminée* (pourcentage), utiliser `billy-circular-loading` à la place.
 
-Spinner circulaire indéterminé (arc qui tourne), pendant « chargement » de `billy-checkmark`. Utilisé pendant l'envoi Peppol en attendant de basculer sur la coche de succès.
+---
 
-### API
+## Accessibilité & motion
 
-```ts
-import { CheckmarkLoadingComponent } from 'billy-layout';
-```
+- SVG `role="img"` + `aria-label` (input `label`) sur les trois composants.
+- `prefers-reduced-motion: reduce` : la coche et la croix apparaissent en fondu simple dans leur état final (pas de halo, éclats ni shake) ; le spinner ralentit (3 s/tour) avec un arc fixe.
 
-Sélecteur : `billy-checkmark-loading`. **Aucun input, aucun output, aucune méthode.**
+## Pièges & notes
 
-### Exemple d'utilisation
-
-Voir l'exemple commun ci-dessus (état `loading()`).
-
-### Styles & theming
-
-- SVG de **156 × 156 px** (viewBox 38 × 38) : cercle gris `#ccc` semi-transparent + arc qui tourne via `<animateTransform type="rotate" dur="1s" repeatCount="indefinite"/>` — animation **SMIL native du SVG**, le fichier SCSS du composant est vide.
-- Couleur `#ccc` codée en dur, pas de token, pas de dark mode, pas de `prefers-reduced-motion` (SMIL n'est pas couvert par les media queries CSS).
-
-### Pièges & notes
-
-- Dimensionné par les attributs `width`/`height` du SVG (156 px) pour s'aligner sur `billy-checkmark` ; pas d'input de taille.
-- Pour une roue de progression *déterminée* (pourcentage), utiliser `billy-circular-loading` à la place.
+- Les animations de la coche et de la croix se jouent au montage : pour les rejouer, détruire/recréer le composant (`@if`).
+- Le SVG a `overflow: visible` (le halo et l'ombre portée débordent du viewBox) : prévoir un peu d'air autour, et ne pas poser d'`overflow: hidden` sur un parent immédiat trop serré sous peine de retrouver le halo tronqué en carré.
+- Le halo et le disque utilisent `transform-box: fill-box` ; les éclats sont des traits en dash-offset — pas de SMIL, tout est en CSS (l'ancien spinner SMIL a été remplacé).
+- Démo : `/c/feedback/checkmark` (vitrine, superposition chargement → succès/échec, sélecteur de couleurs).

@@ -2,7 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   AppLoadingComponent,
+  CheckmarkColor,
   CheckmarkComponent,
+  CheckmarkFailedComponent,
   CheckmarkLoadingComponent,
   CircularLoadingComponent,
   EmptyStateComponent,
@@ -119,22 +121,86 @@ export class AppLoadingDemoComponent {
 
 }
 
-/** billy-checkmark + billy-checkmark-loading : la coche animée. */
+/** billy-checkmark + billy-checkmark-failed + billy-checkmark-loading : la coche animée. */
 @Component({
   selector: 'demo-checkmark',
-  imports: [CheckmarkComponent, CheckmarkLoadingComponent, DemoStageComponent],
+  imports: [CheckmarkComponent, CheckmarkFailedComponent, CheckmarkLoadingComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="La coche de succès" description="À gauche la coche seule (rejouable), à droite le spinner qui se résout en coche.">
+    <demo-stage titre="La coche de succès et la croix d'échec" description="La coche verte, la croix rouge (avec son shake d'erreur) et le spinner partagent la même géométrie.">
       <div class="cm-row">
         <div class="cm-block">
           @if (played()) {
             <billy-checkmark />
           }
-          <button type="button" class="demo-btn" (click)="replay()">Rejouer</button>
+          <span class="demo-note">billy-checkmark</span>
+        </div>
+        <div class="cm-block">
+          @if (played()) {
+            <billy-checkmark-failed />
+          }
+          <span class="demo-note">billy-checkmark-failed</span>
         </div>
         <div class="cm-block">
           <billy-checkmark-loading />
           <span class="demo-note">billy-checkmark-loading</span>
+        </div>
+      </div>
+      <div class="cm-actions">
+        <button type="button" class="demo-btn" (click)="replay()">Rejouer</button>
+      </div>
+    </demo-stage>
+
+    <demo-stage titre="Du chargement au succès ou à l'échec" description="Les composants partagent la même géométrie : superposé, le spinner s'estompe pendant que la coche ou la croix se dessine par-dessus, sans rupture visuelle.">
+      <div class="cm-row">
+        <div class="cm-block">
+          <div class="cm-stack">
+            <billy-checkmark-loading class="cm-layer" [class.cm-layer--hidden]="state() === 'done'" />
+            @if (state() === 'done') {
+              <billy-checkmark class="cm-layer" />
+            }
+          </div>
+          <span class="demo-note">→ succès</span>
+        </div>
+        <div class="cm-block">
+          <div class="cm-stack">
+            <billy-checkmark-loading class="cm-layer" [class.cm-layer--hidden]="state() === 'done'" />
+            @if (state() === 'done') {
+              <billy-checkmark-failed class="cm-layer" />
+            }
+          </div>
+          <span class="demo-note">→ échec</span>
+        </div>
+      </div>
+      <div class="cm-actions">
+        <button type="button" class="demo-btn" (click)="run()">Relancer</button>
+      </div>
+    </demo-stage>
+
+    <demo-stage titre="Couleurs du design system" description="L'input color accepte success, accent, danger, warning et info — appliqué à la coche, à la croix et au spinner. Défauts : success pour la coche et le spinner, danger pour la croix.">
+      <div class="cm-colors" role="group" aria-label="Choix de la couleur">
+        @for (c of colors; track c) {
+          <button
+            type="button"
+            class="demo-btn"
+            [class.demo-btn--submit]="color() === c"
+            [attr.aria-pressed]="color() === c"
+            (click)="setColor(c)"
+          >{{ c }}</button>
+        }
+      </div>
+      <div class="cm-row cm-row--tight">
+        <div class="cm-block cm-block--small">
+          @if (colorPlayed()) {
+            <billy-checkmark [color]="color()" />
+          }
+        </div>
+        <div class="cm-block cm-block--small">
+          @if (colorPlayed()) {
+            <billy-checkmark-failed [color]="color()" />
+          }
+        </div>
+        <div class="cm-block cm-block--small">
+          <billy-checkmark-loading [color]="color()" />
         </div>
       </div>
     </demo-stage>
@@ -144,6 +210,8 @@ export class AppLoadingDemoComponent {
       display: flex;
       gap: 48px;
       align-items: flex-start;
+
+      &.cm-row--tight { gap: 32px; }
     }
 
     .cm-block {
@@ -154,6 +222,40 @@ export class AppLoadingDemoComponent {
       min-width: 120px;
       min-height: 90px;
       justify-content: flex-end;
+
+      &.cm-block--small {
+        min-width: 96px;
+        min-height: 96px;
+        --billy-checkmark-size: 96px;
+      }
+    }
+
+    .cm-stack {
+      display: grid;
+      place-items: center;
+
+      .cm-layer {
+        grid-area: 1 / 1;
+        transition: opacity 0.4s ease-out;
+      }
+
+      .cm-layer--hidden {
+        opacity: 0;
+      }
+    }
+
+    .cm-colors {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .cm-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
     }
   `,
 })
@@ -161,9 +263,34 @@ export class CheckmarkDemoComponent {
 
   readonly played = signal(true);
 
+  /** Démo superposition : le spinner laisse place à la coche ou à la croix. */
+  readonly state = signal<'loading' | 'done'>('loading');
+  private stateTimer?: ReturnType<typeof setTimeout>;
+
+  /** Démo couleurs. */
+  readonly colors: CheckmarkColor[] = ['success', 'accent', 'danger', 'warning', 'info'];
+  readonly color = signal<CheckmarkColor>('success');
+  readonly colorPlayed = signal(true);
+
+  constructor() {
+    this.run();
+  }
+
   replay(): void {
     this.played.set(false);
     setTimeout(() => this.played.set(true), 50);
+  }
+
+  run(): void {
+    clearTimeout(this.stateTimer);
+    this.state.set('loading');
+    this.stateTimer = setTimeout(() => this.state.set('done'), 2000);
+  }
+
+  setColor(couleur: CheckmarkColor): void {
+    this.color.set(couleur);
+    this.colorPlayed.set(false);
+    setTimeout(() => this.colorPlayed.set(true), 50);
   }
 
 }

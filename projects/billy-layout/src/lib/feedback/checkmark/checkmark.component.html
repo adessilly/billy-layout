@@ -1,6 +1,20 @@
-<div>
-    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" style="margin:auto;">
-      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-      <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-    </svg>
-</div>
+<svg
+  class="checkmark"
+  viewBox="0 0 64 64"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  [attr.aria-label]="label()"
+>
+  <circle class="checkmark__halo" cx="32" cy="32" r="23" />
+  <circle class="checkmark__disc" cx="32" cy="32" r="23" />
+  <circle class="checkmark__ring" cx="32" cy="32" r="23" />
+  <g class="checkmark__burst">
+    <path d="M32 8V3" transform="rotate(15 32 32)" />
+    <path d="M32 8V3" transform="rotate(75 32 32)" />
+    <path d="M32 8V3" transform="rotate(135 32 32)" />
+    <path d="M32 8V3" transform="rotate(195 32 32)" />
+    <path d="M32 8V3" transform="rotate(255 32 32)" />
+    <path d="M32 8V3" transform="rotate(315 32 32)" />
+  </g>
+  <path class="checkmark__check" d="M21 33l6.5 6.5L43 24" />
+</svg>

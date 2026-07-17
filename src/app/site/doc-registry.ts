@@ -107,7 +107,7 @@ export const DOC_CATEGORIES: DocCategory[] = [
       { slug: 'toastr', label: 'toastr', summary: 'ToastrService + toasts (minuteur en animation CSS, pile plafonnée, pilule mobile).', tags: ['toast', 'notification'] },
       { slug: 'snackbar', label: 'snackbar', summary: 'Bandeau « nouvelle version » global.', tags: ['bandeau'] },
       { slug: 'app-loading', label: 'app-loading', summary: 'billy-loading : overlay de chargement (parent position: relative requis).', tags: ['loader', 'chargement'] },
-      { slug: 'checkmark', label: 'checkmark', summary: 'Coche animée + spinner checkmark-loading.', tags: ['coche', 'animation'] },
+      { slug: 'checkmark', label: 'checkmark', summary: 'Coche animée, croix d’échec + spinner checkmark-loading (couleurs du DS).', tags: ['coche', 'animation', 'erreur'] },
       { slug: 'circular-loading', label: 'circular-loading', summary: 'Anneau de progression déterminé.', tags: ['progression'] },
       { slug: 'empty-state', label: 'empty-state', summary: 'États vides illustrés (7 types, CTA).', tags: ['vide', 'illustration'] },
     ],

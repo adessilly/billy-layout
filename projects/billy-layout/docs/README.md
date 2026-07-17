@@ -58,7 +58,7 @@ comment structurer une page de liste, quand utiliser consult-card et save-bar.
 - [toastr](feedback/toastr.md) — `ToastrService` + toasts (minuteur = animation CSS, pile plafonnée, pilule mobile).
 - [snackbar](feedback/snackbar.md) — bandeau « nouvelle version » global.
 - [app-loading](feedback/app-loading.md) — `<billy-loading>` : overlay de chargement (parent `position: relative` requis).
-- [checkmark](feedback/checkmark.md) — coche animée + spinner `checkmark-loading`.
+- [checkmark](feedback/checkmark.md) — coche animée, croix d'échec `checkmark-failed` + spinner `checkmark-loading` (couleurs du design system).
 - [circular-loading](feedback/circular-loading.md) — anneau de progression déterminé (sans usage app actuellement).
 - [empty-state](feedback/empty-state.md) — états vides illustrés (7 types, CTA).
 

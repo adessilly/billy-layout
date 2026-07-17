@@ -1,0 +1,69 @@
+// Spinner harmonisé avec billy-checkmark (même géométrie, même couleur) :
+// un arc qui s'étire et se contracte pendant que le tout tourne.
+:host {
+  display: inline-block;
+  line-height: 0;
+  --_cm-color: var(--billy-checkmark-loading-color, var(--billy-checkmark-color, #16a34a));
+}
+
+// Couleurs du design system (input color) — alignées sur la palette toastr.
+:host([data-color='accent'])  { --_cm-color: var(--billy-accent, #12b4dd); }
+:host([data-color='danger'])  { --_cm-color: var(--billy-danger, #dc2626); }
+:host([data-color='warning']) { --_cm-color: #d97706; }
+:host([data-color='info'])    { --_cm-color: var(--billy-accent-strong, #0e97bb); }
+
+.spinner {
+  width: var(--billy-checkmark-size, 156px);
+  height: var(--billy-checkmark-size, 156px);
+  display: block;
+  margin: auto;
+  color: var(--_cm-color);
+  animation: spinner-rotate 1.8s linear infinite;
+}
+
+.spinner__track {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  opacity: 0.15;
+}
+
+.spinner__arc {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: spinner-dash 1.4s ease-in-out infinite;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1 230;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 102 230;
+    stroke-dashoffset: -40;
+  }
+  100% {
+    stroke-dasharray: 102 230;
+    stroke-dashoffset: -142;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+
+  .spinner__arc {
+    animation: none;
+    stroke-dasharray: 40 230;
+  }
+}

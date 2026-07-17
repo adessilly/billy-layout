@@ -75,6 +75,7 @@ export * from './lib/feedback/toastr/toastr-list-panel/toastr-list-panel.compone
 export * from './lib/feedback/snackbar/snackbar.component';
 export * from './lib/feedback/app-loading/app-loading.component';
 export * from './lib/feedback/checkmark/checkmark.component';
+export * from './lib/feedback/checkmark-failed/checkmark-failed.component';
 export * from './lib/feedback/checkmark-loading/checkmark-loading.component';
 export * from './lib/feedback/circular-loading/circular-loading.component';
 export * from './lib/feedback/empty-state/empty-state.component';

@@ -1,21 +1,22 @@
-// Séquence : tracé de l'anneau → pop du disque → tracé de la coche,
-// accompagnés d'un rebond global, d'un halo qui se propage et d'éclats.
+// Séquence : tracé de l'anneau → pop du disque → tracé des deux branches
+// de la croix, accompagnés d'un shake horizontal (langage "erreur") et
+// d'un halo qui se propage. Même géométrie que billy-checkmark.
 $ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
 $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 
 :host {
   display: inline-block;
   line-height: 0;
-  --_cm-color: var(--billy-checkmark-color, #16a34a);
+  --_cm-color: var(--billy-checkmark-failed-color, var(--billy-danger, #dc2626));
 }
 
 // Couleurs du design system (input color) — alignées sur la palette toastr.
+:host([data-color='success']) { --_cm-color: var(--billy-checkmark-color, #16a34a); }
 :host([data-color='accent'])  { --_cm-color: var(--billy-accent, #12b4dd); }
-:host([data-color='danger'])  { --_cm-color: var(--billy-danger, #dc2626); }
 :host([data-color='warning']) { --_cm-color: #d97706; }
 :host([data-color='info'])    { --_cm-color: var(--billy-accent-strong, #0e97bb); }
 
-.checkmark {
+.checkmark-failed {
   width: var(--billy-checkmark-size, 156px);
   height: var(--billy-checkmark-size, 156px);
   display: block;
@@ -24,29 +25,29 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   // ils sont tronqués net sur les bords du SVG.
   overflow: visible;
   color: var(--_cm-color);
-  animation: checkmark-pop 0.5s $ease-pop 0.7s both;
+  animation: checkmark-failed-shake 0.45s ease-in-out 0.72s both;
 }
 
-.checkmark__halo {
+.checkmark-failed__halo {
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  animation: checkmark-halo 0.6s ease-out 0.78s forwards;
+  animation: checkmark-failed-halo 0.6s ease-out 0.9s forwards;
 }
 
-.checkmark__disc {
+.checkmark-failed__disc {
   fill: currentColor;
   transform: scale(0);
   transform-box: fill-box;
   transform-origin: center;
   filter: drop-shadow(0 4px 12px color-mix(in srgb, currentColor 45%, transparent));
-  animation: checkmark-disc 0.45s $ease-pop 0.4s forwards;
+  animation: checkmark-failed-disc 0.45s $ease-pop 0.4s forwards;
 }
 
-.checkmark__ring {
+.checkmark-failed__ring {
   fill: none;
   stroke: currentColor;
   stroke-width: 3;
@@ -56,60 +57,59 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   transform: rotate(-90deg);
   transform-box: fill-box;
   transform-origin: center;
-  animation: checkmark-draw 0.55s $ease-draw forwards;
+  animation: checkmark-failed-draw 0.55s $ease-draw forwards;
 }
 
-.checkmark__check {
+.checkmark-failed__cross {
   fill: none;
   stroke: var(--billy-checkmark-check-color, #fff);
   stroke-width: 3.5;
   stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 32;
-  stroke-dashoffset: 32;
-  animation: checkmark-draw 0.35s $ease-draw 0.68s forwards;
-}
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: checkmark-failed-draw 0.22s $ease-draw forwards;
 
-.checkmark__burst path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 5;
-  stroke-dashoffset: 5;
-  opacity: 0;
-  animation: checkmark-ray 0.55s ease-out 0.78s forwards;
+  &.checkmark-failed__cross--1 {
+    animation-delay: 0.68s;
+  }
 
-  @for $i from 1 through 6 {
-    &:nth-child(#{$i}) {
-      animation-delay: 0.78s + ($i - 1) * 0.03s;
-    }
+  &.checkmark-failed__cross--2 {
+    animation-delay: 0.84s;
   }
 }
 
-@keyframes checkmark-draw {
+@keyframes checkmark-failed-draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
-@keyframes checkmark-disc {
+@keyframes checkmark-failed-disc {
   to {
     transform: scale(1);
   }
 }
 
-@keyframes checkmark-pop {
+@keyframes checkmark-failed-shake {
   0%,
   100% {
-    transform: scale(1);
+    transform: translateX(0);
   }
-  40% {
-    transform: scale(1.07);
+  20% {
+    transform: translateX(-3px);
+  }
+  45% {
+    transform: translateX(2.5px);
+  }
+  70% {
+    transform: translateX(-1.5px);
+  }
+  85% {
+    transform: translateX(1px);
   }
 }
 
-@keyframes checkmark-halo {
+@keyframes checkmark-failed-halo {
   from {
     opacity: 0.5;
     transform: scale(0.9);
@@ -120,44 +120,28 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-@keyframes checkmark-ray {
-  0% {
-    stroke-dashoffset: 5;
-    opacity: 1;
-  }
-  60% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  100% {
-    stroke-dashoffset: -5;
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .checkmark {
-    animation: checkmark-fade 0.3s ease-out both;
+  .checkmark-failed {
+    animation: checkmark-failed-fade 0.3s ease-out both;
   }
 
-  .checkmark__ring,
-  .checkmark__check {
+  .checkmark-failed__ring,
+  .checkmark-failed__cross {
     animation: none;
     stroke-dashoffset: 0;
   }
 
-  .checkmark__disc {
+  .checkmark-failed__disc {
     animation: none;
     transform: scale(1);
   }
 
-  .checkmark__halo,
-  .checkmark__burst path {
+  .checkmark-failed__halo {
     animation: none;
     opacity: 0;
   }
 
-  @keyframes checkmark-fade {
+  @keyframes checkmark-failed-fade {
     from {
       opacity: 0;
     }
