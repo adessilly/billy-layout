@@ -119,65 +119,56 @@
 }
 
 // ── Palettes de couleur ─────────────────────────────────────────────────────
-// Light : fills VIFS façon save-bar (.btn-info #23b7e5 / .btn-warning #ff902b),
-//         aplats pleins + texte blanc. Le texte blanc sur teinte vive relève du
-//         même parti pris que la save-bar (< AA strict).
+// Chaque couleur mappe une famille sémantique du DS (--billy-<hue>-*) sur les
+// variables locales que consomment les variantes. Plus aucune valeur en dur ici
+// (hors fallbacks) : le dark mode arrive automatiquement via body.dark-mode
+// (tokens), sans bloc dark local. `primary` reprend l'Accent de marque.
 // solid  : fond des pleins · on-solid : texte du plein
-// fg     : teinte des variantes contour/texte (assombrie → lisible sur clair)
+// fg     : teinte des variantes contour/texte (= `-strong`, lisible sur clair)
 // soft   : voile teinté du survol contour/texte
 .billy-btn--neutral {
-  --btn-solid: #6b7280;
+  --btn-solid: var(--billy-neutral, #6b7280);
   --btn-on-solid: #fff;
-  --btn-fg: #374151;
-  --btn-soft: rgba(100, 116, 139, 0.12);
-  --btn-soft-strong: rgba(100, 116, 139, 0.2);
-  --btn-ring: rgba(100, 116, 139, 0.32);
+  --btn-fg: var(--billy-neutral-strong, #374151);
+  --btn-soft: var(--billy-neutral-soft, rgba(100, 116, 139, 0.12));
+  --btn-soft-strong: var(--billy-neutral-soft-strong, rgba(100, 116, 139, 0.2));
+  --btn-ring: var(--billy-neutral-ring, rgba(100, 116, 139, 0.32));
 }
 
 .billy-btn--info {
-  --btn-solid: #3b82f6;
+  --btn-solid: var(--billy-info, #3b82f6);
   --btn-on-solid: #fff;
-  --btn-fg: #1d4ed8;
-  --btn-soft: rgba(59, 130, 246, 0.12);
-  --btn-soft-strong: rgba(59, 130, 246, 0.22);
-  --btn-ring: rgba(59, 130, 246, 0.35);
+  --btn-fg: var(--billy-info-strong, #1d4ed8);
+  --btn-soft: var(--billy-info-soft, rgba(59, 130, 246, 0.12));
+  --btn-soft-strong: var(--billy-info-soft-strong, rgba(59, 130, 246, 0.22));
+  --btn-ring: var(--billy-info-ring, rgba(59, 130, 246, 0.35));
 }
 
 .billy-btn--primary {
   --btn-solid: var(--billy-accent, #12b4dd); // cyan de marque, vif
   --btn-on-solid: #fff;
-  --btn-fg: #0e7490;
-  --btn-soft: rgba(18, 180, 221, 0.14);
+  --btn-fg: var(--billy-accent-strong, #0e7490);
+  --btn-soft: var(--billy-accent-soft, rgba(18, 180, 221, 0.14));
   --btn-soft-strong: rgba(18, 180, 221, 0.24);
   --btn-ring: rgba(18, 180, 221, 0.4);
 }
 
 .billy-btn--warning {
-  --btn-solid: #ff902b; // orange de la save-bar
+  --btn-solid: var(--billy-warning, #ff902b); // orange de la save-bar
   --btn-on-solid: #fff;
-  --btn-fg: #b45309;
-  --btn-soft: rgba(255, 144, 43, 0.16);
-  --btn-soft-strong: rgba(255, 144, 43, 0.28);
-  --btn-ring: rgba(255, 144, 43, 0.4);
+  --btn-fg: var(--billy-warning-strong, #b45309);
+  --btn-soft: var(--billy-warning-soft, rgba(255, 144, 43, 0.16));
+  --btn-soft-strong: var(--billy-warning-soft-strong, rgba(255, 144, 43, 0.28));
+  --btn-ring: var(--billy-warning-ring, rgba(255, 144, 43, 0.4));
 }
 
 .billy-btn--error {
-  --btn-solid: #ef4444;
+  --btn-solid: var(--billy-error, #ef4444);
   --btn-on-solid: #fff;
-  --btn-fg: #b91c1c;
-  --btn-soft: rgba(239, 68, 68, 0.12);
-  --btn-soft-strong: rgba(239, 68, 68, 0.22);
-  --btn-ring: rgba(239, 68, 68, 0.35);
-}
-
-// Dark mode : on garde des pleins un peu plus profonds (validés visuellement) et
-// on éclaircit les teintes contour/texte pour rester lisibles sur fond sombre.
-:host-context(.dark-mode) {
-  .billy-btn--neutral { --btn-solid: #4b5563; --btn-fg: #cbd5e1; --btn-soft: rgba(148, 163, 184, 0.14); --btn-soft-strong: rgba(148, 163, 184, 0.24); }
-  .billy-btn--info    { --btn-solid: #2563eb; --btn-fg: #60a5fa; --btn-soft: rgba(96, 165, 250, 0.16); --btn-soft-strong: rgba(96, 165, 250, 0.26); }
-  .billy-btn--primary { --btn-solid: #0e97bb; --btn-fg: #45c8e8; --btn-soft: rgba(69, 200, 232, 0.16); --btn-soft-strong: rgba(69, 200, 232, 0.26); }
-  .billy-btn--warning { --btn-solid: #d97706; --btn-fg: #fbbf24; --btn-soft: rgba(251, 191, 36, 0.16); --btn-soft-strong: rgba(251, 191, 36, 0.26); }
-  .billy-btn--error   { --btn-solid: #dc2626; --btn-fg: #f87171; --btn-soft: rgba(248, 113, 113, 0.16); --btn-soft-strong: rgba(248, 113, 113, 0.26); }
+  --btn-fg: var(--billy-error-strong, #b91c1c);
+  --btn-soft: var(--billy-error-soft, rgba(239, 68, 68, 0.12));
+  --btn-soft-strong: var(--billy-error-soft-strong, rgba(239, 68, 68, 0.22));
+  --btn-ring: var(--billy-error-ring, rgba(239, 68, 68, 0.35));
 }
 
 // ── Tailles ─────────────────────────────────────────────────────────────────

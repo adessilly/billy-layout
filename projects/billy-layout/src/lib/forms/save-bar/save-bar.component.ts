@@ -1,10 +1,11 @@
 import { Component, input, output } from '@angular/core';
+import { ButtonComponent, BillyButtonColor } from '../../buttons/button/button.component';
 
 @Component({
     selector: 'billy-save-bar',
     templateUrl: './save-bar.component.html',
     styleUrls: ['./save-bar.component.scss'],
-    standalone: true
+    imports: [ButtonComponent],
 })
 export class SaveBarComponent {
 
@@ -12,7 +13,8 @@ export class SaveBarComponent {
   loading = input<boolean>(false);
   labelSave = input<string>('Sauvegarder');
   iconSave = input<string>('fa-solid fa-floppy-disk');
-  classSave = input<string>('sb-btn--info');
+  /** Teinte du bouton de sauvegarde (billy-button `color`). */
+  colorSave = input<BillyButtonColor>('primary');
   labelSaveLoading = input<string>('Sauvegarde...');
   labelCancel = input<string>('Retour');
   iconCancel = input<string>('fa-solid fa-chevron-left');

@@ -92,7 +92,12 @@ interface TokenGroup {
 export class TokensGalleryComponent {
 
   readonly groups: TokenGroup[] = [
-    { title: 'Accent', tokens: ['--billy-accent', '--billy-accent-strong', '--billy-accent-soft', '--billy-accent-border'] },
+    { title: 'Accent (primary)', tokens: ['--billy-accent', '--billy-accent-strong', '--billy-accent-soft', '--billy-accent-border'] },
+    { title: 'Neutral', tokens: ['--billy-neutral', '--billy-neutral-strong', '--billy-neutral-soft', '--billy-neutral-soft-strong', '--billy-neutral-ring'] },
+    { title: 'Info', tokens: ['--billy-info', '--billy-info-strong', '--billy-info-soft', '--billy-info-soft-strong', '--billy-info-ring'] },
+    { title: 'Success', tokens: ['--billy-success', '--billy-success-strong', '--billy-success-soft', '--billy-success-soft-strong', '--billy-success-ring'] },
+    { title: 'Warning', tokens: ['--billy-warning', '--billy-warning-strong', '--billy-warning-soft', '--billy-warning-soft-strong', '--billy-warning-ring'] },
+    { title: 'Error', tokens: ['--billy-error', '--billy-error-strong', '--billy-error-soft', '--billy-error-soft-strong', '--billy-error-ring'] },
     { title: 'Champs', tokens: ['--billy-input-bg', '--billy-input-border', '--billy-input-color', '--billy-input-disabled-bg'] },
     { title: 'Surfaces', tokens: ['--billy-surface', '--billy-surface-border', '--billy-divider', '--billy-section-bg'] },
     { title: 'Textes & états', tokens: ['--billy-text-soft', '--billy-text-muted', '--billy-danger', '--billy-focus-border'] },

@@ -40,10 +40,12 @@
   animation: billyToastInRight .34s cubic-bezier(.34, 1.28, .5, 1);
 }
 
-.toast-success { --t-accent: #16a34a; --t-icon-bg: #e7f6ec; }
-.toast-error   { --t-accent: #dc2626; --t-icon-bg: #fdecec; }
-.toast-warning { --t-accent: #d97706; --t-icon-bg: #fdf3e3; }
-.toast-info    { --t-accent: #0e97bb; --t-icon-bg: #e6f7fc; }
+// Accent = teinte `-strong` du statut (moyenne en clair, s'éclaircit en dark) ;
+// pastille = voile `-soft`. `info` reste l'accent cyan de marque.
+.toast-success { --t-accent: var(--billy-success-strong); --t-icon-bg: var(--billy-success-soft); }
+.toast-error   { --t-accent: var(--billy-error-strong);   --t-icon-bg: var(--billy-error-soft); }
+.toast-warning { --t-accent: var(--billy-warning-strong); --t-icon-bg: var(--billy-warning-soft); }
+.toast-info    { --t-accent: var(--billy-accent-strong);  --t-icon-bg: var(--billy-accent-soft); }
 
 @keyframes billyToastInRight {
   from { opacity: 0; transform: translateX(24px) scale(.96); }
@@ -208,10 +210,8 @@
     box-shadow: 0 24px 48px -18px rgba(0, 0, 0, .6);
   }
 
-  .toast-success { --t-accent: #34d399; --t-icon-bg: rgba(52, 211, 153, .14); }
-  .toast-error   { --t-accent: #f87171; --t-icon-bg: rgba(248, 113, 113, .14); }
-  .toast-warning { --t-accent: #fbbf24; --t-icon-bg: rgba(251, 191, 36, .14); }
-  .toast-info    { --t-accent: #7dd3ec; --t-icon-bg: rgba(18, 180, 221, .15); }
+  // Les teintes de statut (accent + pastille) suivent les tokens --billy-*,
+  // qui basculent en dark sous body.dark-mode : aucun override local nécessaire.
 
   .toast-title {
     color: #ced0d2;

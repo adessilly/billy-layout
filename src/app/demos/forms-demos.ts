@@ -1,7 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  BillyButtonColor,
+  ButtonSwitchComponent,
   ConsultLineComponent,
+  DropdownComponent,
+  DropdownOption,
   FormSidePanelComponent,
   InputLineComponent,
   InputPrefixeSuffixeComponent,
@@ -99,18 +103,32 @@ export class LabelClipboardDemoComponent {}
 /** billy-save-bar : la conclusion de tout formulaire. */
 @Component({
   selector: 'demo-save-bar',
-  imports: [SaveBarComponent, DemoStageComponent],
+  imports: [SaveBarComponent, DropdownComponent, ButtonSwitchComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Enregistrer / Annuler" description="disabled = validité du formulaire, loading = requête en cours (le libellé bascule). En pied de dialogue, ajoutez class='no-theme'." [center]="false">
+    <demo-stage titre="Enregistrer / Annuler" description="Boutons délégués à billy-button (plain teinté + ghost). disabled = validité du formulaire, loading = requête en cours (le libellé bascule et le clic est neutralisé). En pied de dialogue, ajoutez class='no-theme'." [center]="false">
       <div stage-controls class="sb-controls">
-        <label><input type="checkbox" [checked]="disabled()" (change)="disabled.set(!disabled())" /> disabled</label>
-        <label><input type="checkbox" [checked]="noTheme()" (change)="noTheme.set(!noTheme())" /> no-theme</label>
+        <label>
+          <billy-button-switch [disabled]="loading()" (valueChange)="disabled.set($event)" />
+          disabled
+        </label>
+        <label>
+          <billy-button-switch (valueChange)="noTheme.set($event)" />
+          no-theme
+        </label>
+        <label class="sb-control--color">
+          colorSave
+          <billy-dropdown
+            [values]="colorOptions"
+            [searchable]="false"
+            (selectionChange)="colorSave.set($event)" />
+        </label>
       </div>
       <div class="sb-frame" [class.sb-frame--flat]="noTheme()">
         <billy-save-bar
           [class.no-theme]="noTheme()"
           [disabled]="disabled()"
           [loading]="loading()"
+          [colorSave]="colorSave()"
           (save)="fakeSave()"
           (cancel)="toastr.info('Retour arrière (simulé).', 'Annuler')" />
       </div>
@@ -147,6 +165,12 @@ export class SaveBarDemoComponent {
   readonly disabled = signal(false);
   readonly noTheme = signal(false);
   readonly loading = signal(false);
+  readonly colorSave = signal<BillyButtonColor>('primary');
+  // 'primary' en tête : le dropdown affiche la 1re option tant qu'aucune valeur
+  // n'est écrite, ce qui doit coïncider avec le défaut de colorSave.
+  readonly colorOptions: DropdownOption[] = (
+    ['primary', 'neutral', 'info', 'warning', 'error'] as BillyButtonColor[]
+  ).map(c => ({ id: c, text: c, value: c }));
 
   fakeSave(): void {
     this.loading.set(true);

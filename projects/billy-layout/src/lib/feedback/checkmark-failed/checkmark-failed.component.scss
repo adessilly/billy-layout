@@ -10,10 +10,11 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   --_cm-color: var(--billy-checkmark-failed-color, var(--billy-danger, #dc2626));
 }
 
-// Couleurs du design system (input color) — alignées sur la palette toastr.
-:host([data-color='success']) { --_cm-color: var(--billy-checkmark-color, #16a34a); }
+// Couleurs du design system — familles sémantiques --billy-* (le disque plein
+// prend la teinte `base`, vive). `--billy-checkmark-failed-color` reste surchargeable.
+:host([data-color='success']) { --_cm-color: var(--billy-checkmark-color, var(--billy-success, #16a34a)); }
 :host([data-color='accent'])  { --_cm-color: var(--billy-accent, #12b4dd); }
-:host([data-color='warning']) { --_cm-color: #d97706; }
+:host([data-color='warning']) { --_cm-color: var(--billy-warning, #ff902b); }
 :host([data-color='info'])    { --_cm-color: var(--billy-accent-strong, #0e97bb); }
 
 .checkmark-failed {

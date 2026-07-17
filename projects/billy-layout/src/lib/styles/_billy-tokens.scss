@@ -14,6 +14,43 @@
   --billy-accent-soft:   #e6f7fc; // fonds teintés (survol, actif, badges)
   --billy-accent-border: #a5dff2; // bordures teintées (survol de zones)
 
+  // ── Couleurs sémantiques (statuts) ──────────────────────────────────────
+  // Cinq familles de statut sur le même modèle qu'Accent, source de vérité
+  // partagée par les boutons, toasts, checkmarks et save-bar. Chaque famille
+  // expose : `base` (rempli vif) · `-strong` (texte/icône, ≥ AA sur clair, et
+  // s'éclaircit en dark pour rester lisible) · `-soft` / `-soft-strong` (voiles
+  // teintés de survol) · `-ring` (halo de focus). `primary` n'a pas de famille
+  // propre : c'est l'Accent de marque ci-dessus.
+  --billy-neutral:             #6b7280;
+  --billy-neutral-strong:      #374151;
+  --billy-neutral-soft:        rgba(100, 116, 139, 0.12);
+  --billy-neutral-soft-strong: rgba(100, 116, 139, 0.2);
+  --billy-neutral-ring:        rgba(100, 116, 139, 0.32);
+
+  --billy-info:                #3b82f6;
+  --billy-info-strong:         #1d4ed8;
+  --billy-info-soft:           rgba(59, 130, 246, 0.12);
+  --billy-info-soft-strong:    rgba(59, 130, 246, 0.22);
+  --billy-info-ring:           rgba(59, 130, 246, 0.35);
+
+  --billy-success:             #16a34a;
+  --billy-success-strong:      #15803d;
+  --billy-success-soft:        rgba(22, 163, 74, 0.12);
+  --billy-success-soft-strong: rgba(22, 163, 74, 0.2);
+  --billy-success-ring:        rgba(22, 163, 74, 0.35);
+
+  --billy-warning:             #ff902b; // orange de la save-bar
+  --billy-warning-strong:      #b45309;
+  --billy-warning-soft:        rgba(255, 144, 43, 0.16);
+  --billy-warning-soft-strong: rgba(255, 144, 43, 0.28);
+  --billy-warning-ring:        rgba(255, 144, 43, 0.4);
+
+  --billy-error:               #ef4444;
+  --billy-error-strong:        #b91c1c;
+  --billy-error-soft:          rgba(239, 68, 68, 0.12);
+  --billy-error-soft-strong:   rgba(239, 68, 68, 0.22);
+  --billy-error-ring:          rgba(239, 68, 68, 0.35);
+
   // ── Focus (bleu par défaut du thème) ────────────────────────────────────
   --billy-focus-border:  #66afe9;
   --billy-focus-ring:    rgba(102, 175, 233, 0.15);
@@ -56,6 +93,36 @@ body.dark-mode {
   --billy-accent-strong: #7dd3ec;
   --billy-accent-soft:   rgba(18, 180, 221, 0.15);
   --billy-accent-border: #0e97bb;
+
+  // ── Couleurs sémantiques (statuts) — dark ───────────────────────────────
+  // Les pleins (`base`) s'assombrissent d'un cran ; les teintes texte/icône
+  // (`-strong`) s'éclaircissent pour rester lisibles sur fond sombre. Les
+  // `-ring` héritent des valeurs claires (halo inchangé). Valeurs alignées sur
+  // les anciens overrides dark du bouton (migration sans changement visuel).
+  --billy-neutral:             #4b5563;
+  --billy-neutral-strong:      #cbd5e1;
+  --billy-neutral-soft:        rgba(148, 163, 184, 0.14);
+  --billy-neutral-soft-strong: rgba(148, 163, 184, 0.24);
+
+  --billy-info:                #2563eb;
+  --billy-info-strong:         #60a5fa;
+  --billy-info-soft:           rgba(96, 165, 250, 0.16);
+  --billy-info-soft-strong:    rgba(96, 165, 250, 0.26);
+
+  --billy-success:             #22c55e;
+  --billy-success-strong:      #4ade80;
+  --billy-success-soft:        rgba(52, 211, 153, 0.14);
+  --billy-success-soft-strong: rgba(52, 211, 153, 0.24);
+
+  --billy-warning:             #d97706;
+  --billy-warning-strong:      #fbbf24;
+  --billy-warning-soft:        rgba(251, 191, 36, 0.16);
+  --billy-warning-soft-strong: rgba(251, 191, 36, 0.26);
+
+  --billy-error:               #dc2626;
+  --billy-error-strong:        #f87171;
+  --billy-error-soft:          rgba(248, 113, 113, 0.16);
+  --billy-error-soft-strong:   rgba(248, 113, 113, 0.26);
 
   --billy-focus-ring:    rgba(102, 175, 233, 0.25);
 

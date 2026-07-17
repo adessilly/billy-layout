@@ -4,28 +4,23 @@
 
 <div class="right-zone">
   @if(cancelVisible()) {
-    <button (click)="askCancel()"
-      type="button" class="sb-btn sb-btn--cancel">
-      @if(iconCancel()) {
-        <i [class]="iconCancel()"></i>
-      }
-      <span>{{ labelCancel() }}</span>
-    </button>
+    <billy-button
+      variant="ghost"
+      type="button"
+      [label]="labelCancel()"
+      [icon]="iconCancel()"
+      (clicked)="askCancel()" />
   }
 
   @if(saveVisible()) {
-    <button [disabled]="disabled()" (click)="askSave()"
-        type="submit" class="sb-btn sb-btn--save {{ classSave() }}">
-        @if(loading()) {
-          <i class="fa-solid fa-spinner fa-pulse fa-fw"></i>
-          <span>{{ labelSaveLoading() }}</span>
-        }
-        @else {
-          @if(iconSave()) {
-            <i [class]="iconSave()"></i>
-          }
-          <span>{{ labelSave() }}</span>
-        }
-    </button>
+    <billy-button
+      variant="plain"
+      type="submit"
+      [color]="colorSave()"
+      [label]="loading() ? labelSaveLoading() : labelSave()"
+      [icon]="iconSave()"
+      [loading]="loading()"
+      [disabled]="disabled()"
+      (clicked)="askSave()" />
   }
 </div>

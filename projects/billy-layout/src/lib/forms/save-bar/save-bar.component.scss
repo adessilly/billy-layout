@@ -3,6 +3,8 @@
 // bord fin --billy-surface-border, coins 16px, ombre douce --billy-card-shadow.
 // Reste une barre « flottante » collante : on ajoute un léger halo vers le haut
 // pour la détacher du contenu qui défile dessous.
+// Les boutons sont des billy-button (variantes ghost / plain) : cette feuille ne
+// gère plus que la mise en page de la barre et le gabarit des boutons.
 // S'appuie sur les tokens --billy-* (dark mode automatique sous body.dark-mode).
 
 :host {
@@ -49,105 +51,12 @@
   margin-left: auto;
 }
 
-// ── Boutons ────────────────────────────────────────────────────────────────
-// min-width sur un sélecteur d'élément (faible spécificité) pour que les
-// overrides consommateurs (ex. .btn-send-facture) puissent l'élargir.
-button {
+// ── Gabarit des boutons ──────────────────────────────────────────────────────
+// L'habillage (couleurs, survol, focus, spinner) vient de billy-button ; on ne
+// fixe ici que la largeur minimale, pour que les deux actions restent lisibles.
+// Faible spécificité (sélecteur d'élément) : un consommateur peut l'élargir.
+.right-zone billy-button {
   min-width: 128px;
-}
-
-.right-zone .sb-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  padding: 9px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.35;
-  border: 1px solid transparent;
-  border-radius: var(--billy-input-radius, 8px);
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.15s ease,
-    background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-
-  i {
-    font-size: 0.85em;
-  }
-
-  span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-  }
-
-  // Reprend le halo de focus que .btn de Bootstrap posait.
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
-  }
-}
-
-// Annuler / retour : bouton fantôme discret
-.sb-btn--cancel {
-  background: transparent;
-  border-color: var(--billy-input-border, #e5e7eb);
-  color: var(--billy-text-muted, #6b7280);
-
-  &:hover {
-    background: var(--billy-addon-hover-bg, #f3f4f6);
-    border-color: var(--billy-input-border-hover, #9ca3af);
-    color: var(--billy-input-color, #374151);
-  }
-}
-
-// Sauvegarder : prend sa couleur d'une variante (classSave) et gagne un relief
-.sb-btn--save {
-  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(17, 24, 39, 0.16);
-  }
-}
-
-// ── Variantes de couleur (passées via [classSave]) ──────────────────────────
-// Reprennent les teintes qu'avaient .btn-info / .btn-warning dans le thème, mais
-// sans dépendre de Bootstrap. Ce sont les seules que les consommateurs utilisent.
-.sb-btn--info {
-  background: #23b7e5;
-  border-color: #23b7e5;
-  color: #fff;
-
-  &:hover:not(:disabled) {
-    background: #18a0ca;
-    border-color: #1797be;
-    color: #fff;
-  }
-}
-
-.sb-btn--warning {
-  background: #ff902b;
-  border-color: #ff902b;
-  color: #fff;
-
-  &:hover:not(:disabled) {
-    background: #ff7c05;
-    border-color: #f77600;
-    color: #fff;
-  }
 }
 
 // ── Mobile : barre givrée pleine largeur ─────────────────────────────────────
@@ -167,7 +76,9 @@ button {
     flex: 1 1 auto;
   }
 
-  .right-zone .sb-btn {
+  // Les deux actions se partagent la largeur ; billy-button (host inline-flex)
+  // devient flexible et son <button> interne occupe déjà 100 %.
+  .right-zone billy-button {
     flex: 1 1 0;
     min-width: 0;
   }

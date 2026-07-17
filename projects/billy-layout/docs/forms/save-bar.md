@@ -4,7 +4,7 @@
 
 ## Rôle
 
-Barre d'actions de formulaire, collante en bas d'écran (`position: sticky`) : bouton « Sauvegarder » (avec état chargement) à droite, bouton « Retour »/annuler fantôme, et une zone libre à gauche pour des actions supplémentaires. C'est la conclusion standard de tous les formulaires de l'app : `src/app/auth/pages/achat/achat-form/achat-form.component.html`, `src/app/auth/pages/vente/vente-form/vente-form.component.html`, `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/compte/compte.component.html`… Elle sert aussi de footer de dialogue via la classe `no-theme` (vente-paiements, compte-password, fichiers-email).
+Barre d'actions de formulaire, collante en bas d'écran (`position: sticky`) : bouton « Sauvegarder » (avec état chargement) à droite, bouton « Retour »/annuler fantôme, et une zone libre à gauche pour des actions supplémentaires. Les deux boutons sont des [`billy-button`](../buttons/button.md) — variante `plain` teintée par `colorSave` pour sauvegarder, variante `ghost` pour annuler. C'est la conclusion standard de tous les formulaires de l'app : `src/app/auth/pages/achat/achat-form/achat-form.component.html`, `src/app/auth/pages/vente/vente-form/vente-form.component.html`, `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/compte/compte.component.html`… Elle sert aussi de footer de dialogue via la classe `no-theme` (vente-paiements, compte-password, fichiers-email).
 
 ## API
 
@@ -21,10 +21,10 @@ Sélecteur : `<billy-save-bar>`.
 | Input | Type | Défaut | Description |
 |---|---|---|---|
 | `disabled` | `boolean` | `false` | Désactive le bouton sauvegarder (typiquement `!formGroup.valid`). |
-| `loading` | `boolean` | `false` | Remplace icône + libellé du bouton sauvegarder par un spinner et `labelSaveLoading`. N'empêche pas le clic : combiner avec `disabled` si besoin. |
+| `loading` | `boolean` | `false` | Remplace icône + libellé du bouton sauvegarder par un spinner et `labelSaveLoading`, et **neutralise le clic** (billy-button ignore les clics en chargement) — protège du double envoi. |
 | `labelSave` | `string` | `'Sauvegarder'` | Libellé du bouton principal. |
 | `iconSave` | `string` | `'fa-solid fa-floppy-disk'` | Icône du bouton principal ; chaîne vide pour ne pas en afficher. |
-| `classSave` | `string` | `'sb-btn--info'` | Variante de couleur du bouton principal, ajoutée à sa liste de classes. Variantes fournies : `sb-btn--info` (bleu) et `sb-btn--warning` (orange) — les seules utilisées par les consommateurs. |
+| `colorSave` | `BillyButtonColor` | `'primary'` | Teinte du bouton principal, passée au `color` de `billy-button`. Valeurs : `neutral` \| `info` \| `primary` \| `warning` \| `error`. |
 | `labelSaveLoading` | `string` | `'Sauvegarde...'` | Libellé affiché pendant `loading`. |
 | `labelCancel` | `string` | `'Retour'` | Libellé du bouton annuler. |
 | `iconCancel` | `string` | `'fa-solid fa-chevron-left'` | Icône du bouton annuler ; chaîne vide pour ne pas en afficher. |
@@ -69,15 +69,15 @@ En footer de dialogue, sans chrome de carte, dans `src/app/auth/pages/vente/vent
 ## Styles & theming
 
 - Hôte sticky `bottom: 0`, `z-index: 1001`, habillé comme les cartes du DS (mixin `billy-card` en langage) : `--billy-surface`, bord `--billy-surface-border`, coins 16px, `--billy-card-shadow` + halo vers le haut pour « flotter » au-dessus du contenu qui défile — dark mode automatique via les tokens.
-- Boutons : rayon `--billy-input-radius`, focus `--billy-focus-ring` (reprend le halo du `.btn` Bootstrap disparu) ; annuler fantôme sur `--billy-input-border` / `--billy-text-muted`, survol `--billy-addon-hover-bg` ; variantes `sb-btn--info` (#23b7e5) et `sb-btn--warning` (#ff902b), teintes des ex-`.btn-info`/`.btn-warning` du thème, codées en dur.
-- `min-width: 128px` posé sur le sélecteur d'élément `button` (spécificité faible, volontaire) pour que les overrides consommateurs puissent élargir un bouton.
+- Boutons : délégués à [`billy-button`](../buttons/button.md) — sauvegarder en variante `plain` teintée par `colorSave`, annuler en variante `ghost` (fantôme neutre sur les tokens d'input, insensible à la couleur). Couleurs, survol, focus (`--billy-focus-ring`), état `disabled` et spinner de chargement viennent tous du bouton ; la save-bar ne gère plus que la mise en page.
+- `min-width: 128px` posé sur le sélecteur d'élément `billy-button` (spécificité faible, volontaire) pour que les overrides consommateurs puissent élargir un bouton.
 - **Classe `no-theme` sur l'hôte** : retire bord, fond, ombre, padding et rayon — la barre devient un simple rang de boutons pour vivre dans un footer de dialogue.
 - Mobile (≤767px) : barre givrée pleine largeur (fond `color-mix` translucide + `backdrop-filter: blur`), `safe-area-inset-bottom`, boutons en `flex: 1`.
 
 ## Pièges & notes
 
 - Le bouton sauvegarder est `type="submit"` : placé dans un `<form>`, un clic déclenche **à la fois** l'output `save` et le `(ngSubmit)` du formulaire — brancher l'un ou l'autre, pas les deux.
-- `loading` ne désactive pas le bouton : passer aussi `[disabled]` pendant la sauvegarde pour éviter le double envoi.
+- `loading` neutralise désormais le clic (billy-button bloque les clics en chargement) : plus besoin de doubler avec `[disabled]` juste pour éviter le double envoi, même si `[disabled]` reste utile pour l'invalidité du formulaire.
 - `z-index: 1001` : sous les side-panels (1050/1051) et les dialogues — c'est voulu, l'overlay de `billy-form-side-panel` couvre la barre.
 - Pour un footer de panneau latéral étroit, la save-bar ne rentre pas (chrome de carte + `min-width` 128px/bouton) : utiliser les mixins « boutons de footer de panneau » de `_billy-forms.scss` (cf. agenda, prestations).
 - `iconSave`/`iconCancel` sont injectés via `[class]` : toute liste de classes Font Awesome est acceptée.

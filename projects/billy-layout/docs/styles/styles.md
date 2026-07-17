@@ -54,6 +54,11 @@ Principaux tokens par famille (light → dark quand la valeur change) :
 | | `--billy-accent-strong` (liens, totaux, sélection) | `#0e97bb` | `#7dd3ec` |
 | | `--billy-accent-soft` (fonds teintés) | `#e6f7fc` | `rgba(18,180,221,.15)` |
 | | `--billy-accent-border` | `#a5dff2` | `#0e97bb` |
+| **Sémantique** (statuts) | `--billy-neutral` / `-strong` | `#6b7280` / `#374151` | `#4b5563` / `#cbd5e1` |
+| `neutral · info · success · warning · error` | `--billy-info` / `-strong` | `#3b82f6` / `#1d4ed8` | `#2563eb` / `#60a5fa` |
+| chacune : `base` (rempli vif), | `--billy-success` / `-strong` | `#16a34a` / `#15803d` | `#22c55e` / `#4ade80` |
+| `-strong` (texte/icône, ≥ AA), | `--billy-warning` / `-strong` | `#ff902b` / `#b45309` | `#d97706` / `#fbbf24` |
+| `-soft` / `-soft-strong`, `-ring` | `--billy-error` / `-strong` | `#ef4444` / `#b91c1c` | `#dc2626` / `#f87171` |
 | **Focus** | `--billy-focus-border` | `#66afe9` | idem |
 | | `--billy-focus-ring` | `rgba(102,175,233,.15)` | `.25` |
 | **Champs** | `--billy-input-bg` / `-border` / `-border-hover` / `-color` / `-placeholder` | `#fff` / `#e5e7eb` / `#9ca3af` / `#374151` / `#c2c8d0` | `#121d1f` / `#49545a` / `#6b7a80` / `#ced0d2` / `#4b5563` |
@@ -64,6 +69,19 @@ Principaux tokens par famille (light → dark quand la valeur change) :
 | | `--billy-divider`, `--billy-text-muted`, `--billy-text-soft` | `#f3f4f6`, `#9ca3af`, `#6b7280` | `#2a3a3e`, `#5a6a70`, `#7a8a90` |
 | **Danger** | `--billy-danger` / `--billy-danger-ring` | `#dc2626` / `rgba(220,38,38,.08)` | idem / `.15` |
 | **Cartes & sections** | `--billy-card-shadow`, `--billy-section-bg` / `-border` / `-title` | ombre 4% / `#fafbfc` / `#eceff3` / `#374151` | ombre 25% / `#1a2629` / `#2e3d41` / `#9aadb3` |
+
+### Familles sémantiques (statuts)
+
+Cinq familles de statut — `neutral`, `info`, `success`, `warning`, `error` — bâties sur le même modèle qu'`Accent`, **source de vérité unique** des teintes de statut du DS. Chacune expose cinq variables :
+
+| Variante | Rôle |
+|---|---|
+| `--billy-<hue>` (`base`) | Rempli **vif** : fond d'un bouton plein, disque d'un checkmark. S'assombrit d'un cran en dark. |
+| `--billy-<hue>-strong` | Teinte **texte/icône** (contour, libellé, glyphe) : ≥ AA 4.5:1 sur surface claire, **s'éclaircit en dark** pour rester lisible. |
+| `--billy-<hue>-soft` / `-soft-strong` | Voiles teintés (survol / actif des variantes contour & texte, pastille d'icône de toast). |
+| `--billy-<hue>-ring` | Halo de focus (`box-shadow`). |
+
+`primary` n'a **pas** de famille propre : c'est l'`Accent` de marque (`--billy-accent*`). Consommateurs : [`billy-button`](../buttons/button.md) (map `base`/`-strong`/`-soft`/`-ring` sur ses `--btn-*`), [`toastr`](../feedback/toastr.md) (accent = `-strong`, pastille = `-soft`), [`checkmark`](../feedback/checkmark.md) & `checkmark-failed` (disque = `base`), [`save-bar`](../forms/save-bar.md) (via `billy-button`). Un seul point à changer pour reteinter un statut partout.
 
 ---
 
@@ -139,7 +157,7 @@ Consommation : `@use 'billy-code-field' as code;` puis `@include code.billy-code
 - `.cfd-meta` : ligne d'information sous le champ, **hauteur réservée** (`min-height: 17px`) — le message apparaît/disparaît sans pousser le champ suivant.
 - `.cfd-country` : puce pays (fond accent doux, animation d'entrée `cfd-chip-in`).
 - `.cfd-msg` + `--ok` / `--info` / `--error` : message d'état.
-- Le vert de validation n'existe pas dans la charte : il est défini ici (`--cfd-ok: #16a34a`, `#4ade80` en dark via `:host-context(body.dark-mode)`). Animations neutralisées sous `prefers-reduced-motion`.
+- Le vert de validation garde une valeur locale (`--cfd-ok: #16a34a`, `#4ade80` en dark via `:host-context(body.dark-mode)`) : il lui faut du vert **vif en clair** _et_ **clair en dark**, un couple que la famille `--billy-success` (base sombre en dark) ne restitue pas d'un seul token. Les valeurs restent alignées sur `--billy-success` (`base` light) / `--billy-success-strong` (dark). Animations neutralisées sous `prefers-reduced-motion`.
 
 ---
 

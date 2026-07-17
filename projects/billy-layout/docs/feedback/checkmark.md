@@ -30,14 +30,14 @@ Les trois composants exposent les mêmes inputs :
 export type CheckmarkColor = 'success' | 'accent' | 'danger' | 'warning' | 'info';
 ```
 
-Correspondance des couleurs (alignée sur la palette du toastr et les tokens `_billy-tokens.scss` — `accent`, `danger` et `info` suivent donc le dark mode) :
+Correspondance des couleurs — le disque plein prend la teinte `base` de la [famille sémantique](../styles/styles.md#familles-sémantiques-statuts) du DS, donc **toutes suivent le dark mode** :
 
 | Valeur | Couleur |
 |---|---|
-| `success` | `#16a34a` |
+| `success` | `var(--billy-success)` (`#16a34a`) |
 | `accent` | `var(--billy-accent)` (`#12b4dd`) |
 | `danger` | `var(--billy-danger)` (`#dc2626`) |
-| `warning` | `#d97706` |
+| `warning` | `var(--billy-warning)` (`#ff902b`) |
 | `info` | `var(--billy-accent-strong)` (`#0e97bb`) |
 
 ### Variables CSS de theming
@@ -45,7 +45,7 @@ Correspondance des couleurs (alignée sur la palette du toastr et les tokens `_b
 | Variable | Défaut | Portée |
 |---|---|---|
 | `--billy-checkmark-size` | `156px` | Taille (largeur = hauteur) des trois composants. |
-| `--billy-checkmark-color` | `#16a34a` | Couleur de la coche et du spinner quand `color` vaut `success` (défaut). |
+| `--billy-checkmark-color` | `var(--billy-success, #16a34a)` | Couleur du disque et du spinner quand `color` vaut `success` (défaut). |
 | `--billy-checkmark-failed-color` | `var(--billy-danger, #dc2626)` | Couleur de la croix quand `color` vaut `danger` (défaut). |
 | `--billy-checkmark-loading-color` | `var(--billy-checkmark-color, #16a34a)` | Surcharge spécifique du spinner. |
 | `--billy-checkmark-check-color` | `#fff` | Couleur du trait de la coche et de la croix. |

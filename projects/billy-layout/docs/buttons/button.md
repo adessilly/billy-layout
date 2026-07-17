@@ -103,7 +103,7 @@ Bouton de soumission pleine largeur :
 
 ## Styles & theming
 
-- **Anatomie CSS pilotée par variables** : chaque couleur pose un petit jeu de variables locales (`--btn-solid`, `--btn-on-solid`, `--btn-fg`, `--btn-soft`, `--btn-ring`) que les variantes consomment. Changer une teinte = surcharger ces variables sur la classe `.billy-btn--<color>`.
+- **Anatomie CSS pilotée par variables** : chaque couleur pose un petit jeu de variables locales (`--btn-solid`, `--btn-on-solid`, `--btn-fg`, `--btn-soft`, `--btn-ring`) que les variantes consomment. Elles sont **mappées sur les familles sémantiques du design system** (`--billy-<hue>` / `-strong` / `-soft` / `-soft-strong` / `-ring`, cf. [tokens](../styles/styles.md#familles-sémantiques-statuts)) : `neutral`, `info`, `warning`, `error` pointent sur leur famille, `primary` sur l'`Accent` de marque. Pour reteinter un statut, on modifie le token du DS (une fois) plutôt que le bouton.
 - **Variantes** :
   - `plain` / `plain-rounded` : fond plein `--btn-solid` (aplat, sans dégradé), texte contrasté, ombre discrète. Au survol : fond légèrement assombri (`color-mix`), élévation `translateY(-1px)` + ombre douce teintée.
   - `outline` / `outline-rounded` : fond transparent, bord et texte `--btn-fg`. Au survol : voile teinté `--btn-soft`.
@@ -112,9 +112,9 @@ Bouton de soumission pleine largeur :
   - `ghost` / `ghost-rounded` : **bouton « Retour » de la save-bar** — fantôme **sans bord au repos**, texte estompé `--billy-text-muted` ; au survol fond gris `--billy-addon-hover-bg` + texte `--billy-input-color` ; au focus, le halo (focus-ring `--billy-focus-ring`) tient lieu de « bord ». Câblé sur les tokens d'input du DS (dark mode automatique). **Insensible à `color`** (toujours neutre) : c'est le bouton secondaire / retour / annulation.
   - Les suffixes `-rounded` passent le rayon à `999px` (pilule).
 - **Tailles** : `small` / `normal` / `big` ne changent que padding, `font-size` et `gap` (variables `--btn-*`).
-- **Teintes** (light mode) : fills **vifs dans l'esprit de la save-bar** — `primary` cyan de marque `--billy-accent` (#12b4dd), `info` #3b82f6, `warning` #ff902b (orange save-bar), `error` #ef4444, `neutral` #6b7280 — en **aplat plat** (pas de dégradé) avec **texte blanc**. En **dark mode**, les pleins sont un cran plus profonds (validés visuellement) et les teintes contour/texte s'éclaircissent.
-- **Contraste** : le texte blanc sur fill vif relève du même parti pris que la save-bar (`.btn-info` / `.btn-warning`) et n'atteint pas partout le seuil AA 4.5:1 sur les teintes claires (`primary`, `warning`) ; les variantes **contour/texte** utilisent en revanche des teintes `--btn-fg` assombries qui restent lisibles (≥ 4.5:1) sur surface claire.
-- **Dark mode** via `:host-context(.dark-mode)` : les `--btn-fg` des variantes contour/texte s'éclaircissent pour rester lisibles ; les pleins gardent leur teinte vive.
+- **Teintes** (light mode) : fills **vifs** issus des tokens `base` — `primary` cyan de marque `--billy-accent` (#12b4dd), `info` `--billy-info` (#3b82f6), `warning` `--billy-warning` (#ff902b, orange save-bar), `error` `--billy-error` (#ef4444), `neutral` `--billy-neutral` (#6b7280) — en **aplat plat** (pas de dégradé) avec **texte blanc**.
+- **Contraste** : le texte blanc sur fill vif n'atteint pas partout le seuil AA 4.5:1 sur les teintes claires (`primary`, `warning`) ; les variantes **contour/texte** utilisent en revanche les teintes `-strong` (`--btn-fg`) qui restent lisibles (≥ 4.5:1) sur surface claire.
+- **Dark mode automatique** : le bouton n'a **plus de bloc dark local** — les familles `--billy-*` basculent sous `body.dark-mode` (les pleins s'assombrissent d'un cran, les `-strong` contour/texte s'éclaircissent). Charger `_billy-tokens` (globalement) est donc requis pour le dark mode.
 - **Focus visible** : halo `box-shadow: 0 0 0 3px var(--btn-ring)` (jamais supprimé).
 - **Motion design** : transitions douces (`ease`) sur `transform` / couleurs / ombre, effets volontairement discrets (élévation d'1px, pilule `text-rounded` en fondu léger). Tout est neutralisé sous `@media (prefers-reduced-motion: reduce)`.
 
@@ -129,6 +129,6 @@ Bouton de soumission pleine largeur :
 
 - `clicked` **n'émet pas** en état `disabled`/`loading` : inutile de reverifier côté consommateur.
 - Un bouton **icône seule sans `label` ni `ariaLabel`** échouera un audit AXE (pas de nom accessible). Toujours renseigner `ariaLabel` dans ce cas.
-- La palette est **auto-portée** par le composant (variables locales), elle ne dépend pas de l'inclusion globale des tokens `--billy-*` ; seul `--billy-accent` est réutilisé pour `primary` (fallback `#12b4dd`).
+- La palette vient des **familles sémantiques du DS** (`--billy-<hue>-*`), avec un **fallback en dur** sur chaque variable (valeur light) : le bouton reste correct en clair même sans les tokens, mais le **dark mode exige `_billy-tokens`** chargé globalement.
 - La variante **`ghost` ignore `color`** : elle est toujours neutre (tokens d'input du DS), par cohérence avec le rôle de bouton retour/secondaire. Pour une action secondaire teintée, utiliser plutôt `outline` ou `text`.
 - `type="submit"` est nécessaire pour déclencher la soumission d'un `<form>` : le défaut est `button` (contrairement au `<button>` HTML natif dont le défaut est `submit`).
