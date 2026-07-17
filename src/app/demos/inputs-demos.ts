@@ -46,6 +46,10 @@ export class DatepickerDemoComponent {
         <billy-dropdown [values]="options" [(ngModel)]="pays" placeholder="Choisir un pays…" />
         <div class="demo-note">Sélection : <code>{{ pays() ?? 'aucune' }}</code></div>
       </div>
+      <div class="demo-form-block dd-block">
+        <billy-dropdown [values]="options" [multiple]="true" [(ngModel)]="paysMulti" placeholder="Choisir un ou plusieurs pays…" />
+        <div class="demo-note">Sélection : <code>{{ paysMulti().length ? paysMulti().join(', ') : 'aucune' }}</code></div>
+      </div>
     </demo-stage>
   `,
   styles: `
@@ -65,6 +69,7 @@ export class DropdownDemoComponent {
   ];
 
   readonly pays = signal<string | null>(null);
+  readonly paysMulti = signal<string[]>(['FR', 'LU']);
 
 }
 

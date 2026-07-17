@@ -29,6 +29,8 @@ interface PanelPosition {
  * - [values] : mêmes options {id, text, value}
  * - le modèle reçoit option.value si défini, sinon l'option elle-même
  * - sans valeur, la première option est affichée (comportement select2)
+ * - mode multi (tags supprimables) si le modèle est un tableau (parité select2)
+ *   ou si [multiple]="true" ; le modèle est alors un tableau de valeurs
  */
 @Component({
   selector: 'billy-dropdown',
@@ -51,6 +53,7 @@ export class DropdownComponent implements ControlValueAccessor {
   readonly searchable = input(true);
   readonly autofocusSearch = input(true);
   readonly placeholder = input('');
+  readonly multiple = input(false);
 
   readonly selectionChange = output<any>();
 
@@ -70,8 +73,12 @@ export class DropdownComponent implements ControlValueAccessor {
 
   readonly isDisabled = computed(() => this.readonly() || this.disabledFromForm());
 
+  /** Multi si demandé explicitement, ou si le modèle est un tableau (parité ad-select). */
+  readonly isMulti = computed(() => this.multiple() || Array.isArray(this.innerValue()));
+
   /** Option correspondant au modèle, sinon la première option (parité select2), sinon null. */
   readonly selectedOption = computed<DropdownOption | null>(() => {
+    if (this.isMulti()) { return null; }
     const options = this.values() ?? [];
     const val = this.innerValue();
     if (val !== null && val !== undefined) {
@@ -80,6 +87,25 @@ export class DropdownComponent implements ControlValueAccessor {
       if (match) { return match; }
     }
     return options.length ? options[0] : null;
+  });
+
+  /** Options correspondant aux valeurs du modèle en mode multi (tags). */
+  readonly selectedOptions = computed<DropdownOption[]>(() => {
+    const val = this.innerValue();
+    if (!Array.isArray(val)) { return []; }
+    const options = this.values() ?? [];
+    return val
+      .map(v => options.find(o => '' + o.id === this.modelToId(v)))
+      .filter((o): o is DropdownOption => !!o);
+  });
+
+  /** Ids sélectionnés (mono ou multi), pour marquer les options de la liste. */
+  readonly selectedIds = computed<Set<string>>(() => {
+    if (this.isMulti()) {
+      return new Set(this.selectedOptions().map(o => '' + o.id));
+    }
+    const selected = this.selectedOption();
+    return new Set(selected ? ['' + selected.id] : []);
   });
 
   /** Options filtrées par la recherche, avec segments de surlignage. */
@@ -117,7 +143,7 @@ export class DropdownComponent implements ControlValueAccessor {
     if (this.isDisabled() || this.isOpen()) { return; }
     this.searchText.set('');
     this.updatePanelPosition();
-    const selected = this.selectedOption();
+    const selected = this.isMulti() ? (this.selectedOptions()[0] ?? null) : this.selectedOption();
     const idx = selected ? (this.values() ?? []).indexOf(selected) : 0;
     this.activeIndex.set(Math.max(idx, 0));
     this.isOpen.set(true);
@@ -166,16 +192,55 @@ export class DropdownComponent implements ControlValueAccessor {
   // ── Sélection ──────────────────────────────────────────────────────────────
 
   pick(option: DropdownOption): void {
+    if (this.isMulti()) {
+      this.toggleMultiValue(option);
+      return;
+    }
     const value = option.value !== undefined ? option.value : option;
+    this.commit(value);
+    this.close(true);
+  }
+
+  /** Multi : ajoute/retire la valeur ; le panneau reste ouvert pour enchaîner les sélections. */
+  private toggleMultiValue(option: DropdownOption): void {
+    const current: any[] = Array.isArray(this.innerValue()) ? this.innerValue() : [];
+    const id = '' + option.id;
+    const next = current.some(v => this.modelToId(v) === id)
+      ? current.filter(v => this.modelToId(v) !== id)
+      : [...current, option.value !== undefined ? option.value : option];
+    this.commit(next);
+    this.searchText.set('');
+    (this.searchEl() ?? this.listEl())?.nativeElement.focus();
+  }
+
+  /** Suppression d'un tag depuis le déclencheur, sans ouvrir le panneau. */
+  removeValue(option: DropdownOption, event: Event): void {
+    event.stopPropagation();
+    if (this.isDisabled()) { return; }
+    const current: any[] = Array.isArray(this.innerValue()) ? this.innerValue() : [];
+    this.commit(current.filter(v => this.modelToId(v) !== '' + option.id));
+    this.onTouchedCallback();
+  }
+
+  private commit(value: any): void {
     this.innerValue.set(value);
     this.onChangeCallback(value);
     this.selectionChange.emit(value);
-    this.close(true);
   }
 
   onSearchInput(text: string): void {
     this.searchText.set(text);
     this.activeIndex.set(0);
+  }
+
+  /** Backspace dans une recherche vide : retire le dernier tag (parité select2). */
+  onSearchKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Backspace' || this.searchText().length || !this.isMulti()) { return; }
+    const last = this.selectedOptions().at(-1);
+    if (last) {
+      event.preventDefault();
+      this.removeValue(last, event);
+    }
   }
 
   // ── Clavier ────────────────────────────────────────────────────────────────

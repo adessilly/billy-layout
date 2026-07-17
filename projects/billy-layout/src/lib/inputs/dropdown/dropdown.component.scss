@@ -20,7 +20,7 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  height: var(--dropdown-height, 35px);
+  min-height: var(--dropdown-height, 35px);
   padding: 0 12px;
   font-size: var(--dropdown-font-size, 14px);
   text-align: left;
@@ -41,6 +41,15 @@
     cursor: not-allowed;
   }
 
+  // En multi, les tags occupent l'espace à gauche et peuvent passer à la ligne
+  &--multi {
+    padding-left: 5px;
+  }
+
+  &--multi:has(.dropdown-trigger__label--placeholder) {
+    padding-left: 12px;
+  }
+
   &__label {
     flex: 1;
     overflow: hidden;
@@ -57,6 +66,51 @@
     transition: transform 0.15s ease;
 
     &--open { transform: rotate(180deg); }
+  }
+}
+
+// ── Tags (mode multi) ─────────────────────────────────────────────────────────
+
+.dropdown-tags {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0;
+  min-width: 0;
+}
+
+.dropdown-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 2px 8px;
+  font-size: 0.85em;
+  color: var(--billy-accent-strong, #0e97bb);
+  background-color: var(--billy-accent-soft, #e6f7fc);
+  border: 1px solid var(--billy-accent-border, #a5dff2);
+  border-radius: 6px;
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    color: var(--billy-accent-strong, #0e97bb);
+    opacity: 0.65;
+    cursor: pointer;
+    transition: color 0.12s ease, opacity 0.12s ease;
+
+    &:hover {
+      opacity: 1;
+      color: var(--billy-danger, #dc2626);
+    }
   }
 }
 

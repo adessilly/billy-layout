@@ -8,13 +8,37 @@
     [class.dropdown-trigger--open]="isOpen()"
     role="combobox"
     aria-haspopup="listbox"
+    [class.dropdown-trigger--multi]="isMulti()"
     [attr.aria-expanded]="isOpen()"
     [attr.aria-required]="required() || null"
     (click)="toggle()"
     (keydown)="onTriggerKeydown($event)">
-    <span class="dropdown-trigger__label" [class.dropdown-trigger__label--placeholder]="!selectedOption()">
-      {{ selectedOption()?.text ?? placeholder() }}
-    </span>
+    @if (isMulti()) {
+      @if (selectedOptions().length) {
+        <span class="dropdown-tags">
+          @for (opt of selectedOptions(); track opt.id) {
+            <span class="dropdown-tag">
+              <span class="dropdown-tag__text">{{ opt.text }}</span>
+              @if (!isDisabled()) {
+                <span class="dropdown-tag__remove"
+                  role="button"
+                  tabindex="-1"
+                  [attr.aria-label]="'Retirer ' + opt.text"
+                  (click)="removeValue(opt, $event)">
+                  <i class="fa-solid fa-xmark"></i>
+                </span>
+              }
+            </span>
+          }
+        </span>
+      } @else {
+        <span class="dropdown-trigger__label dropdown-trigger__label--placeholder">{{ placeholder() }}</span>
+      }
+    } @else {
+      <span class="dropdown-trigger__label" [class.dropdown-trigger__label--placeholder]="!selectedOption()">
+        {{ selectedOption()?.text ?? placeholder() }}
+      </span>
+    }
     <i class="fa-solid fa-chevron-down dropdown-trigger__chevron" [class.dropdown-trigger__chevron--open]="isOpen()"></i>
   </button>
 
@@ -35,7 +59,8 @@
             placeholder="Rechercher…"
             autocomplete="off"
             [value]="searchText()"
-            (input)="onSearchInput($any($event.target).value)">
+            (input)="onSearchInput($any($event.target).value)"
+            (keydown)="onSearchKeydown($event)">
           @if (searchText()) {
             <button type="button" class="dropdown-search__clear" tabindex="-1" (click)="onSearchInput('')">
               <i class="fa-solid fa-xmark"></i>
@@ -44,13 +69,13 @@
         </div>
       }
 
-      <ul #list class="dropdown-list" role="listbox" tabindex="-1">
+      <ul #list class="dropdown-list" role="listbox" tabindex="-1" [attr.aria-multiselectable]="isMulti() || null">
         @for (item of filteredView(); track item.option.id; let i = $index) {
           <li class="dropdown-option"
             role="option"
             [class.dropdown-option--active]="i === activeIndex()"
-            [class.dropdown-option--selected]="item.option === selectedOption()"
-            [attr.aria-selected]="item.option === selectedOption()"
+            [class.dropdown-option--selected]="selectedIds().has('' + item.option.id)"
+            [attr.aria-selected]="selectedIds().has('' + item.option.id)"
             (mouseenter)="activeIndex.set(i)"
             (click)="pick(item.option)">
             <span class="dropdown-option__text">
@@ -60,7 +85,7 @@
                 {{ item.option.text }}
               }
             </span>
-            @if (item.option === selectedOption()) {
+            @if (selectedIds().has('' + item.option.id)) {
               <i class="fa-solid fa-check dropdown-option__check"></i>
             }
           </li>
