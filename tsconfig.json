@@ -3,6 +3,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "billy-layout": ["./dist/billy-layout"]
+    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -26,6 +29,12 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/billy-layout/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/billy-layout/tsconfig.spec.json"
     }
   ]
 }
