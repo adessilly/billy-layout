@@ -1,6 +1,13 @@
 
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
+## Library Components — Documentation & Examples
+
+- Any modification or addition of a library component (in `projects/billy-layout`) MUST be accompanied by updating its documentation in the matching markdown file under `projects/billy-layout/docs/`.
+  - When adding a new component, create the corresponding markdown file in the relevant `docs/` subfolder (e.g. `inputs/`, `forms/`, `layout/`, `feedback/`, …).
+  - When changing an existing component (inputs, outputs, behavior, styling API), keep its `docs/` markdown in sync.
+- Also update, when necessary, the corresponding example/demo in the Angular example app (`src/`, notably `src/app/demos`) so the documented behavior is demonstrated and stays accurate.
+
 ## TypeScript Best Practices
 
 - Use strict type checking
