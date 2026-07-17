@@ -81,8 +81,9 @@ export const DOC_CATEGORIES: DocCategory[] = [
     slug: 'buttons',
     label: 'Buttons',
     icon: 'plus',
-    intro: 'Les tuiles d’action des écrans d’accueil : ajouter et importer.',
+    intro: 'Le bouton d’action polyvalent et les tuiles d’action des écrans d’accueil : ajouter et importer.',
     entries: [
+      { slug: 'button', label: 'button', summary: 'Bouton d’action polyvalent : 5 couleurs × 6 variantes × 3 tailles, label et/ou icône.', tags: ['bouton', 'action', 'cta', 'variante'] },
       { slug: 'button-ajout', label: 'button-ajout', summary: 'Tuile d’action « ajouter » (label + sous-titre + icône).', tags: ['tuile', 'ajout'] },
       { slug: 'button-upload', label: 'button-upload', summary: 'Tuile d’import de fichier (input caché, re-sélection possible).', tags: ['tuile', 'import'] },
     ],

@@ -58,6 +58,7 @@ export * from './lib/forms/save-bar/save-bar.component';
 export * from './lib/forms/form-side-panel/form-side-panel.component';
 
 // ── buttons ──────────────────────────────────────────────────────────────────
+export * from './lib/buttons/button/button.component';
 export * from './lib/buttons/button-ajout/button-ajout.component';
 export * from './lib/buttons/button-upload/button-upload.component';
 

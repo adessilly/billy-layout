@@ -44,6 +44,7 @@ comment structurer une page de liste, quand utiliser consult-card et save-bar.
 
 ## buttons — boutons d'action
 
+- [button](buttons/button.md) — bouton d'action polyvalent (5 couleurs × 6 variantes × 3 tailles, label et/ou icône).
 - [button-ajout](buttons/button-ajout.md) — tuile d'action « ajouter » (label + sous-titre + icône).
 - [button-upload](buttons/button-upload.md) — tuile d'import de fichier (input caché, re-sélection possible).
 

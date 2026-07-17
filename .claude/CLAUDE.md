@@ -3,10 +3,11 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ## Library Components — Documentation & Examples
 
-- Any modification or addition of a library component (in `projects/billy-layout`) MUST be accompanied by updating its documentation in the matching markdown file under `projects/billy-layout/docs/`.
-  - When adding a new component, create the corresponding markdown file in the relevant `docs/` subfolder (e.g. `inputs/`, `forms/`, `layout/`, `feedback/`, …).
-  - When changing an existing component (inputs, outputs, behavior, styling API), keep its `docs/` markdown in sync.
-- Also update, when necessary, the corresponding example/demo in the Angular example app (`src/`, notably `src/app/demos`) so the documented behavior is demonstrated and stays accurate.
+Any change to a library component (in `projects/billy-layout`) is **not done** until all of these hold:
+
+1. Its documentation under `projects/billy-layout/docs/` is up to date — create the markdown file in the relevant subfolder (`inputs/`, `forms/`, `layout/`, `feedback/`, …) for a new component; sync inputs/outputs/behavior/styling API for an existing one.
+2. The matching example/demo in the Angular example app (`src/app/demos`) is updated when the change alters observable behavior or the public API, so the demo stays accurate.
+3. When assembling screens or composing library components, the design system defined in [`projects/billy-layout/docs/ux-guidelines.md`](../projects/billy-layout/docs/ux-guidelines.md) is respected (page-level actions, list structure, consult cards, save bars, empty states, …).
 
 ## TypeScript Best Practices
 
@@ -28,7 +29,6 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 ## Accessibility Requirements
 
 - It MUST pass all AXE checks.
-- It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
 
 ### Components
 

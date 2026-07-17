@@ -33,6 +33,7 @@ export const DEMO_LOADERS: Record<string, () => Promise<Type<unknown>>> = {
   'forms/save-bar': () => import('./forms-demos').then(m => m.SaveBarDemoComponent),
   'forms/form-side-panel': () => import('./forms-demos').then(m => m.FormSidePanelDemoComponent),
 
+  'buttons/button': () => import('./buttons-demos').then(m => m.ButtonDemoComponent),
   'buttons/button-ajout': () => import('./buttons-demos').then(m => m.ButtonAjoutDemoComponent),
   'buttons/button-upload': () => import('./buttons-demos').then(m => m.ButtonUploadDemoComponent),
 
