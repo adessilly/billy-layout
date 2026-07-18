@@ -77,7 +77,8 @@ Sélecteur : `billy-nav-item`.
 | `icon` | `BillyIconName` | requis | Icône `billy-icon` (taille 21). |
 | `label` | `string` | requis | Libellé ; sert de tooltip (`title`) quand replié. |
 | `collapsed` | `boolean` | `false` | Mode icône seule. |
-| `badge` | `string \| null` | `null` | Contenu du badge rouge ; `null` = pas de badge. |
+| `badge` | `string \| null` | `null` | Contenu du badge ; `null` = pas de badge. |
+| `badgeVariant` | `'info' \| 'notification'` | `'info'` | `info` : compteur discret (fond `--billy-accent-soft`, texte `--billy-accent-strong`) pour une information de comptage. `notification` : pastille rouge `#EF4444` qui appelle l'action (éléments à traiter). |
 
 Pas d'output : le `(click)` se pose sur l'élément hôte côté appelant (la sidebar l'utilise pour fermer le tiroir mobile).
 
@@ -85,7 +86,7 @@ Pas d'output : le `(click)` se pose sur l'élément hôte côté appelant (la si
 
 - Lien pilule radius 12px, `#5B6B79`, hover `#EAEFF3` avec micro-translation `translateX(3px)` ; actif `#E6F7FC` / `#0E97BB` en semi-bold.
 - `.billy-nav-item-accent` : barrette accent `#12B4DD` débordant à gauche (`left: -14px`), visible uniquement actif **et** non replié.
-- Badge `#EF4444` blanc, poussé à droite (`margin-left: auto`) ; en mode replié il devient un point positionné en haut à droite de l'icône.
+- Badge poussé à droite (`margin-left: auto`) ; variante `info` (défaut) en tons accent doux (mêmes tokens que les badges de comptage de consult-card/nav-card), variante `notification` en `#EF4444` blanc. En mode replié il devient un point positionné en haut à droite de l'icône.
 - Dark mode via `:host-context(body.dark-mode)` : texte `#9fb0ba`, hover `#2a373b`, actif `rgba(18, 180, 221, .14)` / `#4fc3e0`.
 - La classe hôte `billy-icon-hover-zone` déclenche les micro-animations des icônes billy-icon au survol.
 

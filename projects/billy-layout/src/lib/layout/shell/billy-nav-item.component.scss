@@ -64,11 +64,16 @@
   min-width: 18px;
   padding: 1px 6px;
   border-radius: 999px;
-  background: #EF4444;
-  color: #fff;
+  background: var(--billy-accent-soft);
+  color: var(--billy-accent-strong);
   font-size: 11px;
   font-weight: 700;
   text-align: center;
+
+  &.notification {
+    background: #EF4444;
+    color: #fff;
+  }
 
   .billy-nav-item.collapsed & {
     position: absolute;

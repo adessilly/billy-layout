@@ -10,6 +10,7 @@
     <span class="billy-nav-item-label">{{ label() }}</span>
   }
   @if (badge(); as badgeValue) {
-    <span class="billy-nav-item-badge">{{ badgeValue }}</span>
+    <span class="billy-nav-item-badge"
+          [class.notification]="badgeVariant() === 'notification'">{{ badgeValue }}</span>
   }
 </a>

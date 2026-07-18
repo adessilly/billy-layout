@@ -79,7 +79,7 @@ export class TopbarDemoComponent {
   selector: 'demo-sidebar',
   imports: [DemoStageComponent],
   template: `
-    <demo-stage titre="La sidebar est à votre gauche" description="Ses sections, liens, icônes et badges viennent du token BILLY_SHELL_CONFIG (menuLinks + menuBadges) : ici, chaque catégorie porte en badge son nombre de fiches.">
+    <demo-stage titre="La sidebar est à votre gauche" description="Ses sections, liens, icônes et badges viennent du token BILLY_SHELL_CONFIG (menuLinks + menuBadges) : ici, chaque catégorie porte en badge son nombre de fiches (variante 'info' discrète par défaut ; 'notification' en rouge pour les éléments à traiter).">
       <button type="button" class="demo-btn" (click)="shell.toggleSidebar()">
         {{ shell.sidebarCollapsed() ? 'Déplier' : 'Replier' }} la sidebar
       </button>

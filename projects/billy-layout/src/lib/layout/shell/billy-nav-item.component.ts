@@ -19,5 +19,7 @@ export class BillyNavItemComponent {
   readonly label = input.required<string>();
   readonly collapsed = input(false);
   readonly badge = input<string | null>(null);
+  /** `info` (défaut) : compteur discret. `notification` : pastille rouge qui appelle l'action. */
+  readonly badgeVariant = input<'info' | 'notification'>('info');
 
 }
