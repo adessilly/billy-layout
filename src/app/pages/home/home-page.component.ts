@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BillyIconComponent, NavCardComponent } from 'billy-layout';
 import { DOC_CATEGORIES, DOC_ENTRY_COUNT } from '../../site/doc-registry';
+import { InstallSectionComponent } from './install-section.component';
 
 /**
  * Accueil du site vitrine : hero animé (maquette d'écran BILLy qui s'assemble
@@ -9,7 +10,7 @@ import { DOC_CATEGORIES, DOC_ENTRY_COUNT } from '../../site/doc-registry';
  */
 @Component({
   selector: 'site-home-page',
-  imports: [RouterLink, BillyIconComponent, NavCardComponent],
+  imports: [RouterLink, BillyIconComponent, NavCardComponent, InstallSectionComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
 })

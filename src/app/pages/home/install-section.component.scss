@@ -1,0 +1,406 @@
+:host {
+  display: block;
+}
+
+.install {
+  padding: 52px 8px 0;
+
+  // Déclinaisons AA (≥ 4.5:1) des tokens de texte : --billy-accent-strong sur
+  // fond soft et --billy-text-soft plafonnent à ~3:1 et 4.46:1 en clair.
+  --install-accent-text: #09758f;
+  --install-soft-text: #646c7a;
+}
+
+:host-context(body.dark-mode) .install {
+  --install-accent-text: var(--billy-accent-strong);
+  --install-soft-text: #8a9aa0;
+}
+
+// ── En-tête de section ──────────────────────────────────────────────────────
+.install-head {
+  max-width: 600px;
+  margin-bottom: 24px;
+}
+
+.install-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--install-accent-text);
+  background: var(--billy-accent-soft);
+  border: 1px solid var(--billy-accent-border);
+  border-radius: 20px;
+  padding: 5px 14px;
+}
+
+.install-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--billy-accent);
+  animation: installDot 2s ease infinite;
+}
+
+@keyframes installDot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(18, 180, 221, .5); }
+  50% { box-shadow: 0 0 0 5px rgba(18, 180, 221, 0); }
+}
+
+.install-title {
+  margin: 14px 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--site-heading);
+}
+
+.install-sub {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--install-soft-text);
+}
+
+// ── Grille : terminal npm | "ou" | terminal git ─────────────────────────────
+// La colonne git est plus large : sa commande (56 caractères) doit tenir.
+.install-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1.35fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.install-or {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    width: 1px;
+    background: var(--billy-divider);
+  }
+}
+
+.install-or-badge {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--install-accent-text);
+  background: var(--billy-accent-soft);
+  border: 1px solid var(--billy-accent-border);
+}
+
+// ── Terminaux ───────────────────────────────────────────────────────────────
+// Volontairement sombres dans les deux thèmes : look "console" assumé.
+.term {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: linear-gradient(180deg, #14262b 0%, #0d191c 100%);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(10, 20, 24, .28);
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 48px rgba(10, 20, 24, .34);
+  }
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 10px 14px;
+  background: rgba(255, 255, 255, .04);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+
+.term-dots {
+  display: inline-flex;
+  gap: 6px;
+  flex-shrink: 0;
+
+  i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+
+    &:nth-child(1) { background: #ff5f57; }
+    &:nth-child(2) { background: #febc2e; }
+    &:nth-child(3) { background: #28c840; }
+  }
+}
+
+.term-name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: #a6bac1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.term-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #d3ecf4;
+  background: rgba(18, 180, 221, .14);
+  border: 1px solid rgba(18, 180, 221, .38);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+
+  svg { display: block; }
+
+  &:hover {
+    background: rgba(18, 180, 221, .26);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--billy-accent);
+    outline-offset: 2px;
+  }
+
+  &.is-copied {
+    color: #6ee7a0;
+    background: rgba(74, 222, 128, .12);
+    border-color: rgba(74, 222, 128, .42);
+  }
+}
+
+.term-body {
+  position: relative;
+  flex: 1;
+  padding: 18px 16px 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(11px, 1.35vw, 12.5px);
+  line-height: 1.7;
+  color: #e2ecef;
+  min-height: 112px;
+}
+
+.term-line {
+  display: flex;
+  align-items: baseline;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.term-prompt {
+  flex-shrink: 0;
+  margin-right: 8px;
+  font-weight: 700;
+  color: var(--billy-accent);
+}
+
+// La frappe est simulée en révélant le texte réel (steps + max-width en ch),
+// afin qu'il reste sélectionnable et lisible sans animation.
+.term-cmd {
+  display: inline-block;
+  vertical-align: bottom;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.term--npm .term-cmd { --cmd-width: 24ch; }
+.term--git .term-cmd { --cmd-width: 56ch; }
+
+.term--git .term-body { font-size: clamp(10.5px, 1.1vw, 12px); }
+
+.term-pkg { color: #7ce2ff; }
+
+.term-caret {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 7px;
+  height: 14px;
+  margin-left: 3px;
+  transform: translateY(2px);
+  background: var(--billy-accent);
+  animation: termCaret 1.1s steps(1) infinite;
+}
+
+@keyframes termCaret {
+  50% { opacity: 0; }
+}
+
+.term-out {
+  margin: 6px 0 0;
+  color: #93a9b0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.term-out--ok {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+// Pictogramme décoratif en filigrane (cube npm / branche git).
+.term-pic {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 72px;
+  height: 72px;
+  color: var(--billy-accent);
+  opacity: .18;
+  pointer-events: none;
+}
+
+.pic-draw {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 260;
+}
+
+// ── Motion design : tout démarre à l'entrée dans le viewport ────────────────
+// Sans .is-visible (et donc aussi en prefers-reduced-motion, géré globalement
+// par .site-motion), le contenu est entièrement visible et statique.
+:host(.is-visible) {
+
+  .term {
+    animation: termIn .55s cubic-bezier(.2, .9, .3, 1.15) both;
+  }
+
+  .term--git { animation-delay: .18s; }
+
+  .term--npm .term-cmd { animation: termType .8s steps(24) .5s both; }
+  .term--git .term-cmd { animation: termType 1.6s steps(56) .9s both; }
+
+  .term--npm .term-out--step { animation: termOut .4s ease 1.5s both; }
+  .term--npm .term-out--ok { animation: termOut .4s ease 1.9s both; }
+  .term--git .term-out--step { animation: termOut .4s ease 2.7s both; }
+  .term--git .term-out--ok { animation: termOut .4s ease 3.1s both; }
+
+  .pic-draw { animation: picDraw 1.3s ease .6s both; }
+  .pic-draw--late { animation-delay: 1.2s; }
+
+  .term-pic { animation: picFloat 6s ease-in-out 2.4s infinite; }
+}
+
+@keyframes termIn {
+  from { opacity: 0; transform: translateY(18px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes termType {
+  from { max-width: 0; }
+  to { max-width: var(--cmd-width); }
+}
+
+@keyframes termOut {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes picDraw {
+  from { stroke-dashoffset: 260; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes picFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+// ── Note de bas de section ──────────────────────────────────────────────────
+.install-note {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  color: var(--install-soft-text);
+}
+
+// Annonce screen-reader uniquement.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 991.98px) {
+  .install-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .install-or {
+    flex-direction: row;
+
+    &::before,
+    &::after {
+      width: auto;
+      height: 1px;
+    }
+  }
+
+  .term-body,
+  .term--git .term-body {
+    font-size: 11.5px;
+  }
+}
+
+// Sur mobile la frappe est remplacée par un fondu : la commande peut ainsi
+// passer à la ligne et rester lisible en entier sans défilement horizontal.
+@media (max-width: 767.98px) {
+  .term-line {
+    overflow-x: visible;
+  }
+
+  .term-cmd {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  // Le curseur se positionne mal sur une commande multi-lignes.
+  .term-caret {
+    display: none;
+  }
+
+  :host(.is-visible) .term--npm .term-cmd,
+  :host(.is-visible) .term--git .term-cmd {
+    animation: termOut .5s ease both;
+    max-width: none;
+  }
+
+  :host(.is-visible) .term--npm .term-cmd { animation-delay: .5s; }
+  :host(.is-visible) .term--git .term-cmd { animation-delay: .9s; }
+}
