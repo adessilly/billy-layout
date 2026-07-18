@@ -13,8 +13,9 @@ import { DemoStageComponent } from './demo-stage.component';
 
 const ICON_NAMES: BillyIconName[] = [
   'accueil', 'achats', 'devis', 'ventes', 'prestations', 'agenda',
-  'clients', 'compte', 'peppol', 'bell', 'chevron-left', 'chevron-right',
+  'clients', 'compte', 'peppol', 'bell', 'chevron-left', 'chevron-right', 'chevron-down',
   'sync', 'check', 'clock', 'search', 'dark-mode', 'logout', 'open', 'upload', 'plus',
+  'close', 'refresh', 'bolt', 'lock', 'eye', 'eye-off',
 ];
 
 /** Galerie interactive du jeu d'icônes : taille et épaisseur de trait réglables. */

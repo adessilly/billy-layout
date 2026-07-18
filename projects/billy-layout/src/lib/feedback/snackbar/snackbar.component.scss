@@ -37,12 +37,12 @@
     0 0 0 1px rgba(0, 0, 0, 0.06);
   color: #1a1a2e;
 
+  // billy-icon : la taille se règle via [size], ici seulement la couleur
   &__icon {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
     color: #6c63ff;
   }
 
@@ -92,10 +92,6 @@
     &:active {
       transform: translateY(0);
       opacity: 1;
-    }
-
-    i {
-      font-size: 0.78rem;
     }
   }
 
@@ -199,9 +195,8 @@ body.dark-mode .pwa-snackbar {
         opacity: 0.85;
       }
 
-      i {
+      billy-icon {
         flex-shrink: 0;
-        font-size: 0.82rem;
       }
     }
 

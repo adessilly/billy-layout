@@ -38,6 +38,9 @@
     @case ('chevron-right') {
       <path d="m9 6 6 6-6 6"/>
     }
+    @case ('chevron-down') {
+      <path d="m6 9 6 6 6-6"/>
+    }
     @case ('sync') {
       <path d="M4 12a8 8 0 0 1 13-6l3 3M20 12a8 8 0 0 1-13 6l-3-3"/><path d="M20 4v5h-5M4 20v-5h5"/>
     }
@@ -64,6 +67,24 @@
     }
     @case ('plus') {
       <path d="M12 5v14M5 12h14"/>
+    }
+    @case ('close') {
+      <path d="M6 6l12 12M18 6 6 18"/>
+    }
+    @case ('refresh') {
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+    }
+    @case ('bolt') {
+      <path d="M13 2 5 13h5l-1 9 8-11h-5l1-9Z"/>
+    }
+    @case ('lock') {
+      <rect x="4" y="10.5" width="16" height="10" rx="3"/><path d="M8 10.5V7.75a4 4 0 0 1 8 0v2.75"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/>
+    }
+    @case ('eye') {
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>
+    }
+    @case ('eye-off') {
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/><path d="m4 20 16-16"/>
     }
   }
 </svg>

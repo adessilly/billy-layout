@@ -52,6 +52,7 @@ Usage réel (`src/app/app.component.html`) :
 - Zone fixe pleine largeur en bas (`position: fixed; bottom: 0; z-index: 100000`), respecte le safe-area iOS (`padding-bottom: max(16px, env(safe-area-inset-bottom))`).
 - Entrée/sortie : translation verticale hors écran avec courbe à rebond `cubic-bezier(0.34, 1.56, 0.64, 1)` (0,45 s) déclenchée par la classe `.pwa-snackbar-zone-active` ; `pointer-events: none` quand masqué.
 - Carte « glassmorphism » : fond `rgba(255,255,255,.92)` + `backdrop-filter: blur(16px)`, ombres multiples, `max-width: 560px`. Pas de tokens `--billy-*` : palette autonome (icône et bouton en dégradé `#4f8ef7 → #6c63ff`).
+- Icônes du jeu maison [`billy-icon`](../core/billy-icon.md) : `refresh` (icône d'entête et bouton compact mobile), `bolt` (bouton d'action desktop), `close` (croix) — aucune dépendance Font Awesome.
 - **Dark mode** via la règle globale `body.dark-mode .pwa-snackbar` : fond sombre translucide, textes et bouton de fermeture adaptés (pas de `:host-context` ici — les styles ciblent la classe globale).
 - **Mobile (≤ 480px)** : l'icône et le bloc message+bouton desktop sont masqués au profit d'un **bouton compact unique fusionné** (`.pwa-snackbar__btn-compact`, icône + message, pleine largeur) — un seul tap pour mettre à jour ; la croix reste séparée.
 - Accessibilité : `role="alert"` + `aria-live="polite"` sur la zone, `aria-label="Ignorer"` sur la croix.

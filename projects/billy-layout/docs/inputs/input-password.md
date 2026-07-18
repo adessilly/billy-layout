@@ -4,7 +4,7 @@
 
 ## Rôle
 
-Champ mot de passe du design system : icône cadenas, bouton œil afficher/masquer, label optionnel intégré, et — en option — une jauge de robustesse animée avec liste de critères (`checkStrength`) ou un indicateur de correspondance en direct (`compareTo`, pour un champ de confirmation). La jauge est **purement indicative** : la validité reste portée par les validators du formulaire parent.
+Champ mot de passe du design system : icône cadenas, bouton œil afficher/masquer (icônes `lock`, `eye`, `eye-off` du jeu [`billy-icon`](../core/billy-icon.md)), label optionnel intégré, et — en option — une jauge de robustesse animée avec liste de critères (`checkStrength`) ou un indicateur de correspondance en direct (`compareTo`, pour un champ de confirmation). La jauge est **purement indicative** : la validité reste portée par les validators du formulaire parent.
 
 Utilisé dans `src/app` par le changement de mot de passe : `src/app/auth/pages/compte/compte-password/compte-password.component.html` (trois instances : ancien mot de passe, nouveau avec jauge, confirmation avec comparaison).
 

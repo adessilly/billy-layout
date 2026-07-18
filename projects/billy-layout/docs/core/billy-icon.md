@@ -4,7 +4,7 @@
 
 ## Rôle
 
-Jeu d'icônes SVG maison du design « Billy — Coque applicative » : trait arrondi (`stroke-linecap/linejoin: round`), viewBox 24, dessinées en `stroke: currentColor` — l'icône prend donc la couleur du texte environnant. C'est l'unique source d'icônes du shell de la librairie (topbar, items de navigation, notifications, action-bar) et elle est aussi consommée directement par l'application : recherche globale (`src/app/layout/billy-search/billy-search.component.html`) et menu compte (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`). Certaines icônes embarquent une micro-animation déclenchée au survol d'une zone ancêtre.
+Jeu d'icônes SVG maison du design « Billy — Coque applicative » : trait arrondi (`stroke-linecap/linejoin: round`), viewBox 24, dessinées en `stroke: currentColor` — l'icône prend donc la couleur du texte environnant. C'est l'unique source d'icônes du shell de la librairie (topbar, items de navigation, notifications, action-bar) et des composants qui en embarquent (`billy-input-password` : cadenas et œil ; `billy-dropdown` : chevron, croix, loupe, coche ; `billy-snackbar` : rafraîchir, éclair, croix). Elle est aussi consommée directement par l'application : recherche globale (`src/app/layout/billy-search/billy-search.component.html`) et menu compte (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`). Certaines icônes embarquent une micro-animation déclenchée au survol d'une zone ancêtre.
 
 ## API
 
@@ -32,9 +32,11 @@ Union de littéraux exportée à côté du composant — pratique pour typer des
 
 Icônes de navigation métier : `accueil`, `achats`, `devis`, `ventes`, `prestations`, `agenda`, `clients`, `compte`, `peppol`.
 
-Icônes utilitaires : `bell`, `chevron-left`, `chevron-right`, `sync`, `check`, `clock`, `search`, `dark-mode`, `logout`, `open`, `upload`, `plus`.
+Icônes utilitaires : `bell`, `chevron-left`, `chevron-right`, `chevron-down`, `sync`, `check`, `clock`, `search`, `dark-mode`, `logout`, `open`, `upload`, `plus`, `close`, `refresh`, `bolt`, `lock`, `eye`, `eye-off`.
 
-Le type accepte aussi `string` en entrée du composant pour laisser passer des noms dynamiques, mais seuls les 21 noms ci-dessus produisent un dessin.
+Le type accepte aussi `string` en entrée du composant pour laisser passer des noms dynamiques, mais seuls les 28 noms ci-dessus produisent un dessin.
+
+Repères d'usage des utilitaires récents : `chevron-down` (dropdown, rotation à l'ouverture pilotée en CSS par le parent), `close` (croix de fermeture/suppression — tags du dropdown, snackbar), `refresh` (flèche circulaire « mise à jour », snackbar), `bolt` (éclair du bouton d'action de la snackbar), `lock`/`eye`/`eye-off` (champ mot de passe).
 
 ## Exemple d'utilisation
 

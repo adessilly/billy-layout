@@ -1,6 +1,7 @@
 import { Component, ElementRef, computed, forwardRef, input, output, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ClickOutsideDirective } from '../../core/click-outside/click-outside.directive';
+import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
 /** Option du dropdown — structurellement compatible avec l'ancien AdSelectElement (ad-library). */
 export interface DropdownOption {
@@ -34,8 +35,7 @@ interface PanelPosition {
  */
 @Component({
   selector: 'billy-dropdown',
-  standalone: true,
-  imports: [ClickOutsideDirective],
+  imports: [ClickOutsideDirective, BillyIconComponent],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => DropdownComponent),

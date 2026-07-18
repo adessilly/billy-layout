@@ -1,7 +1,9 @@
 import { Component, input, model, output } from '@angular/core';
+import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
 @Component({
     selector: 'billy-snackbar',
+    imports: [BillyIconComponent],
     templateUrl: './snackbar.component.html',
     styleUrls: ['./snackbar.component.scss']
 })

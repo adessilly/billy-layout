@@ -95,7 +95,7 @@ readonly paysSelectionnes = signal<string[]>(['FR', 'LU']); // pré-sélection p
 - Le déclencheur et le champ de recherche utilisent les mixins **`billy-forms`** : `@include forms.billy-input` et `@include forms.billy-focus`. Tout le thème (dark mode compris) vient des tokens `--billy-*` : `--billy-input-*`, `--billy-surface(-border/-shadow)`, `--billy-divider`, `--billy-accent(-soft/-strong)`, `--billy-text-muted`, `--billy-addon-color`.
 - Personnalisation par instance via CSS custom properties : `--dropdown-height` (35 px), `--dropdown-radius`, `--dropdown-font-size`.
 - Panneau : `position: fixed`, `z-index: 2000`, largeur alignée sur le déclencheur (min 180 px), liste scrollable max 260 px (`overscroll-behavior: contain`), bascule vers le haut si la place manque (`openUp`). Suivi du déclencheur au scroll/resize via listeners `window`.
-- Segments de recherche surlignés en `<b>` couleur `--billy-accent-strong` ; icônes Font Awesome (`fa-chevron-down`, `fa-magnifying-glass`, `fa-check`, `fa-xmark`).
+- Segments de recherche surlignés en `<b>` couleur `--billy-accent-strong` ; icônes du jeu maison [`billy-icon`](../core/billy-icon.md) (`chevron-down`, `search`, `check`, `close`) — taille via `[size]`, couleur héritée en `currentColor`, aucune dépendance Font Awesome.
 - **Tags multi** : chips teintés sur `--billy-accent-soft` / `--billy-accent-border` / `--billy-accent-strong` (cohérents avec les badges du design system), croix de suppression virant au `--billy-danger` au survol. Le déclencheur passe en `min-height` pour laisser les tags passer à la ligne.
 
 ## Pièges & notes

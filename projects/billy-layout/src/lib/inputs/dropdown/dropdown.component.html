@@ -25,7 +25,7 @@
                   tabindex="-1"
                   [attr.aria-label]="'Retirer ' + opt.text"
                   (click)="removeValue(opt, $event)">
-                  <i class="fa-solid fa-xmark"></i>
+                  <billy-icon name="close" [size]="12" [strokeWidth]="2.2" />
                 </span>
               }
             </span>
@@ -39,7 +39,8 @@
         {{ selectedOption()?.text ?? placeholder() }}
       </span>
     }
-    <i class="fa-solid fa-chevron-down dropdown-trigger__chevron" [class.dropdown-trigger__chevron--open]="isOpen()"></i>
+    <billy-icon name="chevron-down" class="dropdown-trigger__chevron"
+      [class.dropdown-trigger__chevron--open]="isOpen()" [size]="14" [strokeWidth]="2.2" />
   </button>
 
   @if (isOpen()) {
@@ -53,7 +54,7 @@
 
       @if (searchable()) {
         <div class="dropdown-search">
-          <i class="fa-solid fa-magnifying-glass dropdown-search__icon"></i>
+          <billy-icon name="search" class="dropdown-search__icon" [size]="13" [strokeWidth]="2.2" />
           <input #searchInput
             type="text"
             placeholder="Rechercher…"
@@ -63,7 +64,7 @@
             (keydown)="onSearchKeydown($event)">
           @if (searchText()) {
             <button type="button" class="dropdown-search__clear" tabindex="-1" (click)="onSearchInput('')">
-              <i class="fa-solid fa-xmark"></i>
+              <billy-icon name="close" [size]="10" [strokeWidth]="2.4" />
             </button>
           }
         </div>
@@ -86,7 +87,7 @@
               }
             </span>
             @if (selectedIds().has('' + item.option.id)) {
-              <i class="fa-solid fa-check dropdown-option__check"></i>
+              <billy-icon name="check" class="dropdown-option__check" [size]="13" [strokeWidth]="2.4" />
             }
           </li>
         } @empty {

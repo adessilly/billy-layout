@@ -1,26 +1,26 @@
 <div class="pwa-snackbar-zone" [class.pwa-snackbar-zone-active]="visible()" role="alert" aria-live="polite">
     <div class="pwa-snackbar">
         <div class="pwa-snackbar__icon" aria-hidden="true">
-            <i class="fa-solid fa-arrow-rotate-right"></i>
+            <billy-icon name="refresh" [size]="22" [strokeWidth]="2" />
         </div>
 
         <!-- Layout desktop : message + bouton séparés -->
         <div class="pwa-snackbar__body">
             <p class="pwa-snackbar__message">{{ message() }}</p>
             <button class="pwa-snackbar__btn" (click)="askButtonClick()" [title]="buttonTitle()">
-                <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                <billy-icon name="bolt" [size]="13" [strokeWidth]="2" />
                 {{ buttonLabel() }}
             </button>
         </div>
 
         <!-- Layout mobile : bouton unique fusionné -->
         <button class="pwa-snackbar__btn-compact" (click)="askButtonClick()" [title]="buttonTitle()">
-            <i class="fa-solid fa-arrow-rotate-right" aria-hidden="true"></i>
+            <billy-icon name="refresh" [size]="14" [strokeWidth]="2.1" />
             {{ message() }}
         </button>
 
         <button class="pwa-snackbar__close" (click)="askClose()" [title]="closeTitle()" aria-label="Ignorer">
-            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            <billy-icon name="close" [size]="14" [strokeWidth]="2.2" />
         </button>
     </div>
 </div>

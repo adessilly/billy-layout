@@ -59,9 +59,9 @@
     &--placeholder { color: var(--billy-text-muted, #9ca3af); }
   }
 
+  // billy-icon : taille via [size], ici couleur et rotation à l'ouverture
   &__chevron {
     flex-shrink: 0;
-    font-size: 11px;
     color: var(--billy-text-muted, #9ca3af);
     transition: transform 0.15s ease;
 
@@ -101,7 +101,6 @@
   &__remove {
     display: inline-flex;
     align-items: center;
-    font-size: 11px;
     color: var(--billy-accent-strong, #0e97bb);
     opacity: 0.65;
     cursor: pointer;
@@ -154,7 +153,6 @@
     left: 19px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
     color: var(--billy-text-muted, #9ca3af);
     pointer-events: none;
   }
@@ -182,7 +180,6 @@
     border-radius: 50%;
     background: var(--billy-input-border, #e5e7eb);
     color: var(--billy-addon-color, #6b7280);
-    font-size: 10px;
     cursor: pointer;
 
     &:hover { color: var(--billy-addon-hover-color, #374151); }
@@ -225,7 +222,6 @@
 
   &__check {
     flex-shrink: 0;
-    font-size: 12px;
     color: var(--billy-accent, #12b4dd);
   }
 

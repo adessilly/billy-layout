@@ -1,5 +1,6 @@
 import { Component, computed, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
 let nextUniqueId = 0;
 
@@ -20,6 +21,7 @@ export interface PasswordCriterion {
  */
 @Component({
   selector: 'billy-input-password',
+  imports: [BillyIconComponent],
   templateUrl: './input-password.component.html',
   styleUrls: ['./input-password.component.scss'],
   providers: [{

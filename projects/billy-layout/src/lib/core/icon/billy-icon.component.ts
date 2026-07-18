@@ -3,8 +3,9 @@ import { Component, input } from '@angular/core';
 export type BillyIconName =
   | 'accueil' | 'achats' | 'devis' | 'ventes' | 'prestations' | 'agenda'
   | 'clients' | 'compte' | 'peppol'
-  | 'bell' | 'chevron-left' | 'chevron-right' | 'sync' | 'check' | 'clock'
-  | 'search' | 'dark-mode' | 'logout' | 'open' | 'upload' | 'plus';
+  | 'bell' | 'chevron-left' | 'chevron-right' | 'chevron-down' | 'sync' | 'check' | 'clock'
+  | 'search' | 'dark-mode' | 'logout' | 'open' | 'upload' | 'plus'
+  | 'close' | 'refresh' | 'bolt' | 'lock' | 'eye' | 'eye-off';
 
 /**
  * Icônes SVG du design « Billy - Coque applicative » (trait arrondi, viewBox 24).
