@@ -95,6 +95,19 @@
   flex: none;
 }
 
+// Bascule clair / sombre : l'icône pivote d'un demi-tour au changement de
+// thème (reprise du comportement de l'app historique).
+.btn-toggle-dark-mode billy-icon {
+  display: flex;
+  transition: transform .5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-toggle-dark-mode billy-icon {
+    transition: none;
+  }
+}
+
 // Boutons d'action : s'applique aussi aux composants de notification
 // existants (li.nav-item > a.nav-link) projetés dans la topbar.
 .billy-topbar-actions ::ng-deep li {
@@ -175,6 +188,10 @@
 
   .billy-topbar-divider {
     background: #49545a;
+  }
+
+  .btn-toggle-dark-mode billy-icon {
+    transform: rotate(180deg);
   }
 
   .billy-topbar-actions ::ng-deep .nav-item > .nav-link {

@@ -55,7 +55,8 @@ Côté application, les slots se posent sur le shell (`src/app/auth/pages/auth-p
 - Burger : 3 barres qui se raccourcissent au hover ; barres accent `#0E97BB` quand la sidebar est repliée (`.collapsed`).
 - Les actions projetées sont stylées via `::ng-deep .nav-item > .nav-link` (38×38, radius 10px, hover `#EAEFF3`) et un style `.badge` rouge (`#EF4444`) — le contenu projeté ne porte pas l'attribut de scope de la topbar, d'où le `::ng-deep`.
 - Mobile (< 768px) : padding réduit, `.billy-topbar-search` en `display: none`.
-- Dark mode via `:host-context(body.dark-mode)` : barres du burger `#ced0d2` (accent `#4fc3e0`), divider `#49545a`, hovers `#2a373b`.
+- Bascule clair / sombre (`.btn-toggle-dark-mode`) : l'icône pivote de 180° (`transition: transform .5s ease`) au passage en dark mode — reprise du comportement de l'app historique. Rotation neutralisée sous `prefers-reduced-motion: reduce`.
+- Dark mode via `:host-context(body.dark-mode)` : barres du burger `#ced0d2` (accent `#4fc3e0`), divider `#49545a`, hovers `#2a373b`, icône du toggle en `rotate(180deg)`.
 
 ## BillyDarkModeService (`billy-dark-mode.service.ts`)
 
