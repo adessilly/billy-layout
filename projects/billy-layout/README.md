@@ -2,6 +2,9 @@
 
 [![npm version](https://img.shields.io/npm/v/billy-layout)](https://www.npmjs.com/package/billy-layout)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/adessilly/billy-layout/blob/main/LICENSE)
+[![Live demo](https://img.shields.io/badge/live%20demo-layout.compta--billy.be-0E97BB)](https://layout.compta-billy.be)
+
+**🔗 Live demo & interactive docs: [layout.compta-billy.be](https://layout.compta-billy.be)**
 
 BILLy layout + design system for Angular: application shell (topbar, sidebar,
 notifications, mobile navigation bar), SCSS tokens & mixins, form fields,

@@ -4,6 +4,11 @@
 [![CI](https://github.com/adessilly/billy-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/adessilly/billy-layout/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
+[![Live demo](https://img.shields.io/badge/live%20demo-layout.compta--billy.be-0E97BB)](https://layout.compta-billy.be)
+
+**🔗 [Live demo & interactive docs → layout.compta-billy.be](https://layout.compta-billy.be)** — every
+component with a live playground, the UX guidelines, the design-token gallery
+(try dark mode and the EN/FR switch).
 
 **An Angular design system and application shell, extracted from a real-world
 production app** (BILLy, an invoicing application). Standalone components,
@@ -58,7 +63,8 @@ prerequisites (fonts, tokens, `BILLY_*` providers) and the SCSS setup.
 
 ## Showcase site
 
-This repository is an Angular workspace containing the library **and** its
+**Live at [layout.compta-billy.be](https://layout.compta-billy.be).** This
+repository is an Angular workspace containing the library **and** its
 showcase site — a documentation app built with the library itself (shell,
 tokens, cards, toasts…): one page per component with a **live demo** tab and a
 **docs** tab, a UX guidelines page, and a live design-token gallery with dark
