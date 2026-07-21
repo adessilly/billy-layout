@@ -7,6 +7,10 @@ pièges. L'arborescence de `docs/` est le miroir de `src/lib/`.
 **🧭 [Guidelines UX](ux-guidelines.md)** — où placer les boutons d'action et d'ajout,
 comment structurer une page de liste, quand utiliser consult-card et save-bar.
 
+**🤖 [claude.md](claude.md)** — contexte prêt à l'emploi pour votre assistant IA :
+à importer dans le `CLAUDE.md` de l'application consommatrice
+(`@node_modules/billy-layout/docs/claude.md`).
+
 ## core — briques transverses
 
 - [billy-icon](core/billy-icon.md) — `<billy-icon>` : jeu d'icônes SVG maison (type `BillyIconName`), micro-animations au survol.

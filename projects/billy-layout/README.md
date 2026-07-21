@@ -17,6 +17,15 @@ d'assemblage des écrans (boutons de header, listes, consult-card, save-bar).
 > installée, tout est lisible dans `node_modules/billy-layout/docs/` (assistants IA
 > compris — commencez par `docs/README.md` puis `docs/ux-guidelines.md`).
 
+**🤖 Assistant IA (Claude Code, etc.)** : le paquet embarque
+[docs/claude.md](docs/claude.md), un contexte prêt à l'emploi. Ajoutez cette
+ligne au `CLAUDE.md` de votre application et votre assistant connaîtra le
+layout, le design system et les composants installés :
+
+```markdown
+@node_modules/billy-layout/docs/claude.md
+```
+
 ## Arborescence
 
 `src/lib/` est organisé par catégories (miroir de `docs/`) :

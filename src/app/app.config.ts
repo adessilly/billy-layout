@@ -6,6 +6,7 @@ import { BILLY_SHELL_CONFIG, BillyMenuLink, BillyShellConfig, ToastrService } fr
 
 import { routes } from './app.routes';
 import { DOC_CATEGORIES } from './site/doc-registry';
+import { version as libraryVersion } from '../../projects/billy-layout/package.json';
 
 registerLocaleData(localeFr);
 
@@ -39,7 +40,7 @@ export const appConfig: ApplicationConfig = {
         const toastr = inject(ToastrService);
         return {
           menuLinks: MENU_LINKS,
-          version: '0.0.1',
+          version: libraryVersion,
           homeLink: '/',
           logout: () => toastr.info('Ceci est le site vitrine de billy-layout : il n’y a pas de session à fermer 😉', 'Déconnexion'),
           // Badge par catégorie : le nombre de fiches, pour démontrer menuBadges.

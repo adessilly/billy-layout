@@ -3,6 +3,9 @@
 }
 
 .install {
+  // Ancre le .sr-only absolu : sans ancêtre positionné il se place par rapport
+  // au document, hors du conteneur scrollable du shell, et allonge <html>.
+  position: relative;
   padding: 52px 8px 0;
 
   // Déclinaisons AA (≥ 4.5:1) des tokens de texte : --billy-accent-strong sur
