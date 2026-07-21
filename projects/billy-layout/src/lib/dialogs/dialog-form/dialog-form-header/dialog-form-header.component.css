@@ -1,0 +1,47 @@
+.billy-modal-header {
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  /* Clean look: no separator, the header content carries the hierarchy. */
+  border-bottom: none;
+}
+
+/* Close cross: small, discreet rounded button. Colors via --billy-* tokens
+   → automatic dark mode (the modal is moved under <body>). */
+.billy-modal-header .close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--billy-text-muted, #9ca3af);
+  font-size: 15px;
+  line-height: 1;
+  opacity: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.billy-modal-header .close:hover {
+  background: var(--billy-divider, #f3f4f6);
+  color: var(--billy-section-title, #374151);
+}
+
+.billy-modal-header .close:active {
+  transform: scale(0.92);
+}
+
+.billy-modal-header .close:focus-visible {
+  outline: 2px solid var(--billy-focus-border, #66afe9);
+  outline-offset: 1px;
+}
+
+.billy-modal-header .close i {
+  font-size: 16px;
+}

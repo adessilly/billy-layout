@@ -1,0 +1,53 @@
+@use 'billy-forms' as forms;
+
+// Formerly Bootstrap's .form-control: the field box is carried here (it is a
+// div posing as a field, with the tags living inside). The skin (border,
+// radius, focus) follows the design system's --billy-* tokens; dark mode is
+// therefore automatic.
+.email-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  min-height: forms.$field-height;
+  padding: 4px 5px;
+  font-size: 1rem;
+  line-height: 1.52857;
+  background: var(--billy-input-bg, #fff);
+  border: 1px solid var(--billy-input-border, #e5e7eb);
+  border-radius: var(--billy-input-radius, 8px);
+  color: var(--billy-input-color, #374151);
+  cursor: text;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-within {
+    @include forms.billy-focus;
+  }
+
+  &.disabled {
+    background: var(--billy-input-disabled-bg, #f3f4f6);
+    cursor: not-allowed;
+  }
+}
+
+.email-input {
+  flex: 1;
+  min-width: 120px;
+  border: none;
+  outline: none;
+  padding: 0.25rem;
+  padding-left: 0px;
+  background: transparent;
+  color: inherit;
+
+  &::placeholder { color: var(--billy-input-placeholder, #c2c8d0); }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.email-input-wrapper {
+  position: relative;
+}

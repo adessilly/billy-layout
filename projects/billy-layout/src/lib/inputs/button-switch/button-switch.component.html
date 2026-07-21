@@ -1,0 +1,24 @@
+<button
+  type="button"
+  role="switch"
+  class="bsw"
+  [class.bsw--on]="checked()"
+  [class.bsw--disabled]="isDisabled()"
+  [attr.aria-checked]="checked()"
+  [attr.aria-disabled]="isDisabled() ? true : null"
+  [disabled]="isDisabled()"
+  (click)="toggle()"
+  (keydown)="onKeydown($event)">
+
+  <span class="bsw-track">
+    <span class="bsw-thumb">
+      @if (currentIcon()) {
+        <i [class]="currentIcon()"></i>
+      }
+    </span>
+  </span>
+
+  @if (currentLabel()) {
+    <span class="bsw-label">{{ currentLabel() }}</span>
+  }
+</button>

@@ -1,0 +1,7 @@
+<div class="toastr-stack" aria-live="polite">
+
+  @for (toast of messages(); track toast.id) {
+    <billy-toastr [toast]="toast" />
+  }
+
+</div>

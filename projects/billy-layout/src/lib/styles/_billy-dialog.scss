@@ -1,0 +1,139 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLy — modal dialog shell (replaces Bootstrap's .modal*)
+// Companion engine: src/app/shared/utils/dialog-utils.ts (Dialog class).
+//
+// Global stylesheet (rather than component styles) for two reasons:
+//  - dialogs are moved under <body> on open;
+//  - three components share the shell (dialog-form, delete, ai-extract):
+//    scoping it would mean duplicating it three times.
+//
+// The geometry mirrors Bootstrap's (500px, modal-xl, margins) so the
+// migration does not shift any dialog; colors come from the --billy-* tokens
+// in styles-tokens.scss, so dark mode is automatic.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Root: full screen, serves at once as backdrop, click-to-close zone and
+// scroll container. `display` is driven from JS (none ↔ block): that switch
+// is what replays the dialogs' illustration animations.
+.billy-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  display: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 0.5);
+  opacity: 0;
+  transition: opacity 0.15s linear;
+}
+
+.billy-modal.is-open {
+  opacity: 1;
+}
+
+// Centered wrapper. `pointer-events: none` lets gutter clicks reach the
+// root (= close on backdrop click); the content takes them back for itself.
+.billy-modal-dialog {
+  position: relative;
+  width: auto;
+  max-width: 500px;
+  margin: 1.75rem auto;
+  pointer-events: none;
+  transform: translateY(-30px);
+  transition: transform 0.25s ease-out;
+}
+
+.billy-modal.is-open .billy-modal-dialog {
+  transform: none;
+}
+
+@media (max-width: 575.98px) {
+  .billy-modal-dialog {
+    margin: 0.5rem;
+  }
+}
+
+.billy-modal-dialog--centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 3.5rem);
+}
+
+@media (max-width: 575.98px) {
+  .billy-modal-dialog--centered {
+    min-height: calc(100% - 1rem);
+  }
+}
+
+// Equivalent of .modal-xl: widened in steps, like Bootstrap.
+@media (min-width: 992px) {
+  .billy-modal-dialog--large { max-width: 800px; }
+}
+
+@media (min-width: 1200px) {
+  .billy-modal-dialog--large { max-width: 1140px; }
+}
+
+// Dialog card: same visual language as billy-card (surface, thin border,
+// 16px radius, soft shadow).
+.billy-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 16px;
+  box-shadow: var(
+    --billy-surface-shadow,
+    0 10px 30px rgba(17, 24, 39, 0.12),
+    0 2px 8px rgba(17, 24, 39, 0.06)
+  );
+}
+
+.billy-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.billy-modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+}
+
+.billy-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.billy-modal-title {
+  margin-bottom: 0;
+  line-height: 1.5;
+  font-weight: lighter;
+
+  > i { margin-right: 10px; }
+}
+
+// Scroll lock, set by Dialog while a dialog is open.
+body.billy-dialog-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .billy-modal,
+  .billy-modal-dialog {
+    transition: none;
+  }
+
+  .billy-modal-dialog {
+    transform: none;
+  }
+}

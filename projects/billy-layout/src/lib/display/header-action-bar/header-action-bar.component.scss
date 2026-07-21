@@ -1,0 +1,246 @@
+// ── Container ──────────────────────────────────────────────────────────────
+
+.hab {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// ── Segmented group: connected neutral actions ─────────────────────────────
+
+.hab-group {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.hab-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:last-child { border-right: 0; }
+
+  &:hover:not(:disabled) {
+    background: #e6f7fc;
+    color: #0e97bb;
+  }
+
+  &:active:not(:disabled) { background: #d5f0f8; }
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.hab-seg__icon i {
+  font-size: 12px;
+  line-height: 1;
+}
+
+// ── Buttons (pill visual, cf. agenda-add-button) ───────────────────────────
+
+.hab-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 10px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.55s ease;
+    pointer-events: none;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
+
+    &::after { left: 130%; }
+
+    .hab-btn__icon { background: rgba(15, 23, 42, 0.1); }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.hab-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+
+  i {
+    font-size: 12px;
+    line-height: 1;
+  }
+}
+
+// ── Variants ───────────────────────────────────────────────────────────────
+
+.hab-btn--primary {
+  background: linear-gradient(135deg, #12b4dd 0%, #0e97bb 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(18, 180, 221, 0.3);
+
+  .hab-btn__icon { background: rgba(255, 255, 255, 0.18); }
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(18, 180, 221, 0.45);
+
+    .hab-btn__icon { background: rgba(255, 255, 255, 0.28); }
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: 0 1px 4px rgba(18, 180, 221, 0.25);
+  }
+}
+
+.hab-btn--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+
+  .hab-btn__icon { background: rgba(255, 255, 255, 0.18); }
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(229, 62, 62, 0.45);
+
+    .hab-btn__icon { background: rgba(255, 255, 255, 0.28); }
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: 0 1px 4px rgba(229, 62, 62, 0.25);
+  }
+}
+
+// ── Mobile: icons only ─────────────────────────────────────────────────────
+
+@media (max-width: 640px) {
+  .hab-btn {
+    padding: 7px 10px;
+  }
+
+  .hab-seg {
+    padding: 7px 12px;
+  }
+
+  .hab-label {
+    display: none;
+  }
+}
+
+// ── Dark mode ──────────────────────────────────────────────────────────────
+
+:host-context(.dark-mode) .hab-group {
+  background: #1e2b2f;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+:host-context(.dark-mode) .hab-seg {
+  color: #cbd5e1;
+  border-right-color: rgba(255, 255, 255, 0.08);
+
+  &:hover:not(:disabled) {
+    background: rgba(125, 211, 236, 0.14);
+    color: #7dd3ec;
+  }
+
+  &:active:not(:disabled) { background: rgba(125, 211, 236, 0.2); }
+}
+
+:host-context(.dark-mode) .hab-btn {
+  background: #1e2b2f;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+    .hab-btn__icon { background: rgba(255, 255, 255, 0.14); }
+  }
+
+  .hab-btn__icon { background: rgba(255, 255, 255, 0.08); }
+}
+
+:host-context(.dark-mode) .hab-btn--primary {
+  background: linear-gradient(135deg, #12b4dd 0%, #0e97bb 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(18, 180, 221, 0.25);
+
+  .hab-btn__icon { background: rgba(255, 255, 255, 0.18); }
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(18, 180, 221, 0.4);
+
+    .hab-btn__icon { background: rgba(255, 255, 255, 0.28); }
+  }
+}
+
+:host-context(.dark-mode) .hab-btn--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.25);
+
+  .hab-btn__icon { background: rgba(255, 255, 255, 0.18); }
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(229, 62, 62, 0.4);
+
+    .hab-btn__icon { background: rgba(255, 255, 255, 0.28); }
+  }
+}

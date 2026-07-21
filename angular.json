@@ -1,0 +1,120 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "billy-layout-project": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              {
+                "glob": "**/*.md",
+                "input": "projects/billy-layout/docs",
+                "output": "/docs"
+              },
+              {
+                "glob": "pdf.worker.min.js",
+                "input": "node_modules/pdfjs-dist/build/",
+                "output": "/assets/js/"
+              }
+            ],
+            "styles": ["src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["projects/billy-layout/src/lib/styles"]
+            },
+            "allowedCommonJsDependencies": [
+              "ng2-pdf-viewer",
+              "pdfjs-dist/build/pdf",
+              "pdfjs-dist/web/pdf_viewer"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kB",
+                  "maximumError": "20kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "billy-layout-project:build:production"
+            },
+            "development": {
+              "buildTarget": "billy-layout-project:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "billy-layout": {
+      "projectType": "library",
+      "root": "projects/billy-layout",
+      "sourceRoot": "projects/billy-layout/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/billy-layout/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/billy-layout/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/billy-layout/tsconfig.spec.json"
+          }
+        }
+      }
+    }
+  }
+}

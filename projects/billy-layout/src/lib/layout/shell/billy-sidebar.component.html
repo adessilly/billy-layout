@@ -1,0 +1,30 @@
+<nav class="billy-sidebar"
+     [class.collapsed]="shell.sidebarCollapsed()"
+     [class.mobile-open]="shell.mobileSidebarOpen()">
+
+  @for (item of links; track item.text) {
+    @if (item.heading) {
+      <div class="billy-sidebar-heading">{{ item.text }}</div>
+    } @else {
+      <billy-nav-item
+        [link]="item.link!"
+        [icon]="item.icon!"
+        [label]="item.text"
+        [collapsed]="shell.sidebarCollapsed()"
+        [badge]="badges()[item.text] ?? null"
+        (click)="shell.closeMobileSidebar()" />
+    }
+  }
+
+  <div class="billy-sidebar-version">
+    <span class="billy-sidebar-version-dot" aria-hidden="true"></span>
+    <span class="billy-sidebar-version-label">
+      @if (!shell.sidebarCollapsed()) {
+        Version {{ version }}
+      } @else {
+        {{ version }}
+      }
+    </span>
+  </div>
+
+</nav>

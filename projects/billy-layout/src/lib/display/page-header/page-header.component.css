@@ -1,0 +1,130 @@
+.billy-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 2px 18px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Back button: discreet ghost button that takes on a pill relief on hover
+   (same visual language as the action bar, at the opposite end of the header). */
+.billy-page-header-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  /* Pulls the button closer to the title without shrinking the gap between other elements. */
+  margin-right: -6px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #94A3B8;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+              box-shadow 0.15s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.billy-page-header-back i {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.billy-page-header-back:hover {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  color: #0E97BB;
+  transform: translateX(-2px);
+}
+
+.billy-page-header-back:active {
+  transform: translateX(-2px) scale(0.96);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+}
+
+.billy-page-header-back:focus-visible {
+  outline: 2px solid #12B4DD;
+  outline-offset: 2px;
+}
+
+.billy-page-header-titles {
+  min-width: 0;
+}
+
+.billy-page-header-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #1E293B;
+}
+
+.billy-page-header-subtitle {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #94A3B8;
+}
+
+.billy-page-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media screen and (max-width: 767px) {
+  .billy-page-header {
+    padding: 14px 2px 12px;
+    gap: 12px;
+  }
+
+  .billy-page-header-title {
+    font-size: 19px;
+  }
+
+  /* Comfortable touch target, and always-visible affordance (no hover on touch). */
+  .billy-page-header-back {
+    width: 40px;
+    height: 40px;
+    margin-right: -4px;
+    background: #fff;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    color: #64748B;
+  }
+}
+
+:host-context(body.dark-mode) .billy-page-header-title {
+  color: #ced0d2;
+}
+
+:host-context(body.dark-mode) .billy-page-header-subtitle {
+  color: #64747c;
+}
+
+:host-context(body.dark-mode) .billy-page-header-back {
+  color: #64747c;
+}
+
+:host-context(body.dark-mode) .billy-page-header-back:hover {
+  background: #1e2b2f;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  color: #7dd3ec;
+}
+
+@media screen and (max-width: 767px) {
+  :host-context(body.dark-mode) .billy-page-header-back {
+    background: #1e2b2f;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    color: #cbd5e1;
+  }
+}

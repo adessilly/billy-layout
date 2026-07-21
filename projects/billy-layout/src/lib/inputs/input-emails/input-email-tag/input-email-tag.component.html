@@ -1,0 +1,11 @@
+<div class="email-tag" [class.invalid]="invalid()">
+  <span class="email-text">{{ email() }}</span>
+  <button
+    type="button"
+    class="remove-btn"
+    (click)="onRemove()"
+    [disabled]="disabled()"
+    tabindex="-1">
+    <i class="fas fa-times"></i>
+  </button>
+</div>

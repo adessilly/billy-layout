@@ -1,0 +1,47 @@
+<div class="cfd-shell"
+  [class.cfd-shell--focus]="focused()"
+  [class.cfd-shell--valid]="status() === 'valid'"
+  [class.cfd-shell--invalid]="showError()"
+  [class.cfd-shell--disabled]="isDisabled()">
+
+  <billy-code-glyph class="cfd-glyph" kind="email"></billy-code-glyph>
+
+  <!-- type="text" and not "email": the base places the caret with
+       setSelectionRange(), which the spec does not allow on an email field
+       (it throws InvalidStateError, and the input would be lost). `inputmode`
+       brings back the "@" keyboard on mobile, which is what we were after. -->
+  <input #codeInput class="cfd-input cfd-input--text" type="text" inputmode="email"
+    [id]="inputId() || uid"
+    [placeholder]="placeholder() || 'name@example.com'"
+    [disabled]="isDisabled()"
+    [attr.aria-invalid]="showError()"
+    [attr.aria-describedby]="uid + '-msg'"
+    autocomplete="email" autocapitalize="off" spellcheck="false"
+    (input)="onInput()"
+    (keydown)="onKeydown($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()" />
+
+  <billy-code-status [status]="status()" [progress]="progress()"></billy-code-status>
+
+</div>
+
+<p class="cfd-meta" [id]="uid + '-msg'" role="status">
+  <!-- No domain badge on an address in error: "gmail.com" displayed next to
+       "there are two @s" muddles the message. -->
+  @if (status() !== 'invalid' && domain(); as host) {
+    <span class="cfd-country">{{ host }}</span>
+  }
+
+  @if (suggestion(); as corrected) {
+    <!-- The correction is clickable: reading it without being able to apply it
+         would be an invitation to retype the address by hand. -->
+    <button type="button" class="cfd-suggest" (click)="applySuggestion()">
+      Did you mean <strong>{{ corrected }}</strong>?
+    </button>
+  } @else {
+    <span class="cfd-msg"
+      [class.cfd-msg--ok]="status() === 'valid'"
+      [class.cfd-msg--error]="showError()">{{ message() }}</span>
+  }
+</p>

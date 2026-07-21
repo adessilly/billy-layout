@@ -1,0 +1,113 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// billy-button-switch — iOS-style switch aligned with the BILLy form guidelines
+// ═══════════════════════════════════════════════════════════════════════════
+
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+  // Track color in the inactive state (adapted for dark mode below).
+  --bsw-track-off: #d1d5db;
+  --bsw-track-on:  var(--billy-accent, #12b4dd);
+  --bsw-thumb:     #ffffff;
+}
+
+.bsw {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--billy-input-color, #374151);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+// ── Rail ────────────────────────────────────────────────────────────────────
+.bsw-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--bsw-track-off);
+  box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.14);
+  transition: background-color 0.28s cubic-bezier(0.4, 0.1, 0.3, 1);
+}
+
+// ── Curseur ─────────────────────────────────────────────────────────────────
+.bsw-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bsw-thumb);
+  color: var(--bsw-track-on);
+  font-size: 10px;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.28), 0 1px 3px rgba(17, 24, 39, 0.12);
+  transition:
+    transform 0.30s cubic-bezier(0.34, 1.4, 0.64, 1),
+    width 0.20s ease;
+}
+
+// ── State label ─────────────────────────────────────────────────────────────
+.bsw-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--billy-input-color, #374151);
+  transition: color 0.2s ease;
+}
+
+// ── Active state ────────────────────────────────────────────────────────────
+.bsw--on .bsw-track {
+  background: var(--bsw-track-on);
+  box-shadow: inset 0 1px 2px rgba(14, 151, 187, 0.35);
+}
+.bsw--on .bsw-thumb {
+  transform: translateX(20px);
+}
+.bsw--on .bsw-label {
+  color: var(--billy-accent-strong, #0e97bb);
+}
+
+// ── Interactions ────────────────────────────────────────────────────────────
+.bsw:hover:not(.bsw--disabled) .bsw-thumb {
+  box-shadow: 0 1px 3px rgba(17, 24, 39, 0.34), 0 2px 6px rgba(17, 24, 39, 0.16);
+}
+// Small iOS-style "stretch" effect while pressed.
+.bsw:active:not(.bsw--disabled) .bsw-thumb {
+  width: 24px;
+}
+.bsw--on:active:not(.bsw--disabled) .bsw-thumb {
+  transform: translateX(16px);
+}
+
+.bsw:focus-visible {
+  outline: none;
+}
+.bsw:focus-visible .bsw-track {
+  box-shadow:
+    inset 0 1px 2px rgba(17, 24, 39, 0.14),
+    0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.25));
+}
+
+// ── Disabled ────────────────────────────────────────────────────────────────
+.bsw--disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+// ── Dark mode ───────────────────────────────────────────────────────────────
+:host-context(body.dark-mode) {
+  --bsw-track-off: #49545a;
+  --bsw-thumb:     #e8eaed;
+}

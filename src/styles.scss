@@ -1,0 +1,106 @@
+// ── Global styles of the billy-layout showcase site ─────────────────────────
+// The library stylesheets are resolved by stylePreprocessorOptions.includePaths
+// (projects/billy-layout/src/lib/styles) — same names as an external consumer.
+@use '@fortawesome/fontawesome-free/css/all.css';
+@use 'billy-reboot';
+@use 'billy-tokens';
+@use 'billy-dialog';
+@use 'billy-forms' as forms;
+
+// Site-specific tokens (dark variants via body.dark-mode).
+:root {
+  --site-page-bg: #f4f6f8;
+  --site-card-bg: #fff;
+  --site-heading: #1f2937;
+  --site-code-bg: #f6f8fa;
+  --site-code-border: #eceff3;
+  --site-accent-gradient: linear-gradient(135deg, #12b4dd 0%, #0e97bb 60%, #0b7e9d 100%);
+}
+
+body.dark-mode {
+  --site-page-bg: #1e292b;
+  --site-card-bg: #1c282b;
+  --site-heading: #e2e6e9;
+  --site-code-bg: #121d1f;
+  --site-code-border: #2a3a3e;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Source Sans Pro', sans-serif;
+}
+
+body.dark-mode {
+  color: #a8b6bb;
+  background-color: #1e292b;
+}
+
+// Standard container for the site pages (below billy-page-header).
+.site-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 4px 48px 16px;
+}
+
+@media (max-width: 767.98px) {
+  .site-page {
+    padding: 0 2px 40px;
+  }
+}
+
+// Standard white card of the site (doc pages, demos).
+.site-card {
+  background: var(--site-card-bg);
+  border: 1px solid var(--billy-surface-border);
+  border-radius: 16px;
+  box-shadow: var(--billy-card-shadow);
+  padding: 28px 32px;
+}
+
+@media (max-width: 767.98px) {
+  .site-card {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+}
+
+// ── Demo building blocks (built with the library's billy-forms mixins) ──────
+.demo-btn {
+  @include forms.billy-panel-button;
+  @include forms.billy-panel-button-ghost;
+}
+
+.demo-btn--submit {
+  @include forms.billy-panel-button;
+  @include forms.billy-panel-button-submit;
+}
+
+.demo-btn--destructive {
+  @include forms.billy-panel-button;
+  @include forms.billy-panel-button-destructive;
+}
+
+.demo-field {
+  @include forms.billy-field;
+}
+
+.demo-form-block {
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+
+.demo-note {
+  font-size: 12px;
+  color: var(--billy-text-soft);
+  text-align: center;
+  width: 100%;
+}
+
+// Honor prefers-reduced-motion for all of the site's motion design.
+@media (prefers-reduced-motion: reduce) {
+  .site-motion,
+  .site-motion * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

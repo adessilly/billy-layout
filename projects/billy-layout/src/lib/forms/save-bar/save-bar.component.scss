@@ -1,0 +1,85 @@
+// Form action bar (save / cancel + ng-content).
+// Same visual language as the panels (billy-card mixin): white surface,
+// thin --billy-surface-border border, 16px corners, soft --billy-card-shadow.
+// Still a sticky "floating" bar: a slight upward halo is added to detach it
+// from the content scrolling underneath.
+// The buttons are billy-button (ghost / plain variants): this stylesheet now
+// only handles the bar's layout and the buttons' sizing.
+// Relies on the --billy-* tokens (automatic dark mode under body.dark-mode).
+
+:host {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  z-index: 1001;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  // Aligned with billy-card: same border / radius / surface.
+  padding: 14px 18px;
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 16px;
+  // card shadow + upward halo: the bar "floats" above the scrolling content
+  box-shadow: var(--billy-card-shadow, 0 1px 2px rgba(17, 24, 39, 0.04)),
+    0 -6px 20px rgba(17, 24, 39, 0.05);
+
+  &.no-theme {
+    border: none;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+.left-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.right-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+// ── Button sizing ────────────────────────────────────────────────────────────
+// The skin (colors, hover, focus, spinner) comes from billy-button; we only set
+// the minimum width here, so both actions stay readable.
+// Low specificity (element selector): a consumer can widen it.
+.right-zone billy-button {
+  min-width: 128px;
+}
+
+// ── Mobile: full-width frosted bar ───────────────────────────────────────────
+@media screen and (max-width: 767px) {
+  :host:not(.no-theme) {
+    border: none;
+    border-top: 1px solid var(--billy-divider, #f3f4f6);
+    border-radius: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--billy-surface, #fff) 82%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 -8px 24px rgba(17, 24, 39, 0.08);
+  }
+
+  .right-zone {
+    flex: 1 1 auto;
+  }
+
+  // Both actions share the width; billy-button (inline-flex host) becomes
+  // flexible and its inner <button> already takes up 100%.
+  .right-zone billy-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

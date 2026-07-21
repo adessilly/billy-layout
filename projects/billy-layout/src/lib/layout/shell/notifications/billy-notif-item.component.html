@@ -1,0 +1,15 @@
+<div class="billy-notif-item">
+  <span class="billy-notif-item-avatar" [style.background]="accentBg()" [style.color]="accentColor()">{{ initial() }}</span>
+  <span class="billy-notif-item-texts">
+    <span class="billy-notif-item-title">{{ title() }}</span>
+    <span class="billy-notif-item-sub">{{ sub() }}</span>
+  </span>
+  <span class="billy-notif-item-right">
+    @if (amount()) {
+      <span class="billy-notif-item-amount">{{ amount() }}</span>
+    }
+    @if (status()) {
+      <span class="billy-notif-item-status" [style.color]="statusColor() ?? accentColor()">{{ status() }}</span>
+    }
+  </span>
+</div>

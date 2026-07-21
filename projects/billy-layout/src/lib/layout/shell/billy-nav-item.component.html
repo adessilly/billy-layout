@@ -1,0 +1,16 @@
+<a class="billy-nav-item billy-icon-hover-zone"
+   [class.collapsed]="collapsed()"
+   [routerLink]="link()"
+   routerLinkActive="active"
+   [routerLinkActiveOptions]="{ exact: link() === '/' }"
+   [title]="collapsed() ? label() : ''">
+  <span class="billy-nav-item-accent" aria-hidden="true"></span>
+  <billy-icon class="billy-nav-item-icon" [name]="icon()" [size]="21" />
+  @if (!collapsed()) {
+    <span class="billy-nav-item-label">{{ label() }}</span>
+  }
+  @if (badge(); as badgeValue) {
+    <span class="billy-nav-item-badge"
+          [class.notification]="badgeVariant() === 'notification'">{{ badgeValue }}</span>
+  }
+</a>

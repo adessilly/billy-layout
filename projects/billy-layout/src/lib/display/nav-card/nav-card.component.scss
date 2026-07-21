@@ -1,0 +1,107 @@
+// Clickable navigation tile. Dark mode is entirely carried by the
+// --billy-* tokens: no local dark block.
+
+:host {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--billy-surface);
+  border: 1px solid var(--billy-surface-border);
+  box-shadow: var(--billy-card-shadow);
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+
+  // Reset for the <button billy-nav-card> usage.
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--billy-accent-border);
+    box-shadow: var(--billy-surface-shadow);
+
+    .nc-icon { transform: scale(1.08) rotate(-4deg); }
+    .nc-chevron { opacity: 1; transform: translateX(0); }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--billy-focus-border);
+    outline-offset: 2px;
+  }
+}
+
+// Staggered entrance: delay = stagger × 60ms (+ optional base delay,
+// --billy-nav-card-base-delay, set by the container).
+@media (prefers-reduced-motion: no-preference) {
+  :host {
+    // backwards (not both): once the animation is done, it must no longer
+    // override the :hover transform.
+    animation: billyNavCardIn .45s ease backwards;
+    animation-delay: calc(var(--billy-nav-card-stagger, 0) * 60ms + var(--billy-nav-card-base-delay, 0ms));
+  }
+}
+
+@keyframes billyNavCardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--billy-accent-strong);
+  background: var(--billy-accent-soft);
+  border: 1px solid var(--billy-accent-border);
+  transition: transform .2s ease;
+}
+
+.nc-texts {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nc-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--billy-section-title);
+}
+
+.nc-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--billy-accent-strong);
+  background: var(--billy-accent-soft);
+  border-radius: 12px;
+  padding: 1px 8px;
+}
+
+.nc-description {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--billy-text-soft);
+}
+
+.nc-chevron {
+  align-self: center;
+  color: var(--billy-accent);
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: opacity .18s ease, transform .18s ease;
+}

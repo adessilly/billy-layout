@@ -1,0 +1,26 @@
+<div class="left-zone">
+  <ng-content></ng-content>
+</div>
+
+<div class="right-zone">
+  @if(cancelVisible()) {
+    <billy-button
+      variant="ghost"
+      type="button"
+      [label]="labelCancelText()"
+      [icon]="iconCancel()"
+      (clicked)="askCancel()" />
+  }
+
+  @if(saveVisible()) {
+    <billy-button
+      variant="plain"
+      type="submit"
+      [color]="colorSave()"
+      [label]="loading() ? labelSaveLoadingText() : labelSaveText()"
+      [icon]="iconSave()"
+      [loading]="loading()"
+      [disabled]="disabled()"
+      (clicked)="askSave()" />
+  }
+</div>

@@ -1,0 +1,78 @@
+// Field framed by a prefix and/or a suffix ("No.", "€", "%"…).
+// Self-contained since Bootstrap was dropped: no more .input-group nor
+// .input-group-prepend/append (those two came from Bootstrap 4, which only the
+// Angle theme still defined). Colors via the --billy-* tokens.
+@use 'billy-forms' as forms;
+
+// Group written by hand rather than with the billy-input-group mixin: the field
+// is projected by the consumer, so the mixin's child selectors (`>`) cannot
+// reach it — it carries the _ngcontent attribute of ITS page, not ours.
+.ips-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 1rem; // ex-.mb-3
+}
+
+// ── Prefix / suffix ─────────────────────────────────────────────────────────
+.ips-addon {
+  @include forms.billy-input-group-addon;
+}
+
+// A single border at the junction: the addon yields its own to the field.
+.ips-addon--prefix {
+  border-right: 0;
+  border-radius: var(--billy-input-radius, 8px) 0 0 var(--billy-input-radius, 8px);
+}
+
+.ips-addon--suffix {
+  border-left: 0;
+  border-radius: 0 var(--billy-input-radius, 8px) var(--billy-input-radius, 8px) 0;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover i {
+  color: var(--billy-accent-strong, #0e97bb);
+}
+
+// ── Projected field ─────────────────────────────────────────────────────────
+// ::ng-deep is required: the field comes from the consumer (ng-content) and
+// does not carry our scope attribute. We only give it its place in the
+// group — not its box nor its skin.
+//
+// Tempting to include billy-field here, but that would be an abuse: `.ips-group[scope]
+// input` (0,2,1) beats the page's `.form-control[scope]` (0,2,0), so the
+// wrapper would force its typography onto the field of a consumer that has its
+// own (the "No." of vente-form is 13px, off the design system scale). The box
+// stays with the consumer: the three pages that use us all project a
+// `.form-control`.
+.ips-group ::ng-deep input,
+.ips-group ::ng-deep select {
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+}
+
+// Focused field above the addons, otherwise its halo would slip underneath.
+.ips-group ::ng-deep input:focus,
+.ips-group ::ng-deep select:focus {
+  z-index: 2;
+}
+
+// Square corners on the side where an addon is attached.
+.ips-group:has(.ips-addon--prefix) ::ng-deep input,
+.ips-group:has(.ips-addon--prefix) ::ng-deep select {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.ips-group:has(.ips-addon--suffix) ::ng-deep input,
+.ips-group:has(.ips-addon--suffix) ::ng-deep select {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

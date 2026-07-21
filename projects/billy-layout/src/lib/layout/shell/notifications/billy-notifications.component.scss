@@ -1,0 +1,293 @@
+.billy-notifications {
+  position: relative;
+  list-style: none;
+  display: flex;
+}
+
+// ── Bell ───────────────────────────────────────────────────────────────────
+.billy-notif-bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+
+  &:hover {
+    background: #EAEFF3;
+  }
+
+  &.open {
+    background: #E6F7FC;
+    color: #0E97BB;
+  }
+
+  // Chime when there is at least one notification (panel closed):
+  // the bell swings from its anchor point then rests for a long while.
+  &.ringing billy-icon {
+    transform-origin: 50% 15%;
+    animation: billyBellRing 6s ease-in-out infinite;
+    animation-delay: 1.2s;
+  }
+}
+
+@keyframes billyBellRing {
+  0%, 14%, 100% { transform: rotate(0); }
+  2% { transform: rotate(16deg); }
+  4% { transform: rotate(-13deg); }
+  6% { transform: rotate(10deg); }
+  8% { transform: rotate(-7deg); }
+  10% { transform: rotate(4deg); }
+  12% { transform: rotate(-2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .billy-notif-bell.ringing billy-icon {
+    animation: none;
+  }
+}
+
+.billy-notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #EF4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #F4F6F8;
+}
+
+// ── Panel ──────────────────────────────────────────────────────────────────
+.billy-notif-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 300px;
+  background: #fff;
+  border: 1px solid #ECF0F3;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -18px rgba(16, 42, 67, .22);
+  overflow: hidden;
+  transform-origin: top right;
+  transition: opacity .2s ease, transform .22s cubic-bezier(.34, 1.28, .5, 1);
+  opacity: 0;
+  transform: translateY(-8px) scale(.96);
+  pointer-events: none;
+  z-index: 30;
+
+  &.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+@keyframes billyNotifIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.billy-notif-level {
+  padding: 6px;
+  animation: billyNotifIn .2s ease;
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────
+.billy-notif-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #F1F4F7;
+}
+
+.billy-notif-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: background .15s ease;
+
+  &:hover {
+    background: #EEF2F6;
+  }
+}
+
+.billy-notif-header-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.billy-notif-header-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0E97BB;
+  background: #E6F7FC;
+  border-radius: 8px;
+  padding: 3px 9px;
+}
+
+// ── Level 1 · categories ───────────────────────────────────────────────────
+.billy-notif-cat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background .15s ease;
+
+  &:hover {
+    background: #F5F8FA;
+  }
+}
+
+.billy-notif-cat-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.billy-notif-cat-texts {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.billy-notif-cat-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.billy-notif-cat-sub {
+  font-size: 11.5px;
+  color: #94A3B8;
+}
+
+.billy-notif-cat-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0E97BB;
+  background: #E6F7FC;
+  border-radius: 8px;
+  padding: 2px 8px;
+
+  &.empty {
+    color: #94A3B8;
+    background: #F1F4F7;
+  }
+}
+
+.billy-notif-cat-chevron {
+  flex: none;
+  color: #C5D0DB;
+}
+
+// ── Level 1 actions footer ─────────────────────────────────────────────────
+.billy-notif-footer {
+  border-top: 1px solid #F1F4F7;
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+// ── Mobile: full-width panel ───────────────────────────────────────────────
+@media (max-width: 767.98px) {
+  .billy-notif-panel {
+    position: fixed;
+    top: 62px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}
+
+// ── Dark mode ──────────────────────────────────────────────────────────────
+:host-context(body.dark-mode) {
+  .billy-notif-bell {
+    color: #9fb0ba;
+
+    &:hover {
+      background: #2a373b;
+    }
+
+    &.open {
+      background: rgba(18, 180, 221, .14);
+      color: #4fc3e0;
+    }
+  }
+
+  .billy-notif-badge {
+    border-color: #1e292b;
+  }
+
+  .billy-notif-panel {
+    background: #172224;
+    border-color: #49545a;
+    box-shadow: 0 24px 48px -18px rgba(0, 0, 0, .6);
+  }
+
+  .billy-notif-header {
+    border-bottom-color: #2a373b;
+  }
+
+  .billy-notif-header-title {
+    color: #ced0d2;
+  }
+
+  .billy-notif-back:hover,
+  .billy-notif-cat:hover {
+    background: #223034;
+  }
+
+  .billy-notif-cat-label {
+    color: #ced0d2;
+  }
+
+  .billy-notif-cat-count.empty {
+    background: #2a373b;
+    color: #7f8c95;
+  }
+
+  .billy-notif-cat-icon,
+  .billy-notif-header-badge,
+  .billy-notif-cat-count:not(.empty) {
+    filter: saturate(.85) brightness(.92);
+  }
+
+  .billy-notif-footer {
+    border-top-color: #2a373b;
+  }
+}

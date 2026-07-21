@@ -1,0 +1,20 @@
+<!--Do NOT add tabindex="-1": it disables focus on the select2 search inputs!-->
+<div class="billy-modal" role="dialog" #dialogRoot>
+  <div class="billy-modal-dialog" [class.billy-modal-dialog--large]="large()" [style.max-width.px]="maxWidth()" role="document">
+    <div class="billy-modal-content">
+
+      @if(header(); as header) {
+        <ng-container *ngTemplateOutlet="header.template()"></ng-container>
+      }
+
+      @if(body(); as body) {
+        <ng-container *ngTemplateOutlet="body.template()"></ng-container>
+      }
+
+      @if(footer(); as footer) {
+        <ng-container *ngTemplateOutlet="footer.template()"></ng-container>
+      }
+
+    </div>
+  </div>
+</div>

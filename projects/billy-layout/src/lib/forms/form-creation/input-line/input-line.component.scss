@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+label {
+  color: #A6A6A6;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  margin-bottom: 3px;
+}
+
+.form-group.form-group-nomarginbottom {
+  margin-bottom: 0px;
+}

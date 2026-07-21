@@ -1,0 +1,61 @@
+<li class="billy-notifications">
+
+  <button type="button" class="billy-notif-bell" [class.open]="open()" [class.ringing]="totalCount() > 0 && !open()"
+    (click)="toggle()" [title]="i18n.strings().topbar.notifications">
+    <billy-icon name="bell" [size]="20" [strokeWidth]="1.8" />
+    @if (totalCount() > 0) {
+      <span class="billy-notif-badge">{{ totalCount() }}</span>
+    }
+  </button>
+
+  <div class="billy-notif-panel" [class.open]="open()">
+
+    <!-- Adaptive header -->
+    <div class="billy-notif-header">
+      @if (activeCategory(); as active) {
+        <button type="button" class="billy-notif-back" (click)="back()" [title]="i18n.strings().notifications.back">
+          <billy-icon name="chevron-left" [size]="18" [strokeWidth]="2" />
+        </button>
+        <span class="billy-notif-header-title">{{ active.label }}</span>
+        @if (active.count() > 0) {
+          <span class="billy-notif-header-badge">{{ active.count() }}</span>
+        }
+      } @else {
+        <span class="billy-notif-header-title">{{ i18n.strings().topbar.notifications }}</span>
+      }
+    </div>
+
+    <!-- Level 1 · categories -->
+    @if (!activeCategory()) {
+      <div class="billy-notif-level">
+        @for (category of categories(); track category.id) {
+          <div class="billy-notif-cat" (click)="openCategory(category.id)">
+            <span class="billy-notif-cat-icon" [style.background]="category.iconBg" [style.color]="category.iconColor">
+              <billy-icon [name]="category.icon" [size]="17" [strokeWidth]="1.8" />
+            </span>
+            <span class="billy-notif-cat-texts">
+              <span class="billy-notif-cat-label">{{ category.label }}</span>
+              <span class="billy-notif-cat-sub">{{ category.sub }}</span>
+            </span>
+            <span class="billy-notif-cat-count" [class.empty]="category.count() === 0">{{ category.count() }}</span>
+            <billy-icon class="billy-notif-cat-chevron" name="chevron-right" [size]="16" [strokeWidth]="2" />
+          </div>
+        }
+        <div class="billy-notif-footer">
+          <billy-notif-action icon="sync" [spinning]="syncLoading()" (click)="syncAll()">
+            {{ i18n.strings().notifications.syncNow }}
+          </billy-notif-action>
+        </div>
+      </div>
+    }
+
+    <!-- Level 2 · each category (projected by the application) displays its
+         list when it is open. The components stay instantiated at all times:
+         they load their data and feed the counters even when the panel is
+         closed. The state (active category, sync) is pushed to them by the
+         component's effect; their outputs are subscribed there. -->
+    <ng-content />
+
+  </div>
+
+</li>

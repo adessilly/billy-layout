@@ -1,0 +1,154 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLy — global design tokens
+// Source of truth for form colors/shapes and accents.
+// Dark values are carried by body.dark-mode: any component that
+// consumes these variables (including overlays moved under <body>)
+// automatically inherits the right theme, without a local dark block.
+// Related mixins: src/app/shared/styles/billy-forms.scss
+// ═══════════════════════════════════════════════════════════════════════════
+
+:root {
+  // ── Accent (theme blue) ─────────────────────────────────────────────────
+  --billy-accent:        #12b4dd; // icons, checks, dots
+  --billy-accent-strong: #0e97bb; // accented text (links, totals, selection)
+  --billy-accent-soft:   #e6f7fc; // tinted backgrounds (hover, active, badges)
+  --billy-accent-border: #a5dff2; // tinted borders (area hover)
+
+  // ── Semantic colors (statuses) ──────────────────────────────────────────
+  // Five status families modeled after Accent, the shared source of truth
+  // for buttons, toasts, checkmarks and the save-bar. Each family exposes:
+  // `base` (vivid fill) · `-strong` (text/icon, ≥ AA on light, and lightens
+  // in dark to stay readable) · `-soft` / `-soft-strong` (tinted hover
+  // veils) · `-ring` (focus halo). `primary` has no family of its own:
+  // it is the brand Accent above.
+  --billy-neutral:             #6b7280;
+  --billy-neutral-strong:      #374151;
+  --billy-neutral-soft:        rgba(100, 116, 139, 0.12);
+  --billy-neutral-soft-strong: rgba(100, 116, 139, 0.2);
+  --billy-neutral-ring:        rgba(100, 116, 139, 0.32);
+
+  --billy-info:                #3b82f6;
+  --billy-info-strong:         #1d4ed8;
+  --billy-info-soft:           rgba(59, 130, 246, 0.12);
+  --billy-info-soft-strong:    rgba(59, 130, 246, 0.22);
+  --billy-info-ring:           rgba(59, 130, 246, 0.35);
+
+  --billy-success:             #16a34a;
+  --billy-success-strong:      #15803d;
+  --billy-success-soft:        rgba(22, 163, 74, 0.12);
+  --billy-success-soft-strong: rgba(22, 163, 74, 0.2);
+  --billy-success-ring:        rgba(22, 163, 74, 0.35);
+
+  --billy-warning:             #ff902b; // save-bar orange
+  --billy-warning-strong:      #b45309;
+  --billy-warning-soft:        rgba(255, 144, 43, 0.16);
+  --billy-warning-soft-strong: rgba(255, 144, 43, 0.28);
+  --billy-warning-ring:        rgba(255, 144, 43, 0.4);
+
+  --billy-error:               #ef4444;
+  --billy-error-strong:        #b91c1c;
+  --billy-error-soft:          rgba(239, 68, 68, 0.12);
+  --billy-error-soft-strong:   rgba(239, 68, 68, 0.22);
+  --billy-error-ring:          rgba(239, 68, 68, 0.35);
+
+  // ── Focus (theme default blue) ──────────────────────────────────────────
+  --billy-focus-border:  #66afe9;
+  --billy-focus-ring:    rgba(102, 175, 233, 0.15);
+
+  // ── Input fields ────────────────────────────────────────────────────────
+  --billy-input-bg:             #fff;
+  --billy-input-border:         #e5e7eb;
+  --billy-input-border-hover:   #9ca3af;
+  --billy-input-color:          #374151;
+  --billy-input-placeholder:    #c2c8d0;
+  --billy-input-radius:         8px;
+  --billy-input-disabled-bg:    #f3f4f6;
+  --billy-input-disabled-color: #9ca3af;
+
+  // ── Input-group addons (buttons attached to fields) ─────────────────────
+  --billy-addon-bg:          #f9fafb;
+  --billy-addon-color:       #6b7280;
+  --billy-addon-hover-bg:    #f3f4f6;
+  --billy-addon-hover-color: #374151;
+
+  // ── Floating surfaces (dropdowns, panels) and misc ──────────────────────
+  --billy-surface:        #fff;
+  --billy-surface-border: #e5e7eb;
+  --billy-surface-shadow: 0 10px 30px rgba(17, 24, 39, 0.12), 0 2px 8px rgba(17, 24, 39, 0.06);
+  --billy-divider:        #f3f4f6;
+  --billy-text-muted:     #9ca3af;
+  --billy-text-soft:      #6b7280; // labels, introductory text
+  --billy-danger:         #dc2626;
+  --billy-danger-ring:    rgba(220, 38, 38, 0.08);
+
+  // ── Cards & sections (page panels — billy-cards.scss mixins) ────────────
+  --billy-card-shadow:    0 1px 2px rgba(17, 24, 39, 0.04);
+  --billy-section-bg:     #fafbfc;
+  --billy-section-border: #eceff3;
+  --billy-section-title:  #374151;
+}
+
+body.dark-mode {
+  --billy-accent:        #12b4dd;
+  --billy-accent-strong: #7dd3ec;
+  --billy-accent-soft:   rgba(18, 180, 221, 0.15);
+  --billy-accent-border: #0e97bb;
+
+  // ── Semantic colors (statuses) — dark ───────────────────────────────────
+  // Fills (`base`) darken one notch; text/icon tints (`-strong`) lighten to
+  // stay readable on a dark background. The `-ring` values inherit the light
+  // ones (halo unchanged). Values aligned with the button's former dark
+  // overrides (migration with no visual change).
+  --billy-neutral:             #4b5563;
+  --billy-neutral-strong:      #cbd5e1;
+  --billy-neutral-soft:        rgba(148, 163, 184, 0.14);
+  --billy-neutral-soft-strong: rgba(148, 163, 184, 0.24);
+
+  --billy-info:                #2563eb;
+  --billy-info-strong:         #60a5fa;
+  --billy-info-soft:           rgba(96, 165, 250, 0.16);
+  --billy-info-soft-strong:    rgba(96, 165, 250, 0.26);
+
+  --billy-success:             #22c55e;
+  --billy-success-strong:      #4ade80;
+  --billy-success-soft:        rgba(52, 211, 153, 0.14);
+  --billy-success-soft-strong: rgba(52, 211, 153, 0.24);
+
+  --billy-warning:             #d97706;
+  --billy-warning-strong:      #fbbf24;
+  --billy-warning-soft:        rgba(251, 191, 36, 0.16);
+  --billy-warning-soft-strong: rgba(251, 191, 36, 0.26);
+
+  --billy-error:               #dc2626;
+  --billy-error-strong:        #f87171;
+  --billy-error-soft:          rgba(248, 113, 113, 0.16);
+  --billy-error-soft-strong:   rgba(248, 113, 113, 0.26);
+
+  --billy-focus-ring:    rgba(102, 175, 233, 0.25);
+
+  --billy-input-bg:             #121d1f;
+  --billy-input-border:         #49545a;
+  --billy-input-border-hover:   #6b7a80;
+  --billy-input-color:          #ced0d2;
+  --billy-input-placeholder:    #4b5563;
+  --billy-input-disabled-bg:    #172224;
+  --billy-input-disabled-color: #5a6a70;
+
+  --billy-addon-bg:          #212e31;
+  --billy-addon-color:       #7a8a90;
+  --billy-addon-hover-bg:    #2d3d42;
+  --billy-addon-hover-color: #ced0d2;
+
+  --billy-surface:        #1c282b;
+  --billy-surface-border: #49545a;
+  --billy-surface-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --billy-divider:        #2a3a3e;
+  --billy-text-muted:     #5a6a70;
+  --billy-text-soft:      #7a8a90;
+  --billy-danger-ring:    rgba(220, 38, 38, 0.15);
+
+  --billy-card-shadow:    0 1px 2px rgba(0, 0, 0, 0.25);
+  --billy-section-bg:     #1a2629;
+  --billy-section-border: #2e3d41;
+  --billy-section-title:  #9aadb3;
+}

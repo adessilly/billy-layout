@@ -1,0 +1,72 @@
+<div class="billy-modal del-modal" tabindex="-1" role="dialog" #modalDelete>
+  <div class="billy-modal-dialog billy-modal-dialog--centered del-dialog" role="document">
+    <div class="billy-modal-content del-content">
+
+      <button type="button" class="del-close" data-billy-dismiss [attr.aria-label]="i18n.strings().deleteDialog.close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+
+      <!-- Animated illustration: the lid opens, the document falls into the trash can. -->
+      <div class="del-hero" aria-hidden="true">
+        <svg class="del-svg" viewBox="0 0 120 120" focusable="false">
+          <!-- halo + ripples -->
+          <circle class="del-halo" cx="60" cy="66" r="36" />
+          <circle class="del-ring del-ring-1" cx="60" cy="66" r="36" />
+          <circle class="del-ring del-ring-2" cx="60" cy="66" r="36" />
+
+          <!-- sheet (drawn before the trash can: it disappears behind the rim) -->
+          <g class="del-paper">
+            <rect x="52.5" y="30" width="15" height="19" rx="2" />
+            <line x1="56" y1="36" x2="64" y2="36" />
+            <line x1="56" y1="40" x2="64" y2="40" />
+            <line x1="56" y1="44" x2="61" y2="44" />
+          </g>
+
+          <!-- trash can body -->
+          <g class="del-can">
+            <path class="del-can-body" d="M46 60 L74 60 L71.5 94 Q71 99 66 99 L54 99 Q49 99 48.5 94 Z" />
+            <line class="del-groove" x1="55" y1="67" x2="55.8" y2="91" />
+            <line class="del-groove" x1="60" y1="67" x2="60" y2="91" />
+            <line class="del-groove" x1="65" y1="67" x2="64.2" y2="91" />
+          </g>
+
+          <!-- lid (hinged on the right) -->
+          <g class="del-lid">
+            <rect class="del-lid-plate" x="42" y="52.5" width="36" height="6.5" rx="3.25" />
+            <rect class="del-lid-handle" x="53.5" y="46.5" width="13" height="6.5" rx="3" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="del-body">
+        <h5 class="del-title">{{ titleText() }}</h5>
+        <p class="del-message">{{ messageText() }}</p>
+
+        @if (productName() || price()) {
+          <div class="del-item">
+            @if (productName()) {
+              <span class="del-item-name">{{ productName() }}</span>
+            }
+            @if (price()) {
+              <span class="del-item-price">{{ price() | currency: 'EUR' }} {{ label() }}</span>
+            }
+          </div>
+        }
+
+        <p class="del-warning">
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          {{ i18n.strings().deleteDialog.warning }}
+        </p>
+      </div>
+
+      <div class="del-actions">
+        <button type="button" class="del-btn del-btn-cancel" data-billy-dismiss>{{ i18n.strings().deleteDialog.cancel }}</button>
+        <button type="button" class="del-btn del-btn-danger" data-billy-dismiss (click)="askDelete()">
+          <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+          {{ labelValidateText() }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

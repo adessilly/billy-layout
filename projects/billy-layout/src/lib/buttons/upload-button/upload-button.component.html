@@ -1,0 +1,17 @@
+<div class="add-tile add-tile-import" (click)="trigger()" [class.is-loading]="loading()">
+  <div class="add-tile-icon">
+    @if (loading()) {
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    } @else {
+      <i class="fa-solid fa-file-arrow-up"></i>
+    }
+  </div>
+  <div class="add-tile-content">
+    <span class="add-tile-title">
+      @if (loading()) { {{ i18n.strings().uploadButton.loading }} } @else { {{ labelText() }} }
+    </span>
+    <span class="add-tile-subtitle">{{ subtitleText() }}</span>
+  </div>
+</div>
+
+<input #fileInput type="file" [attr.accept]="accept()" style="display:none" (change)="onFileChange($event)" />

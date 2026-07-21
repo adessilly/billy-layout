@@ -1,0 +1,17 @@
+@let fileTpl = file();
+@let imageUrlTrustedTpl = imageUrlTrusted();
+@if (visible() && fileTpl && imageUrlTrustedTpl) {
+  <div class="viewer">
+    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fileTpl.fileName" icon="fa-solid fa-image" (closeViewer)="hide()">
+    </billy-file-viewer-toolbar>
+    <div class="viewer-body">
+      @if (loading()) {
+        <div class="viewer-loading">
+          <i class="fa-solid fa-sync fa-spin"></i>
+        </div>
+      } @else {
+        <img [src]="imageUrlTrustedTpl" [alt]="fileTpl.fileName" />
+      }
+    </div>
+  </div>
+}

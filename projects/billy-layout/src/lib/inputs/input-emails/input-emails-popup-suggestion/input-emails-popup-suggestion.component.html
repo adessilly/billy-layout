@@ -1,0 +1,12 @@
+@if (show() && filteredEmails().length > 0) {
+  <div class="email-suggestions">
+    @for (email of filteredEmails(); track email; let i = $index) {
+      <div
+        class="suggestion-item"
+        [class.selected]="i === selectedIndex()"
+        (click)="selectSuggestion(email)">
+        {{ email }}
+      </div>
+    }
+  </div>
+}

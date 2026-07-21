@@ -1,0 +1,122 @@
+:host { display: contents; }
+
+.ftb-wrapper {
+  display: flex;
+}
+
+// ── Toggle variant (segment control) ──────────────────────────────────────────
+.ftb--toggle {
+  gap: 2px;
+  background: #f3f4f6;
+  border-radius: 20px;
+  padding: 2px;
+
+  .ftb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 18px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    white-space: nowrap;
+    transition: all 0.15s;
+
+    i { font-size: 11px; }
+
+    &.active {
+      background: #fff;
+      color: var(--opt-color, var(--ftb-color, #6366f1));
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    &:not(.active):hover { color: #374151; }
+  }
+}
+
+// ── Chips variant (individual pills) ──────────────────────────────────────────
+.ftb--chips {
+  gap: 4px;
+  flex-wrap: wrap;
+
+  .ftb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.15s;
+
+    i { font-size: 10px; }
+
+    &:hover { border-color: #9ca3af; color: #374151; }
+
+    &.active {
+      font-weight: 700;
+      color: var(--opt-color, var(--ftb-color, #374151));
+      border-color: var(--opt-color, var(--ftb-color, #e5e7eb));
+      background: var(--opt-bg, #fff);
+    }
+  }
+}
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+:host-context(.dark-mode) {
+
+  .ftb--toggle {
+    background: #212e31;
+
+    .ftb-btn {
+      color: #7a8a90;
+
+      &.active { background: #2d3d40; box-shadow: none; }
+      &:not(.active):hover { color: #ced0d2; }
+    }
+  }
+
+  .ftb--chips {
+    .ftb-btn {
+      background: #212e31;
+      border-color: #49545a;
+      color: #7a8a90;
+
+      &:hover { border-color: #7a8a90; color: #ced0d2; }
+
+      &.active {
+        // Background at 15% opacity of the active color, border and text unchanged
+        background: color-mix(in srgb, var(--opt-color, var(--ftb-color, #6366f1)) 15%, transparent);
+      }
+    }
+  }
+}
+
+// ── Mobile ────────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .ftb--toggle {
+    width: 100%;
+
+    .ftb-btn { flex: 1; justify-content: center; }
+  }
+
+  .ftb--chips {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    width: 100%;
+
+    &::-webkit-scrollbar { display: none; }
+
+    .ftb-btn { flex-shrink: 0; }
+  }
+}

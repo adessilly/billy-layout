@@ -1,0 +1,25 @@
+<header class="billy-page-header">
+
+  @if (backVisible()) {
+    <button
+      type="button"
+      class="billy-page-header-back"
+      [title]="backLabelText()"
+      [attr.aria-label]="backLabelText()"
+      (click)="back.emit()">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  }
+
+  <div class="billy-page-header-titles">
+    <h1 class="billy-page-header-title">{{ title() }}</h1>
+    @if (subtitle()) {
+      <div class="billy-page-header-subtitle">{{ subtitle() }}</div>
+    }
+  </div>
+
+  <div class="billy-page-header-actions">
+    <ng-content></ng-content>
+  </div>
+
+</header>

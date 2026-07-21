@@ -1,0 +1,60 @@
+@use 'billy-cards' as cards;
+
+// Single-section consult card: white card + badge-style title,
+// WITHOUT the grey sub-panel (reserved for multi-section cards, see docs/billy-cards.md).
+// Dark mode is carried by the --billy-* tokens: no local dark block.
+
+:host {
+  display: block;
+  @include cards.billy-card;
+}
+
+.cc-title {
+  @include cards.billy-section-title;
+}
+
+.cc-icon {
+  @include cards.billy-section-icon;
+}
+
+.cc-badge {
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--billy-accent-soft);
+  color: var(--billy-accent-strong);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.cc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+
+  // Projected actions do not inherit the title typography.
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+
+  // Projected action buttons (Bootstrap's btn-outline-secondary) have colors
+  // hard-coded for light mode: we rebase them on the --billy-* tokens so that
+  // dark mode follows. ::ng-deep because the projected content belongs to the parent.
+  ::ng-deep .btn.btn-outline-secondary {
+    border-color: var(--billy-input-border);
+    color: var(--billy-text-soft);
+    background: transparent;
+
+    &:hover,
+    &:focus {
+      border-color: var(--billy-input-border-hover);
+      color: var(--billy-input-color);
+      background: var(--billy-addon-bg);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem var(--billy-focus-ring);
+    }
+  }
+}

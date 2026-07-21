@@ -1,0 +1,121 @@
+<section class="install" aria-labelledby="install-title">
+
+  <header class="install-head">
+    <div class="install-eyebrow">
+      <span class="install-eyebrow-dot"></span>
+      Installation
+    </div>
+    <h2 class="install-title" id="install-title">Get started with one command</h2>
+    <p class="install-sub">
+      Add the library to your Angular application via npm, or clone the
+      GitHub repository to run this demo site locally.
+    </p>
+  </header>
+
+  <div class="install-grid">
+
+    <!-- ── npm install ──────────────────────────────────────────────────── -->
+    <article class="term term--npm">
+      <div class="term-bar">
+        <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <h3 class="term-name">In your application</h3>
+        <button type="button"
+                class="term-copy"
+                [class.is-copied]="copied() === 'npm'"
+                [attr.aria-label]="'Copy the command ' + commands.npm"
+                (click)="copy('npm')">
+          @if (copied() === 'npm') {
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Copied!
+          } @else {
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+              <rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 3.5v-.2A1.8 1.8 0 0 0 8.7 1.5H4.3a1.8 1.8 0 0 0-1.8 1.8v4.4a1.8 1.8 0 0 0 1.8 1.8h.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            Copy
+          }
+        </button>
+      </div>
+
+      <div class="term-body">
+        <!-- Self-drawing npm package pictogram (decorative). -->
+        <svg class="term-pic" viewBox="0 0 64 64" aria-hidden="true">
+          <path class="pic-draw" d="M32 8 L54 20 L54 42 L32 54 L10 42 L10 20 Z" />
+          <path class="pic-draw pic-draw--late" d="M10 20 L32 32 L54 20" />
+          <path class="pic-draw pic-draw--late" d="M32 32 L32 54" />
+        </svg>
+
+        <div class="term-line">
+          <span class="term-prompt" aria-hidden="true">❯</span>
+          <code class="term-cmd">npm install <span class="term-pkg">billy-layout</span></code>
+          <span class="term-caret" aria-hidden="true"></span>
+        </div>
+        <p class="term-out term-out--step">+ billy-layout&#64;0.0.1</p>
+        <p class="term-out term-out--ok">✓ {{ entryCount }} components ready to use</p>
+      </div>
+    </article>
+
+    <div class="install-or" aria-hidden="true">
+      <span class="install-or-badge">or</span>
+    </div>
+
+    <!-- ── git clone ────────────────────────────────────────────────────── -->
+    <article class="term term--git">
+      <div class="term-bar">
+        <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <h3 class="term-name">The repository locally</h3>
+        <button type="button"
+                class="term-copy"
+                [class.is-copied]="copied() === 'git'"
+                [attr.aria-label]="'Copy the command ' + commands.git"
+                (click)="copy('git')">
+          @if (copied() === 'git') {
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Copied!
+          } @else {
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+              <rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 3.5v-.2A1.8 1.8 0 0 0 8.7 1.5H4.3a1.8 1.8 0 0 0-1.8 1.8v4.4a1.8 1.8 0 0 0 1.8 1.8h.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            Copy
+          }
+        </button>
+      </div>
+
+      <div class="term-body">
+        <!-- Self-drawing git branch pictogram (decorative). -->
+        <svg class="term-pic" viewBox="0 0 64 64" aria-hidden="true">
+          <circle class="pic-draw" cx="18" cy="13" r="6" />
+          <circle class="pic-draw" cx="18" cy="51" r="6" />
+          <circle class="pic-draw pic-draw--late" cx="46" cy="32" r="6" />
+          <path class="pic-draw" d="M18 19 L18 45" />
+          <path class="pic-draw pic-draw--late" d="M18 28 C18 40 46 16 46 26" />
+        </svg>
+
+        <div class="term-line">
+          <span class="term-prompt" aria-hidden="true">❯</span>
+          <code class="term-cmd">git clone <span class="term-pkg">https://github.com/adessilly/billy-layout.git</span></code>
+          <span class="term-caret" aria-hidden="true"></span>
+        </div>
+        <p class="term-out term-out--step">Cloning into 'billy-layout'…</p>
+        <p class="term-out term-out--ok">✓ npm install &amp;&amp; npm start → local demo</p>
+      </div>
+    </article>
+
+  </div>
+
+  <p class="install-note">
+    Angular 22+ · standalone components · zero Bootstrap dependencies
+  </p>
+
+  <div class="sr-only" aria-live="polite">
+    @if (copied()) {
+      Command copied to the clipboard.
+    }
+  </div>
+
+</section>

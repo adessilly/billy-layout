@@ -1,0 +1,346 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// billy-button — all-purpose action button
+//
+// 3 independent axes: color (5 DS tints) × variant (plain/outline/text,
+// rounded or not) × size. Each color exposes a small set of local variables
+// (--btn-*) that the variants consume; the tints are chosen to pass WCAG AA
+// (text ≥ 4.5:1) in both light and dark mode.
+// ═══════════════════════════════════════════════════════════════════════════
+
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+  max-width: 100%;
+
+  // Honors the system "reduce motion" preference.
+  @media (prefers-reduced-motion: reduce) {
+    .billy-btn,
+    .billy-btn * {
+      transition: none !important;
+    }
+  }
+}
+
+// ── Shared base ─────────────────────────────────────────────────────────────
+.billy-btn {
+  // Default values, overridden by the color classes.
+  --btn-solid: var(--billy-accent, #12b4dd);
+  --btn-on-solid: #fff;
+  --btn-fg: #0e7490;
+  --btn-soft: rgba(18, 180, 221, 0.1);
+  --btn-soft-strong: rgba(18, 180, 221, 0.18);
+  --btn-ring: rgba(18, 180, 221, 0.35);
+
+  --btn-radius: var(--billy-input-radius, 8px);
+  --btn-pad-y: 9px;
+  --btn-pad-x: 18px;
+  --btn-font: 14px;
+  --btn-gap: 8px;
+  --btn-icon-scale: 0.9;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  border: 1.5px solid transparent;
+  border-radius: var(--btn-radius);
+  background: transparent;
+
+  font-family: inherit;
+  font-size: var(--btn-font);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--btn-fg);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: transform 0.16s ease, background-color 0.16s ease,
+    border-color 0.16s ease, color 0.16s ease, box-shadow 0.18s ease;
+
+  &__content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--btn-gap);
+    min-width: 0;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__icon,
+  &__spinner {
+    font-size: calc(var(--btn-font) * var(--btn-icon-scale));
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 0.16s ease;
+  }
+
+  // ── Shared interactions ────────────────────────────────────────────────
+  &:active:not(:disabled) {
+    transform: translateY(0.5px) scale(0.98);
+    transition-duration: 0.05s;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--btn-ring);
+  }
+
+  &:disabled,
+  &.is-loading {
+    cursor: not-allowed;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    box-shadow: none;
+    transform: none;
+  }
+
+  &.is-loading {
+    // The content stays; only the interactivity is disabled.
+    .billy-btn__spinner {
+      animation-duration: 0.9s;
+    }
+  }
+}
+
+// ── Color palettes ──────────────────────────────────────────────────────────
+// Each color maps a semantic DS family (--billy-<hue>-*) onto the local
+// variables the variants consume. No more hard-coded values here (besides
+// fallbacks): dark mode arrives automatically via body.dark-mode (tokens),
+// with no local dark block. `primary` reuses the brand Accent.
+// solid  : plain background · on-solid : plain text
+// fg     : tint of the outline/text variants (= `-strong`, readable on light)
+// soft   : tinted veil of the outline/text hover
+.billy-btn--neutral {
+  --btn-solid: var(--billy-neutral, #6b7280);
+  --btn-on-solid: #fff;
+  --btn-fg: var(--billy-neutral-strong, #374151);
+  --btn-soft: var(--billy-neutral-soft, rgba(100, 116, 139, 0.12));
+  --btn-soft-strong: var(--billy-neutral-soft-strong, rgba(100, 116, 139, 0.2));
+  --btn-ring: var(--billy-neutral-ring, rgba(100, 116, 139, 0.32));
+}
+
+.billy-btn--info {
+  --btn-solid: var(--billy-info, #3b82f6);
+  --btn-on-solid: #fff;
+  --btn-fg: var(--billy-info-strong, #1d4ed8);
+  --btn-soft: var(--billy-info-soft, rgba(59, 130, 246, 0.12));
+  --btn-soft-strong: var(--billy-info-soft-strong, rgba(59, 130, 246, 0.22));
+  --btn-ring: var(--billy-info-ring, rgba(59, 130, 246, 0.35));
+}
+
+.billy-btn--primary {
+  --btn-solid: var(--billy-accent, #12b4dd); // vivid brand cyan
+  --btn-on-solid: #fff;
+  --btn-fg: var(--billy-accent-strong, #0e7490);
+  --btn-soft: var(--billy-accent-soft, rgba(18, 180, 221, 0.14));
+  --btn-soft-strong: rgba(18, 180, 221, 0.24);
+  --btn-ring: rgba(18, 180, 221, 0.4);
+}
+
+.billy-btn--warning {
+  --btn-solid: var(--billy-warning, #ff902b); // save-bar orange
+  --btn-on-solid: #fff;
+  --btn-fg: var(--billy-warning-strong, #b45309);
+  --btn-soft: var(--billy-warning-soft, rgba(255, 144, 43, 0.16));
+  --btn-soft-strong: var(--billy-warning-soft-strong, rgba(255, 144, 43, 0.28));
+  --btn-ring: var(--billy-warning-ring, rgba(255, 144, 43, 0.4));
+}
+
+.billy-btn--error {
+  --btn-solid: var(--billy-error, #ef4444);
+  --btn-on-solid: #fff;
+  --btn-fg: var(--billy-error-strong, #b91c1c);
+  --btn-soft: var(--billy-error-soft, rgba(239, 68, 68, 0.12));
+  --btn-soft-strong: var(--billy-error-soft-strong, rgba(239, 68, 68, 0.22));
+  --btn-ring: var(--billy-error-ring, rgba(239, 68, 68, 0.35));
+}
+
+// ── Sizes ───────────────────────────────────────────────────────────────────
+.billy-btn--small {
+  --btn-pad-y: 5px;
+  --btn-pad-x: 12px;
+  --btn-font: 12.5px;
+  --btn-gap: 6px;
+}
+
+.billy-btn--normal {
+  --btn-pad-y: 9px;
+  --btn-pad-x: 18px;
+  --btn-font: 14px;
+}
+
+.billy-btn--big {
+  --btn-pad-y: 13px;
+  --btn-pad-x: 26px;
+  --btn-font: 16px;
+  --btn-gap: 10px;
+}
+
+// ── Variant: plain ──────────────────────────────────────────────────────────
+// Flat fill (solid tint, no gradient). On hover: slight darkening and a soft
+// shadow — a discreet effect, without glossy relief.
+.billy-btn--plain,
+.billy-btn--plain-rounded {
+  background: var(--btn-solid);
+  border-color: var(--btn-solid);
+  color: var(--btn-on-solid);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--btn-solid) 93%, #000);
+    border-color: color-mix(in srgb, var(--btn-solid) 93%, #000);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--btn-solid) 45%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: 0 1px 3px -1px color-mix(in srgb, var(--btn-solid) 40%, transparent);
+  }
+}
+
+// ── Variant: outline ────────────────────────────────────────────────────────
+.billy-btn--outline,
+.billy-btn--outline-rounded {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--btn-fg) 45%, transparent);
+  color: var(--btn-fg);
+
+  &:hover:not(:disabled) {
+    background: var(--btn-soft);
+    border-color: var(--btn-fg);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--btn-soft-strong);
+  }
+}
+
+// ── Variant: text ───────────────────────────────────────────────────────────
+// `text`         : simple tinted veil on hover (preset corners).
+// `text-rounded` : a fully rounded pill appears on hover
+//                  (fade + slight zoom), with the label staying in place.
+.billy-btn--text,
+.billy-btn--text-rounded {
+  background: transparent;
+  border-color: transparent;
+  color: var(--btn-fg);
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    color: color-mix(in srgb, var(--btn-fg) 88%, #000);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0.5px) scale(0.99);
+  }
+}
+
+.billy-btn--text {
+  &:hover:not(:disabled) {
+    background: var(--btn-soft);
+  }
+}
+
+.billy-btn--text-rounded {
+  overflow: visible;
+
+  // The pill emerges from a neutral background, sealed behind the content.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--btn-soft);
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 0;
+  }
+
+  .billy-btn__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover:not(:disabled)::before,
+  &:focus-visible::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &:active:not(:disabled)::before {
+    background: var(--btn-soft-strong);
+  }
+}
+
+// ── Variant: ghost (the save-bar "Back" button) ─────────────────────────────
+// Mirrors the save-bar cancel button: discreet ghost, with NO border at rest
+// (faded text), gray veil on hover, and a halo ("border") on focus via the
+// shared focus-ring. Wired to the DS input tokens (automatic dark mode).
+// Deliberately neutral: `color` has no effect here.
+.billy-btn--ghost,
+.billy-btn--ghost-rounded {
+  --btn-ring: var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+
+  background: transparent;
+  border-color: transparent; // no border at rest
+  color: var(--billy-text-muted, #6b7280);
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    background: var(--billy-addon-hover-bg, #f3f4f6);
+    color: var(--billy-input-color, #374151);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--billy-addon-hover-bg, #f3f4f6);
+    transform: translateY(0.5px) scale(0.99);
+  }
+}
+
+// ── Pill corners ────────────────────────────────────────────────────────────
+.billy-btn--plain-rounded,
+.billy-btn--outline-rounded,
+.billy-btn--text-rounded,
+.billy-btn--ghost-rounded {
+  --btn-radius: 999px;
+  border-radius: 999px;
+}
+
+// ── Icon only: square footprint with the variant's corners ──────────────────
+.billy-btn--icon-only {
+  --btn-pad-x: var(--btn-pad-y);
+  aspect-ratio: 1 / 1;
+  padding: var(--btn-pad-y);
+
+  .billy-btn__icon,
+  .billy-btn__spinner {
+    font-size: calc(var(--btn-font) * 1.05);
+  }
+}
+
+// ── Full width ──────────────────────────────────────────────────────────────
+.billy-btn--block {
+  width: 100%;
+}
+:host:has(.billy-btn--block) {
+  display: flex;
+  width: 100%;
+}

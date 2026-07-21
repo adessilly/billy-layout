@@ -1,0 +1,65 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.add-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.add-tile-import {
+  background: #f4f6f7;
+  color: #555;
+  border: 2px dashed #ccc;
+}
+
+.add-tile-import:hover:not(.is-loading) {
+  background: #e8f8fd;
+  border-color: #23b7e5;
+  color: #23b7e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(118, 118, 118, 0.2);
+}
+
+.add-tile.is-loading {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.add-tile-icon {
+  font-size: 1.2em;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.add-tile-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-tile-title {
+  font-weight: 600;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+
+.add-tile-subtitle {
+  font-size: 0.72em;
+  opacity: 0.75;
+  margin-top: 2px;
+}

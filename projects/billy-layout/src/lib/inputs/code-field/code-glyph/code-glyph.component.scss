@@ -1,0 +1,51 @@
+// Symbol of a "code" field (VAT / IBAN).
+// The color comes from the parent (`color`): the glyph follows the field's state.
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: var(--billy-accent-strong, #0e97bb);
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+// Plate background: tinted, it reads as a "badge" like the section icons.
+.cg-plate {
+  fill: var(--billy-accent-soft, #e6f7fc);
+  stroke: currentColor;
+  stroke-width: 1.3;
+  opacity: 0.9;
+}
+
+.cg-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+// Perforation of the tax stamp: dotted rather than a solid stroke.
+.cg-perf {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 2.6;
+  opacity: 0.75;
+}
+
+// Magnetic stripe of the card: solid, it is what makes the card readable.
+.cg-band {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  opacity: 0.35;
+}

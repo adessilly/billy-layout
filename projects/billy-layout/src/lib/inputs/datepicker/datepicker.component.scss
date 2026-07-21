@@ -1,0 +1,157 @@
+// Standalone component: same visual rules as the billy-input mixin,
+// inlined here (with fallbacks) to stay independent of the application.
+
+:host {
+  display: block;
+}
+
+// ── Field ────────────────────────────────────────────────────────────────────
+
+.dp {
+  position: relative;
+  width: 100%;
+}
+
+.dp-input {
+  width: 100%;
+  height: var(--datepicker-height, 35px);
+  padding: 0 38px 0 12px;
+  font-size: 14px;
+  background: var(--billy-input-bg, #fff);
+  border: 1px solid var(--billy-input-border, #e5e7eb);
+  border-radius: var(--billy-input-radius, 8px);
+  color: var(--billy-input-color, #374151);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder { color: var(--billy-input-placeholder, #c2c8d0); }
+
+  &:hover:not(:disabled) { border-color: var(--billy-input-border-hover, #9ca3af); }
+
+  &:focus {
+    outline: none;
+    border-color: var(--billy-focus-border, #66afe9);
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+
+  &:disabled {
+    background: var(--billy-input-disabled-bg, #f3f4f6);
+    color: var(--billy-input-disabled-color, #9ca3af);
+    cursor: not-allowed;
+  }
+}
+
+.dp--open .dp-input {
+  border-color: var(--billy-focus-border, #66afe9);
+  box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+}
+
+.dp--invalid .dp-input {
+  border-color: var(--billy-danger, #dc2626);
+
+  &:focus { box-shadow: 0 0 0 3px var(--billy-danger-ring, rgba(220, 38, 38, 0.08)); }
+}
+
+.dp-toggle {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  border: none;
+  border-radius: 0 calc(var(--billy-input-radius, 8px) - 1px) calc(var(--billy-input-radius, 8px) - 1px) 0;
+  background: transparent;
+  color: var(--billy-addon-color, #6b7280);
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--billy-accent-soft, #e6f7fc);
+    color: var(--billy-accent-strong, #0e97bb);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+
+  &:disabled {
+    color: var(--billy-input-disabled-color, #9ca3af);
+    cursor: not-allowed;
+  }
+}
+
+.dp--open .dp-toggle { color: var(--billy-accent-strong, #0e97bb); }
+
+// ── Desktop popover (position: fixed — escapes overflow parents) ─────────────
+
+.dp-panel {
+  position: fixed;
+  z-index: 2000; // above the side-panels (1051), below the toasts (9000+)
+  background: var(--billy-surface, #fff);
+  border: 1px solid var(--billy-surface-border, #e5e7eb);
+  border-radius: 14px;
+  box-shadow: var(--billy-surface-shadow, 0 10px 30px rgba(17, 24, 39, 0.12));
+  animation: dp-in 0.14s ease;
+
+  &--up { animation-name: dp-in-up; }
+}
+
+@keyframes dp-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes dp-in-up {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+// ── Feuille mobile ───────────────────────────────────────────────────────────
+
+.dp-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1999;
+  background: rgba(17, 24, 39, 0.45);
+  animation: dp-fade 0.2s ease;
+}
+
+.dp-panel--sheet {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: none;
+  border-radius: 20px 20px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -10px 40px rgba(17, 24, 39, 0.25);
+  animation: dp-sheet-in 0.25s cubic-bezier(0.32, 0.72, 0.33, 1);
+
+  // bottom-sheet visual handle
+  &::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 10px auto 0;
+    border-radius: 100px;
+    background: var(--billy-input-border, #e5e7eb);
+  }
+}
+
+@keyframes dp-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dp-sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-input, .dp-toggle { transition: none; }
+  .dp-panel, .dp-backdrop { animation: none; }
+}

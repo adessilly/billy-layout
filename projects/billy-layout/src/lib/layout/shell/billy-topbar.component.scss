@@ -1,0 +1,209 @@
+.billy-topbar {
+  height: 66px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 22px;
+  background: transparent;
+  position: relative;
+  // Above the pages' chrome (sticky bars z-index 3-20), below the
+  // application overlays (action-bar 200, action-sheet 500, modals).
+  z-index: 50;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+// ── Animated hamburger ─────────────────────────────────────────────────────
+.billy-topbar-burger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  cursor: pointer;
+  transition: background .18s ease, transform .12s ease;
+
+  span {
+    width: 19px;
+    height: 2px;
+    border-radius: 2px;
+    background: #475569;
+    transition: width .24s cubic-bezier(.4, 0, .2, 1), background .2s ease;
+  }
+
+  &:hover {
+    background: #EAEFF3;
+
+    span:nth-child(1) { width: 13px; }
+    span:nth-child(3) { width: 11px; }
+  }
+
+  &:active {
+    transform: scale(.9);
+  }
+
+  &.collapsed span {
+    background: #0E97BB;
+  }
+}
+
+// ── Logo ───────────────────────────────────────────────────────────────────
+.billy-topbar-logo {
+  display: flex;
+  align-items: center;
+  flex: none;
+
+  img {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    box-shadow: 0 4px 10px -4px rgba(18, 180, 221, .55);
+  }
+}
+
+// ── Search ─────────────────────────────────────────────────────────────────
+// Left-aligned, right after the logo: reduced to an icon at rest, it widens
+// on focus (cf. billy-search.component). `flex: none` so it does not stretch
+// and lets the width be driven by the component itself.
+.billy-topbar-search {
+  flex: none;
+  min-width: 0;
+}
+
+// ── Right-hand actions ─────────────────────────────────────────────────────
+.billy-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.billy-topbar-divider {
+  width: 1px;
+  height: 26px;
+  background: #DFE5EA;
+  margin: 0 6px;
+  flex: none;
+}
+
+// Light / dark toggle: the icon rotates half a turn on theme change
+// (carried over from the legacy app's behavior).
+.btn-toggle-dark-mode billy-icon {
+  display: flex;
+  transition: transform .5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-toggle-dark-mode billy-icon {
+    transition: none;
+  }
+}
+
+// Action buttons: also applies to the existing notification components
+// (li.nav-item > a.nav-link) projected into the topbar.
+.billy-topbar-actions ::ng-deep li {
+  list-style: none;
+}
+
+.billy-topbar-actions ::ng-deep .nav-item > .nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: #64748B;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+
+  &:hover {
+    background: #EAEFF3;
+    color: #334155;
+  }
+
+  .badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #EF4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border: 2px solid #F4F6F8;
+  }
+}
+
+// Account menu: avatar sizing handled by the component itself.
+// (::ng-deep: the element is projected from the application, it does not
+// carry the topbar's scope attribute. Targeted by the slot attribute so as
+// not to depend on the application component's name.)
+.billy-topbar-actions ::ng-deep [shell-account] {
+  margin-left: 6px;
+}
+
+@media (max-width: 767.98px) {
+  .billy-topbar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .billy-topbar-search {
+    display: none;
+  }
+}
+
+// ── Dark mode ──────────────────────────────────────────────────────────────
+:host-context(body.dark-mode) {
+  .billy-topbar-burger {
+    span {
+      background: #ced0d2;
+    }
+
+    &:hover {
+      background: #2a373b;
+    }
+
+    &.collapsed span {
+      background: #4fc3e0;
+    }
+  }
+
+  .billy-topbar-divider {
+    background: #49545a;
+  }
+
+  .btn-toggle-dark-mode billy-icon {
+    transform: rotate(180deg);
+  }
+
+  .billy-topbar-actions ::ng-deep .nav-item > .nav-link {
+    color: #9fb0ba;
+
+    &:hover {
+      background: #2a373b;
+      color: #ced0d2;
+    }
+
+    .badge {
+      border-color: #1e292b;
+    }
+  }
+}

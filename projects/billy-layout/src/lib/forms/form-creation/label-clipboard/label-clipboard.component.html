@@ -1,0 +1,14 @@
+<span class="label-container" (click)="askCopy($event)" title="click to copy to the clipboard">
+  <div class="icon-zone">
+    @if(copied()) {
+      <i class="copied-icon fa-solid fa-clipboard-check"></i>
+    }
+    @else {
+      <i class="copy-icon fa-solid fa-clipboard"></i>
+    }
+   </div>
+  {{ label() }}
+  @if(copied()) {
+    <span>&nbsp;(copied to the clipboard)</span>
+  }
+</span>

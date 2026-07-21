@@ -1,0 +1,35 @@
+<div class="email-input-wrapper">
+  <div class="email-tags-container" (click)="focusInput()" [class.disabled]="disabled">
+
+    @for(email of emails(); track email; let i = $index) {
+      <billy-input-email-tag
+        [email]="email"
+        [invalid]="!isValidEmail(email)"
+        [disabled]="disabled"
+        (remove)="removeEmail(i)"
+      />
+    }
+
+    <input
+      #emailInput
+      type="text"
+      class="email-input"
+      [ngModel]="inputValue()"
+      (ngModelChange)="onInputChange($event)"
+      [placeholder]="emails().length === 0 ? placeholderText() : ''"
+      (keydown)="onInputKeydown($event)"
+      (blur)="onInputBlur()"
+      (paste)="onPaste($event)"
+      [disabled]="disabled"
+    />
+
+  </div>
+
+  <billy-input-emails-popup-suggestion
+    [inputValue]="inputValue()"
+    [availableEmails]="availableEmails()"
+    [excludedEmails]="emails()"
+    [show]="showSuggestions()"
+    (suggestionSelected)="selectSuggestion($event)"
+  />
+</div>

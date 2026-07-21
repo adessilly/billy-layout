@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '(.tool_input.file_path // .tool_response.filePath // \"\") as $f | if ($f | test(\"/projects/billy-layout/\")) and ($f | test(\"/projects/billy-layout/docs/\") | not) and ($f | test(\"[.](ts|html|scss)$\")) then {hookSpecificOutput:{hookEventName:\"PostToolUse\", additionalContext:\"billy-layout reminder: a library component was modified. Before considering the task done: 1) update the matching markdown under projects/billy-layout/docs/, 2) adapt the src/app/demos example when behavior or the public API changes, 3) respect the design system defined in projects/billy-layout/docs/ux-guidelines.md.\"}} else empty end' 2>/dev/null || true",
+            "statusMessage": "billy-layout docs/design-system check"
+          }
+        ]
+      }
+    ]
+  }
+}

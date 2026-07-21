@@ -1,0 +1,24 @@
+<button
+  [class]="classes()"
+  [attr.type]="type()"
+  [attr.aria-label]="effectiveAriaLabel()"
+  [attr.aria-busy]="loading() ? 'true' : null"
+  [disabled]="disabled() || loading()"
+  (click)="onClick($event)">
+
+  <span class="billy-btn__content">
+    @if (loading()) {
+      <i class="billy-btn__spinner fa-solid fa-spinner fa-spin-pulse" aria-hidden="true"></i>
+    } @else if (icon() && iconPosition() === 'left') {
+      <i class="billy-btn__icon" [class]="icon()" aria-hidden="true"></i>
+    }
+
+    @if (label()) {
+      <span class="billy-btn__label">{{ label() }}</span>
+    }
+
+    @if (!loading() && icon() && iconPosition() === 'right') {
+      <i class="billy-btn__icon" [class]="icon()" aria-hidden="true"></i>
+    }
+  </span>
+</button>

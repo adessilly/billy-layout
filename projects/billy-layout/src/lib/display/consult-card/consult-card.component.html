@@ -1,0 +1,14 @@
+<div class="cc-title">
+  <span class="cc-icon"><i [class]="icon()"></i></span>
+  <span class="cc-label">{{ label() }}</span>
+  @if (badge() !== null) {
+    <span class="cc-badge">{{ badge() }}</span>
+  }
+  <span class="cc-actions">
+    <ng-content select="[card-actions]"></ng-content>
+  </span>
+</div>
+
+<div class="cc-body">
+  <ng-content></ng-content>
+</div>

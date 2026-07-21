@@ -1,0 +1,11 @@
+<div [class.form-group-nomarginbottom]="nomarginbottom()" class="form-group">
+  @if(label()) {
+    <label>{{ label() }} @if (mandatory()) {
+      <span class="mandatory">*</span>
+    }</label>
+  }
+  @if(info().length > 0) {
+    <span>&nbsp;&nbsp;<i class="fa-solid fa-circle-info" [title]="info()" style="font-size:11px"></i></span>
+  }
+  <ng-content></ng-content>
+</div>

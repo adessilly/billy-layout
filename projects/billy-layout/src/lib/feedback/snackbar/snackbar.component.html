@@ -1,0 +1,26 @@
+<div class="pwa-snackbar-zone" [class.pwa-snackbar-zone-active]="visible()" role="alert" aria-live="polite">
+    <div class="pwa-snackbar">
+        <div class="pwa-snackbar__icon" aria-hidden="true">
+            <billy-icon name="refresh" [size]="22" [strokeWidth]="2" />
+        </div>
+
+        <!-- Desktop layout: separate message + button -->
+        <div class="pwa-snackbar__body">
+            <p class="pwa-snackbar__message">{{ messageText() }}</p>
+            <button class="pwa-snackbar__btn" (click)="askButtonClick()" [title]="buttonTitleText()">
+                <billy-icon name="bolt" [size]="13" [strokeWidth]="2" />
+                {{ buttonLabelText() }}
+            </button>
+        </div>
+
+        <!-- Mobile layout: single merged button -->
+        <button class="pwa-snackbar__btn-compact" (click)="askButtonClick()" [title]="buttonTitleText()">
+            <billy-icon name="refresh" [size]="14" [strokeWidth]="2.1" />
+            {{ messageText() }}
+        </button>
+
+        <button class="pwa-snackbar__close" (click)="askClose()" [title]="closeTitleText()" [attr.aria-label]="i18n.strings().snackbar.dismiss">
+            <billy-icon name="close" [size]="14" [strokeWidth]="2.2" />
+        </button>
+    </div>
+</div>

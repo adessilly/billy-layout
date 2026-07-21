@@ -1,0 +1,19 @@
+<div class="viewer-toolbar">
+  <div class="viewer-file">
+    <span class="viewer-file-icon">
+      @if (loading()) {
+        <i class="fa-solid fa-sync fa-spin"></i>
+      } @else {
+        <i [class]="icon()"></i>
+      }
+    </span>
+    <span class="viewer-file-name" [title]="filename()">{{ filename() }}</span>
+  </div>
+
+  <div class="viewer-actions">
+    <ng-content></ng-content>
+    <button type="button" class="viewer-btn viewer-btn--close" [title]="i18n.strings().viewer.close" (click)="hide()">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+</div>

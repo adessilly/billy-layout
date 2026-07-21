@@ -1,0 +1,93 @@
+// Read-only rendering of a VAT number / IBAN: digits up front, separators in gray.
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+}
+
+.cv-glyph {
+  width: 22px;
+  height: 22px;
+  opacity: 0.9;
+}
+
+// Each segment is a flex item: the line break of a long IBAN then falls
+// between two groups, never in the middle of one.
+.cv-code {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  min-width: 0;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cv-seg {
+  white-space: pre;                        // the spacing segments matter
+}
+
+// The connective parts ("BE", dots, spaces): present, but understated.
+.cv-seg--muted {
+  color: var(--billy-text-muted, #9ca3af);
+  font-weight: 500;
+}
+
+.cv-empty {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--billy-text-muted, #9ca3af);
+}
+
+// ── Copy ────────────────────────────────────────────────────────────────────
+// Discreet at rest, it reveals itself on row hover (and stays visible for
+// keyboard users, otherwise it would be unreachable).
+.cv-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--billy-text-muted, #9ca3af);
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:host(:hover) .cv-copy,
+.cv-copy:focus-visible,
+.cv-copy--done {
+  opacity: 1;
+}
+
+.cv-copy:hover {
+  background: var(--billy-accent-soft, #e6f7fc);
+  color: var(--billy-accent-strong, #0e97bb);
+}
+
+// After copying, the check mark stays green even under the cursor: the rule
+// must therefore be more specific than the hover above.
+.cv-copy.cv-copy--done {
+  color: #16a34a;
+
+  i { animation: cv-pop 0.3s cubic-bezier(0.34, 1.5, 0.64, 1); }
+}
+
+:host-context(body.dark-mode) .cv-copy.cv-copy--done { color: #4ade80; }
+
+@keyframes cv-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-copy,
+  .cv-copy--done i { transition: none; animation: none; }
+}

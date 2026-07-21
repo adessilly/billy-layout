@@ -1,0 +1,283 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLy — form mixins (consume the tokens from src/styles-tokens.scss)
+// Usage: @use '../../../../shared/styles/billy-forms' as forms;
+//        .my-input { @include forms.billy-input; }
+// Dark mode is automatic: the tokens change under body.dark-mode.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Input field of the form family (input, textarea, select trigger)
+@mixin billy-input {
+  background: var(--billy-input-bg, #fff);
+  border: 1px solid var(--billy-input-border, #e5e7eb);
+  border-radius: var(--billy-input-radius, 8px);
+  color: var(--billy-input-color, #374151);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder { color: var(--billy-input-placeholder, #c2c8d0); }
+
+  &:focus {
+    outline: none;
+    border-color: var(--billy-focus-border, #66afe9);
+    box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+  }
+}
+
+// Invalid state to combine with billy-input (Angular class .is-invalid)
+@mixin billy-input-invalid {
+  border-color: var(--billy-danger, #dc2626);
+
+  &:focus { box-shadow: 0 0 0 3px var(--billy-danger-ring, rgba(220, 38, 38, 0.08)); }
+}
+
+// Focus state only (for a non-input element, e.g. a dropdown button whose
+// open state must reflect focus)
+@mixin billy-focus {
+  outline: none;
+  border-color: var(--billy-focus-border, #66afe9);
+  box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
+}
+
+// Input-group addon: button attached or tied to a field
+// (e.g. the "+ client" of the sale/quote forms, the vat-field dropdown-toggle)
+@mixin billy-addon-button {
+  background: var(--billy-addon-bg, #f9fafb);
+  border: 1px solid var(--billy-input-border, #e5e7eb);
+  color: var(--billy-addon-color, #6b7280);
+
+  &:hover {
+    background: var(--billy-addon-hover-bg, #f3f4f6);
+    color: var(--billy-addon-hover-color, #374151);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Standalone fields, buttons and groups — without Bootstrap
+//
+// `billy-input` above only lays down the *skin* (colors, border, focus): the
+// components using it kept `class="form-control"` for the box (display,
+// width, height, padding). The mixins that follow also bring the box, and
+// make the component independent of Bootstrap.
+//
+// The geometry mirrors the theme's (2.1875rem height, .375rem 1rem padding,
+// 1.52857 line-height) so the switch shifts nothing; only the skin follows
+// the --billy-* tokens, so the radius goes from 4px to 8px and the focus to
+// the design system blue. Dark mode remains automatic.
+//
+// Mind the font sizes: the Angle theme overrode Bootstrap's (.form-control
+// and .input-group-text at .875rem instead of 1rem, .btn at 13px). The
+// theme's value is authoritative here — the root is at 16px, taking back
+// Bootstrap's 1rem would enlarge the fields against the rest of the app.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Field height. Exposed (`forms.$field-height`) because a button attached to
+// a field must align with it: billy-button itself imposes no height.
+$field-height: 2.1875rem;
+
+// Complete input field (replaces .form-control)
+@mixin billy-field {
+  display: block;
+  width: 100%;
+  height: $field-height;
+  padding: 0.375rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.52857;
+  background-clip: padding-box;
+
+  @include billy-input;
+
+  &:disabled,
+  &[readonly] {
+    background: var(--billy-input-disabled-bg, #f3f4f6);
+    color: var(--billy-input-disabled-color, #9ca3af);
+    opacity: 1;
+  }
+
+  &.is-invalid { @include billy-input-invalid; }
+}
+
+// Text area: same field, but one that grows with its content.
+@mixin billy-textarea {
+  @include billy-field;
+  height: auto;
+}
+
+// Button base (replaces .btn). Colorless: combine it with one of the button
+// variants below, or dress the button in the component.
+@mixin billy-button {
+  display: inline-block;
+  padding: 0.375rem 1rem;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.52857;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  color: var(--billy-input-color, #374151);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--billy-input-radius, 8px);
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus-visible { @include billy-focus; }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// "Field + attached addon" group (replaces .input-group).
+// The field takes the remaining space; the corners meet in the middle.
+@mixin billy-input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+
+  // The field must not impose its width: the group carries it.
+  > .billy-field,
+  > input,
+  > select {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+  }
+
+  // Corners: rounded on the outside of the group, straight at the junction.
+  > :not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  > :not(:first-child) {
+    margin-left: -1px; // borders overlap instead of doubling up
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  // The focused field moves to the front, or its halo would slide under the addon.
+  > :focus,
+  > :focus-within {
+    z-index: 2;
+  }
+}
+
+// Text or button attached to the field in a billy-input-group.
+//
+// The height is pinned to the field's, it is NOT derived from the content:
+// this is a flex box, so a text addon ("€") is taller than an icon-only one,
+// and it would stick out of the field (the group uses align-items: stretch,
+// but the field itself has a fixed height and does not follow). The content
+// is centered vertically, hence the absence of vertical padding.
+@mixin billy-input-group-addon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $field-height;
+  padding: 0 1rem;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.52857;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: var(--billy-input-radius, 8px);
+
+  @include billy-addon-button;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Side-panel footer action buttons
+// Same visual language as <billy-save-bar> (ghost to cancel / full accent
+// with relief to confirm), but at a reduced scale: the save-bar's card
+// chrome and its 128px min-width per button do not fit in a panel's width.
+// Use when a save-bar does not fit (calendar, services).
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Base shared by all footer buttons
+@mixin billy-panel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  border: 1px solid transparent;
+  border-radius: var(--billy-input-radius, 8px);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  i { font-size: 0.85em; }
+  span { white-space: nowrap; }
+
+  &:active { transform: translateY(1px); }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+// Cancel / No: discreet ghost button (cf. billy-save-bar's .btn-cancel)
+@mixin billy-panel-button-ghost {
+  background: transparent;
+  border-color: var(--billy-input-border, #e5e7eb);
+  color: var(--billy-text-soft, #6b7280);
+
+  &:hover {
+    background: var(--billy-addon-hover-bg, #f3f4f6);
+    border-color: var(--billy-input-border-hover, #9ca3af);
+    color: var(--billy-input-color, #374151);
+  }
+}
+
+// Save: full accent + relief on hover (cf. billy-save-bar's .btn-save)
+@mixin billy-panel-button-submit {
+  background: var(--billy-accent, #12b4dd);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
+
+  &:hover:not(:disabled) {
+    background: var(--billy-accent-strong, #0e97bb);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(18, 180, 221, 0.28);
+  }
+}
+
+// Delete confirmation: the destructive action takes the main button's place
+@mixin billy-panel-button-destructive {
+  background: var(--billy-danger, #dc2626);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08);
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.28);
+  }
+}
+
+// Delete: icon only (~36px), pushed to the left to keep the destructive
+// action away from the confirm button
+@mixin billy-panel-button-delete-icon {
+  margin-right: auto;
+  padding: 8px 11px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--billy-text-muted, #9ca3af);
+
+  &:hover {
+    background: var(--billy-danger-ring, rgba(220, 38, 38, 0.08));
+    color: var(--billy-danger, #dc2626);
+  }
+}

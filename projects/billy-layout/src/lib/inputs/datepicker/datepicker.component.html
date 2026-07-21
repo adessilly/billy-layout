@@ -1,0 +1,55 @@
+<div class="dp"
+  [class.dp--invalid]="invalid()"
+  [class.dp--disabled]="isDisabled()"
+  [class.dp--open]="isOpen()">
+
+  <input #field
+    type="text"
+    class="dp-input"
+    autocomplete="off"
+    [placeholder]="placeholder()"
+    [disabled]="isDisabled()"
+    [attr.aria-label]="ariaLabelText()"
+    [attr.aria-invalid]="invalid() || null"
+    [value]="text()"
+    (input)="onInput($any($event.target).value)"
+    (blur)="onBlur()"
+    (keydown)="onFieldKeydown($event)"
+  />
+
+  <button type="button" class="dp-toggle"
+    [disabled]="isDisabled()"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-label]="i18n.strings().datepicker.openCalendar"
+    (click)="toggle()">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2.5"/>
+      <path d="M3 10h18M8 3v4M16 3v4"/>
+      <circle cx="12" cy="15.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+
+</div>
+
+@if (isOpen()) {
+  @if (isMobile()) {
+    <div class="dp-backdrop" aria-hidden="true" (click)="close()"></div>
+  }
+  <div #panel class="dp-panel"
+    [class.dp-panel--sheet]="isMobile()"
+    [class.dp-panel--up]="!isMobile() && panelPos().openUp"
+    [style.left.px]="isMobile() ? null : panelPos().left"
+    [style.top.px]="isMobile() || panelPos().openUp ? null : panelPos().top"
+    [style.bottom.px]="!isMobile() && panelPos().openUp ? panelPos().bottom : null"
+    role="dialog"
+    [attr.aria-label]="i18n.strings().datepicker.chooseDate"
+    [attr.aria-modal]="isMobile() ? true : null"
+    (keydown)="onPanelKeydown($event)">
+    <billy-datepicker-calendar
+      [selected]="value()"
+      [locale]="localeText()"
+      [autofocusDay]="true"
+      (datePicked)="onDatePicked($event)" />
+  </div>
+}

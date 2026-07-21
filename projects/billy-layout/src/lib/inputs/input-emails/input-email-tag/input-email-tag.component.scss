@@ -1,0 +1,74 @@
+.email-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background-color: #cedbe2;
+  color: #676f74;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  max-width: 100%;
+
+  &.invalid {
+    background-color: #f8d7da;
+    color: #721c24;
+
+    .remove-btn {
+      color: #721c24;
+    }
+  }
+
+  .email-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .remove-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #676f74;
+    cursor: pointer;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    i {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// Dark mode support
+:host-context(.dark-mode) {
+  .email-tag {
+    background-color: #0056b3;
+
+    &.invalid {
+      background-color: #842029;
+      color: #f8d7da;
+
+      .remove-btn {
+        color: #f8d7da;
+      }
+    }
+  }
+}

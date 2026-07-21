@@ -1,0 +1,363 @@
+<div class="empty-wrap" [class]="'empty-wrap--' + type()">
+
+  @switch (type()) {
+
+    <!-- ══════════════════ PURCHASE — scanned receipt ══════════════════ -->
+    @case ('purchase') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#fff0ea"/>
+
+        <g class="es-float">
+          <!-- Receipt shadow -->
+          <path d="M62 40 Q62 30 72 30 H128 Q138 30 138 40 V128 l-4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 Z"
+                transform="translate(4 5)" fill="#ff7a59" opacity="0.16"/>
+
+          <!-- Receipt body (torn edge) -->
+          <path class="es-card" d="M62 40 Q62 30 72 30 H128 Q138 30 138 40 V128 l-4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 -4.75 7 -4.75-7 Z"
+                fill="white" stroke="#ffd9cc" stroke-width="1.5"/>
+
+          <!-- Store header -->
+          <circle cx="79" cy="47" r="5" fill="#ffd3c4"/>
+          <rect x="90" y="43.5" width="32" height="7" rx="3.5" fill="#ffe4da"/>
+
+          <!-- Item lines -->
+          <rect class="es-line" x="72" y="62" width="56" height="6" rx="3" fill="#f0f1f5"/>
+          <rect class="es-line" x="72" y="75" width="42" height="6" rx="3" fill="#f3f4f6"/>
+          <rect class="es-line" x="72" y="88" width="50" height="6" rx="3" fill="#f3f4f6"/>
+
+          <!-- Dotted rule + total -->
+          <line x1="72" y1="101" x2="128" y2="101" stroke="#ffe0d5" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <rect x="72" y="108" width="22" height="7" rx="3.5" fill="#ffd3c4"/>
+          <rect x="106" y="107" width="22" height="9" rx="4.5" fill="#ff7a59"/>
+
+          <!-- AI scan beam -->
+          <g class="es-scan">
+            <rect x="56" y="37" width="88" height="12" fill="#ff7a59" opacity="0.09"/>
+            <rect x="56" y="34" width="88" height="3.5" rx="1.75" fill="#ff7a59" opacity="0.85"/>
+          </g>
+        </g>
+
+        <!-- € coin -->
+        <g class="es-coin">
+          <circle cx="163" cy="62" r="13" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="163" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">€</text>
+        </g>
+        <circle class="es-dot es-dot--2" cx="38" cy="118" r="7" fill="#fde68a" stroke="#fbbf24" stroke-width="1.5"/>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="33" y1="33" x2="33" y2="43" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="28" y1="38" x2="38" y2="38" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <circle class="es-dot" cx="24" cy="84" r="4.5" fill="#ffb59e" opacity="0.8"/>
+        <circle class="es-dot es-dot--3" cx="176" cy="112" r="3.5" fill="#fbbf24" opacity="0.5"/>
+      </svg>
+    }
+
+    <!-- ══════════════════ SALE — paid invoice & growth ══════════════════ -->
+    @case ('sale') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#e9f8f1"/>
+
+        <!-- Mini chart in the background -->
+        <rect class="es-bar es-bar--1" x="30" y="98" width="9" height="24" rx="3" fill="#a7f3d0"/>
+        <rect class="es-bar es-bar--2" x="43" y="84" width="9" height="38" rx="3" fill="#6ee7b7"/>
+
+        <!-- Growth arrow drawing itself -->
+        <g class="es-draw-group">
+          <path class="es-draw" d="M26 90 C 38 82, 40 62, 56 48" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+          <path class="es-draw es-draw--head" d="M46 46 L57 46 L56 57" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+
+        <g class="es-float">
+          <!-- Shadow -->
+          <rect x="68" y="37" width="84" height="104" rx="11" fill="#10b981" opacity="0.14"/>
+          <!-- Invoice -->
+          <rect class="es-card" x="64" y="32" width="84" height="104" rx="11" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+          <!-- Folded corner -->
+          <path d="M148 52 L128 32 L146 32 Q148 32 148 36 Z" fill="#c7f0de"/>
+
+          <!-- INVOICE header -->
+          <rect x="76" y="46" width="38" height="8" rx="4" fill="#6366f1"/>
+
+          <!-- Lines -->
+          <rect class="es-line" x="76" y="64" width="52" height="6" rx="3" fill="#f0f1f5"/>
+          <rect class="es-line" x="76" y="77" width="40" height="6" rx="3" fill="#f3f4f6"/>
+          <rect class="es-line" x="76" y="90" width="46" height="6" rx="3" fill="#f3f4f6"/>
+
+          <!-- Total band -->
+          <rect x="76" y="104" width="52" height="11" rx="5.5" fill="#eef2ff"/>
+          <rect x="106" y="107" width="18" height="5" rx="2.5" fill="#6366f1"/>
+
+          <!-- Paid badge -->
+          <g class="es-pop">
+            <circle cx="146" cy="124" r="14" fill="#10b981" stroke="white" stroke-width="3"/>
+            <path d="M139.5 124 l4.5 4.5 8.5-9.5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </g>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="168" y1="29" x2="168" y2="39" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="163" y1="34" x2="173" y2="34" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <circle class="es-dot" cx="22" cy="60" r="4.5" fill="#6ee7b7" opacity="0.8"/>
+        <circle class="es-dot es-dot--3" cx="178" cy="96" r="3.5" fill="#a5b4fc" opacity="0.7"/>
+      </svg>
+    }
+
+    <!-- ══════════════════ QUOTE — signature pending ══════════════════ -->
+    @case ('quote') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#fdf3e0"/>
+
+        <g class="es-float">
+          <!-- Shadow -->
+          <rect x="62" y="35" width="84" height="108" rx="11" fill="#f59e0b" opacity="0.15"/>
+          <!-- Document -->
+          <rect class="es-card" x="58" y="30" width="84" height="108" rx="11" fill="white" stroke="#fde8c8" stroke-width="1.5"/>
+
+          <!-- QUOTE header -->
+          <rect x="70" y="44" width="38" height="8" rx="4" fill="#f59e0b"/>
+
+          <!-- Lines -->
+          <rect class="es-line" x="70" y="62" width="52" height="6" rx="3" fill="#f0f1f5"/>
+          <rect class="es-line" x="70" y="75" width="42" height="6" rx="3" fill="#f3f4f6"/>
+          <rect class="es-line" x="70" y="88" width="48" height="6" rx="3" fill="#f3f4f6"/>
+
+          <!-- Signature line + animated initials -->
+          <line class="es-line-stroke" x1="70" y1="122" x2="130" y2="122" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <path class="es-sign" d="M72 117 C76 108 80 108 82 115 C84 121 88 106 93 110 C97 113 100 112 104 107 C107 103 111 112 118 108"
+                stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Pen -->
+          <g class="es-pen">
+            <line x1="124" y1="100" x2="141" y2="83" stroke="#7c3aed" stroke-width="7" stroke-linecap="round"/>
+            <line x1="128" y1="96" x2="131.5" y2="92.5" stroke="#a78bfa" stroke-width="7"/>
+            <polygon points="117,107 124.5,100.5 120,95.5" fill="#f59e0b"/>
+            <circle cx="117.5" cy="106.5" r="1.6" fill="#92400e"/>
+          </g>
+        </g>
+
+        <!-- “Pending” clock badge -->
+        <g class="es-pop">
+          <circle cx="150" cy="42" r="14" fill="#fbbf24" stroke="white" stroke-width="3"/>
+          <circle cx="150" cy="42" r="9.5" fill="#fffbeb"/>
+          <line x1="150" y1="42" x2="154.5" y2="44" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+          <line class="es-hand" x1="150" y1="42" x2="150" y2="35" stroke="#92400e" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="150" cy="42" r="1.5" fill="#92400e"/>
+        </g>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="32" y1="39" x2="32" y2="49" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="27" y1="44" x2="37" y2="44" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <circle class="es-dot" cx="24" cy="100" r="4.5" fill="#fcd34d" opacity="0.8"/>
+        <circle class="es-dot es-dot--3" cx="176" cy="110" r="3.5" fill="#a5b4fc" opacity="0.7"/>
+      </svg>
+    }
+
+    <!-- ══════════════════ CLIENT — avatar trio ══════════════════ -->
+    @case ('client') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <clipPath id="esAvL"><circle cx="56" cy="94" r="16"/></clipPath>
+          <clipPath id="esAvR"><circle cx="144" cy="94" r="16"/></clipPath>
+          <clipPath id="esAvM"><circle cx="100" cy="86" r="27"/></clipPath>
+        </defs>
+
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#f4eeff"/>
+
+        <!-- Rotating orbit -->
+        <g class="es-orbit">
+          <circle cx="100" cy="86" r="58" stroke="#ddd6fe" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
+          <circle cx="100" cy="28" r="4" fill="#c4b5fd"/>
+          <circle cx="141" cy="127" r="3" fill="#a78bfa" opacity="0.7"/>
+        </g>
+
+        <!-- Left avatar -->
+        <g class="es-bob es-bob--l">
+          <g clip-path="url(#esAvL)">
+            <circle cx="56" cy="94" r="16" fill="#ede9fe"/>
+            <circle cx="56" cy="89" r="6" fill="#a78bfa"/>
+            <ellipse cx="56" cy="107" rx="9.5" ry="7.5" fill="#a78bfa"/>
+          </g>
+          <circle cx="56" cy="94" r="16" fill="none" stroke="white" stroke-width="2.5"/>
+        </g>
+
+        <!-- Right avatar -->
+        <g class="es-bob es-bob--r">
+          <g clip-path="url(#esAvR)">
+            <circle cx="144" cy="94" r="16" fill="#f3e8ff"/>
+            <circle cx="144" cy="89" r="6" fill="#c4b5fd"/>
+            <ellipse cx="144" cy="107" rx="9.5" ry="7.5" fill="#c4b5fd"/>
+          </g>
+          <circle cx="144" cy="94" r="16" fill="none" stroke="white" stroke-width="2.5"/>
+        </g>
+
+        <!-- Main avatar -->
+        <g class="es-bob">
+          <circle cx="100" cy="88.5" r="27" fill="#7c3aed" opacity="0.18"/>
+          <g clip-path="url(#esAvM)">
+            <circle cx="100" cy="86" r="27" fill="#8b5cf6"/>
+            <circle cx="100" cy="78" r="9.5" fill="#f5f3ff"/>
+            <ellipse cx="100" cy="106" rx="15" ry="11" fill="#f5f3ff"/>
+          </g>
+          <circle cx="100" cy="86" r="27" fill="none" stroke="white" stroke-width="3"/>
+
+          <!-- + badge -->
+          <g class="es-pop">
+            <circle cx="121" cy="105" r="10.5" fill="#10b981" stroke="white" stroke-width="3"/>
+            <rect x="116.5" y="103.5" width="9" height="3" rx="1.5" fill="white"/>
+            <rect x="119.5" y="100.5" width="3" height="9" rx="1.5" fill="white"/>
+          </g>
+        </g>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="164" y1="31" x2="164" y2="41" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="159" y1="36" x2="169" y2="36" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <circle class="es-dot" cx="26" cy="60" r="4.5" fill="#c4b5fd" opacity="0.8"/>
+        <circle class="es-dot es-dot--3" cx="176" cy="120" r="3.5" fill="#fbbf24" opacity="0.5"/>
+      </svg>
+    }
+
+    <!-- ══════════════════ EVENTS — calendar ══════════════════ -->
+    @case ('events') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#eef2ff"/>
+
+        <g class="es-float">
+          <!-- Shadow -->
+          <rect x="43" y="42" width="118" height="100" rx="13" fill="#818cf8" opacity="0.18"/>
+          <!-- Calendar body -->
+          <rect class="es-card" x="40" y="38" width="118" height="100" rx="13" fill="white" stroke="#e0e7ff" stroke-width="1.5"/>
+          <!-- Banner -->
+          <rect x="40" y="38" width="118" height="38" rx="13" fill="#6366f1"/>
+          <rect x="40" y="63" width="118" height="13" fill="#6366f1"/>
+          <!-- Rings -->
+          <rect x="70" y="27" width="9" height="24" rx="4.5" fill="#4338ca"/>
+          <rect x="119" y="27" width="9" height="24" rx="4.5" fill="#4338ca"/>
+          <!-- Month -->
+          <rect x="74" y="46" width="50" height="8" rx="4" fill="rgba(255,255,255,0.35)"/>
+          <!-- Empty grid -->
+          <rect class="es-line" x="56" y="89" width="86" height="7" rx="3.5" fill="#f0f1f5"/>
+          <rect class="es-line" x="56" y="104" width="66" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect class="es-line" x="56" y="119" width="76" height="7" rx="3.5" fill="#f3f4f6"/>
+        </g>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="163" y1="21" x2="163" y2="31" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="158" y1="26" x2="168" y2="26" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="159.5" y1="23.5" x2="166.5" y2="28.5" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <line x1="166.5" y1="23.5" x2="159.5" y2="28.5" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        </g>
+
+        <circle class="es-dot" cx="22" cy="80" r="5" fill="#a5b4fc" opacity="0.8"/>
+        <circle class="es-dot es-dot--2" cx="178" cy="108" r="4" fill="#fbbf24" opacity="0.5"/>
+        <circle class="es-dot es-dot--3" cx="172" cy="150" r="3.5" fill="#c7d2fe" opacity="0.8"/>
+      </svg>
+    }
+
+    <!-- ══════════════════ RECURRING — rotating cycle ══════════════════ -->
+    @case ('recurring') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="87" rx="80" ry="68" fill="#ecfdf5"/>
+
+        <!-- Dotted track -->
+        <circle cx="100" cy="87" r="52" stroke="#bbf7d0" stroke-width="2" stroke-dasharray="5 4" fill="none"/>
+
+        <!-- Continuously rotating arc -->
+        <g class="es-rotor">
+          <path d="M 100 35 A 52 52 0 1 1 48 87" fill="none" stroke="#6366f1" stroke-width="9" stroke-linecap="round"/>
+          <polygon points="48,72 40,86 56,86" fill="#6366f1"/>
+          <circle cx="100" cy="35" r="8" fill="#e0e7ff"/>
+          <circle cx="100" cy="35" r="4.5" fill="#6366f1"/>
+        </g>
+
+        <!-- 3 o'clock marker -->
+        <circle cx="152" cy="87" r="6" fill="#d1fae5"/>
+        <circle cx="152" cy="87" r="3" fill="#10b981" opacity="0.55"/>
+
+        <!-- Center -->
+        <circle class="es-card" cx="100" cy="87" r="26" fill="white" stroke="#d1fae5" stroke-width="1.5"/>
+        <g class="es-pop">
+          <rect x="92" y="85" width="16" height="4" rx="2" fill="#6366f1"/>
+          <rect x="98" y="79" width="4" height="16" rx="2" fill="#6366f1"/>
+        </g>
+
+        <circle class="es-dot" cx="22" cy="60" r="4.5" fill="#a5b4fc" opacity="0.7"/>
+        <circle class="es-dot es-dot--2" cx="178" cy="114" r="3.5" fill="#6ee7b7" opacity="0.7"/>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="30" y1="112" x2="30" y2="122" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="25" y1="117" x2="35" y2="117" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+      </svg>
+    }
+
+    <!-- ══════════════════ SEARCH — no results ══════════════════ -->
+    @case ('search') {
+      <svg class="empty-svg" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse class="es-glow" cx="100" cy="88" rx="82" ry="70" fill="#eef2f7"/>
+
+        <!-- Ghost results -->
+        <g>
+          <rect class="es-card" x="46" y="40" width="104" height="18" rx="9" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <circle cx="58" cy="49" r="5" fill="#e2e8f0"/>
+          <rect class="es-line" x="70" y="46.5" width="52" height="5" rx="2.5" fill="#eef1f5"/>
+        </g>
+        <g opacity="0.75">
+          <rect class="es-card" x="46" y="66" width="104" height="18" rx="9" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <circle cx="58" cy="75" r="5" fill="#e2e8f0"/>
+          <rect class="es-line" x="70" y="72.5" width="40" height="5" rx="2.5" fill="#eef1f5"/>
+        </g>
+        <g opacity="0.5">
+          <rect class="es-card" x="46" y="92" width="104" height="18" rx="9" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <circle cx="58" cy="101" r="5" fill="#e2e8f0"/>
+          <rect class="es-line" x="70" y="98.5" width="46" height="5" rx="2.5" fill="#eef1f5"/>
+        </g>
+
+        <!-- Sweeping magnifier -->
+        <g class="es-sweep">
+          <circle cx="116" cy="94" r="23" fill="white" fill-opacity="0.82" stroke="#6366f1" stroke-width="5"/>
+          <path d="M103 88 A15 15 0 0 1 110 79" stroke="#c7d2fe" stroke-width="3" stroke-linecap="round"/>
+          <text x="116" y="101" text-anchor="middle" font-size="19" font-weight="700" fill="#c7d2fe">?</text>
+          <line x1="133" y1="111" x2="149" y2="127" stroke="#6366f1" stroke-width="8" stroke-linecap="round"/>
+        </g>
+
+        <!-- Sparkle -->
+        <g class="es-sparkle">
+          <line x1="40" y1="31" x2="40" y2="41" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="35" y1="36" x2="45" y2="36" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <circle class="es-dot" cx="170" cy="56" r="4.5" fill="#a5b4fc" opacity="0.7"/>
+        <circle class="es-dot es-dot--3" cx="30" cy="122" r="3.5" fill="#94a3b8" opacity="0.5"/>
+      </svg>
+    }
+
+  }
+
+  <div class="empty-title">{{ copy().title }}</div>
+  <div class="empty-subtitle">{{ copy().subtitle }}</div>
+
+  @if (copy().cta; as cta) {
+    <button type="button" class="empty-cta" (click)="createClicked.emit()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="5.75" y="1" width="2.5" height="12" rx="1.25" fill="white"/>
+        <rect x="1" y="5.75" width="12" height="2.5" rx="1.25" fill="white"/>
+      </svg>
+      {{ cta }}
+    </button>
+  }
+
+</div>

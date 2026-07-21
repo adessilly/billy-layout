@@ -1,0 +1,56 @@
+.email-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  margin-top: 0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  .suggestion-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    font-size: 0.875rem;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &:active {
+      background-color: #e9ecef;
+    }
+
+    &.selected {
+      background-color: #e7f3ff;
+    }
+  }
+}
+
+// Dark mode support
+:host-context(.dark-mode) {
+  .email-suggestions {
+    background-color: #2b3035;
+    border-color: #495057;
+
+    .suggestion-item {
+      &:hover {
+        background-color: #343a40;
+      }
+
+      &:active {
+        background-color: #3d4449;
+      }
+
+      &.selected {
+        background-color: #1a3a52;
+        border-left-color: var(--billy-accent, #12b4dd);
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<div class="billy-shell">
+
+  <billy-topbar>
+    <!-- Re-projection of the business slots to the topbar (ng-container: a
+         re-projected <ng-content select> does not match without ngProjectAs). -->
+    <ng-container ngProjectAs="[shell-search]">
+      <ng-content select="[shell-search]" />
+    </ng-container>
+    <ng-container ngProjectAs="[shell-notifications]">
+      <ng-content select="[shell-notifications]" />
+    </ng-container>
+    <ng-container ngProjectAs="[shell-account]">
+      <ng-content select="[shell-account]" />
+    </ng-container>
+  </billy-topbar>
+
+  <div class="billy-shell-body">
+
+    <billy-sidebar />
+
+    @if (shell.mobileSidebarOpen()) {
+      <div class="billy-shell-backdrop" (click)="shell.closeMobileSidebar()"></div>
+    }
+
+    <main class="billy-shell-content">
+      <ng-content />
+    </main>
+
+  </div>
+
+</div>

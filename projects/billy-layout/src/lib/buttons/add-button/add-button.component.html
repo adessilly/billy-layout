@@ -1,0 +1,11 @@
+<div class="add-tile add-tile-manual" (click)="onClick($event)">
+  <div class="add-tile-icon">
+    <i [class]="icon()"></i>
+  </div>
+  <div class="add-tile-content">
+    <span class="add-tile-title">{{ labelText() }}</span>
+    @if (subtitle()) {
+      <span class="add-tile-subtitle">{{ subtitle() }}</span>
+    }
+  </div>
+</div>

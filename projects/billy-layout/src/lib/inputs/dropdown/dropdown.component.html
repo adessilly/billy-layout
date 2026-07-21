@@ -1,0 +1,101 @@
+<div class="dropdown" clickOutside [listenClickOutside]="isOpen()" (clickOutside)="close()">
+
+  <button #trigger
+    type="button"
+    class="dropdown-trigger"
+    [id]="id()"
+    [disabled]="isDisabled()"
+    [class.dropdown-trigger--open]="isOpen()"
+    role="combobox"
+    aria-haspopup="listbox"
+    [class.dropdown-trigger--multi]="isMulti()"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-required]="required() || null"
+    (click)="toggle()"
+    (keydown)="onTriggerKeydown($event)">
+    @if (isMulti()) {
+      @if (selectedOptions().length) {
+        <span class="dropdown-tags">
+          @for (opt of selectedOptions(); track opt.id) {
+            <span class="dropdown-tag">
+              <span class="dropdown-tag__text">{{ opt.text }}</span>
+              @if (!isDisabled()) {
+                <span class="dropdown-tag__remove"
+                  role="button"
+                  tabindex="-1"
+                  [attr.aria-label]="i18n.strings().dropdown.remove + ' ' + opt.text"
+                  (click)="removeValue(opt, $event)">
+                  <billy-icon name="close" [size]="12" [strokeWidth]="2.2" />
+                </span>
+              }
+            </span>
+          }
+        </span>
+      } @else {
+        <span class="dropdown-trigger__label dropdown-trigger__label--placeholder">{{ placeholder() }}</span>
+      }
+    } @else {
+      <span class="dropdown-trigger__label" [class.dropdown-trigger__label--placeholder]="!selectedOption()">
+        {{ selectedOption()?.text ?? placeholder() }}
+      </span>
+    }
+    <billy-icon name="chevron-down" class="dropdown-trigger__chevron"
+      [class.dropdown-trigger__chevron--open]="isOpen()" [size]="14" [strokeWidth]="2.2" />
+  </button>
+
+  @if (isOpen()) {
+    <div class="dropdown-panel"
+      [class.dropdown-panel--up]="panelPos().openUp"
+      [style.left.px]="panelPos().left"
+      [style.width.px]="panelPos().width"
+      [style.top.px]="panelPos().openUp ? null : panelPos().top"
+      [style.bottom.px]="panelPos().openUp ? panelPos().bottom : null"
+      (keydown)="onPanelKeydown($event)">
+
+      @if (searchable()) {
+        <div class="dropdown-search">
+          <billy-icon name="search" class="dropdown-search__icon" [size]="13" [strokeWidth]="2.2" />
+          <input #searchInput
+            type="text"
+            [placeholder]="i18n.strings().dropdown.searchPlaceholder"
+            autocomplete="off"
+            [value]="searchText()"
+            (input)="onSearchInput($any($event.target).value)"
+            (keydown)="onSearchKeydown($event)">
+          @if (searchText()) {
+            <button type="button" class="dropdown-search__clear" tabindex="-1" (click)="onSearchInput('')">
+              <billy-icon name="close" [size]="10" [strokeWidth]="2.4" />
+            </button>
+          }
+        </div>
+      }
+
+      <ul #list class="dropdown-list" role="listbox" tabindex="-1" [attr.aria-multiselectable]="isMulti() || null">
+        @for (item of filteredView(); track item.option.id; let i = $index) {
+          <li class="dropdown-option"
+            role="option"
+            [class.dropdown-option--active]="i === activeIndex()"
+            [class.dropdown-option--selected]="selectedIds().has('' + item.option.id)"
+            [attr.aria-selected]="selectedIds().has('' + item.option.id)"
+            (mouseenter)="activeIndex.set(i)"
+            (click)="pick(item.option)">
+            <span class="dropdown-option__text">
+              @if (item.seg) {
+                {{ item.seg.before }}<b>{{ item.seg.match }}</b>{{ item.seg.after }}
+              } @else {
+                {{ item.option.text }}
+              }
+            </span>
+            @if (selectedIds().has('' + item.option.id)) {
+              <billy-icon name="check" class="dropdown-option__check" [size]="13" [strokeWidth]="2.4" />
+            }
+          </li>
+        } @empty {
+          <li class="dropdown-empty">{{ i18n.strings().dropdown.noResults }}</li>
+        }
+      </ul>
+
+    </div>
+  }
+
+</div>

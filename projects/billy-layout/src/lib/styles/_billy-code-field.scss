@@ -1,0 +1,142 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLy — shell of the "code" fields (billy-input-vat, billy-input-iban)
+// Usage: @use '../../../styles/billy-code-field' as code;
+//        @include code.billy-code-field;
+//
+// A single set of classes (.cfd-*) shared by both fields: they only differ
+// in their glyph and messages, not in their box.
+// Dark mode follows the --billy-* tokens, except the validation green which
+// does not exist in the style guide and is defined here.
+// ═══════════════════════════════════════════════════════════════════════════
+
+@use 'billy-forms' as forms;
+
+@mixin billy-code-field {
+
+  :host {
+    display: block;
+
+    --cfd-ok: #16a34a;
+  }
+
+  :host-context(body.dark-mode) {
+    --cfd-ok: #4ade80;
+  }
+
+  // ── Field box ─────────────────────────────────────────────────────────────
+  .cfd-shell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px 4px 7px;
+
+    @include forms.billy-input;
+  }
+
+  .cfd-shell--focus { @include forms.billy-focus; }
+
+  // Valid: the field keeps its neutral border. Validity reads from the check
+  // mark, the glyph and the message — a permanent green frame would shout a
+  // success nobody needs to be warned about. The error, though, keeps its
+  // frame: it is what must catch the eye.
+  .cfd-shell--valid {
+    .cfd-glyph { color: var(--cfd-ok); }
+  }
+
+  .cfd-shell--invalid {
+    @include forms.billy-input-invalid;
+
+    .cfd-glyph { color: var(--billy-danger, #dc2626); }
+  }
+
+  .cfd-shell--disabled {
+    background: var(--billy-input-disabled-bg, #f3f4f6);
+    cursor: not-allowed;
+
+    .cfd-glyph { opacity: 0.55; }
+  }
+
+  .cfd-glyph {
+    transition: color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .cfd-shell--focus .cfd-glyph { transform: scale(1.07); }
+
+  // ── Input ─────────────────────────────────────────────────────────────────
+  // Fixed-width digits: groups stay aligned from one field to the next, and
+  // the value does not "breathe" while typing.
+  .cfd-input {
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--billy-input-color, #374151);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+
+    &:focus { outline: none; }
+
+    &::placeholder {
+      color: var(--billy-input-placeholder, #c2c8d0);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    &:disabled {
+      color: var(--billy-input-disabled-color, #9ca3af);
+      cursor: not-allowed;
+    }
+  }
+
+  // ── Info line ─────────────────────────────────────────────────────────────
+  // Reserved height: the message appears and disappears without pushing the
+  // next field.
+  .cfd-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 17px;
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .cfd-country {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--billy-accent-soft, #e6f7fc);
+    color: var(--billy-accent-strong, #0e97bb);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    animation: cfd-chip-in 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .cfd-msg {
+    min-width: 0;
+    color: var(--billy-text-muted, #9ca3af);
+    transition: color 0.2s ease;
+  }
+
+  .cfd-msg--ok    { color: var(--cfd-ok); font-weight: 500; }
+  .cfd-msg--info  { color: var(--billy-accent-strong, #0e97bb); }
+  .cfd-msg--error { color: var(--billy-danger, #dc2626); font-weight: 500; }
+
+  @keyframes cfd-chip-in {
+    from { opacity: 0; transform: translateY(2px) scale(0.9); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cfd-shell,
+    .cfd-glyph,
+    .cfd-country { animation: none; transition: none; }
+  }
+
+}

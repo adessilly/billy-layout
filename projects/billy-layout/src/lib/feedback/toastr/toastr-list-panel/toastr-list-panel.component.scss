@@ -1,0 +1,25 @@
+// Toast stack, anchored below the topbar (66px). The container lets clicks
+// pass through; only the cards are interactive.
+.toastr-stack {
+  position: fixed;
+  top: 78px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+
+// Mobile: pills centered below the topbar, sized to their content.
+@media (max-width: 767.98px) {
+  .toastr-stack {
+    top: 74px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    align-items: center;
+  }
+}
