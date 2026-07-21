@@ -1,75 +1,75 @@
 # dialog — `Dialog`
 
-> Catégorie `dialogs` · source `projects/billy-layout/src/lib/dialogs/dialog/dialog-utils.ts` · classe (+ token d'injection `BILLY_DIALOG_ROUTER`, `projects/billy-layout/src/lib/dialogs/dialog/billy-dialog-router.ts`)
+> Category `dialogs` · source `projects/billy-layout/src/lib/dialogs/dialog/dialog-utils.ts` · class (+ injection token `BILLY_DIALOG_ROUTER`, `projects/billy-layout/src/lib/dialogs/dialog/billy-dialog-router.ts`)
 
-## Rôle
+## Purpose
 
-`Dialog` est le moteur des dialogues modaux du design system, **sans aucune dépendance à Bootstrap**. Il reprend à l'identique le contrat de l'ancienne coque `bootstrap.Modal` : `show()` / `hide()`, et deux évènements *terminaux* (`listenShow()` / `listenClose()`) émis **une fois la transition CSS finie**. Ce différé est essentiel : les appelants retirent l'élément du `<body>` et enchaînent la navigation dans `listenClose()` — les notifier plus tôt casserait l'animation.
+`Dialog` is the engine behind the design system's modal dialogs, **with no Bootstrap dependency whatsoever**. It reproduces the contract of the old `bootstrap.Modal` shell exactly: `show()` / `hide()`, and two *terminal* events (`listenShow()` / `listenClose()`) emitted **once the CSS transition has finished**. That deferral is essential: callers remove the element from `<body>` and chain navigation inside `listenClose()` — notifying them earlier would break the animation.
 
-La classe ne fait **que** le comportement (affichage, transitions, gestes de fermeture, pile, verrou de scroll). La coque visuelle `.billy-modal*` est une feuille **globale** : `projects/billy-layout/src/lib/styles/_billy-dialog.scss`, chargée par le `src/styles.scss` de l'application (`@use 'billy-dialog';`, via l'`includePaths` `projects/billy-layout/src/lib/styles` d'`angular.json`).
+The class handles behavior **only** (display, transitions, closing gestures, stack, scroll lock). The visual `.billy-modal*` shell is a **global** stylesheet: `projects/billy-layout/src/lib/styles/_billy-dialog.scss`, loaded by the application's `src/styles.scss` (`@use 'billy-dialog';`, via the `includePaths` `projects/billy-layout/src/lib/styles` in `angular.json`).
 
 ## API
 
-### Constructeur
+### Constructor
 
 ```ts
 new Dialog(host: HTMLElement)
 ```
 
-`host` est la **racine** `.billy-modal` (l'élément plein écran qui sert de fond, de zone de clic-pour-fermer et de conteneur de défilement).
+`host` is the `.billy-modal` **root** (the full-screen element acting as backdrop, click-to-close zone and scroll container).
 
-### Méthodes publiques
+### Public methods
 
-| Méthode | Signature | Description |
+| Method | Signature | Description |
 |---|---|---|
-| `show` | `show(): void` | Ouvre le dialogue : pousse l'instance dans la pile, pose `billy-dialog-open` sur `<body>`, branche les écouteurs (mousedown/click/keydown), pose `aria-modal="true"`, passe `display` à `block`, force un reflow puis ajoute la classe `is-open` (déclenche la transition d'opacité). No-op si l'instance n'est pas à l'état `idle`. |
-| `hide` | `hide(): void` | Ferme le dialogue : retire `is-open`, attend la fin de transition puis démonte tout (`teardown`) et émet `listenClose()`. No-op si l'état n'est ni `opening` ni `open` (une fermeture peut donc couper une ouverture en cours). |
-| `listenShow` | `listenShow(): Observable<void>` | Émet **une seule fois**, quand le dialogue est entièrement ouvert (transition comprise), puis complète. |
-| `listenClose` | `listenClose(): Observable<void>` | Émet **une seule fois**, quand le dialogue est entièrement fermé (transition comprise), puis complète. C'est là qu'on retire l'élément du `<body>` et qu'on enchaîne la navigation. |
+| `show` | `show(): void` | Opens the dialog: pushes the instance onto the stack, sets `billy-dialog-open` on `<body>`, wires the listeners (mousedown/click/keydown), sets `aria-modal="true"`, switches `display` to `block`, forces a reflow then adds the `is-open` class (triggering the opacity transition). No-op if the instance is not in the `idle` state. |
+| `hide` | `hide(): void` | Closes the dialog: removes `is-open`, waits for the transition to end then tears everything down (`teardown`) and emits `listenClose()`. No-op if the state is neither `opening` nor `open` (so a close can interrupt an opening in progress). |
+| `listenShow` | `listenShow(): Observable<void>` | Emits **exactly once**, when the dialog is fully open (transition included), then completes. |
+| `listenClose` | `listenClose(): Observable<void>` | Emits **exactly once**, when the dialog is fully closed (transition included), then completes. This is where you remove the element from `<body>` and chain navigation. |
 
-### Cycle de vie interne
+### Internal lifecycle
 
-Machine à états `idle → opening → open → closing → closed`. Une instance est **à usage unique** : après fermeture (`closed`), `show()` ne fait plus rien — pour rouvrir, créer un `new Dialog(...)` sur le même élément. Cas géré : rouvrir sur le **même élément hôte** (ex. `app-ai-extract-dialog` enchaîne les ouvertures) démonte silencieusement l'instance précédente restée dans la pile, **sans** émettre `listenClose()` (sinon l'appelant retirerait du `<body>` l'élément qu'on s'apprête à réafficher).
+State machine `idle → opening → open → closing → closed`. An instance is **single-use**: after closing (`closed`), `show()` does nothing anymore — to reopen, create a `new Dialog(...)` on the same element. Handled case: reopening on the **same host element** (e.g. `app-ai-extract-dialog` chains openings) silently tears down the previous instance left on the stack, **without** emitting `listenClose()` (otherwise the caller would remove from `<body>` the very element about to be redisplayed).
 
-### Gestes de fermeture
+### Closing gestures
 
-Ferment le dialogue (appellent `hide()`) :
+These close the dialog (call `hide()`):
 
-- la touche **Échap** — dialogues empilés : **seul celui du dessus de la pile** répond ;
-- un **clic sur le fond** — uniquement si le `mousedown` a eu lieu sur le fond aussi (un glisser démarré dans le dialogue et relâché sur le fond ne ferme pas) ;
-- tout élément portant l'attribut **`data-billy-dismiss`** (remplaçant de `data-bs-dismiss`), où qu'il soit dans l'arbre (détection par `closest()`).
+- the **Escape** key — with stacked dialogs, **only the topmost one** responds;
+- a **backdrop click** — only if the `mousedown` also happened on the backdrop (a drag started inside the dialog and released on the backdrop does not close it);
+- any element carrying the **`data-billy-dismiss`** attribute (replacement for `data-bs-dismiss`), anywhere in the tree (detected with `closest()`).
 
-### Pile et verrou de scroll
+### Stack and scroll lock
 
-- `openStack` (module-level) : dialogues ouverts, du plus ancien au plus récent. Sert au routage d'Échap et au verrou.
-- `body.billy-dialog-open` (`overflow: hidden`, défini dans `_billy-dialog.scss`) : posé au premier `show()`, retiré **seulement quand la pile est vide** — un dialogue peut en ouvrir un autre (ex. confirmation de suppression depuis un formulaire) sans que le scroll soit rendu entre les deux. C'est un verrou *compté* de fait.
+- `openStack` (module-level): open dialogs, oldest to newest. Used for Escape routing and the lock.
+- `body.billy-dialog-open` (`overflow: hidden`, defined in `_billy-dialog.scss`): set on the first `show()`, removed **only when the stack is empty** — one dialog can open another (e.g. delete confirmation from a form) without scrolling being restored in between. Effectively a *counted* lock.
 
-### Filet de sécurité de transition
+### Transition safety net
 
-`transitionend` n'arrive jamais si la transition ne part pas (onglet en arrière-plan, `prefers-reduced-motion`, transition surchargée à `none`). Un repli à **400 ms** (`TRANSITION_FALLBACK_MS`) garantit que `listenShow()` / `listenClose()` émettent quand même. Seule la transition **d'opacité de la racine** est écoutée (les `transitionend` des enfants — transform du dialogue, animations SVG — remontent et sont ignorés).
+`transitionend` never fires if the transition does not start (background tab, `prefers-reduced-motion`, transition overridden to `none`). A **400 ms** fallback (`TRANSITION_FALLBACK_MS`) guarantees that `listenShow()` / `listenClose()` still emit. Only the **root's opacity transition** is listened to (children's `transitionend` events — dialog transform, SVG animations — bubble up and are ignored).
 
-## Markup attendu
+## Expected markup
 
 ```html
-<div class="billy-modal" tabindex="-1" role="dialog" #modalRef>        <!-- élément passé au constructeur -->
+<div class="billy-modal" tabindex="-1" role="dialog" #modalRef>        <!-- element passed to the constructor -->
   <div class="billy-modal-dialog billy-modal-dialog--centered" role="document">
     <div class="billy-modal-content">
-      <button type="button" data-billy-dismiss aria-label="Fermer">…</button>
-      … contenu …
+      <button type="button" data-billy-dismiss aria-label="Close">…</button>
+      … content …
     </div>
   </div>
 </div>
 ```
 
-Classes disponibles (voir `_billy-dialog.scss`) : `.billy-modal-dialog--centered` (centrage vertical), `.billy-modal-dialog--large` (équivalent `modal-xl` : 800px ≥ 992px, 1140px ≥ 1200px), `.billy-modal-header` / `-body` / `-footer` / `-title`.
+Available classes (see `_billy-dialog.scss`): `.billy-modal-dialog--centered` (vertical centering), `.billy-modal-dialog--large` (equivalent to `modal-xl`: 800px ≥ 992px, 1140px ≥ 1200px), `.billy-modal-header` / `-body` / `-footer` / `-title`.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel : `src/app/auth/pages/vente/vente-send-dialog/vente-send-dialog.component.ts` (choix du canal d'envoi d'une facture, rendu sous forme de `Promise`) :
+Real-world usage: `src/app/auth/pages/vente/vente-send-dialog/vente-send-dialog.component.ts` (choosing the sending channel for an invoice, exposed as a `Promise`):
 
 ```ts
-open(noteCredit = false): Promise<VenteSendChoice | null> {
-  // Déplacé sous <body> pour échapper aux stacking contexts (topbar, overlays).
+open(creditNote = false): Promise<VenteSendChoice | null> {
+  // Moved under <body> to escape stacking contexts (topbar, overlays).
   const element = this.modalRef().nativeElement;
   if (element.parentElement?.tagName !== 'BODY') {
     document.body.appendChild(element);
@@ -78,15 +78,15 @@ open(noteCredit = false): Promise<VenteSendChoice | null> {
   modal.show();
   modal.listenClose().pipe(first()).subscribe(() => {
     document.body.removeChild(element);
-    this.settle(null);                        // fermeture sans choix = abandon
+    this.settle(null);                        // closed without a choice = abandoned
   });
   return new Promise(resolve => { this.resolver = resolve; });
 }
 ```
 
-Le pattern canonique : **appendChild sous `<body>` → `new Dialog` → `show()` → `listenClose().pipe(first())` → `removeChild`**.
+The canonical pattern: **appendChild under `<body>` → `new Dialog` → `show()` → `listenClose().pipe(first())` → `removeChild`**.
 
-## Le token `BILLY_DIALOG_ROUTER`
+## The `BILLY_DIALOG_ROUTER` token
 
 ```ts
 export interface BillyDialogRouter {
@@ -95,9 +95,9 @@ export interface BillyDialogRouter {
 export const BILLY_DIALOG_ROUTER = new InjectionToken<BillyDialogRouter>('BILLY_DIALOG_ROUTER');
 ```
 
-Pont de navigation des dialogues **routés** : `billy-dialog-form` est utilisé par des dialogues portés par une route « overlay » ; quand l'utilisateur ferme par un geste (Échap, clic sur le fond), il faut aussi quitter la route. La librairie ne connaît pas le routeur de l'application : celle-ci fournit ce token — **optionnel** ; sans lui, la fermeture visuelle fonctionne mais aucune navigation n'a lieu.
+Navigation bridge for **routed** dialogs: `billy-dialog-form` is used by dialogs carried by an "overlay" route; when the user closes with a gesture (Escape, backdrop click), the route must be left too. The library does not know the application's router: the app provides this token — **optional**; without it the visual close works but no navigation happens.
 
-Côté billy-client (`src/app/app.config.ts`) :
+On the billy-client side (`src/app/app.config.ts`):
 
 ```ts
 { provide: BILLY_DIALOG_ROUTER, useExisting: RouteurUtilsService },
@@ -105,17 +105,17 @@ Côté billy-client (`src/app/app.config.ts`) :
 
 ## Styles & theming
 
-- Coque : `projects/billy-layout/src/lib/styles/_billy-dialog.scss` (racine `z-index: 1055`, fond `rgba(17,24,39,.5)`, transition opacité 0.15s + glissement `translateY(-30px)` → 0 en 0.25s).
-- Géométrie identique à Bootstrap (500px par défaut, paliers `--large`, marges) pour que la migration n'ait déplacé aucun dialogue.
-- Couleurs via les tokens `--billy-*` (surface, bord, ombre) → **dark mode automatique**.
-- `.billy-modal-dialog` est en `pointer-events: none` : les clics de la gouttière atteignent la racine (fermeture au fond), le `.billy-modal-content` les reprend (`pointer-events: auto`).
-- `prefers-reduced-motion: reduce` : transitions coupées (le repli 400 ms de `Dialog` prend le relais).
+- Shell: `projects/billy-layout/src/lib/styles/_billy-dialog.scss` (root `z-index: 1055`, backdrop `rgba(17,24,39,.5)`, 0.15s opacity transition + `translateY(-30px)` → 0 slide in 0.25s).
+- Geometry identical to Bootstrap (500px by default, `--large` breakpoints, margins) so the migration moved no dialog by a pixel.
+- Colors via `--billy-*` tokens (surface, border, shadow) → **automatic dark mode**.
+- `.billy-modal-dialog` has `pointer-events: none`: gutter clicks reach the root (backdrop close), while `.billy-modal-content` reclaims them (`pointer-events: auto`).
+- `prefers-reduced-motion: reduce`: transitions disabled (the 400 ms `Dialog` fallback takes over).
 
-## Pièges & notes
+## Gotchas & notes
 
-- **Instance à usage unique** : après une fermeture complète, recréer un `Dialog` pour rouvrir. `listenShow`/`listenClose` sont des `Subject` complétés — ils n'émettront plus.
-- **Ne pas retirer l'élément du `<body>` avant `listenClose()`** : l'animation de fermeture serait tronquée et le démontage des écouteurs incomplet.
-- **Le clic-fond exige mousedown + click sur la racine** : une sélection de texte qui déborde du dialogue ne le ferme pas — comportement voulu.
-- **Échap et pile** : seul le dialogue du dessus capte Échap ; utile quand `billy-delete-dialog` s'ouvre par-dessus un `billy-dialog-form`.
-- Les commentaires d'en-tête du fichier mentionnent encore `src/styles-dialog.scss` : la coque vit désormais dans la lib (`lib/styles/_billy-dialog.scss`), importée par le `styles.scss` de l'app.
-- Le passage `display: none ↔ block` piloté en JS rejoue les animations CSS d'illustration des dialogues à chaque ouverture (exploité par delete-dialog et vente-send-dialog).
+- **Single-use instance**: after a full close, create a new `Dialog` to reopen. `listenShow`/`listenClose` are completed `Subject`s — they will not emit again.
+- **Do not remove the element from `<body>` before `listenClose()`**: the closing animation would be truncated and the listener teardown incomplete.
+- **The backdrop close requires mousedown + click on the root**: a text selection spilling out of the dialog does not close it — intended behavior.
+- **Escape and the stack**: only the topmost dialog catches Escape; useful when `billy-delete-dialog` opens on top of a `billy-dialog-form`.
+- The file's header comments still mention `src/styles-dialog.scss`: the shell now lives in the lib (`lib/styles/_billy-dialog.scss`), imported by the app's `styles.scss`.
+- The JS-driven `display: none ↔ block` switch replays the dialogs' CSS illustration animations on every opening (leveraged by delete-dialog and vente-send-dialog).

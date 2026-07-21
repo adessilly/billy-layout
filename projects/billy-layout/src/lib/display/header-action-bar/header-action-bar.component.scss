@@ -7,7 +7,7 @@
   gap: 8px;
 }
 
-// ── Segmented group : actions neutres reliées ──────────────────────────────
+// ── Segmented group: connected neutral actions ─────────────────────────────
 
 .hab-group {
   display: inline-flex;
@@ -52,7 +52,7 @@
   line-height: 1;
 }
 
-// ── Buttons (visuel pilule, cf. agenda-add-button) ─────────────────────────
+// ── Buttons (pill visual, cf. agenda-add-button) ───────────────────────────
 
 .hab-btn {
   position: relative;
@@ -164,7 +164,7 @@
   }
 }
 
-// ── Mobile: icones uniquement ──────────────────────────────────────────────
+// ── Mobile: icons only ─────────────────────────────────────────────────────
 
 @media (max-width: 640px) {
   .hab-btn {

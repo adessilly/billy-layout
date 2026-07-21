@@ -1,192 +1,194 @@
-# Famille « code-field » — CodeFieldBase, InputTvaComponent, InputIbanComponent, InputEmailComponent, TvaDisplayComponent, IbanDisplayComponent, CodeGlyphComponent, CodeStatusComponent, CodeValueComponent
+# "code-field" family — CodeFieldBase, InputVatComponent, InputIbanComponent, InputEmailComponent, VatDisplayComponent, IbanDisplayComponent, CodeGlyphComponent, CodeStatusComponent, CodeValueComponent
 
-> Catégorie `inputs` · source `projects/billy-layout/src/lib/inputs/code-field/` · standalone components (les champs de saisie sont des ControlValueAccessor)
+> Category `inputs` · source `projects/billy-layout/src/lib/inputs/code-field/` · standalone components (the input fields are ControlValueAccessors)
 
-Famille de composants pour la saisie et la relecture des identifiants normalisés : numéro de TVA intracommunautaire, IBAN, adresse email. Tous partagent le même contrat : **le modèle ne voit que la valeur canonique** (« BE0690614660 »), **le DOM ne montre que la valeur formatée** (« BE 0690.614.660 »). Point d'entrée des exports : `lib/inputs/code-field/index.ts` (ré-exporté par `public-api.ts`).
+Component family for entering and reviewing normalized identifiers: intra-community VAT number, IBAN, email address. All share the same contract: **the model only sees the canonical value** ("BE0690614660"), **the DOM only shows the formatted value** ("BE 0690.614.660"). Export entry point: `lib/inputs/code-field/index.ts` (re-exported by `public-api.ts`).
 
 ## Architecture
 
 ```
 core/utils/                          inputs/code-field/
-├── code-format.ts   ← types & découpage   ├── code-field.base.ts   (CodeFieldBase, socle CVA abstrait)
-├── tva-utils.ts     ← règles TVA          ├── input-tva/           (billy-input-tva      = base + TvaUtils)
-├── iban-utils.ts    ← règles IBAN         ├── input-iban/          (billy-input-iban     = base + IbanUtils)
-└── email-utils.ts   ← règles email        ├── input-email/         (billy-input-email    = base + EmailUtils)
-                                           ├── tva-display/         (billy-tva-display    = TvaUtils → billy-code-value)
+├── code-format.ts   ← types & splitting   ├── code-field.base.ts   (CodeFieldBase, abstract CVA foundation)
+├── vat-utils.ts     ← VAT rules           ├── input-vat/           (billy-input-vat      = base + VatUtils)
+├── iban-utils.ts    ← IBAN rules          ├── input-iban/          (billy-input-iban     = base + IbanUtils)
+└── email-utils.ts   ← email rules         ├── input-email/         (billy-input-email    = base + EmailUtils)
+                                           ├── vat-display/         (billy-vat-display    = VatUtils → billy-code-value)
                                            ├── iban-display/        (billy-iban-display   = IbanUtils → billy-code-value)
-                                           ├── code-value/          (rendu lecture segments + copie)
-                                           ├── code-glyph/          (symbole SVG tva/iban/email)
-                                           └── code-status/         (pastille d'état + anneau de progression)
+                                           ├── code-value/          (read-only segment rendering + copy)
+                                           ├── code-glyph/          (SVG symbol vat/iban/email)
+                                           └── code-status/         (status badge + progress ring)
 ```
 
-- **`code-format.ts`** (voir [../core/code-utils.md](../core/code-utils.md)) définit le vocabulaire commun : `CodeSegment` (`{ text, muted }` — les séparateurs et préfixes pays sont `muted`, donc grisés), `CodeStatus` (`'empty' | 'partial' | 'invalid' | 'unverified' | 'valid'`), `CodeInfo` (status + pays + message + progression 0→1) et les découpeurs `groupBySizes` / `groupByChunks` / `keepAlnum` / `segmentsToText`.
-- **`TvaUtils` / `IbanUtils` / `EmailUtils`** portent toute la connaissance métier (règles par pays, clés de contrôle modulo 97, domaines email courants) sous une API identique : `sanitize` (forme canonique), `formatText`/`format` (masque / segments), `normalize` (retouches au blur), `describe` (→ `CodeInfo`).
-- **`CodeFieldBase`** (directive abstraite) est le socle CVA : c'est lui qui gère le masquage à la frappe, le repositionnement du curseur, l'effacement au contact d'un séparateur, les états `focused`/`touched` et le nettoyage des valeurs sales venues du backend. Chaque champ concret ne fournit que 3-4 méthodes (`sanitize`, `formatText`, `normalize`, éventuellement `isSignificant`) et un computed `info`.
-- Les affichages en lecture (`billy-tva-display`, `billy-iban-display`) ne font que brancher les utils sur la brique de présentation pure `billy-code-value`.
+- **`code-format.ts`** (see [../core/code-utils.md](../core/code-utils.md)) defines the shared vocabulary: `CodeSegment` (`{ text, muted }` — separators and country prefixes are `muted`, hence grayed out), `CodeStatus` (`'empty' | 'partial' | 'invalid' | 'unverified' | 'valid'`), `CodeInfo` (status + country + message + 0→1 progress) and the splitters `groupBySizes` / `groupByChunks` / `keepAlnum` / `segmentsToText`.
+- **`VatUtils` / `IbanUtils` / `EmailUtils`** carry all the domain knowledge (per-country rules, modulo 97 check digits, common email domains) under an identical API: `sanitize` (canonical form), `formatText`/`format` (mask / segments), `normalize` (blur-time touch-ups), `describe` (→ `CodeInfo`).
+- **`CodeFieldBase`** (abstract directive) is the CVA foundation: it handles masking while typing, cursor repositioning, deletion across a separator, the `focused`/`touched` states and the cleanup of dirty values coming from the backend. Each concrete field only provides 3-4 methods (`sanitize`, `formatText`, `normalize`, possibly `isSignificant`) and an `info` computed.
+- The read-only displays (`billy-vat-display`, `billy-iban-display`) merely wire the utils onto the pure presentation brick `billy-code-value`.
 
-## CodeFieldBase (socle abstrait)
+## CodeFieldBase (abstract foundation)
 
-> `@Directive()` abstraite, `implements ControlValueAccessor` — jamais instanciée seule.
+> Abstract `@Directive()`, `implements ControlValueAccessor` — never instantiated on its own.
 
-### Principe
+### Principle
 
-Un champ masqué : à chaque frappe, la saisie est nettoyée (`sanitize` — les caractères non autorisés n'entrent jamais), reformatée (`formatText`) et le curseur est replacé **en comptant les caractères significatifs** qui le précèdent (pas sa position brute, que les séparateurs décaleraient). La valeur du DOM est pilotée à la main (pas de binding `[value]`) : réécrire l'input à chaque frappe renverrait le curseur à la fin.
+A masked field: on each keystroke, the input is cleaned (`sanitize` — disallowed characters never get in), reformatted (`formatText`) and the cursor is repositioned **by counting the significant characters** preceding it (not its raw position, which separators would shift). The DOM value is driven by hand (no `[value]` binding): rewriting the input on every keystroke would send the cursor to the end.
 
-### Inputs communs à tous les champs
+### Inputs shared by all fields
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `inputId` | `string` | `''` | `id` posé sur l'`<input>` interne (pour `<label for>`). À défaut un uid `billy-code-N` est généré. |
-| `placeholder` | `string` | `''` | Placeholder (chaque champ a son défaut : « BE 0690.614.660 », etc.). |
-| `hint` | `string` | `''` | Texte affiché sous le champ tant que rien n'est saisi (remplace le message d'état `empty`). |
-| `forceDisabled` | `boolean` (`booleanAttribute`) | `false` | Désactivation statique, en plus de celle du formulaire. **Volontairement pas nommée `disabled`** : signal-forms réserve ce nom et écrirait par-dessus. |
+| `inputId` | `string` | `''` | `id` set on the inner `<input>` (for `<label for>`). Falls back to a generated `billy-code-N` uid. |
+| `placeholder` | `string` | `''` | Placeholder (each field has its own default: "BE 0690.614.660", etc.). |
+| `hint` | `string` | `''` | Text displayed under the field while nothing is typed (replaces the `empty` state message). |
+| `forceDisabled` | `boolean` (`booleanAttribute`) | `false` | Static disabling, on top of the form's. **Deliberately not named `disabled`**: signal-forms reserves that name and would overwrite it. |
 
-### Signaux / API dérivée
+### Signals / derived API
 
-`value` (canonique), `display` (formaté), `focused`, `touched`, `isDisabled`, `status` (`CodeStatus`), `progress` (0→1), `showError` (erreur **seulement après blur** : pendant la frappe, un numéro incomplet n'est pas une erreur — la pastille, elle, suit la saisie en direct), `message` (le `hint` si vide, sinon le message du diagnostic).
+`value` (canonical), `display` (formatted), `focused`, `touched`, `isDisabled`, `status` (`CodeStatus`), `progress` (0→1), `showError` (error **only after blur**: while typing, an incomplete number is not an error — the badge, however, tracks input live), `message` (the `hint` when empty, otherwise the diagnostic message).
 
-### Contrat des sous-classes
+### Subclass contract
 
-| Méthode abstraite | Rôle |
+| Abstract method | Role |
 |---|---|
-| `sanitize(raw)` | Forme canonique : tout caractère non autorisé disparaît. |
-| `formatText(value)` | Masque : rendu à plat de la valeur canonique. |
-| `normalize(value)` | Retouches au blur (préfixe pays, zéro de tête…). |
-| `info` (computed) | Diagnostic `CodeInfo` complet. |
-| `isSignificant(char)` (surchargable) | Frontière significatif/liant pour le curseur — alphanumérique par défaut. |
+| `sanitize(raw)` | Canonical form: every disallowed character disappears. |
+| `formatText(value)` | Mask: flat rendering of the canonical value. |
+| `normalize(value)` | Blur-time touch-ups (country prefix, leading zero…). |
+| `info` (computed) | Full `CodeInfo` diagnostic. |
+| `isSignificant(char)` (overridable) | Significant/filler boundary for the cursor — alphanumeric by default. |
+
+The concrete fields compute their `info` diagnostic by passing the active i18n locale to the utils (e.g. `VatUtils.describe(value, i18n.locale())`): field messages follow the configured language automatically. Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### ControlValueAccessor
 
-- **Valeur modèle** : `string` canonique (jamais de séparateurs). Un `null`/`undefined` écrit devient `''`.
-- **Valeur sale venue du backend** : nettoyée à l'affichage puis **renvoyée propre au modèle** en différé (`queueMicrotask`) — écrire pendant que le formulaire écrit ferait boucler.
-- Au blur : `normalize` puis re-`sanitize` (le préfixe pays ajouté ne doit pas faire déborder la longueur max), reformatage, `onTouched`.
-- Pas de `NG_VALIDATORS` : la validité visuelle (pastille, message, bordure) est portée par le composant, la validité du formulaire reste l'affaire des validators du parent.
-- Compatible `[ngModel]`, `formControlName` **et** la directive signal-forms `[formField]` (usage dominant dans `src/app`).
+- **Model value**: canonical `string` (never any separators). A written `null`/`undefined` becomes `''`.
+- **Dirty value from the backend**: cleaned for display then **sent back clean to the model** asynchronously (`queueMicrotask`) — writing while the form is writing would loop.
+- On blur: `normalize` then re-`sanitize` (the added country prefix must not overflow the max length), reformatting, `onTouched`.
+- No `NG_VALIDATORS`: visual validity (badge, message, border) is carried by the component; form validity remains the parent validators' business.
+- Compatible with `[ngModel]`, `formControlName` **and** the signal-forms `[formField]` directive (dominant usage in `src/app`).
 
-## billy-input-tva — InputTvaComponent
+## billy-input-vat — InputVatComponent
 
-Saisie d'un numéro de TVA intracommunautaire. Modèle « BE0690614660 », affichage « BE 0690.614.660 ». Le numéro belge est vérifié (modulo 97) ; les autres pays connus sont vérifiés en longueur (`unverified` si conforme) ; les pays inconnus ne sont jamais déclarés faux.
+Entry of an intra-community VAT number. Model "BE0690614660", display "BE 0690.614.660". The Belgian number is verified (modulo 97); other known countries are length-checked (`unverified` if conforming); unknown countries are never declared wrong.
 
-| Input spécifique | Type | Défaut | Description |
+| Specific input | Type | Default | Description |
 |---|---|---|---|
-| `defaultCountry` | `string` | `'BE'` | Pays présumé quand seuls des chiffres sont saisis : au blur, `TvaUtils.normalize` ajoute le préfixe (et restaure le zéro de tête d'un ancien numéro belge à 9 chiffres). |
+| `defaultCountry` | `string` | `'BE'` | Assumed country when only digits are typed: on blur, `VatUtils.normalize` adds the prefix (and restores the leading zero of a legacy 9-digit Belgian number). |
 
-**Slot de projection** : `<ng-content select="[codeAction]">` — action facultative accolée au champ. Utilisé par `client-form` pour `<app-bce-search codeAction>` (recherche Banque-Carrefour affichée seulement sur un numéro belge valide). Sans projection, le champ reste inchangé.
+**Projection slot**: `<ng-content select="[codeAction]">` — optional action attached to the field. Used by `client-form` for `<app-bce-search codeAction>` (Crossroads Bank search shown only on a valid Belgian number). Without projection, the field is unchanged.
 
-Usage dans `src/app` : `client-form`, `compte-form`.
+Usage in `src/app`: `client-form`, `compte-form`.
 
 ## billy-input-iban — InputIbanComponent
 
-Saisie d'un compte bancaire IBAN. Modèle « BE68539007547034 », affichage « BE 68 5390 0754 7034 ». La clé de contrôle (ISO 7064, modulo 97) est universelle : vérifiée dès que l'IBAN est complet, quel que soit le pays. Pas d'input spécifique ; `normalize` se réduit à `sanitize` (rien à compléter sur un IBAN).
+Entry of an IBAN bank account. Model "BE68539007547034", display "BE 68 5390 0754 7034". The check digits (ISO 7064, modulo 97) are universal: verified as soon as the IBAN is complete, whatever the country. No specific input; `normalize` boils down to `sanitize` (nothing to complete on an IBAN).
 
-Usage dans `src/app` : `client-form`, `compte-form`.
+Usage in `src/app`: `client-form`, `compte-form`.
 
 ## billy-input-email — InputEmailComponent
 
-Même coque, même pastille et mêmes états que TVA/IBAN, **sans masque** (`formatText` et `normalize` = identité) : une adresse ne se découpe pas en groupes. Les espaces (fréquents au copier-coller) et caractères interdits sont retirés à la frappe comme au chargement ; la casse est laissée intacte (RFC 5321).
+Same shell, same badge and same states as VAT/IBAN, **without a mask** (`formatText` and `normalize` = identity): an address doesn't split into groups. Spaces (common when copy-pasting) and disallowed characters are removed while typing as well as on load; case is left untouched (RFC 5321).
 
-Spécificités :
+Specifics:
 
-- `domain` (computed) : domaine saisi, affiché en pastille comme le pays d'un numéro de TVA — masqué quand l'adresse est invalide.
-- `suggestion` (computed) : correction proposée par `EmailUtils.suggest` pour les fautes de frappe de domaine (« gmial.com » → « gmail.com ») — l'état bleu `unverified` sert à ça. Un bouton « Vouliez-vous dire … ? » remplace le message ; `applySuggestion()` écrit la correction dans le champ.
-- `isSignificant` est surchargé (tout caractère autorisé est significatif) : les branches « effacer par-dessus un séparateur » du socle ne se déclenchent jamais.
-- L'`<input>` est `type="text" inputmode="email"` et non `type="email"` : le socle place le curseur avec `setSelectionRange()`, que la norme interdit sur un champ email (`InvalidStateError`). `inputmode` ramène quand même le clavier « @ » sur mobile.
+- `domain` (computed): typed domain, shown as a badge like a VAT number's country — hidden when the address is invalid.
+- `suggestion` (computed): correction proposed by `EmailUtils.suggest` for domain typos ("gmial.com" → "gmail.com") — that's what the blue `unverified` state is for. A "Did you mean …?" button replaces the message; `applySuggestion()` writes the correction into the field.
+- `isSignificant` is overridden (every allowed character is significant): the base's "delete across a separator" branches never trigger.
+- The `<input>` is `type="text" inputmode="email"` and not `type="email"`: the base positions the cursor with `setSelectionRange()`, which the spec forbids on an email field (`InvalidStateError`). `inputmode` still brings up the "@" keyboard on mobile.
 
-Usage dans `src/app` : `client-form`.
+Usage in `src/app`: `client-form`.
 
-## billy-tva-display — TvaDisplayComponent / billy-iban-display — IbanDisplayComponent
+## billy-vat-display — VatDisplayComponent / billy-iban-display — IbanDisplayComponent
 
-Affichage en lecture d'un numéro déjà enregistré : la valeur (même sale) est nettoyée puis découpée par `TvaUtils.format` / `IbanUtils.format`, et rendue par `billy-code-value`. Robustes par construction : un pays sans règle de découpage est affiché tel quel derrière son préfixe.
+Read-only display of an already-saved number: the value (even dirty) is cleaned then split by `VatUtils.format` / `IbanUtils.format`, and rendered by `billy-code-value`. Robust by construction: a country without a splitting rule is displayed as-is behind its prefix.
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `value` | `string \| null \| undefined` | `''` | Valeur brute (canonique ou non). |
-| `empty` | `string` | `'Non renseigné'` | Texte affiché sans valeur. |
-| `glyph` | `boolean` (`booleanAttribute`) | `false` | Affiche le symbole SVG devant la valeur. |
-| `copyable` | `boolean` (`booleanAttribute`) | `true` | Affiche le bouton de copie. |
+| `value` | `string \| null \| undefined` | `''` | Raw value (canonical or not). |
+| `empty` | `string` | i18n `codeDisplay.empty` (EN `'Not provided'`) | Text displayed when there is no value. When the input is not set, the default comes from the i18n dictionary. |
+| `glyph` | `boolean` (`booleanAttribute`) | `false` | Shows the SVG symbol before the value. |
+| `copyable` | `boolean` (`booleanAttribute`) | `true` | Shows the copy button. |
 
-Usage dans `src/app` : `client-fiche` (consultation client), `compte-document`, `peppol-facture-status-info` (TVA).
+Usage in `src/app`: `client-fiche` (client consultation), `compte-document`, `peppol-facture-status-info` (VAT).
 
 ```html
-<billy-tva-display class="cc-value" [value]="c.tva"></billy-tva-display>
+<billy-vat-display class="cc-value" [value]="c.tva"></billy-vat-display>
 <billy-iban-display class="cc-value" [value]="c.compte"></billy-iban-display>
 ```
 
 ## billy-code-glyph — CodeGlyphComponent
 
-Symbole SVG d'un champ « code » : vignette fiscale dentelée (TVA), carte bancaire (IBAN) ou enveloppe (email). Dessinés à la main (à 26 px, deux traits nets valent mieux qu'un glyphe de fonte) et teintés par `currentColor` : le glyphe suit l'état du champ (accent, vert `--cfd-ok`, rouge danger).
+SVG symbol of a "code" field: perforated tax stamp (VAT), bank card (IBAN) or envelope (email). Hand-drawn (at 26 px, two crisp strokes beat a font glyph) and tinted by `currentColor`: the glyph follows the field's state (accent, `--cfd-ok` green, danger red).
 
 | Input | Type | Description |
 |---|---|---|
-| `kind` | `CodeGlyphKind` = `'tva' \| 'iban' \| 'email'` (**required**) | Choix du dessin. |
+| `kind` | `CodeGlyphKind` = `'vat' \| 'iban' \| 'email'` (**required**) | Choice of drawing. |
 
 ## billy-code-status — CodeStatusComponent
 
-Pastille d'état (22 px, `role="img"` + `aria-label` francisé) :
+Status badge (22 px, `role="img"` + English `aria-label`):
 
-- `partial` → anneau de progression qui se remplit à la frappe (cercle `pathLength="1"`, piloté par `stroke-dashoffset = 1 - progress`) ;
-- `valid` → disque vert, coche qui se dessine (animation `stroke-dashoffset`) ;
-- `unverified` → disque accent avec « i » (structure conforme, pas de clé de contrôle connue) ;
-- `invalid` → disque rouge avec « ! ».
+- `partial` → progress ring filling while typing (`pathLength="1"` circle, driven by `stroke-dashoffset = 1 - progress`);
+- `valid` → green disc, self-drawing check mark (`stroke-dashoffset` animation);
+- `unverified` → accent disc with "i" (conforming structure, no known check digit);
+- `invalid` → red disc with "!".
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `status` | `CodeStatus` (**required**) | — | État affiché (classe hôte `cs--<status>`). |
-| `progress` | `number` | `0` | Avancement 0→1 de l'anneau (état `partial`). |
+| `status` | `CodeStatus` (**required**) | — | Displayed state (host class `cs--<status>`). |
+| `progress` | `number` | `0` | 0→1 progress of the ring (`partial` state). |
 
 ## billy-code-value — CodeValueComponent
 
-Rendu en lecture d'un code déjà découpé : présentation pure, le découpage est l'affaire des utils. Les segments `muted` passent en gris, les chiffres gardent la couleur du texte. Bouton de copie discret (révélé au survol de la ligne, toujours visible au clavier) qui copie la **valeur canonique** `raw` — pas le rendu avec séparateurs — et n'affiche la coche « copié » (1,8 s) qu'une fois `navigator.clipboard.writeText` réellement résolu.
+Read-only rendering of an already-split code: pure presentation, the splitting is the utils' business. `muted` segments turn gray, digits keep the text color. Discreet copy button (revealed on row hover, always visible to keyboard users) which copies the **canonical value** `raw` — not the rendering with separators — and only shows the "copied" check (1.8 s) once `navigator.clipboard.writeText` has actually resolved.
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `segments` | `CodeSegment[]` (**required**) | — | Fragments à afficher. |
-| `kind` | `CodeGlyphKind` (**required**) | — | Symbole à afficher si `glyph`. |
-| `raw` | `string` | `''` | Valeur canonique copiée. |
-| `empty` | `string` | `'Non renseigné'` | Texte sans valeur. |
-| `glyph` / `copyable` | `boolean` (`booleanAttribute`) | `true` / `true` | Affichage du symbole / du bouton copie. |
+| `segments` | `CodeSegment[]` (**required**) | — | Fragments to display. |
+| `kind` | `CodeGlyphKind` (**required**) | — | Symbol to display if `glyph`. |
+| `raw` | `string` | `''` | Canonical value being copied. |
+| `empty` | `string` | i18n `codeDisplay.empty` (EN `'Not provided'`) | Text when there is no value. |
+| `glyph` / `copyable` | `boolean` (`booleanAttribute`) | `true` / `true` | Display of the symbol / of the copy button. |
 
-## Exemple d'utilisation
+## Usage example
 
-Extrait réel de `src/app/auth/pages/client/client-form/client-form.component.html` (signal-forms `[formField]`) :
+Real excerpt from `src/app/auth/pages/client/client-form/client-form.component.html` (signal-forms `[formField]`):
 
 ```html
 <billy-input-email inputId="cf-email"
-  hint="Adresse à laquelle partiront les factures"
+  hint="Address the invoices will be sent to"
   [formField]="formClient.email">
 </billy-input-email>
 
-<billy-input-tva inputId="cf-tva"
-  hint="Numéro d'entreprise ou TVA intracommunautaire"
+<billy-input-vat inputId="cf-tva"
+  hint="Company number or intra-community VAT"
   [formField]="formClient.tva">
-  <!-- N'apparaît que sur un numéro belge valide -->
+  <!-- Only appears on a valid Belgian number -->
   <app-bce-search codeAction
     [tva]="formClient.tva().value()"
     (found)="applyBce($event)">
   </app-bce-search>
-</billy-input-tva>
+</billy-input-vat>
 
 <billy-input-iban inputId="cf-compte"
-  hint="IBAN du compte à créditer"
+  hint="IBAN of the account to credit"
   [formField]="formClient.compte">
 </billy-input-iban>
 ```
 
-Les champs s'utilisent aussi avec `formControlName` / `[ngModel]` (CVA standard).
+The fields can also be used with `formControlName` / `[ngModel]` (standard CVA).
 
 ## Styles & theming
 
-- La coque des trois champs vient de la mixin partagée **`billy-code-field`** (`lib/styles/_billy-code-field.scss`, incluse par chaque `.scss` de champ), elle-même bâtie sur les mixins `billy-forms` (`billy-input`, `billy-focus`, `billy-input-invalid`). Un seul jeu de classes `.cfd-*` pour les trois champs.
-- Tokens : `--billy-input-*`, `--billy-accent(-soft/-strong)`, `--billy-danger`, `--billy-text-muted`, `--billy-divider`, `--billy-section-*`. Le **vert de validation n'existe pas dans la charte** : il est défini localement (`--cfd-ok`/`--cs-ok` : `#16a34a`, `#4ade80` en dark) et réajusté via `body.dark-mode`.
-- Parti pris : un champ **valide garde sa bordure neutre** (la validation se lit à la coche, au glyphe et au message) ; seule l'erreur colore le cadre.
-- Chasse fixe (`font-variant-numeric: tabular-nums`, interlettrage élargi) sur TVA/IBAN pour que les groupes restent alignés ; annulée pour l'email (`.cfd-input--text` : « rn » et « m » doivent rester distincts).
-- La ligne d'information `.cfd-meta` a une hauteur réservée (`min-height: 17px`) : le message apparaît/disparaît sans pousser le champ suivant. Pastille pays `.cfd-country` animée à l'apparition.
-- Dans `billy-code-value`, chaque segment est un élément flex : un IBAN long se coupe **entre** deux groupes, jamais au milieu. `prefers-reduced-motion` respecté partout.
+- The shell of the three fields comes from the shared **`billy-code-field`** mixin (`lib/styles/_billy-code-field.scss`, included by each field's `.scss`), itself built on the `billy-forms` mixins (`billy-input`, `billy-focus`, `billy-input-invalid`). A single set of `.cfd-*` classes for all three fields.
+- Tokens: `--billy-input-*`, `--billy-accent(-soft/-strong)`, `--billy-danger`, `--billy-text-muted`, `--billy-divider`, `--billy-section-*`. The **validation green does not exist in the design language**: it is defined locally (`--cfd-ok`/`--cs-ok`: `#16a34a`, `#4ade80` in dark) and readjusted via `body.dark-mode`.
+- Deliberate choice: a **valid field keeps its neutral border** (validity reads through the check, the glyph and the message); only an error colors the frame.
+- Fixed-pitch digits (`font-variant-numeric: tabular-nums`, widened letter-spacing) on VAT/IBAN so groups stay aligned; cancelled for email (`.cfd-input--text`: "rn" and "m" must remain distinguishable).
+- The `.cfd-meta` info line has reserved height (`min-height: 17px`): the message appears/disappears without pushing the next field. Country badge `.cfd-country` animated on appearance.
+- In `billy-code-value`, each segment is a flex item: a long IBAN wraps **between** two groups, never in the middle. `prefers-reduced-motion` respected everywhere.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **Zoneless/signals** : tout l'état est en signals ; la synchronisation DOM ← `display` passe par un `effect` qui ne réécrit l'input **que si** le DOM diverge du modèle (chargement, reset) — pendant la frappe on n'y touche pas, donc le curseur ne bouge pas.
-- **`forceDisabled` et non `disabled`** : signal-forms écrit l'état du champ dans l'input `disabled` de l'hôte *après* les bindings du template ; un `disabled` statique serait écrasé.
-- **Backspace/Delete au contact d'un séparateur** : le socle efface le caractère significatif visé de l'autre côté du séparateur (sinon le masque remettrait aussitôt le point et rien ne disparaîtrait). Les suppressions de mot (Ctrl/Alt/Cmd) sont laissées au navigateur.
-- **Écriture de valeurs sales** : `writeValue('be 0690.614.660')` renverra `BE0690614660` au modèle via `queueMicrotask` — le formulaire verra donc une écriture asynchrone juste après le chargement (un tour, puis stable).
-- Détails des utils (règles par pays, checksums, suggestions email) : voir [../core/code-utils.md](../core/code-utils.md).
+- **Zoneless/signals**: all state is in signals; the DOM ← `display` synchronization goes through an `effect` that only rewrites the input **when** the DOM diverges from the model (load, reset) — while typing it is left alone, so the cursor doesn't move.
+- **`forceDisabled` and not `disabled`**: signal-forms writes the field state into the host's `disabled` input *after* the template bindings; a static `disabled` would be overwritten.
+- **Backspace/Delete against a separator**: the base deletes the targeted significant character on the other side of the separator (otherwise the mask would immediately put the dot back and nothing would disappear). Word deletions (Ctrl/Alt/Cmd) are left to the browser.
+- **Writing dirty values**: `writeValue('be 0690.614.660')` will send `BE0690614660` back to the model via `queueMicrotask` — the form will thus see an asynchronous write right after loading (one tick, then stable).
+- Details of the utils (per-country rules, checksums, email suggestions): see [../core/code-utils.md](../core/code-utils.md).

@@ -5,9 +5,9 @@ export interface FilterToggleOption {
   value: string | null;
   label: string;
   icon?: string;
-  /** Couleur texte + bordure quand actif (variante chips) */
+  /** Text + border color when active (chips variant) */
   activeColor?: string;
-  /** Couleur de fond quand actif (variante chips) */
+  /** Background color when active (chips variant) */
   activeBg?: string;
 }
 
@@ -15,21 +15,20 @@ export interface FilterToggleOption {
   selector: 'billy-filter-toggle-buttons',
   templateUrl: './filter-toggle-buttons.component.html',
   styleUrls: ['./filter-toggle-buttons.component.scss'],
-  standalone: true,
   imports: [CommonModule],
 })
 export class FilterToggleButtonsComponent {
-  /** Liste des options à afficher */
+  /** List of options to display */
   readonly options = input.required<FilterToggleOption[]>();
-  /** Valeur actuellement sélectionnée */
+  /** Currently selected value */
   readonly value = input<string | null>(null);
   /**
-   * Variante visuelle :
-   * - `toggle` : segment-control avec fond commun (achat, vente)
-   * - `chips`  : pills individuelles colorées (recurrence)
+   * Visual variant:
+   * - `toggle`: segment control with a shared background (purchase, sale)
+   * - `chips` : individual colored pills (recurring entries)
    */
   readonly variant = input<'toggle' | 'chips'>('toggle');
-  /** Couleur active partagée par tout le groupe (variante toggle, ou fallback chips) */
+  /** Active color shared by the whole group (toggle variant, or chips fallback) */
   readonly activeColor = input<string | undefined>(undefined);
 
   readonly valueChange = output<string | null>();

@@ -1,10 +1,10 @@
 # billy-action-bar — ActionBarComponent
 
-> Catégorie `layout` · source `projects/billy-layout/src/lib/layout/action-bar/` · standalone component
+> Category `layout` · source `projects/billy-layout/src/lib/layout/action-bar/` · standalone component
 
-## Rôle
+## Role
 
-Dock de navigation mobile flottant façon iOS : pilule de verre (blur + saturation) fixée en bas de l'écran, avec un halo actif qui glisse entre les onglets et des icônes `billy-icon` (mêmes symboles que le menu latéral) rejouant leurs micro-animations à l'activation. La librairie ne connaît pas les routes : chaque onglet fournit son test d'activation (`isActive(url)`) et son action de navigation (`go()`). Dans billy-client, la barre est posée par `src/app/auth/pages/auth-page.component.html` (hors du shell, sous condition `billyConfig.showActionBar`) et n'est affichée qu'en dessous de 768px (règle dans `auth-page.component.scss`).
+iOS-style floating mobile navigation dock: a glass pill (blur + saturation) fixed at the bottom of the screen, with an active halo that slides between tabs and `billy-icon` icons (same symbols as the side menu) replaying their micro-animations on activation. The library knows nothing about routes: each tab provides its activation test (`isActive(url)`) and its navigation action (`go()`). In billy-client, the bar is placed by `src/app/auth/pages/auth-page.component.html` (outside the shell, behind the `billyConfig.showActionBar` condition) and is only shown below 768px (rule in `auth-page.component.scss`).
 
 ## API
 
@@ -12,69 +12,71 @@ Dock de navigation mobile flottant façon iOS : pilule de verre (blur + saturati
 import { ActionBarComponent, BillyActionBarTab } from 'billy-layout';
 ```
 
-Sélecteur : `billy-action-bar`.
+Selector: `billy-action-bar`.
 
-### Interface BillyActionBarTab
+### BillyActionBarTab interface
 
 ```ts
 interface BillyActionBarTab {
-  icon: BillyIconName;              // icône billy-icon (sert aussi de clé de track)
-  label: string;                    // libellé sous l'icône
-  isActive: (url: string) => boolean; // l'onglet est-il actif pour cette URL ?
-  go: () => void;                   // navigation au clic
+  icon: BillyIconName;              // billy-icon icon (also used as the track key)
+  label: string;                    // label below the icon
+  isActive: (url: string) => boolean; // is the tab active for this URL?
+  go: () => void;                   // navigation on click
 }
 ```
 
-### Inputs / membres
+### Inputs / members
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `tabs` | `BillyActionBarTab[]` | requis | Les onglets, dans l'ordre d'affichage. |
+| `tabs` | `BillyActionBarTab[]` | required | The tabs, in display order. |
 
-Pas d'output.
+No output.
 
-| Membre public | Type | Description |
+The `<nav>`'s `aria-label` comes from the i18n dictionary (`actionBar.mainNavigation`, EN "Main navigation"). Built-in strings are localizable — see [i18n](../core/i18n.md).
+
+| Public member | Type | Description |
 |---|---|---|
-| `activeIndex` | `signal<number>` | Index de l'onglet actif, `-1` si l'URL courante ne matche aucun onglet. |
-| `pillTransform` | `computed<string>` | `translateX(n * 100%)` du halo ; retombe sur le dernier index actif quand `activeIndex() < 0`, pour que le halo s'estompe **sur place** au lieu de sauter en position 0. |
-| `refreshNav(url)` | `void` | Recalcule l'index actif (appelé au init et à chaque `NavigationEnd`). |
-| `router` | `Router` | Injecté (abonnement aux `NavigationEnd`). |
+| `activeIndex` | `signal<number>` | Index of the active tab, `-1` if the current URL matches no tab. |
+| `pillTransform` | `computed<string>` | `translateX(n * 100%)` of the halo; falls back to the last active index when `activeIndex() < 0`, so the halo fades out **in place** instead of jumping to position 0. |
+| `refreshNav(url)` | `void` | Recomputes the active index (called on init and on every `NavigationEnd`). |
+| `router` | `Router` | Injected (subscription to `NavigationEnd`). |
 
 ## Slots / projection
 
-Aucun `ng-content` : le rendu est entièrement piloté par `tabs`.
+No `ng-content`: the rendering is entirely driven by `tabs`.
 
-## Exemple d'utilisation
+## Usage example
 
-Onglets réels, `src/app/auth/pages/auth-page.component.ts` :
+Real-world tabs, `src/app/auth/pages/auth-page.component.ts`:
 
 ```ts
-/** Onglets de la barre de navigation mobile (billy-action-bar, billy-layout). */
+/** Tabs of the mobile navigation bar (billy-action-bar, billy-layout). */
 readonly actionBarTabs: BillyActionBarTab[] = [
   {
-    icon: 'accueil', label: 'Accueil',
+    icon: 'home', label: 'Home',
     isActive: url => url === '/auth' || url === '/auth/home' || url === '/auth/dashboard',
     go: () => this.routeurUtilsService.toAuthPage(),
   },
   {
-    icon: 'achats', label: 'Achats',
+    icon: 'purchases', label: 'Purchases',
     isActive: url => url === '/auth/achat/list',
     go: () => this.routeurUtilsService.toAchatPage(),
   },
   {
-    icon: 'ventes', label: 'Ventes',
+    icon: 'sales', label: 'Sales',
     isActive: url => url === '/auth/vente/list',
     go: () => this.routeurUtilsService.toVentePage(),
   },
   {
-    icon: 'agenda', label: 'Agenda',
+    icon: 'calendar', label: 'Calendar',
     isActive: url => url.startsWith('/auth/agenda'),
     go: () => this.routeurUtilsService.toAgendaPage(),
   },
 ];
 ```
 
-Et dans `auth-page.component.html` :
+And in `auth-page.component.html`:
 
 ```html
 @if (billyConfig.showActionBar) {
@@ -84,17 +86,17 @@ Et dans `auth-page.component.html` :
 
 ## Styles & theming
 
-- Coque : `position: fixed`, centrée, `bottom: calc(14px + env(safe-area-inset-bottom))`, largeur `min(calc(100% - 28px), 400px)`, `z-index: 200` (au-dessus de la topbar 50, sous action-sheet 500). Verre : `rgba(255,255,255,.78)` + `backdrop-filter: blur(28px) saturate(190%)`, entrée animée depuis le bas (`ab-enter`).
-- Halo `.tab-pill` : `width: calc(100% / 4)` — **codé pour 4 onglets** ; il glisse via `pillTransform` et passe en `.tab-pill-off` (fade + scale .72) quand aucun onglet ne matche. Couleurs par tokens : `var(--billy-accent-soft, #e6f7fc)` (halo) et `var(--billy-accent-strong, #0e97bb)` (onglet actif) — ces variables basculent seules via `body.dark-mode`.
-- Activation : rebond de l'icône (`ab-pop`) puis micro-geste propre à chaque symbole via les tags `.anim-lift/-drop/-rise` posés par billy-icon (`::ng-deep`).
-- Dark mode via `:host-context(body.dark-mode)` : seule la coque a un override (`rgba(23,34,36,.82)`) ; note de spécificité — la couleur inactive est scopée `.tab:not(.is-active)` pour ne pas écraser la couleur active.
-- `prefers-reduced-motion` : entrée, glissement et animations d'icônes désactivés.
-- L'affichage mobile-only et le dégagement du contenu ne sont **pas** gérés par le composant : billy-client masque la barre ≥ 768px et ajoute un padding-bottom au shell via `.has-action-bar` dans `auth-page.component.scss`.
+- Shell: `position: fixed`, centered, `bottom: calc(14px + env(safe-area-inset-bottom))`, width `min(calc(100% - 28px), 400px)`, `z-index: 200` (above the topbar at 50, below action-sheet at 500). Glass: `rgba(255,255,255,.78)` + `backdrop-filter: blur(28px) saturate(190%)`, animated entrance from the bottom (`ab-enter`).
+- `.tab-pill` halo: `width: calc(100% / 4)` — **coded for 4 tabs**; it slides via `pillTransform` and switches to `.tab-pill-off` (fade + scale .72) when no tab matches. Colors via tokens: `var(--billy-accent-soft, #e6f7fc)` (halo) and `var(--billy-accent-strong, #0e97bb)` (active tab) — those variables switch on their own via `body.dark-mode`.
+- Activation: icon bounce (`ab-pop`) then a micro-gesture specific to each symbol via the `.anim-lift/-drop/-rise` tags set by billy-icon (`::ng-deep`).
+- Dark mode via `:host-context(body.dark-mode)`: only the shell has an override (`rgba(23,34,36,.82)`); specificity note — the inactive color is scoped `.tab:not(.is-active)` so it does not clobber the active color.
+- `prefers-reduced-motion`: entrance, sliding and icon animations disabled.
+- The mobile-only display and content clearance are **not** handled by the component: billy-client hides the bar ≥ 768px and adds a padding-bottom to the shell via `.has-action-bar` in `auth-page.component.scss`.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- `width: calc(100% / 4)` du halo suppose exactement 4 onglets ; passer un autre nombre exige d'adapter le SCSS (commentaire en place : « = nombre d'onglets de tabs[] »).
-- Le `@for` track sur `tab.icon` : deux onglets avec la même icône casseraient le rendu — les icônes doivent être uniques.
-- Les `isActive` sont évalués contre `router.url` brut (query params inclus) : préférer `startsWith` quand la page a des sous-routes ou des paramètres.
-- L'abonnement aux événements du routeur (`ngOnInit`) n'est jamais désinscrit — sans conséquence dans billy-client où la barre vit aussi longtemps que `auth-page`, mais à savoir si le composant devait être monté/démonté fréquemment.
-- Quand l'URL ne matche aucun onglet, le halo disparaît en douceur sur le dernier onglet actif (`lastIndex`) : comportement voulu, pas un bug.
+- The halo's `width: calc(100% / 4)` assumes exactly 4 tabs; passing another count requires adapting the SCSS (comment in place: "= number of tabs in tabs[]").
+- The `@for` tracks on `tab.icon`: two tabs with the same icon would break the rendering — icons must be unique.
+- The `isActive` callbacks are evaluated against the raw `router.url` (query params included): prefer `startsWith` when the page has sub-routes or parameters.
+- The router events subscription (`ngOnInit`) is never unsubscribed — harmless in billy-client where the bar lives as long as `auth-page`, but worth knowing if the component were mounted/unmounted frequently.
+- When the URL matches no tab, the halo fades out gently on the last active tab (`lastIndex`): intended behavior, not a bug.

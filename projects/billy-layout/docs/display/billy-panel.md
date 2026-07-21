@@ -1,39 +1,39 @@
 # billy-panel — BillyPanelComponent
 
-> Catégorie `display` · source `projects/billy-layout/src/lib/display/billy-panel/` · standalone component
+> Category `display` · source `projects/billy-layout/src/lib/display/billy-panel/` · standalone component
 
-## Rôle
+## Purpose
 
-Coque de panneau flottant « Billy » : carte blanche arrondie, ombre douce et animation d'ouverture (opacité + translation + scale). Elle a été extraite du panneau de notifications (`.billy-notif-panel`) pour partager le même langage visuel. Le composant est **purement présentationnel** : l'état `open` et la logique de fermeture (clic extérieur, Échap…) restent pilotés par l'appelant.
+"Billy" floating panel shell: rounded white card, soft shadow and opening animation (opacity + translation + scale). It was extracted from the notification panel (`.billy-notif-panel`) to share the same visual language. The component is **purely presentational**: the `open` state and the closing logic (outside click, Escape…) remain the caller's responsibility.
 
-Utilisation dans `src/app` (vérifiée par grep) : uniquement le menu « Mon compte » du topbar — `shared/components/icon-top-compte/billy-account-menu.component.html`. Le panneau de notifications du shell partage le visuel mais garde sa propre implémentation.
+Usage in `src/app` (verified via grep): only the topbar "My account" menu — `shared/components/icon-top-compte/billy-account-menu.component.html`. The shell's notification panel shares the visual but keeps its own implementation.
 
 ## API
 
-**Sélecteur** : `billy-panel` · **Import** : `import { BillyPanelComponent } from 'billy-layout';`
+**Selector**: `billy-panel` · **Import**: `import { BillyPanelComponent } from 'billy-layout';`
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `open` | `boolean` (transform `booleanAttribute`) | `false` | Le panneau est-il déployé ? Anime l'apparition/disparition (le panneau reste dans le DOM, `pointer-events: none` quand fermé). |
-| `heading` | `string \| undefined` | `undefined` | Titre optionnel affiché dans l'entête (rendu seulement si fourni). |
-| `subheading` | `string \| undefined` | `undefined` | Sous-titre optionnel sous le titre (rendu seulement si `heading` est présent). |
+| `open` | `boolean` (transform `booleanAttribute`) | `false` | Whether the panel is expanded. Animates the appearance/disappearance (the panel stays in the DOM, `pointer-events: none` when closed). |
+| `heading` | `string \| undefined` | `undefined` | Optional title displayed in the header (rendered only if provided). |
+| `subheading` | `string \| undefined` | `undefined` | Optional subtitle below the title (rendered only if `heading` is present). |
 
 ### Outputs
 
-Aucun. La fermeture est la responsabilité du parent (typiquement `ClickOutsideDirective` + touche Échap).
+None. Closing is the parent's responsibility (typically `ClickOutsideDirective` + the Escape key).
 
 ## Slots / projection
 
-- `<ng-content />` (par défaut) : corps du panneau, rendu dans `.billy-panel-body` (padding 6px).
+- `<ng-content />` (default): panel body, rendered inside `.billy-panel-body` (6px padding).
 
-## Exemple d'utilisation
+## Usage example
 
-Menu compte du topbar (`billy-account-menu.component.html`) :
+Topbar account menu (`billy-account-menu.component.html`):
 
 ```html
-<billy-panel [open]="open()" heading="Mon compte" subheading="Accès rapides">
+<billy-panel [open]="open()" heading="My account" subheading="Quick links">
   @for (item of links; track item.link) {
     <a class="account-menu-item" [routerLink]="item.link" (click)="close()">
       <span class="account-menu-icon" [style.background]="item.iconBg" [style.color]="item.iconColor">
@@ -45,19 +45,19 @@ Menu compte du topbar (`billy-account-menu.component.html`) :
 </billy-panel>
 ```
 
-Le parent est un conteneur `position: relative` : le panneau se positionne en `position: absolute; top: calc(100% + 14px); right: 0` (largeur fixe 288px, `transform-origin: top right`).
+The parent is a `position: relative` container: the panel positions itself with `position: absolute; top: calc(100% + 14px); right: 0` (fixed width 288px, `transform-origin: top right`).
 
 ## Styles & theming
 
-- Couleurs **en dur** (pas de tokens `--billy-*`) : fond `#fff`, bord `#ECF0F3`, ombre portée `rgba(16, 42, 67, .22)`.
-- Dark mode via `:host-context(body.dark-mode)` : fond `#172224`, bord `#49545a`, titres adaptés.
-- `:host { display: contents; }` — le composant n'introduit pas de boîte propre, c'est `.billy-panel` qui est positionnée par rapport au parent.
-- Mobile (`max-width: 767.98px`) : le panneau passe en `position: fixed; top: 62px; left/right: 12px` (collé aux bords sous le topbar).
-- Animation : `transition opacity .2s / transform .22s cubic-bezier(.34, 1.28, .5, 1)` (léger rebond), `z-index: 30`.
+- **Hard-coded** colors (no `--billy-*` tokens): `#fff` background, `#ECF0F3` border, `rgba(16, 42, 67, .22)` drop shadow.
+- Dark mode via `:host-context(body.dark-mode)`: `#172224` background, `#49545a` border, adapted headings.
+- `:host { display: contents; }` — the component introduces no box of its own; `.billy-panel` is what gets positioned relative to the parent.
+- Mobile (`max-width: 767.98px`): the panel switches to `position: fixed; top: 62px; left/right: 12px` (pinned to the edges below the topbar).
+- Animation: `transition opacity .2s / transform .22s cubic-bezier(.34, 1.28, .5, 1)` (slight bounce), `z-index: 30`.
 
-## Pièges & notes
+## Gotchas & notes
 
-- **L'ancrage est à la charge du parent** : sans conteneur `position: relative`, le panneau se positionne par rapport à l'ancêtre positionné le plus proche.
-- Le panneau fermé reste dans le DOM (masqué via opacité + `pointer-events: none`) : l'état des enfants est conservé, mais attention au focus clavier — gérez `tabindex`/focus côté parent si nécessaire.
-- Sur mobile le `top: 62px` fixe suppose la hauteur du topbar du shell ; un usage hors shell devra surcharger cette valeur.
-- Pas de bouton de fermeture intégré : prévoir clic extérieur (cf. `ClickOutsideDirective` de la lib) et/ou Échap côté appelant.
+- **Anchoring is up to the parent**: without a `position: relative` container, the panel positions itself relative to the nearest positioned ancestor.
+- The closed panel stays in the DOM (hidden via opacity + `pointer-events: none`): child state is preserved, but watch out for keyboard focus — handle `tabindex`/focus on the parent side if needed.
+- On mobile, the fixed `top: 62px` assumes the shell topbar height; usage outside the shell will have to override that value.
+- No built-in close button: plan for outside click (see the library's `ClickOutsideDirective`) and/or Escape on the caller's side.

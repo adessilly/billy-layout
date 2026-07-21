@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BillyNotificationsComponent, BillyShellComponent, ToastrListPanelComponent } from 'billy-layout';
 import { DocSearchComponent } from './site/doc-search.component';
-import { NotifNouveautesComponent } from './site/notif-nouveautes.component';
+import { NotifWhatsNewComponent } from './site/notif-whats-new.component';
 import { AccountMenuComponent } from './site/account-menu.component';
 
 /**
- * Racine du site vitrine : le site est lui-même habillé par le shell de la
- * librairie (topbar + sidebar + notifications) — la meilleure démo possible.
+ * Root of the showcase site: the site is itself dressed by the library's
+ * shell (topbar + sidebar + notifications) — the best possible demo.
  */
 @Component({
   selector: 'app-root',
@@ -17,7 +17,7 @@ import { AccountMenuComponent } from './site/account-menu.component';
     BillyNotificationsComponent,
     ToastrListPanelComponent,
     DocSearchComponent,
-    NotifNouveautesComponent,
+    NotifWhatsNewComponent,
     AccountMenuComponent,
   ],
   templateUrl: './app.html',

@@ -1,4 +1,5 @@
 import { Component, ElementRef, afterRenderEffect, computed, inject, input, output, signal } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 
 interface CalendarDay {
   date: Date;
@@ -9,34 +10,38 @@ interface CalendarDay {
 }
 
 /**
- * Grille calendrier autonome (aucune dépendance applicative) : vue jours et
- * vue mois, navigation clavier complète (pattern ARIA grid, roving tabindex),
- * libellés générés via Intl à partir de l'input [locale].
- * Thème par tokens CSS --billy-* avec valeurs de repli — utilisable hors app.
+ * Standalone calendar grid (no application dependency): days view and
+ * months view, full keyboard navigation (ARIA grid pattern, roving tabindex),
+ * labels generated via Intl from the [locale] input.
+ * Themed via --billy-* CSS tokens with fallback values — usable outside the app.
  */
 @Component({
   selector: 'billy-datepicker-calendar',
-  standalone: true,
   templateUrl: './datepicker-calendar.component.html',
   styleUrls: ['./datepicker-calendar.component.scss']
 })
 export class DatepickerCalendarComponent {
 
+  protected readonly i18n = inject(BillyI18nService);
+
   readonly selected = input<Date | null>(null);
-  readonly locale = input('fr-FR');
-  /** Donne le focus au jour actif dès le premier rendu (calendrier ouvert en popup). */
+  readonly locale = input<string>();
+
+  /** The input always wins; otherwise the dictionary of the active locale. */
+  protected readonly localeText = computed(() => this.locale() ?? this.i18n.strings().datepicker.dateLocale);
+  /** Focuses the active day on first render (calendar opened as a popup). */
   readonly autofocusDay = input(false);
 
   readonly datePicked = output<Date>();
 
   readonly view = signal<'days' | 'months'>('days');
-  /** Mois affiché quand l'utilisateur a navigué ; sinon dérivé de selected/aujourd'hui. */
+  /** Month shown when the user has navigated; otherwise derived from selected/today. */
   private readonly navMonth = signal<{ year: number, month: number } | null>(null);
-  /** Jour ciblé par la navigation clavier (roving tabindex). */
+  /** Day targeted by keyboard navigation (roving tabindex). */
   private readonly focusOverride = signal<Date | null>(null);
   private readonly monthFocus = signal<number | null>(null);
 
-  /** Incrémenté à chaque demande de focus ; consommé après le rendu (zoneless : pas de setTimeout fiable). */
+  /** Incremented on each focus request; consumed after render (zoneless: no reliable setTimeout). */
   private readonly focusRequest = signal(0);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -56,19 +61,19 @@ export class DatepickerCalendarComponent {
     return { year: base.getFullYear(), month: base.getMonth() };
   });
 
-  /** Titre de l'en-tête : « Juillet 2026 » en vue jours, « 2026 » en vue mois. */
+  /** Header title: "July 2026" in days view, "2026" in months view. */
   readonly title = computed(() => {
     const { year, month } = this.viewMonth();
     if (this.view() === 'months') { return '' + year; }
-    const label = new Intl.DateTimeFormat(this.locale(), { month: 'long', year: 'numeric' })
+    const label = new Intl.DateTimeFormat(this.localeText(), { month: 'long', year: 'numeric' })
       .format(new Date(year, month, 1));
     return label.charAt(0).toUpperCase() + label.slice(1);
   });
 
-  /** Semaine commençant le lundi (le 5 janvier 2026 est un lundi). */
+  /** Week starting on Monday (January 5, 2026 is a Monday). */
   readonly weekdays = computed(() => {
-    const short = new Intl.DateTimeFormat(this.locale(), { weekday: 'short' });
-    const long = new Intl.DateTimeFormat(this.locale(), { weekday: 'long' });
+    const short = new Intl.DateTimeFormat(this.localeText(), { weekday: 'short' });
+    const long = new Intl.DateTimeFormat(this.localeText(), { weekday: 'long' });
     return Array.from({ length: 7 }, (_, i) => {
       const day = new Date(2026, 0, 5 + i);
       return { short: short.format(day).replace('.', '').slice(0, 2), long: long.format(day) };
@@ -76,11 +81,11 @@ export class DatepickerCalendarComponent {
   });
 
   readonly monthNames = computed(() => {
-    const format = new Intl.DateTimeFormat(this.locale(), { month: 'short' });
+    const format = new Intl.DateTimeFormat(this.localeText(), { month: 'short' });
     return Array.from({ length: 12 }, (_, m) => format.format(new Date(2026, m, 1)).replace('.', ''));
   });
 
-  /** Jour porteur du tabindex 0 : navigation clavier, sinon sélection, sinon aujourd'hui, sinon le 1er. */
+  /** Day carrying tabindex 0: keyboard navigation, else selection, else today, else the 1st. */
   readonly focusDate = computed(() => {
     const { year, month } = this.viewMonth();
     const inView = (d: Date | null) => d !== null && d.getFullYear() === year && d.getMonth() === month;
@@ -96,7 +101,7 @@ export class DatepickerCalendarComponent {
 
   readonly weeks = computed<CalendarDay[][]>(() => {
     const { year, month } = this.viewMonth();
-    const ariaFormat = new Intl.DateTimeFormat(this.locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const ariaFormat = new Intl.DateTimeFormat(this.localeText(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     const selected = this.selected();
     const firstOffset = (new Date(year, month, 1).getDay() + 6) % 7;
     const weeks: CalendarDay[][] = [];
@@ -121,7 +126,7 @@ export class DatepickerCalendarComponent {
     return this.isSameDay(date, this.focusDate());
   }
 
-  /** Donne le focus à l'élément actif de la vue courante (appelé aussi par le parent à l'ouverture). */
+  /** Focuses the active element of the current view (also called by the parent on opening). */
   focusActiveDay(): void {
     this.focusRequest.update(n => n + 1);
   }
@@ -162,7 +167,7 @@ export class DatepickerCalendarComponent {
     this.navMonth.set({ year: year + delta, month });
   }
 
-  // ── Sélection ───────────────────────────────────────────────────────────────
+  // ── Selection ───────────────────────────────────────────────────────────────
 
   pickDay(date: Date): void {
     this.datePicked.emit(this.stripTime(date));
@@ -172,7 +177,7 @@ export class DatepickerCalendarComponent {
     this.datePicked.emit(this.today);
   }
 
-  // ── Clavier ─────────────────────────────────────────────────────────────────
+  // ── Keyboard ────────────────────────────────────────────────────────────────
 
   onGridKeydown(event: KeyboardEvent): void {
     const current = this.focusDate();
@@ -194,7 +199,7 @@ export class DatepickerCalendarComponent {
     this.focusActiveDay();
   }
 
-  /** En vue mois, Escape revient aux jours au lieu de fermer le datepicker (capté à la racine). */
+  /** In months view, Escape goes back to the days instead of closing the datepicker (captured at the root). */
   onCalendarKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape' && this.view() === 'months') {
       event.preventDefault();

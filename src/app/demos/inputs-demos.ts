@@ -11,20 +11,22 @@ import {
   InputEmailsComponent,
   InputIbanComponent,
   InputPasswordComponent,
-  InputTvaComponent,
-  TvaDisplayComponent,
+  InputVatComponent,
+  VatDisplayComponent,
 } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
+import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
 
-/** billy-datepicker : CVA 'yyyy-MM-dd' | null, popover desktop. */
+/** billy-datepicker : CVA 'yyyy-MM-dd' | null, desktop popover. */
 @Component({
   selector: 'demo-datepicker',
-  imports: [FormsModule, DatepickerComponent, DemoStageComponent],
+  imports: [FormsModule, DatepickerComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Choisir une date" description="ControlValueAccessor au format 'yyyy-MM-dd' : popover calendrier sur desktop, bottom-sheet sur mobile (réduisez la fenêtre).">
+    <demo-stage title="Pick a date" description="ControlValueAccessor in 'yyyy-MM-dd' format: calendar popover on desktop, bottom sheet on mobile (shrink the window).">
+      <demo-locale-toggle stage-controls />
       <div class="demo-form-block dp-block">
         <billy-datepicker [(ngModel)]="date" />
-        <div class="demo-note">Valeur du modèle : <code>{{ date() ?? 'null' }}</code></div>
+        <div class="demo-note">Model value: <code>{{ date() ?? 'null' }}</code></div>
       </div>
     </demo-stage>
   `,
@@ -36,19 +38,20 @@ export class DatepickerDemoComponent {
   readonly date = signal<string | null>('2026-07-17');
 }
 
-/** billy-dropdown : options {id, text, value}, mode recherche. */
+/** billy-dropdown : {id, text, value} options, search mode. */
 @Component({
   selector: 'demo-dropdown',
-  imports: [FormsModule, DropdownComponent, DemoStageComponent],
+  imports: [FormsModule, DropdownComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Liste déroulante avec recherche" description="Parité select2 : recherche avec mise en évidence, navigation clavier, le modèle reçoit option.value.">
+    <demo-stage title="Dropdown list with search" description="select2 parity: search with highlighting, keyboard navigation, the model receives option.value.">
+      <demo-locale-toggle stage-controls />
       <div class="demo-form-block dd-block">
-        <billy-dropdown [values]="options" [(ngModel)]="pays" placeholder="Choisir un pays…" />
-        <div class="demo-note">Sélection : <code>{{ pays() ?? 'aucune' }}</code></div>
+        <billy-dropdown [values]="options" [(ngModel)]="country" placeholder="Pick a country…" />
+        <div class="demo-note">Selection: <code>{{ country() ?? 'none' }}</code></div>
       </div>
       <div class="demo-form-block dd-block">
-        <billy-dropdown [values]="options" [multiple]="true" [(ngModel)]="paysMulti" placeholder="Choisir un ou plusieurs pays…" />
-        <div class="demo-note">Sélection : <code>{{ paysMulti().length ? paysMulti().join(', ') : 'aucune' }}</code></div>
+        <billy-dropdown [values]="options" [multiple]="true" [(ngModel)]="countriesMulti" placeholder="Pick one or more countries…" />
+        <div class="demo-note">Selection: <code>{{ countriesMulti().length ? countriesMulti().join(', ') : 'none' }}</code></div>
       </div>
     </demo-stage>
   `,
@@ -59,32 +62,33 @@ export class DatepickerDemoComponent {
 export class DropdownDemoComponent {
 
   readonly options: DropdownOption[] = [
-    { id: 'BE', text: 'Belgique', value: 'BE' },
+    { id: 'BE', text: 'Belgium', value: 'BE' },
     { id: 'FR', text: 'France', value: 'FR' },
     { id: 'LU', text: 'Luxembourg', value: 'LU' },
-    { id: 'NL', text: 'Pays-Bas', value: 'NL' },
-    { id: 'DE', text: 'Allemagne', value: 'DE' },
-    { id: 'IT', text: 'Italie', value: 'IT' },
-    { id: 'ES', text: 'Espagne', value: 'ES' },
+    { id: 'NL', text: 'Netherlands', value: 'NL' },
+    { id: 'DE', text: 'Germany', value: 'DE' },
+    { id: 'IT', text: 'Italy', value: 'IT' },
+    { id: 'ES', text: 'Spain', value: 'ES' },
   ];
 
-  readonly pays = signal<string | null>(null);
-  readonly paysMulti = signal<string[]>(['FR', 'LU']);
+  readonly country = signal<string | null>(null);
+  readonly countriesMulti = signal<string[]>(['FR', 'LU']);
 
 }
 
-/** La famille code-field : saisie formatée + affichages lecture. */
+/** The code-field family: formatted input + read-only displays. */
 @Component({
   selector: 'demo-code-field',
-  imports: [FormsModule, InputTvaComponent, InputIbanComponent, InputEmailComponent, TvaDisplayComponent, IbanDisplayComponent, DemoStageComponent],
+  imports: [FormsModule, InputVatComponent, InputIbanComponent, InputEmailComponent, VatDisplayComponent, IbanDisplayComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Codes formatés et validés en frappe" description="Segments groupés, glyphe pays, statut (partiel / invalide / valide) : essayez BE 0403 200 393 ou BE71 0961 2345 6769." [center]="false">
+    <demo-stage title="Codes formatted and validated as you type" description="Grouped segments, country glyph, status (partial / invalid / valid): try BE 0403 200 393 or BE71 0961 2345 6769." [center]="false">
+      <demo-locale-toggle stage-controls />
       <div class="cf-grid">
         <div class="cf-block">
-          <label class="cf-label">billy-input-tva</label>
-          <billy-input-tva [(ngModel)]="tva" placeholder="BE 0123 456 749" />
-          <label class="cf-label cf-label--read">billy-tva-display</label>
-          <billy-tva-display [value]="tva()" glyph />
+          <label class="cf-label">billy-input-vat</label>
+          <billy-input-vat [(ngModel)]="vat" placeholder="BE 0123 456 749" />
+          <label class="cf-label cf-label--read">billy-vat-display</label>
+          <billy-vat-display [value]="vat()" glyph />
         </div>
         <div class="cf-block">
           <label class="cf-label">billy-input-iban</label>
@@ -94,8 +98,8 @@ export class DropdownDemoComponent {
         </div>
         <div class="cf-block">
           <label class="cf-label">billy-input-email</label>
-          <billy-input-email [(ngModel)]="email" placeholder="prenom@domaine.be" />
-          <div class="demo-note">Tapez « prenom&#64;gmial.com » pour voir la suggestion.</div>
+          <billy-input-email [(ngModel)]="email" placeholder="firstname@domain.be" />
+          <div class="demo-note">Type "firstname&#64;gmial.com" to see the suggestion.</div>
         </div>
       </div>
     </demo-stage>
@@ -125,20 +129,21 @@ export class DropdownDemoComponent {
   `,
 })
 export class CodeFieldDemoComponent {
-  readonly tva = signal('');
+  readonly vat = signal('');
   readonly iban = signal('');
   readonly email = signal('');
 }
 
-/** billy-input-emails : tags multi-emails + autocomplétion. */
+/** billy-input-emails : multi-email tags + autocompletion. */
 @Component({
   selector: 'demo-input-emails',
-  imports: [FormsModule, InputEmailsComponent, DemoStageComponent],
+  imports: [FormsModule, InputEmailsComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Saisie multi-destinataires" description="Entrée, virgule ou point-virgule pour valider un tag ; l'autocomplétion vient de [availableEmails], fourni par le consommateur.">
+    <demo-stage title="Multi-recipient input" description="Enter, comma or semicolon to confirm a tag; autocompletion comes from [availableEmails], supplied by the consumer.">
+      <demo-locale-toggle stage-controls />
       <div class="demo-form-block ie-block">
-        <billy-input-emails [(ngModel)]="emails" [availableEmails]="carnet" placeholder="Ajouter un destinataire…" />
-        <div class="demo-note">Modèle (string) : <code>{{ emails() || 'null' }}</code></div>
+        <billy-input-emails [(ngModel)]="emails" [availableEmails]="addressBook" />
+        <div class="demo-note">Model (string): <code>{{ emails() || 'null' }}</code></div>
       </div>
     </demo-stage>
   `,
@@ -148,26 +153,27 @@ export class CodeFieldDemoComponent {
 })
 export class InputEmailsDemoComponent {
 
-  readonly emails = signal<string | null>('compta@billy.be');
+  readonly emails = signal<string | null>('accounting@billy.be');
 
-  readonly carnet = [
-    'compta@billy.be',
-    'direction@billy.be',
+  readonly addressBook = [
+    'accounting@billy.be',
+    'management@billy.be',
     'support@billy.be',
-    'facturation@client-demo.be',
+    'billing@client-demo.be',
     'contact@client-demo.be',
   ];
 
 }
 
-/** billy-input-password : jauge de robustesse + correspondance. */
+/** billy-input-password : strength gauge + match check. */
 @Component({
   selector: 'demo-input-password',
-  imports: [FormsModule, InputPasswordComponent, DemoStageComponent],
+  imports: [FormsModule, InputPasswordComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Mot de passe et confirmation" description="checkStrength affiche la jauge de robustesse ; compareTo valide la correspondance des deux champs." [center]="false">
+    <demo-stage title="Password and confirmation" description="checkStrength shows the strength gauge; compareTo validates that both fields match." [center]="false">
+      <demo-locale-toggle stage-controls />
       <div class="ip-grid">
-        <billy-input-password label="Nouveau mot de passe" [checkStrength]="true" [(ngModel)]="password" />
+        <billy-input-password label="New password" [checkStrength]="true" [(ngModel)]="password" />
         <billy-input-password label="Confirmation" [compareTo]="password()" [(ngModel)]="confirm" />
       </div>
     </demo-stage>
@@ -186,17 +192,17 @@ export class InputPasswordDemoComponent {
   readonly confirm = signal('');
 }
 
-/** billy-button-switch : toggle booléen CVA. */
+/** billy-button-switch : boolean CVA toggle. */
 @Component({
   selector: 'demo-button-switch',
   imports: [FormsModule, ButtonSwitchComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Interrupteur façon iOS" description="ControlValueAccessor booléen, avec libellés et icônes optionnels de part et d'autre.">
+    <demo-stage title="iOS-style switch" description="Boolean ControlValueAccessor, with optional labels and icons on either side.">
       <div class="bs-col">
         <billy-button-switch [(ngModel)]="simple" />
-        <billy-button-switch labelOff="HTVA" labelOn="TVAC" [(ngModel)]="tvac" />
-        <billy-button-switch iconOff="fa-regular fa-moon" iconOn="fa-solid fa-sun" [(ngModel)]="jour" />
-        <div class="demo-note">simple : <code>{{ simple() }}</code> · tvac : <code>{{ tvac() }}</code> · jour : <code>{{ jour() }}</code></div>
+        <billy-button-switch labelOff="excl. VAT" labelOn="incl. VAT" [(ngModel)]="inclVat" />
+        <billy-button-switch iconOff="fa-regular fa-moon" iconOn="fa-solid fa-sun" [(ngModel)]="day" />
+        <div class="demo-note">simple: <code>{{ simple() }}</code> · inclVat: <code>{{ inclVat() }}</code> · day: <code>{{ day() }}</code></div>
       </div>
     </demo-stage>
   `,
@@ -211,18 +217,19 @@ export class InputPasswordDemoComponent {
 })
 export class ButtonSwitchDemoComponent {
   readonly simple = signal(false);
-  readonly tvac = signal(true);
-  readonly jour = signal(false);
+  readonly inclVat = signal(true);
+  readonly day = signal(false);
 }
 
-/** billy-attachment-button : pièces jointes en two-way binding. */
+/** billy-attachment-button : attachments with two-way binding. */
 @Component({
   selector: 'demo-attachment-button',
-  imports: [AttachmentButtonComponent, DemoStageComponent],
+  imports: [AttachmentButtonComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Joindre des fichiers" description="Le trombone porte le compteur ; le panneau liste permet d'ajouter et de retirer ([(files)], plafonné à 5).">
+    <demo-stage title="Attach files" description="The paperclip carries the counter; the list panel lets you add and remove ([(files)], capped at 5).">
+      <demo-locale-toggle stage-controls />
       <billy-attachment-button [(files)]="files" />
-      <div class="demo-note">{{ files().length }} fichier(s) dans le modèle</div>
+      <div class="demo-note">{{ files().length }} file(s) in the model</div>
     </demo-stage>
   `,
 })

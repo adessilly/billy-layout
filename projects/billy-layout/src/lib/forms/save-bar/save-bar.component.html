@@ -7,7 +7,7 @@
     <billy-button
       variant="ghost"
       type="button"
-      [label]="labelCancel()"
+      [label]="labelCancelText()"
       [icon]="iconCancel()"
       (clicked)="askCancel()" />
   }
@@ -17,7 +17,7 @@
       variant="plain"
       type="submit"
       [color]="colorSave()"
-      [label]="loading() ? labelSaveLoading() : labelSave()"
+      [label]="loading() ? labelSaveLoadingText() : labelSaveText()"
       [icon]="iconSave()"
       [loading]="loading()"
       [disabled]="disabled()"

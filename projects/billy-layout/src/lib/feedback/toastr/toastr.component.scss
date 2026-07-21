@@ -1,5 +1,5 @@
-// Chaque toast est une ligne de grille qui se replie (1fr → 0fr) à la sortie,
-// pour que la pile se referme en douceur sans saut.
+// Each toast is a grid row that collapses (1fr → 0fr) on exit,
+// so the stack closes up smoothly without jumping.
 :host {
   display: grid;
   grid-template-rows: 1fr;
@@ -20,9 +20,9 @@
   min-height: 0;
 }
 
-// ── Carte ──────────────────────────────────────────────────────────────────
+// ── Card ───────────────────────────────────────────────────────────────────
 .toast-card {
-  // Teintes par type (surchargées par .toast-<type> ci-dessous)
+  // Per-type tints (overridden by .toast-<type> below)
   --t-accent:  var(--billy-accent-strong);
   --t-icon-bg: var(--billy-accent-soft);
 
@@ -40,8 +40,8 @@
   animation: billyToastInRight .34s cubic-bezier(.34, 1.28, .5, 1);
 }
 
-// Accent = teinte `-strong` du statut (moyenne en clair, s'éclaircit en dark) ;
-// pastille = voile `-soft`. `info` reste l'accent cyan de marque.
+// Accent = the status's `-strong` tint (medium in light mode, lightens in dark);
+// icon chip = the `-soft` veil. `info` keeps the cyan brand accent.
 .toast-success { --t-accent: var(--billy-success-strong); --t-icon-bg: var(--billy-success-soft); }
 .toast-error   { --t-accent: var(--billy-error-strong);   --t-icon-bg: var(--billy-error-soft); }
 .toast-warning { --t-accent: var(--billy-warning-strong); --t-icon-bg: var(--billy-warning-soft); }
@@ -52,7 +52,7 @@
   to { opacity: 1; transform: translateX(0) scale(1); }
 }
 
-// Liseré coloré à gauche
+// Colored edge on the left
 .toast-accent {
   position: absolute;
   left: 0;
@@ -62,7 +62,7 @@
   background: var(--t-accent);
 }
 
-// Pastille d'icône
+// Icon chip
 .toast-icon {
   flex: none;
   display: flex;
@@ -76,7 +76,7 @@
   font-size: 14px;
 }
 
-// ── Textes ─────────────────────────────────────────────────────────────────
+// ── Texts ──────────────────────────────────────────────────────────────────
 .toast-texts {
   flex: 1;
   min-width: 0;
@@ -98,7 +98,7 @@
   overflow-wrap: break-word;
 }
 
-// ── Fermeture ──────────────────────────────────────────────────────────────
+// ── Dismiss ────────────────────────────────────────────────────────────────
 .toast-close {
   flex: none;
   display: flex;
@@ -121,7 +121,7 @@
   }
 }
 
-// ── Barre de progression (porte la temporisation d'auto-fermeture) ─────────
+// ── Progress bar (carries the auto-dismiss timing) ─────────────────────────
 .toast-progress {
   position: absolute;
   left: 0;
@@ -136,7 +136,7 @@
   animation-fill-mode: forwards;
 }
 
-// Le survol suspend le compte à rebours : le toast reste tant qu'on le lit.
+// Hovering pauses the countdown: the toast stays while it is being read.
 .toast-card:hover .toast-progress {
   animation-play-state: paused;
 }
@@ -146,7 +146,7 @@
   to { transform: scaleX(0); }
 }
 
-// ── Mobile : pilule compacte (icône + titre), tap pour déplier ─────────────
+// ── Mobile: compact pill (icon + title), tap to expand ─────────────────────
 @media (max-width: 767.98px) {
   :host(.leaving) {
     transform: translateY(-10px);
@@ -192,8 +192,8 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-// ── Accessibilité : pas de rebond pour qui préfère éviter le mouvement.
-// La barre de progression, elle, reste : c'est le minuteur du toast.
+// ── Accessibility: no bounce for those who prefer reduced motion.
+// The progress bar, however, stays: it is the toast's timer.
 @media (prefers-reduced-motion: reduce) {
   :host {
     transition: none;
@@ -210,8 +210,8 @@
     box-shadow: 0 24px 48px -18px rgba(0, 0, 0, .6);
   }
 
-  // Les teintes de statut (accent + pastille) suivent les tokens --billy-*,
-  // qui basculent en dark sous body.dark-mode : aucun override local nécessaire.
+  // The status tints (accent + chip) follow the --billy-* tokens, which
+  // switch to dark under body.dark-mode: no local override needed.
 
   .toast-title {
     color: #ced0d2;

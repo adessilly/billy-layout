@@ -1,55 +1,66 @@
-# billy-layout — contexte pour votre assistant IA
+# billy-layout — context for your AI assistant
 
-> Ce fichier est livré avec le paquet. Importez-le dans le `CLAUDE.md` de votre
-> application en une ligne :
+> This file ships with the package. Import it into your application's
+> `CLAUDE.md` with a single line:
 >
 > ```markdown
 > @node_modules/billy-layout/docs/claude.md
 > ```
 >
-> Votre assistant saura ainsi, à chaque session, que l'application embarque le
-> design system BILLy — et où en trouver la documentation complète.
+> Your assistant will then know, in every session, that the application embeds
+> the BILLy design system — and where to find its full documentation.
 
-Cette application utilise **billy-layout**, la librairie Angular du design
-system BILLy : shell applicatif (topbar, sidebar, notifications, action-bar
-mobile), champs de formulaire (ControlValueAccessor), dialogues, feedback,
-panneaux de consultation et tokens SCSS `--billy-*`.
+This application uses **billy-layout**, the Angular library of the BILLy design
+system: application shell (topbar, sidebar, notifications, mobile action-bar),
+form fields (ControlValueAccessor), dialogs, feedback, consultation panels and
+`--billy-*` SCSS tokens.
 
-## Règles pour l'assistant
+## Rules for the assistant
 
-1. **Ne pas réinventer l'UI.** Avant de créer un composant visuel (bouton,
-   champ, carte, dialogue, toast, état vide…), vérifier si billy-layout le
-   fournit déjà. L'index complet — une fiche par composant avec API signals,
-   exemples réels, theming et pièges — est dans
+1. **Do not reinvent the UI.** Before creating any visual component (button,
+   field, card, dialog, toast, empty state…), check whether billy-layout
+   already provides it. The full index — one page per component with the
+   signals API, real examples, theming and pitfalls — is in
    `node_modules/billy-layout/docs/README.md`.
-2. **Respecter les guidelines UX** définies dans
-   `node_modules/billy-layout/docs/ux-guidelines.md` pour tout assemblage
-   d'écran : placement des actions de page, structure des listes, cartes de
-   consultation (`consult-card`), barre d'enregistrement (`save-bar`),
-   états vides.
-3. **Styles via le design system.** Utiliser les tokens CSS `--billy-*`
-   (couleurs, surfaces, light/dark) et les mixins SCSS partagés
-   (`billy-forms`, `billy-cards`, `billy-code-field`…) plutôt que des valeurs
-   en dur — détails dans `node_modules/billy-layout/docs/styles/styles.md`.
-   Le mode sombre repose sur la classe `body.dark-mode`, pilotée par
+2. **Follow the UX guidelines** defined in
+   `node_modules/billy-layout/docs/ux-guidelines.md` for any screen assembly:
+   placement of page actions, list structure, consultation cards
+   (`consult-card`), save bar (`save-bar`), empty states.
+3. **Style through the design system.** Use the `--billy-*` CSS tokens
+   (colors, surfaces, light/dark) and the shared SCSS mixins
+   (`billy-forms`, `billy-cards`, `billy-code-field`…) rather than hard-coded
+   values — details in `node_modules/billy-layout/docs/styles/styles.md`.
+   Dark mode relies on the `body.dark-mode` class, driven by
    `BillyDarkModeService`.
-4. **Imports TypeScript** depuis l'entrée unique du paquet :
-   `import { … } from 'billy-layout'`. Composants standalone, API à base de
-   signals (`input()` / `output()` / `model()`).
+4. **TypeScript imports** from the package's single entry point:
+   `import { … } from 'billy-layout'`. Standalone components, signal-based
+   API (`input()` / `output()` / `model()`).
 
-## Carte des familles de composants
+## i18n — built-in component strings
 
-| Famille | Contenu | Fiches |
+The components' built-in strings (button labels, dialog copy, tooltips, empty
+states…) come from an i18n dictionary — English by default, French shipped.
+Configure the language at bootstrap with `provideBillyI18n('en' | 'fr')`, with
+optional per-string overrides
+(`provideBillyI18n('fr', { saveBar: { save: 'Enregistrer' } })`); switch at
+runtime via `BillyI18nService.setLocale()` (signal-based, instant). The label
+inputs of the components (`labelSave`, `backLabel`, …) always win over the
+dictionary — do not hard-code translations that the dictionary already
+provides. Full reference: `node_modules/billy-layout/docs/core/i18n.md`.
+
+## Component family map
+
+| Family | Contents | Docs |
 |---|---|---|
-| `layout/` | `<billy-shell>` (topbar, sidebar, notifications, slots), action-bar mobile | `docs/layout/` |
-| `inputs/` | datepicker, dropdown, champs codes (TVA/IBAN/email), multi-emails, password, switch, pièces jointes | `docs/inputs/` |
-| `forms/` | input-line/consult-line, save-bar, form-side-panel, base de formulaire signals | `docs/forms/` |
-| `buttons/` | bouton d'action (couleurs × variantes × tailles), tuiles ajout/upload | `docs/buttons/` |
-| `dialogs/` | moteur `Dialog`, `<billy-dialog-form>`, confirmation de suppression | `docs/dialogs/` |
+| `layout/` | `<billy-shell>` (topbar, sidebar, notifications, slots), mobile action-bar | `docs/layout/` |
+| `inputs/` | datepicker, dropdown, code fields (VAT/IBAN/email), multi-emails, password, switch, attachments | `docs/inputs/` |
+| `forms/` | input-line/consult-line, save-bar, form-side-panel, signal-based form base class | `docs/forms/` |
+| `buttons/` | action button (colors × variants × sizes), add/upload tiles | `docs/buttons/` |
+| `dialogs/` | `Dialog` engine, `<billy-dialog-form>`, delete confirmation | `docs/dialogs/` |
 | `feedback/` | toastr, snackbar, loaders, checkmark, empty-state | `docs/feedback/` |
-| `display/` | consult-card, page-header, header-action-bar, tabs, nav-card, filtres | `docs/display/` |
-| `viewers/` | visionneuses pdf/image/xml (`BILLY_FILE_SOURCE`) | `docs/viewers/` |
-| `core/` | `<billy-icon>`, click-outside, autofocus, utils TVA/IBAN/email | `docs/core/` |
-| `styles/` | tokens `--billy-*`, reboot, mixins SCSS | `docs/styles/` |
+| `display/` | consult-card, page-header, header-action-bar, tabs, nav-card, filters | `docs/display/` |
+| `viewers/` | pdf/image/xml viewers (`BILLY_FILE_SOURCE`) | `docs/viewers/` |
+| `core/` | `<billy-icon>`, click-outside, autofocus, VAT/IBAN/email utils | `docs/core/` |
+| `styles/` | `--billy-*` tokens, reboot, SCSS mixins | `docs/styles/` |
 
-Tous les chemins ci-dessus sont relatifs à `node_modules/billy-layout/`.
+All paths above are relative to `node_modules/billy-layout/`.

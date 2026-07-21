@@ -37,7 +37,7 @@
     0 0 0 1px rgba(0, 0, 0, 0.06);
   color: #1a1a2e;
 
-  // billy-icon : la taille se règle via [size], ici seulement la couleur
+  // billy-icon: size is set via [size], only the color here
   &__icon {
     flex-shrink: 0;
     display: flex;
@@ -146,7 +146,7 @@ body.dark-mode .pwa-snackbar {
   }
 }
 
-// Bouton compact mobile : caché par défaut
+// Compact mobile button: hidden by default
 .pwa-snackbar__btn-compact {
   display: none;
 }
@@ -207,5 +207,5 @@ body.dark-mode .pwa-snackbar {
 }
 
 body.dark-mode .pwa-snackbar__btn-compact {
-  // hérite du gradient, pas besoin de surcharge
+  // inherits the gradient, no override needed
 }

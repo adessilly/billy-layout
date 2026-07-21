@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.15);
-  // au-dessus de la save-bar sticky (z-index 1001), sous les toasts/modales (9000+)
+  // above the sticky save-bar (z-index 1001), below the toasts/modals (9000+)
   z-index: 1050;
   animation: fadeIn 0.2s ease;
 }

@@ -1,64 +1,64 @@
 # billy-input-line — InputLineComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/form-creation/input-line/` · standalone component
+> Category `forms` · source `projects/billy-layout/src/lib/forms/form-creation/input-line/` · standalone component
 
-## Rôle
+## Purpose
 
-Ligne de formulaire en mode édition : un libellé en petites capitales grises au-dessus du champ, avec astérisque de champ obligatoire et infobulle optionnels, le champ lui-même étant projeté par le consommateur (`<ng-content>`). C'est la brique de mise en page la plus utilisée des formulaires de l'app : on la retrouve entre autres dans `src/app/auth/pages/achat/achat-form/achat-form.component.html` (chaque champ du formulaire d'achat), `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/peppol-facture/peppol-facture-summary/peppol-facture-summary.component.html` et `src/app/shared/components/fichiers-manager/fichiers-generation/fichiers-generation.component.html`.
+Form row in edit mode: a label in small gray capitals above the field, with an optional required-field asterisk and tooltip, the field itself being projected by the consumer (`<ng-content>`). It is the most widely used layout brick of the app's forms: found among others in `src/app/auth/pages/achat/achat-form/achat-form.component.html` (every field of the purchase form), `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/peppol-facture/peppol-facture-summary/peppol-facture-summary.component.html` and `src/app/shared/components/fichiers-manager/fichiers-generation/fichiers-generation.component.html`.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { InputLineComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-input-line>`. Également exporté via le tableau legacy `FormCreationModule` (barrel `lib/forms/form-creation/index.ts`) qui regroupe les cinq composants form-creation pour un import en bloc dans `imports: [...]`.
+Selector: `<billy-input-line>`. Also exported via the legacy `FormCreationModule` array (barrel `lib/forms/form-creation/index.ts`) which groups the five form-creation components for a one-shot import in `imports: [...]`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string` | `''` | Libellé affiché au-dessus du champ. Si vide, aucun `<label>` n'est rendu. |
-| `mandatory` | `boolean` | `false` | Ajoute un astérisque `<span class="mandatory">*</span>` après le libellé. |
-| `info` | `string` | `''` | Si non vide, affiche une icône `fa-circle-info` dont le `title` (infobulle native) contient ce texte. |
-| `nomarginbottom` | `boolean` | `false` | Pose `.form-group-nomarginbottom` sur le wrapper pour annuler la marge basse (utile en fin de panneau ou dans une grille qui gère déjà les espacements). |
+| `label` | `string` | `''` | Label displayed above the field. If empty, no `<label>` is rendered. |
+| `mandatory` | `boolean` | `false` | Appends an asterisk `<span class="mandatory">*</span>` after the label. |
+| `info` | `string` | `''` | If non-empty, displays an `fa-circle-info` icon whose `title` (native tooltip) contains this text. |
+| `nomarginbottom` | `boolean` | `false` | Sets `.form-group-nomarginbottom` on the wrapper to cancel the bottom margin (useful at the end of a panel or in a grid that already manages spacing). |
 
-Pas d'output ni de méthode publique.
+No outputs or public methods.
 
 ## Slots / projection
 
-`<ng-content>` unique : le champ (input, `billy-datepicker`, `billy-dropdown`, `billy-input-prefixe-suffixe`…) est fourni par le consommateur et rendu sous le libellé.
+Single `<ng-content>`: the field (input, `billy-datepicker`, `billy-dropdown`, `billy-input-prefix-suffix`…) is provided by the consumer and rendered under the label.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/achat/achat-form/achat-form.component.html` :
+Real usage in `src/app/auth/pages/achat/achat-form/achat-form.component.html`:
 
 ```html
-<billy-input-line class="col-lg-4 col-md-6 col-sm-6" [mandatory]="true" label="Libellé">
+<billy-input-line class="col-lg-4 col-md-6 col-sm-6" [mandatory]="true" label="Label">
   <input class="form-control" type="text"
     [class.is-invalid]="!ctrl.libelle.valid && ctrl.libelle.touched"
     formControlName="libelle" />
 </billy-input-line>
 
-<billy-input-line class="col-lg-4 col-md-6 col-sm-6" [mandatory]="true" label="Prix (tvac)">
-  <billy-input-prefixe-suffixe suffixe="€">
+<billy-input-line class="col-lg-4 col-md-6 col-sm-6" [mandatory]="true" label="Price (incl. VAT)">
+  <billy-input-prefix-suffix suffix="€">
     <input class="form-control" type="number" formControlName="prix" />
-  </billy-input-prefixe-suffixe>
+  </billy-input-prefix-suffix>
 </billy-input-line>
 ```
 
 ## Styles & theming
 
-- `:host { display: block }` : le composant se comporte comme un bloc, on lui passe couramment des classes de grille (`col-lg-4`…) directement sur l'hôte.
-- Libellé : couleur fixe `#A6A6A6`, `text-transform: uppercase`, `font-size: 0.8em` — pas de token `--billy-*`, la couleur est identique en dark mode (elle reste lisible sur fond sombre).
-- Le wrapper porte la classe `.form-group`, dont la marge basse (`margin-bottom: 1rem`) vient du CSS legacy global de l'app (`src/app/layout/layout-ui-loader/billy-legacy.scss`), pas de la librairie.
+- `:host { display: block }`: the component behaves as a block; grid classes (`col-lg-4`…) are commonly passed directly on the host.
+- Label: fixed color `#A6A6A6`, `text-transform: uppercase`, `font-size: 0.8em` — no `--billy-*` token, the color is identical in dark mode (it stays readable on a dark background).
+- The wrapper carries the `.form-group` class, whose bottom margin (`margin-bottom: 1rem`) comes from the app's global legacy CSS (`src/app/layout/layout-ui-loader/billy-legacy.scss`), not from the library.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **Dépendance au CSS global** : la marge basse de `.form-group` est définie côté app (billy-legacy.scss, chargé par le layout-ui-loader). Hors de billy-client, le composant n'a pas d'espacement vertical par défaut.
-- La classe `.mandatory` de l'astérisque n'est pas stylée dans le SCSS du composant : sa couleur vient elle aussi des styles globaux de l'app.
-- Le champ projeté n'est pas relié au `<label>` (pas de `for`/`id`) : pas d'association d'accessibilité automatique.
-- L'infobulle `info` est un `title` natif : pas de tooltip riche, invisible au clavier/tactile.
-- Pendant la consultation (lecture seule), utiliser plutôt `billy-consult-line`, qui partage le même style de libellé.
+- **Global CSS dependency**: the `.form-group` bottom margin is defined on the app side (billy-legacy.scss, loaded by the layout-ui-loader). Outside billy-client, the component has no default vertical spacing.
+- The asterisk's `.mandatory` class is not styled in the component's SCSS: its color also comes from the app's global styles.
+- The projected field is not linked to the `<label>` (no `for`/`id`): no automatic accessibility association.
+- The `info` tooltip is a native `title`: no rich tooltip, invisible to keyboard/touch users.
+- For consultation (read-only), use `billy-consult-line` instead, which shares the same label style.

@@ -12,7 +12,7 @@ import bash from 'highlight.js/lib/languages/bash';
 import json from 'highlight.js/lib/languages/json';
 import { AppLoadingComponent } from 'billy-layout';
 
-// Langages présents dans les fiches docs/ (ts, html, scss, bash, json).
+// Languages present in the docs/ pages (ts, html, scss, bash, json).
 hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('xml', xml);
@@ -21,7 +21,7 @@ hljs.registerLanguage('css', css);
 hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('json', json);
 
-/** Alias de fence → langage highlight.js. */
+/** Fence alias → highlight.js language. */
 const LANG_ALIASES: Record<string, string> = {
   ts: 'typescript',
   js: 'javascript',
@@ -32,13 +32,13 @@ const LANG_ALIASES: Record<string, string> = {
 };
 
 /**
- * Rend une fiche markdown de la documentation embarquée (assets /docs).
+ * Renders a markdown page from the embedded documentation (assets /docs).
  *
- * Les liens relatifs entre fiches (`../display/page-header.md`, `README.md`,
- * `ux-guidelines.md`) sont réécrits vers les routes du site ; les liens http
- * s'ouvrent dans un nouvel onglet. Les blocs de code sont colorisés par
- * highlight.js (thème maison aligné sur les tokens --billy-*). Le contenu
- * vient du dépôt lui-même : il est de confiance (bypassSecurityTrustHtml).
+ * Relative links between pages (`../display/page-header.md`, `README.md`,
+ * `ux-guidelines.md`) are rewritten to site routes; http links open in a new
+ * tab. Code blocks are highlighted by highlight.js (in-house theme aligned
+ * with the --billy-* tokens). The content comes from the repository itself:
+ * it is trusted (bypassSecurityTrustHtml).
  */
 @Component({
   selector: 'site-markdown',
@@ -48,20 +48,20 @@ const LANG_ALIASES: Record<string, string> = {
       @if (doc.isLoading()) {
         <billy-loading [loading]="true" />
       } @else if (doc.error()) {
-        <p class="site-md-error">Impossible de charger cette fiche ({{ src() }}).</p>
+        <p class="site-md-error">Unable to load this doc page ({{ src() }}).</p>
       } @else {
         <div class="site-md-body" [innerHTML]="html()" (click)="onClick($event)"></div>
       }
     </div>
   `,
   styleUrl: './markdown-viewer.component.scss',
-  // Le HTML injecté via [innerHTML] échappe à l'encapsulation émulée : les
-  // styles de la fiche doivent être globaux (tous préfixés .site-md-body).
+  // HTML injected via [innerHTML] escapes emulated encapsulation: the doc
+  // page styles must be global (all prefixed with .site-md-body).
   encapsulation: ViewEncapsulation.None,
 })
 export class MarkdownViewerComponent {
 
-  /** Chemin de la fiche, relatif à la racine docs/ (ex. 'core/billy-icon.md'). */
+  /** Path of the doc page, relative to the docs/ root (e.g. 'core/billy-icon.md'). */
   readonly src = input.required<string>();
 
   private readonly sanitizer = inject(DomSanitizer);
@@ -104,7 +104,7 @@ export class MarkdownViewerComponent {
     return this.sanitizer.bypassSecurityTrustHtml(marked.parse(markdown, { async: false }));
   });
 
-  /** Navigation interne : les liens .md relatifs deviennent des routes du site. */
+  /** Internal navigation: relative .md links become site routes. */
   onClick(event: Event): void {
     const anchor = (event.target as HTMLElement).closest('a[data-doc-link]');
     if (!anchor) { return; }
@@ -116,7 +116,7 @@ export class MarkdownViewerComponent {
   private resolveRoute(href: string): string | null {
     const link = href.split('#')[0];
     if (!link) { return null; }
-    // Résolution relative au dossier de la fiche courante, dans docs/.
+    // Resolution relative to the current doc page's folder, inside docs/.
     const baseDir = this.src().split('/').slice(0, -1);
     const segments = [...baseDir];
     for (const part of link.split('/')) {
@@ -124,7 +124,7 @@ export class MarkdownViewerComponent {
       else if (part !== '.' && part !== '') { segments.push(part); }
     }
     const path = segments.join('/').replace(/\.md$/, '');
-    if (path === 'README') { return '/composants'; }
+    if (path === 'README') { return '/components'; }
     if (path === 'ux-guidelines') { return '/guidelines'; }
     if (path === 'styles/styles') { return '/styles'; }
     const [category, slug] = path.split('/');

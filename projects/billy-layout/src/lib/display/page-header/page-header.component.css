@@ -7,8 +7,8 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Retour : bouton fantôme discret, qui prend le relief d'une pilule au survol
-   (même langage visuel que la barre d'actions, à l'opposé du header). */
+/* Back button: discreet ghost button that takes on a pill relief on hover
+   (same visual language as the action bar, at the opposite end of the header). */
 .billy-page-header-back {
   display: flex;
   align-items: center;
@@ -16,7 +16,7 @@
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  /* Rapproche le bouton du titre sans réduire le gap des autres éléments. */
+  /* Pulls the button closer to the title without shrinking the gap between other elements. */
   margin-right: -6px;
   padding: 0;
   background: transparent;
@@ -72,7 +72,7 @@
   color: #94A3B8;
 }
 
-.zone-btn-header {
+.billy-page-header-actions {
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
     font-size: 19px;
   }
 
-  /* Cible tactile confortable, et repli visible en permanence (pas de survol). */
+  /* Comfortable touch target, and always-visible affordance (no hover on touch). */
   .billy-page-header-back {
     width: 40px;
     height: 40px;

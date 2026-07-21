@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// billy-button-switch — interrupteur iOS aligné sur la charte formulaires BILLy
+// billy-button-switch — iOS-style switch aligned with the BILLy form guidelines
 // ═══════════════════════════════════════════════════════════════════════════
 
 :host {
   display: inline-flex;
   vertical-align: middle;
-  // Couleur du rail à l'état inactif (adaptée en dark mode plus bas).
+  // Track color in the inactive state (adapted for dark mode below).
   --bsw-track-off: #d1d5db;
   --bsw-track-on:  var(--billy-accent, #12b4dd);
   --bsw-thumb:     #ffffff;
@@ -59,7 +59,7 @@
     width 0.20s ease;
 }
 
-// ── Libellé d'état ──────────────────────────────────────────────────────────
+// ── State label ─────────────────────────────────────────────────────────────
 .bsw-label {
   font-size: 13px;
   font-weight: 500;
@@ -67,7 +67,7 @@
   transition: color 0.2s ease;
 }
 
-// ── État actif ──────────────────────────────────────────────────────────────
+// ── Active state ────────────────────────────────────────────────────────────
 .bsw--on .bsw-track {
   background: var(--bsw-track-on);
   box-shadow: inset 0 1px 2px rgba(14, 151, 187, 0.35);
@@ -83,7 +83,7 @@
 .bsw:hover:not(.bsw--disabled) .bsw-thumb {
   box-shadow: 0 1px 3px rgba(17, 24, 39, 0.34), 0 2px 6px rgba(17, 24, 39, 0.16);
 }
-// Petit effet « d'étirement » façon iOS pendant l'appui.
+// Small iOS-style "stretch" effect while pressed.
 .bsw:active:not(.bsw--disabled) .bsw-thumb {
   width: 24px;
 }
@@ -100,7 +100,7 @@
     0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.25));
 }
 
-// ── Désactivé ───────────────────────────────────────────────────────────────
+// ── Disabled ────────────────────────────────────────────────────────────────
 .bsw--disabled {
   cursor: not-allowed;
   opacity: 0.55;

@@ -1,15 +1,15 @@
 import { InjectionToken } from '@angular/core';
 
 /**
- * Pont de navigation des dialogues routés.
+ * Navigation bridge for routed dialogs.
  *
- * `billy-dialog-form` est utilisé par des dialogues portés par une route
- * « overlay » : quand l'utilisateur ferme le dialogue par un geste (Échap,
- * clic sur le fond), il faut aussi quitter la route. La librairie ne connaît
- * pas le routeur de l'application : celle-ci fournit ce token (optionnel) —
- * sans lui, la fermeture visuelle fonctionne mais aucune navigation n'a lieu.
+ * `billy-dialog-form` is used by dialogs carried by an "overlay" route: when
+ * the user closes the dialog with a gesture (Escape, click on the backdrop),
+ * the route must be left as well. The library does not know the application's
+ * router: the application provides this (optional) token — without it, the
+ * visual close still works but no navigation takes place.
  *
- * Côté billy-client : `{ provide: BILLY_DIALOG_ROUTER, useExisting: RouteurUtilsService }`.
+ * On the billy-client side: `{ provide: BILLY_DIALOG_ROUTER, useExisting: RouteurUtilsService }`.
  */
 export interface BillyDialogRouter {
   closeOverlay(): void;

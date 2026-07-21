@@ -1,5 +1,5 @@
-// Symbole d'un champ « code » (TVA / IBAN).
-// La couleur vient du parent (`color`) : le glyphe suit l'état du champ.
+// Symbol of a "code" field (VAT / IBAN).
+// The color comes from the parent (`color`): the glyph follows the field's state.
 
 :host {
   display: inline-flex;
@@ -17,7 +17,7 @@ svg {
   overflow: visible;
 }
 
-// Fond de la plaque : teinté, il fait « pastille » comme les icônes de section.
+// Plate background: tinted, it reads as a "badge" like the section icons.
 .cg-plate {
   fill: var(--billy-accent-soft, #e6f7fc);
   stroke: currentColor;
@@ -32,7 +32,7 @@ svg {
   stroke-linecap: round;
 }
 
-// Perforation de la vignette fiscale : pointillé plutôt qu'un trait plein.
+// Perforation of the tax stamp: dotted rather than a solid stroke.
 .cg-perf {
   fill: none;
   stroke: currentColor;
@@ -42,7 +42,7 @@ svg {
   opacity: 0.75;
 }
 
-// Bande magnétique de la carte : pleine, c'est elle qui la rend lisible.
+// Magnetic stripe of the card: solid, it is what makes the card readable.
 .cg-band {
   fill: none;
   stroke: currentColor;

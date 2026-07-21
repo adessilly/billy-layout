@@ -7,32 +7,32 @@ import {
   AutofocusDirective,
   EmailUtils,
   IbanUtils,
-  TvaUtils,
+  VatUtils,
 } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
 
 const ICON_NAMES: BillyIconName[] = [
-  'accueil', 'achats', 'devis', 'ventes', 'prestations', 'agenda',
-  'clients', 'compte', 'peppol', 'bell', 'chevron-left', 'chevron-right', 'chevron-down',
+  'home', 'purchases', 'quotes', 'sales', 'services', 'calendar',
+  'clients', 'account', 'peppol', 'bell', 'chevron-left', 'chevron-right', 'chevron-down',
   'sync', 'check', 'clock', 'search', 'dark-mode', 'logout', 'open', 'upload', 'plus',
   'close', 'refresh', 'bolt', 'lock', 'eye', 'eye-off',
 ];
 
-/** Galerie interactive du jeu d'icônes : taille et épaisseur de trait réglables. */
+/** Interactive gallery of the icon set: adjustable size and stroke width. */
 @Component({
   selector: 'demo-icon',
   imports: [FormsModule, BillyIconComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Le jeu d'icônes complet" description="Survolez une tuile : chaque icône porte sa micro-animation." [center]="false">
+    <demo-stage title="The full icon set" description="Hover a tile: each icon carries its own micro-animation." [center]="false">
       <div stage-controls class="icon-controls">
-        <label>Taille <input type="range" min="16" max="40" [(ngModel)]="size" /></label>
-        <label>Trait <input type="range" min="1" max="3" step="0.1" [(ngModel)]="stroke" /></label>
+        <label>Size <input type="range" min="16" max="40" [(ngModel)]="size" /></label>
+        <label>Stroke <input type="range" min="1" max="3" step="0.1" [(ngModel)]="stroke" /></label>
       </div>
       <div class="icon-grid">
         @for (name of icons; track name) {
           <button type="button" class="icon-tile" (click)="copy(name)" [title]="'<billy-icon name=&quot;' + name + '&quot; />'">
             <billy-icon [name]="name" [size]="size()" [strokeWidth]="stroke()" />
-            <code>{{ copied() === name ? 'copié !' : name }}</code>
+            <code>{{ copied() === name ? 'copied!' : name }}</code>
           </button>
         }
       </div>
@@ -101,24 +101,24 @@ export class IconDemoComponent {
 
 }
 
-/** [clickOutside] : un panneau qui se ferme dès qu'on clique ailleurs. */
+/** [clickOutside] : a panel that closes as soon as you click elsewhere. */
 @Component({
   selector: 'demo-click-outside',
   imports: [ClickOutsideDirective, DemoStageComponent],
   template: `
-    <demo-stage titre="Fermer au clic extérieur" description="La directive écoute un unique listener document (pensé zoneless) tant que [listenClickOutside] est vrai.">
+    <demo-stage title="Close on outside click" description="The directive listens with a single document listener (zoneless-friendly) while [listenClickOutside] is true.">
       <div class="co-anchor" (clickOutside)="close()" [listenClickOutside]="open()">
         <button type="button" class="demo-btn--submit" (click)="open.set(!open())">
-          {{ open() ? 'Panneau ouvert' : 'Ouvrir le panneau' }}
+          {{ open() ? 'Panel open' : 'Open the panel' }}
         </button>
         @if (open()) {
           <div class="co-panel">
-            Cliquez n’importe où <strong>en dehors</strong> de cette carte : elle se ferme.
-            Un clic à l’intérieur ne la ferme pas.
+            Click anywhere <strong>outside</strong> this card: it closes.
+            A click inside does not close it.
           </div>
         }
       </div>
-      <div class="demo-note">Fermetures au clic extérieur : <strong>{{ closeCount() }}</strong></div>
+      <div class="demo-note">Outside-click closes: <strong>{{ closeCount() }}</strong></div>
     </demo-stage>
   `,
   styles: `
@@ -162,18 +162,18 @@ export class ClickOutsideDemoComponent {
 
 }
 
-/** [billyAutofocus] : le champ prend le focus dès son apparition. */
+/** [billyAutofocus] : the field grabs focus as soon as it appears. */
 @Component({
   selector: 'demo-autofocus',
   imports: [AutofocusDirective, DemoStageComponent],
   template: `
-    <demo-stage titre="Focus automatique à l'affichage" description="Montez le champ : il reçoit le focus sans code côté page.">
+    <demo-stage title="Automatic focus on display" description="Mount the field: it receives focus without any page-side code.">
       <div class="demo-form-block af-block">
         <button type="button" class="demo-btn" (click)="mounted.set(!mounted())">
-          {{ mounted() ? 'Retirer le champ' : 'Afficher le champ' }}
+          {{ mounted() ? 'Remove the field' : 'Show the field' }}
         </button>
         @if (mounted()) {
-          <input class="demo-field" billyAutofocus placeholder="Je viens de recevoir le focus" />
+          <input class="demo-field" billyAutofocus placeholder="I just received focus" />
         }
       </div>
     </demo-stage>
@@ -191,19 +191,19 @@ export class AutofocusDemoComponent {
   readonly mounted = signal(false);
 }
 
-/** TvaUtils / IbanUtils / EmailUtils : validation en direct. */
+/** VatUtils / IbanUtils / EmailUtils : live validation. */
 @Component({
   selector: 'demo-code-utils',
   imports: [FormsModule, DemoStageComponent],
   template: `
-    <demo-stage titre="Les utils de valeurs, en direct" description="Clé belge mod 97 pour la TVA, mod 97 ISO pour l'IBAN, diagnostic + suggestion de domaine pour l'email." [center]="false">
+    <demo-stage title="The value utils, live" description="Belgian mod 97 check digit for VAT, ISO mod 97 for IBAN, diagnosis + domain suggestion for email." [center]="false">
       <div class="cu-grid">
 
         <div class="cu-block">
-          <label class="cu-label">Numéro de TVA belge</label>
-          <input class="demo-field" [ngModel]="tva()" (ngModelChange)="tva.set($event)" placeholder="BE 0123 456 749" />
-          <div class="cu-verdict" [class.ok]="tvaValid()" [class.ko]="tva() && !tvaValid()">
-            {{ tva() ? (tvaValid() ? '✓ clé mod 97 valide' : '✗ clé invalide') : 'Saisissez un numéro…' }}
+          <label class="cu-label">Belgian VAT number</label>
+          <input class="demo-field" [ngModel]="vat()" (ngModelChange)="vat.set($event)" placeholder="BE 0123 456 749" />
+          <div class="cu-verdict" [class.ok]="vatValid()" [class.ko]="vat() && !vatValid()">
+            {{ vat() ? (vatValid() ? '✓ valid mod 97 check digit' : '✗ invalid check digit') : 'Enter a number…' }}
           </div>
         </div>
 
@@ -211,18 +211,18 @@ export class AutofocusDemoComponent {
           <label class="cu-label">IBAN</label>
           <input class="demo-field" [ngModel]="iban()" (ngModelChange)="iban.set($event)" placeholder="BE71 0961 2345 6769" />
           <div class="cu-verdict" [class.ok]="ibanValid()" [class.ko]="iban() && !ibanValid()">
-            {{ iban() ? (ibanValid() ? '✓ mod 97 ISO valide' : '✗ IBAN invalide') : 'Saisissez un IBAN…' }}
+            {{ iban() ? (ibanValid() ? '✓ valid ISO mod 97' : '✗ invalid IBAN') : 'Enter an IBAN…' }}
           </div>
         </div>
 
         <div class="cu-block">
           <label class="cu-label">Email</label>
-          <input class="demo-field" [ngModel]="email()" (ngModelChange)="email.set($event)" placeholder="prenom@gmial.com" />
+          <input class="demo-field" [ngModel]="email()" (ngModelChange)="email.set($event)" placeholder="firstname@gmial.com" />
           <div class="cu-verdict" [class.ok]="emailValid()" [class.ko]="email() && !emailValid()">
-            @if (!email()) { Saisissez un email… }
-            @else if (emailSuggestion()) { 🤔 vouliez-vous dire <strong>{{ emailSuggestion() }}</strong> ? }
-            @else if (emailValid()) { ✓ format valide }
-            @else { ✗ format invalide }
+            @if (!email()) { Enter an email… }
+            @else if (emailSuggestion()) { 🤔 did you mean <strong>{{ emailSuggestion() }}</strong>? }
+            @else if (emailValid()) { ✓ valid format }
+            @else { ✗ invalid format }
           </div>
         </div>
 
@@ -256,11 +256,11 @@ export class AutofocusDemoComponent {
 })
 export class CodeUtilsDemoComponent {
 
-  readonly tva = signal('');
+  readonly vat = signal('');
   readonly iban = signal('');
   readonly email = signal('');
 
-  readonly tvaValid = computed(() => TvaUtils.describe(this.tva()).status === 'valid');
+  readonly vatValid = computed(() => VatUtils.describe(this.vat()).status === 'valid');
   readonly ibanValid = computed(() => IbanUtils.isValid(this.iban()));
   readonly emailValid = computed(() => EmailUtils.isValid(this.email()));
   readonly emailSuggestion = computed(() => EmailUtils.suggest(this.email()));

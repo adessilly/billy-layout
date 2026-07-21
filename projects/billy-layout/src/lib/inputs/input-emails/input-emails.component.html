@@ -16,7 +16,7 @@
       class="email-input"
       [ngModel]="inputValue()"
       (ngModelChange)="onInputChange($event)"
-      [placeholder]="emails().length === 0 ? placeholder() : ''"
+      [placeholder]="emails().length === 0 ? placeholderText() : ''"
       (keydown)="onInputKeydown($event)"
       (blur)="onInputBlur()"
       (paste)="onPaste($event)"

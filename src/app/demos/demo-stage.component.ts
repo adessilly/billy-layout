@@ -1,8 +1,8 @@
 import { Component, input } from '@angular/core';
 
 /**
- * Scène de démonstration : carte à fond pointillé qui met le composant en
- * situation, avec un intitulé et une zone de contrôles optionnelle
+ * Demo stage: a dotted-background card that puts the component in
+ * context, with a heading and an optional controls area
  * (slot [stage-controls]).
  */
 @Component({
@@ -11,7 +11,7 @@ import { Component, input } from '@angular/core';
     <section class="stage">
       <header class="stage-head">
         <div class="stage-titles">
-          <h3 class="stage-title">{{ titre() }}</h3>
+          <h3 class="stage-title">{{ title() }}</h3>
           @if (description()) {
             <p class="stage-sub">{{ description() }}</p>
           }
@@ -86,9 +86,9 @@ import { Component, input } from '@angular/core';
 })
 export class DemoStageComponent {
 
-  readonly titre = input.required<string>();
+  readonly title = input.required<string>();
   readonly description = input('');
-  /** Centre le contenu de la scène (composants « objets » vs mises en page). */
+  /** Centers the stage content ("object" components vs full layouts). */
   readonly center = input(true);
 
 }

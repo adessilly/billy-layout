@@ -1,8 +1,8 @@
 <div class="billy-shell">
 
   <billy-topbar>
-    <!-- Re-projection des slots métier vers la topbar (ng-container : un
-         <ng-content select> re-projeté ne matche pas sans ngProjectAs). -->
+    <!-- Re-projection of the business slots to the topbar (ng-container: a
+         re-projected <ng-content select> does not match without ngProjectAs). -->
     <ng-container ngProjectAs="[shell-search]">
       <ng-content select="[shell-search]" />
     </ng-container>

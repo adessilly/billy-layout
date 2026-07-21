@@ -4,12 +4,12 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/home/home-page.component').then(m => m.HomePageComponent),
-    title: 'billy-layout — Design system BILLy',
+    title: 'billy-layout — BILLy design system',
   },
   {
     path: 'guidelines',
     loadComponent: () => import('./pages/doc/guidelines-page.component').then(m => m.GuidelinesPageComponent),
-    title: 'Guidelines UX — billy-layout',
+    title: 'UX guidelines — billy-layout',
   },
   {
     path: 'styles',
@@ -17,9 +17,9 @@ export const routes: Routes = [
     title: 'Styles & tokens — billy-layout',
   },
   {
-    path: 'composants',
-    loadComponent: () => import('./pages/composants/composants-page.component').then(m => m.ComposantsPageComponent),
-    title: 'Composants — billy-layout',
+    path: 'components',
+    loadComponent: () => import('./pages/components/components-page.component').then(m => m.ComponentsPageComponent),
+    title: 'Components — billy-layout',
   },
   {
     path: 'c/:category',

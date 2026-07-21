@@ -1,69 +1,71 @@
 # billy-dropdown — DropdownComponent
 
-> Catégorie `inputs` · source `projects/billy-layout/src/lib/inputs/dropdown/` · standalone component (ControlValueAccessor)
+> Category `inputs` · source `projects/billy-layout/src/lib/inputs/dropdown/` · standalone component (ControlValueAccessor)
 
-## Rôle
+## Purpose
 
-Remplaçant maison de `<ad-select>` (select2/jQuery de l'ancienne ad-library), rétro-compatible : mêmes options `{ id, text, value }`, même comportement « première option affichée par défaut ». Déclencheur `role="combobox"`, panneau en `position: fixed` (échappe aux `overflow` parents) avec recherche accent-insensible et surlignage des correspondances. La fermeture au clic extérieur passe par la directive `ClickOutsideDirective` de la lib (`lib/core/click-outside/`).
+In-house replacement for `<ad-select>` (select2/jQuery from the old ad-library), backward-compatible: same `{ id, text, value }` options, same "first option displayed by default" behavior. `role="combobox"` trigger, panel in `position: fixed` (escapes parent `overflow`) with accent-insensitive search and match highlighting. Closing on outside click goes through the library's `ClickOutsideDirective` (`lib/core/click-outside/`).
 
-Utilisé massivement dans `src/app` : `vente-form`, `devis-form`, `achat-form`, `prestations-agenda`, `agenda-evenement-form`, `agenda-recurrence-form`, `agenda-filter-bar`, `recurrence-filter-bar`…
+Used massively in `src/app`: `vente-form`, `devis-form`, `achat-form`, `prestations-agenda`, `agenda-evenement-form`, `agenda-recurrence-form`, `agenda-filter-bar`, `recurrence-filter-bar`…
 
 ## API
 
-**Sélecteur & import**
+**Selector & import**
 
 ```ts
 import { DropdownComponent, DropdownOption } from 'billy-layout';
 ```
 
-**Interface `DropdownOption`** (structurellement compatible avec l'ancien `AdSelectElement`) :
+**`DropdownOption` interface** (structurally compatible with the old `AdSelectElement`):
 
 ```ts
 export interface DropdownOption {
-  text: string;   // libellé affiché
-  id: string;     // identifiant unique (comparé en chaîne)
-  value?: any;    // valeur envoyée au modèle ; à défaut, l'option elle-même
+  text: string;   // displayed label
+  id: string;     // unique identifier (compared as string)
+  value?: any;    // value sent to the model; falls back to the option itself
 }
 ```
 
-**Inputs** (API signals — `input()`)
+**Inputs** (signals API — `input()`)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `values` | `DropdownOption[]` | `[]` | Liste des options. |
-| `id` | `string` | `''` | `id` posé sur le bouton déclencheur (pour `<label for>`). |
-| `required` | `boolean` | `false` | Pose `aria-required` sur le déclencheur. |
-| `readonly` | `boolean` | `false` | Désactivation statique (en plus de celle du formulaire). |
-| `searchable` | `boolean` | `true` | Affiche le champ de recherche en tête de panneau. |
-| `autofocusSearch` | `boolean` | `true` | Focus automatique de la recherche à l'ouverture (sinon focus de la liste). |
-| `placeholder` | `string` | `''` | Texte affiché quand aucune option n'est sélectionnée. |
-| `multiple` | `boolean` | `false` | Active la sélection multiple : tags supprimables dans le déclencheur, le modèle devient un **tableau** de valeurs. Le mode multi s'active aussi automatiquement si le modèle écrit est déjà un tableau (parité select2). |
+| `values` | `DropdownOption[]` | `[]` | List of options. |
+| `id` | `string` | `''` | `id` set on the trigger button (for `<label for>`). |
+| `required` | `boolean` | `false` | Sets `aria-required` on the trigger. |
+| `readonly` | `boolean` | `false` | Static disabling (on top of the form's). |
+| `searchable` | `boolean` | `true` | Shows the search field at the top of the panel. Its placeholder comes from the i18n dictionary (`dropdown.searchPlaceholder`, EN `'Search…'`). |
+| `autofocusSearch` | `boolean` | `true` | Automatically focuses the search on opening (otherwise the list is focused). |
+| `placeholder` | `string` | `''` | Text displayed when no option is selected. |
+| `multiple` | `boolean` | `false` | Enables multi-selection: removable tags in the trigger, the model becomes an **array** of values. Multi mode also activates automatically if the written model is already an array (select2 parity). |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 **Outputs**
 
 | Output | Type | Description |
 |---|---|---|
-| `selectionChange` | `any` | Émis à chaque sélection, avec la même valeur que celle envoyée au CVA. |
+| `selectionChange` | `any` | Emitted on every selection, with the same value as the one sent to the CVA. |
 
-**Méthodes publiques**
+**Public methods**
 
-| Méthode | Description |
+| Method | Description |
 |---|---|
-| `open()` / `close(focusTrigger = false)` / `toggle()` | Contrôle du panneau. |
-| `pick(option)` | Sélectionne une option. En mono : émet + referme. En multi : bascule la valeur (ajout/retrait) et laisse le panneau ouvert. |
-| `removeValue(option, event)` | Multi uniquement : retire le tag correspondant sans ouvrir le panneau. |
+| `open()` / `close(focusTrigger = false)` / `toggle()` | Panel control. |
+| `pick(option)` | Selects an option. Single: emits + closes. Multi: toggles the value (add/remove) and leaves the panel open. |
+| `removeValue(option, event)` | Multi only: removes the corresponding tag without opening the panel. |
 
 ## ControlValueAccessor
 
-- **Valeur modèle** : `option.value` si défini, sinon l'objet `DropdownOption` lui-même (parité select2).
-- **Correspondance modèle → option** : le modèle peut être un id (`number`/`string`) ou un objet possédant un `id` ; la comparaison se fait en chaîne (`'' + id`). En mono, sans correspondance (ou modèle `null`/`undefined`), **la première option est affichée** — comportement hérité de select2 ; le placeholder n'apparaît que si la liste est vide.
-- **Mode multi** (`multiple` ou modèle tableau) : le modèle est un **tableau** de valeurs (chacune suivant la même règle `option.value` / option). Chaque valeur devient un tag supprimable ; le placeholder s'affiche tant que le tableau est vide. `Backspace` dans une recherche vide retire le dernier tag (parité select2).
-- Pas de `NG_VALIDATORS`.
-- `setDisabledState()` : combine avec `readonly` (`isDisabled = readonly() || disabledFromForm()`), referme le panneau si ouvert.
+- **Model value**: `option.value` if defined, otherwise the `DropdownOption` object itself (select2 parity).
+- **Model → option matching**: the model can be an id (`number`/`string`) or an object with an `id`; the comparison is done as strings (`'' + id`). In single mode, with no match (or a `null`/`undefined` model), **the first option is displayed** — behavior inherited from select2; the placeholder only appears if the list is empty.
+- **Multi mode** (`multiple` or array model): the model is an **array** of values (each following the same `option.value` / option rule). Each value becomes a removable tag; the placeholder shows while the array is empty. `Backspace` in an empty search removes the last tag (select2 parity).
+- No `NG_VALIDATORS`.
+- `setDisabledState()`: combined with `readonly` (`isDisabled = readonly() || disabledFromForm()`), closes the panel if open.
 
-## Exemple d'utilisation
+## Usage example
 
-Extrait réel de `src/app/auth/pages/agenda/agenda-evenement-form/agenda-evenement-form.component.html` (usage `ngModel`) :
+Real excerpt from `src/app/auth/pages/agenda/agenda-evenement-form/agenda-evenement-form.component.html` (`ngModel` usage):
 
 ```html
 <billy-dropdown
@@ -73,36 +75,36 @@ Extrait réel de `src/app/auth/pages/agenda/agenda-evenement-form/agenda-eveneme
 </billy-dropdown>
 ```
 
-S'utilise aussi avec `formControlName` dans les formulaires réactifs (`vente-form`, `achat-form`…).
+Also usable with `formControlName` in reactive forms (`vente-form`, `achat-form`…).
 
-**Sélection multiple** — `multiple` active les tags ; le modèle est un tableau de valeurs :
+**Multi-selection** — `multiple` enables the tags; the model is an array of values:
 
 ```html
 <billy-dropdown
-  [values]="paysOptions"
+  [values]="countryOptions"
   [multiple]="true"
-  [(ngModel)]="paysSelectionnes"
-  placeholder="Choisir un ou plusieurs pays…">
+  [(ngModel)]="selectedCountries"
+  placeholder="Pick one or more countries…">
 </billy-dropdown>
 ```
 
 ```ts
-readonly paysSelectionnes = signal<string[]>(['FR', 'LU']); // pré-sélection par ids/valeurs
+readonly selectedCountries = signal<string[]>(['FR', 'LU']); // pre-selection by ids/values
 ```
 
 ## Styles & theming
 
-- Le déclencheur et le champ de recherche utilisent les mixins **`billy-forms`** : `@include forms.billy-input` et `@include forms.billy-focus`. Tout le thème (dark mode compris) vient des tokens `--billy-*` : `--billy-input-*`, `--billy-surface(-border/-shadow)`, `--billy-divider`, `--billy-accent(-soft/-strong)`, `--billy-text-muted`, `--billy-addon-color`.
-- Personnalisation par instance via CSS custom properties : `--dropdown-height` (35 px), `--dropdown-radius`, `--dropdown-font-size`.
-- Panneau : `position: fixed`, `z-index: 2000`, largeur alignée sur le déclencheur (min 180 px), liste scrollable max 260 px (`overscroll-behavior: contain`), bascule vers le haut si la place manque (`openUp`). Suivi du déclencheur au scroll/resize via listeners `window`.
-- Segments de recherche surlignés en `<b>` couleur `--billy-accent-strong` ; icônes du jeu maison [`billy-icon`](../core/billy-icon.md) (`chevron-down`, `search`, `check`, `close`) — taille via `[size]`, couleur héritée en `currentColor`, aucune dépendance Font Awesome.
-- **Tags multi** : chips teintés sur `--billy-accent-soft` / `--billy-accent-border` / `--billy-accent-strong` (cohérents avec les badges du design system), croix de suppression virant au `--billy-danger` au survol. Le déclencheur passe en `min-height` pour laisser les tags passer à la ligne.
+- The trigger and the search field use the **`billy-forms`** mixins: `@include forms.billy-input` and `@include forms.billy-focus`. The whole theme (dark mode included) comes from the `--billy-*` tokens: `--billy-input-*`, `--billy-surface(-border/-shadow)`, `--billy-divider`, `--billy-accent(-soft/-strong)`, `--billy-text-muted`, `--billy-addon-color`.
+- Per-instance customization via CSS custom properties: `--dropdown-height` (35 px), `--dropdown-radius`, `--dropdown-font-size`.
+- Panel: `position: fixed`, `z-index: 2000`, width aligned with the trigger (min 180 px), scrollable list max 260 px (`overscroll-behavior: contain`), flips upward when room is lacking (`openUp`). Follows the trigger on scroll/resize via `window` listeners.
+- Search matches highlighted in `<b>` colored `--billy-accent-strong`; icons from the in-house [`billy-icon`](../core/billy-icon.md) set (`chevron-down`, `search`, `check`, `close`) — size via `[size]`, color inherited through `currentColor`, no Font Awesome dependency.
+- **Multi tags**: chips tinted on `--billy-accent-soft` / `--billy-accent-border` / `--billy-accent-strong` (consistent with the design system badges), removal cross turning `--billy-danger` on hover. The trigger switches to `min-height` to let tags wrap.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **ClickOutsideDirective** : la fermeture au clic extérieur est active seulement quand `isOpen()` est vrai (`[listenClickOutside]="isOpen()"`), pour ne pas écouter le document en permanence (important en zoneless).
-- **Clavier** : `ArrowDown`/`ArrowUp` sur le déclencheur ouvre le panneau ; dans le panneau : flèches pour l'option active, `Home`/`End`, `Enter` sélectionne, `Escape` referme (re-focus du déclencheur), `Tab` referme sans re-focus.
-- **Recherche accent-insensible** : normalisation NFD caractère par caractère (`stripAccent`) avec surlignage exact des caractères d'origine — « eve » matche « Évènement ».
-- Le focus à l'ouverture et le `scrollIntoView` de l'option active passent par `setTimeout(...)` (le panneau vient d'être rendu) — fonctionne en zoneless mais ne pas retirer ces différés.
-- Sans valeur écrite par le formulaire, le composant **affiche** la première option mais **n'émet rien** : penser à initialiser le contrôle si la valeur par défaut doit exister dans le modèle. Ce défaut « première option » ne s'applique **pas** en multi : un tableau vide affiche le placeholder.
-- **Multi** : le mode s'active si `[multiple]="true"` **ou** si la valeur écrite est un tableau. Pour un multi initialement vide, passer `[multiple]="true"` (un `null`/`undefined` ne suffit pas à déduire le mode). Le panneau reste ouvert après chaque clic pour enchaîner les sélections.
+- **ClickOutsideDirective**: outside-click closing is only active while `isOpen()` is true (`[listenClickOutside]="isOpen()"`), to avoid listening to the document permanently (important in zoneless).
+- **Keyboard**: `ArrowDown`/`ArrowUp` on the trigger opens the panel; inside the panel: arrows for the active option, `Home`/`End`, `Enter` selects, `Escape` closes (re-focusing the trigger), `Tab` closes without re-focus.
+- **Accent-insensitive search**: character-by-character NFD normalization (`stripAccent`) with exact highlighting of the original characters — "eve" matches "Évènement".
+- Focus on opening and `scrollIntoView` of the active option go through `setTimeout(...)` (the panel has just been rendered) — works in zoneless but do not remove these deferrals.
+- Without a value written by the form, the component **displays** the first option but **emits nothing**: remember to initialize the control if the default value must exist in the model. This "first option" default does **not** apply in multi mode: an empty array shows the placeholder.
+- **Multi**: the mode activates if `[multiple]="true"` **or** if the written value is an array. For an initially empty multi, pass `[multiple]="true"` (a `null`/`undefined` is not enough to infer the mode). The panel stays open after each click to chain selections.

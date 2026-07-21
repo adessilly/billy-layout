@@ -1,7 +1,8 @@
-import { Component, input, output, viewChild, ElementRef, model } from '@angular/core';
+import { Component, computed, inject, input, output, viewChild, ElementRef, model } from '@angular/core';
 import { Dialog } from '../dialog/dialog-utils';
 import { first } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 
 export enum MessageDialogClick {
   PRIMARY = 1,
@@ -17,12 +18,18 @@ export enum MessageDialogClick {
 })
 export class DeleteDialogComponent {
 
-  readonly message = model('Voulez-vous supprimer cet enregistrement ?');
+  protected readonly i18n = inject(BillyI18nService);
+
+  readonly message = model<string | undefined>(undefined);
   readonly productName = model('');
-  readonly prix = model(0);
+  readonly price = model(0);
   readonly label = model('');
-  readonly titre = model('Confirmation suppression');
-  readonly labelValidate = model('Supprimer');
+  readonly title = model<string | undefined>(undefined);
+  readonly labelValidate = model<string | undefined>(undefined);
+
+  protected readonly messageText = computed(() => this.message() ?? this.i18n.strings().deleteDialog.message);
+  protected readonly titleText = computed(() => this.title() ?? this.i18n.strings().deleteDialog.title);
+  protected readonly labelValidateText = computed(() => this.labelValidate() ?? this.i18n.strings().deleteDialog.confirm);
   readonly delete = output<string>();
   readonly modalDelete = viewChild.required<ElementRef>('modalDelete');
 
@@ -44,9 +51,9 @@ export class DeleteDialogComponent {
     });
   }
 
-  openDialogAndWait(titre: string, sousTitre: string, label: string): Promise<MessageDialogClick> {
-    this.titre.set(titre);
-    this.productName.set(sousTitre);
+  openDialogAndWait(title: string, subtitle: string, label: string): Promise<MessageDialogClick> {
+    this.title.set(title);
+    this.productName.set(subtitle);
     this.label.set(label);
     this.openDialog();
     return new Promise( (resolve, reject) => {

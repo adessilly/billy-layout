@@ -1,23 +1,23 @@
-import { Component, OnInit, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 
 @Component({
     selector: 'billy-page-header',
     templateUrl: './page-header.component.html',
     styleUrls: ['./page-header.component.css']
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent {
 
-  readonly titre = input.required<string>();
-  readonly sousTitre = input('');
+  protected readonly i18n = inject(BillyI18nService);
 
-  /** Affiche le bouton de retour, placé avant le titre. */
-  readonly retourVisible = input(false);
-  readonly retourTitre = input('Retour');
-  readonly retour = output<void>();
+  readonly title = input.required<string>();
+  readonly subtitle = input('');
 
-  constructor() { }
+  /** Shows the back button, placed before the title. */
+  readonly backVisible = input(false);
+  readonly backLabel = input<string>();
+  readonly back = output<void>();
 
-  ngOnInit() {
-  }
+  protected readonly backLabelText = computed(() => this.backLabel() ?? this.i18n.strings().pageHeader.back);
 
 }

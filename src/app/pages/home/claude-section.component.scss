@@ -3,14 +3,14 @@
 }
 
 .ai {
-  // Ancre le .sr-only absolu : sans ancêtre positionné il se place par rapport
-  // au document, hors du conteneur scrollable du shell, et allonge <html>
-  // (double scrollbar verticale).
+  // Anchors the absolute .sr-only: without a positioned ancestor it sits
+  // relative to the document, outside the shell's scroll container, and
+  // stretches <html> (double vertical scrollbar).
   position: relative;
   padding: 52px 8px 0;
 
-  // Déclinaisons AA (≥ 4.5:1) des tokens de texte, comme la section install :
-  // --billy-accent-strong sur fond soft et --billy-text-soft plafonnent sous 4.5:1.
+  // AA (≥ 4.5:1) variants of the text tokens, like the install section:
+  // --billy-accent-strong on a soft background and --billy-text-soft cap below 4.5:1.
   --ai-accent-text: #09758f;
   --ai-soft-text: #646c7a;
 }
@@ -20,7 +20,7 @@
   --ai-soft-text: #8a9aa0;
 }
 
-// ── En-tête de section ──────────────────────────────────────────────────────
+// ── Section header ──────────────────────────────────────────────────────────
 .ai-head {
   max-width: 640px;
   margin-bottom: 24px;
@@ -73,7 +73,7 @@
   strong { color: var(--site-heading); }
 }
 
-// ── Grille : éditeur CLAUDE.md | flux | connaissances ───────────────────────
+// ── Grid: CLAUDE.md editor | flow | knowledge ───────────────────────────────
 .ai-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) 110px minmax(0, 1fr);
@@ -81,7 +81,7 @@
   align-items: center;
 }
 
-// ── Éditeur CLAUDE.md (look console, sombre dans les deux thèmes) ───────────
+// ── CLAUDE.md editor (console look, dark in both themes) ────────────────────
 .ai-editor {
   display: flex;
   flex-direction: column;
@@ -206,8 +206,8 @@
   user-select: none;
 }
 
-// La frappe est simulée en révélant le texte réel (steps + max-width en ch) :
-// il reste sélectionnable et entièrement visible sans animation.
+// Typing is simulated by revealing the real text (steps + max-width in ch):
+// it stays selectable and fully visible without the animation.
 .ai-code {
   display: inline-block;
   vertical-align: bottom;
@@ -252,7 +252,7 @@
   color: #4ade80;
 }
 
-// ── Flux SVG : le contexte irrigue les connaissances (décoratif) ────────────
+// ── SVG flow: the context feeds the knowledge (decorative) ──────────────────
 .ai-flow {
   align-self: stretch;
   display: flex;
@@ -356,10 +356,10 @@
   }
 }
 
-// ── Motion design : tout démarre à l'entrée dans le viewport ────────────────
-// Sans .is-visible (et donc aussi en prefers-reduced-motion, géré globalement
-// par .site-motion), le contenu est entièrement visible et statique — seuls
-// les points du flux, purement décoratifs, restent invisibles.
+// ── Motion design: everything starts when entering the viewport ─────────────
+// Without .is-visible (and therefore also under prefers-reduced-motion, handled
+// globally by .site-motion), the content is fully visible and static — only the
+// flow dots, purely decorative, stay invisible.
 :host(.is-visible) {
 
   .ai-editor { animation: aiIn .55s cubic-bezier(.2, .9, .3, 1.15) both; }
@@ -465,12 +465,12 @@
     gap: 16px;
   }
 
-  // À la verticale le flux n'a plus de sens : les chips prennent le relais.
+  // Stacked vertically the flow no longer makes sense: the chips take over.
   .ai-flow { display: none; }
 }
 
-// Sur mobile la frappe est remplacée par un fondu : la ligne peut ainsi
-// passer à la ligne et rester lisible en entier sans défilement horizontal.
+// On mobile the typing is replaced by a fade: the line can then wrap and
+// stay fully readable without horizontal scrolling.
 @media (max-width: 767.98px) {
   .ai-row--import { overflow-x: visible; }
 
@@ -479,7 +479,7 @@
     overflow-wrap: anywhere;
   }
 
-  // Le curseur se positionne mal sur une ligne repliée.
+  // The caret positions itself badly on a wrapped line.
   .ai-caret { display: none; }
 
   :host(.is-visible) .ai-code--import {

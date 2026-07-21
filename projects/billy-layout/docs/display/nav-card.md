@@ -1,41 +1,41 @@
 # billy-nav-card — NavCardComponent
 
-> Catégorie `display` · source `projects/billy-layout/src/lib/display/nav-card/` · standalone component
+> Category `display` · source `projects/billy-layout/src/lib/display/nav-card/` · standalone component
 
-## Rôle
+## Purpose
 
-Carte de navigation : tuile cliquable avec pastille-icône (jeu `billy-icon`), libellé, badge de comptage optionnel, description courte et chevron « aller vers » révélé au survol. C'est la brique des grilles de points d'entrée — un hub, un écran d'accueil, un sommaire de sections.
+Navigation card: a clickable tile with an icon chip (`billy-icon` set), a label, an optional count badge, a short description and a "go to" chevron revealed on hover. It is the building block for entry-point grids — a hub, a home screen, a section index.
 
-C'est un **sélecteur d'attribut** posé sur `<a>` ou `<button>` : la navigation (`routerLink`, `href`, `(click)`) reste portée par l'élément hôte du consommateur, la carte n'est que l'habillage. La librairie ne dépend donc pas du Router.
+It is an **attribute selector** applied to `<a>` or `<button>`: navigation (`routerLink`, `href`, `(click)`) stays on the consumer's host element; the card is just the dressing. The library therefore has no dependency on the Router.
 
-Utilisation dans le site : la grille des catégories de la page d'accueil (`src/app/pages/home/`), une carte par entrée de `DOC_CATEGORIES`.
+Usage on the site: the home page category grid (`src/app/pages/home/`), one card per `DOC_CATEGORIES` entry.
 
 ## API
 
-**Sélecteur** : `a[billy-nav-card]`, `button[billy-nav-card]` · **Import** : `import { NavCardComponent } from 'billy-layout';`
+**Selector**: `a[billy-nav-card]`, `button[billy-nav-card]` · **Import**: `import { NavCardComponent } from 'billy-layout';`
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string` (**`input.required`**) | — | Libellé principal de la carte. |
-| `icon` | `BillyIconName` (**`input.required`**) | — | Icône de la pastille (jeu `billy-icon`, pas FontAwesome). |
-| `description` | `string` | `''` | Description courte sous le libellé. Chaîne vide = ligne masquée. |
-| `badge` | `number \| null` | `null` | Badge numérique après le libellé (pastille cyan). `null` = pas de badge — un `0` s'affiche bien. |
-| `chevron` | `boolean` | `true` | Affiche le chevron révélé au survol. |
-| `stagger` | `number` | `0` | Index d'apparition : décale l'animation d'entrée de 60 ms par carte. |
+| `label` | `string` (**`input.required`**) | — | Main card label. |
+| `icon` | `BillyIconName` (**`input.required`**) | — | Chip icon (`billy-icon` set, not FontAwesome). |
+| `description` | `string` | `''` | Short description below the label. Empty string = line hidden. |
+| `badge` | `number \| null` | `null` | Numeric badge after the label (cyan chip). `null` = no badge — a `0` does display. |
+| `chevron` | `boolean` | `true` | Shows the chevron revealed on hover. |
+| `stagger` | `number` | `0` | Appearance index: offsets the entrance animation by 60 ms per card. |
 
 ### Outputs
 
-Aucun — le clic est celui de l'élément hôte (`routerLink`, `href` ou `(click)`).
+None — the click belongs to the host element (`routerLink`, `href` or `(click)`).
 
 ## Slots / projection
 
-Aucun : tout le contenu passe par les inputs.
+None: all content goes through the inputs.
 
-## Exemple d'utilisation
+## Usage example
 
-`home-page.component.html` (grille des catégories) :
+`home-page.component.html` (category grid):
 
 ```html
 <div class="cats-grid">
@@ -56,30 +56,30 @@ Aucun : tout le contenu passe par les inputs.
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 14px;
-  --billy-nav-card-base-delay: 200ms; // les cartes arrivent après le hero
+  --billy-nav-card-base-delay: 200ms; // cards arrive after the hero
 }
 ```
 
-En `<button>` (action sans navigation) :
+As a `<button>` (action without navigation):
 
 ```html
-<button type="button" billy-nav-card label="Exporter" icon="open"
-        description="Générer le dossier comptable du trimestre." (click)="export()"></button>
+<button type="button" billy-nav-card label="Export" icon="open"
+        description="Generate the quarter's accounting file." (click)="export()"></button>
 ```
 
 ## Styles & theming
 
-- `:host` (l'`<a>`/`<button>` lui-même) : surface `--billy-surface`, bord `--billy-surface-border`, radius 16px, ombre `--billy-card-shadow` ; au survol, translation de −3 px, bord `--billy-accent-border` et ombre `--billy-surface-shadow`.
-- Pastille : `--billy-accent-soft` (fond) / `--billy-accent-strong` (icône) / `--billy-accent-border` (bord) ; badge sur les mêmes tokens ; libellé `--billy-section-title` ; description `--billy-text-soft` ; chevron `--billy-accent`.
-- **Animation d'entrée** (fondu + translation) : delay = `stagger × 60ms + var(--billy-nav-card-base-delay, 0ms)`. Le conteneur peut poser `--billy-nav-card-base-delay` pour synchroniser la cascade avec le reste de la page. Désactivée sous `prefers-reduced-motion`.
-- Focus clavier : anneau `:focus-visible` sur `--billy-focus-border` (outline décalé de 2 px).
-- **Dark mode entièrement porté par les tokens `--billy-*`** — aucun bloc dark local.
+- `:host` (the `<a>`/`<button>` itself): `--billy-surface` surface, `--billy-surface-border` border, 16px radius, `--billy-card-shadow` shadow; on hover, −3 px translation, `--billy-accent-border` border and `--billy-surface-shadow` shadow.
+- Chip: `--billy-accent-soft` (background) / `--billy-accent-strong` (icon) / `--billy-accent-border` (border); badge on the same tokens; label `--billy-section-title`; description `--billy-text-soft`; chevron `--billy-accent`.
+- **Entrance animation** (fade + translation): delay = `stagger × 60ms + var(--billy-nav-card-base-delay, 0ms)`. The container can set `--billy-nav-card-base-delay` to synchronize the cascade with the rest of the page. Disabled under `prefers-reduced-motion`.
+- Keyboard focus: `:focus-visible` ring on `--billy-focus-border` (outline offset by 2 px).
+- **Dark mode fully carried by the `--billy-*` tokens** — no local dark block.
 
-## Pièges & notes
+## Gotchas & notes
 
-- **Ne pas auto-fermer l'hôte** : `<a billy-nav-card … />` est refusé par le compilateur (élément natif) — écrire `</a>`.
-- `icon` attend un `BillyIconName` (icônes SVG maison), pas une classe FontAwesome comme `billy-consult-card`.
-- Le test du badge est `badge() !== null` : passer `0` affiche bien « 0 » ; utiliser `null` pour le masquer.
-- L'animation d'entrée utilise `animation-fill-mode: backwards` (pas `both`) : une fois jouée, elle ne doit plus écraser le `transform` du survol.
-- En usage `<button>`, penser à `type="button"` pour ne pas soumettre un formulaire parent.
-- Ne pas confondre avec `billy-consult-card` (carte de **contenu** titrée, à projection) ni `billy-button-ajout` (tuile d'**action** « ajouter ») : `billy-nav-card` est la tuile de **navigation**.
+- **Do not self-close the host**: `<a billy-nav-card … />` is rejected by the compiler (native element) — write `</a>`.
+- `icon` expects a `BillyIconName` (in-house SVG icons), not a FontAwesome class like `billy-consult-card`.
+- The badge check is `badge() !== null`: passing `0` does display "0"; use `null` to hide it.
+- The entrance animation uses `animation-fill-mode: backwards` (not `both`): once played, it must no longer override the hover `transform`.
+- When used as a `<button>`, remember `type="button"` to avoid submitting a parent form.
+- Do not confuse it with `billy-consult-card` (a titled **content** card with projection) or `billy-add-button` (an "add" **action** tile): `billy-nav-card` is the **navigation** tile.

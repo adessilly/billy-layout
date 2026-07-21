@@ -1,12 +1,12 @@
-// Spinner harmonisé avec billy-checkmark (même géométrie, même couleur) :
-// un arc qui s'étire et se contracte pendant que le tout tourne.
+// Spinner aligned with billy-checkmark (same geometry, same color):
+// an arc stretching and contracting while the whole thing spins.
 :host {
   display: inline-block;
   line-height: 0;
   --_cm-color: var(--billy-checkmark-loading-color, var(--billy-checkmark-color, #16a34a));
 }
 
-// Couleurs du design system (input color) — alignées sur la palette toastr.
+// Design system colors (color input) — aligned with the toastr palette.
 :host([data-color='accent'])  { --_cm-color: var(--billy-accent, #12b4dd); }
 :host([data-color='danger'])  { --_cm-color: var(--billy-danger, #dc2626); }
 :host([data-color='warning']) { --_cm-color: #d97706; }

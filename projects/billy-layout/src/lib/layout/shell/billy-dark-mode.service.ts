@@ -1,11 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 
 /**
- * Thème sombre du shell : persistance localStorage + classe `dark-mode` sur
- * le <body> (les feuilles globales de l'application s'y accrochent).
+ * Dark theme of the shell: localStorage persistence + `dark-mode` class on
+ * the <body> (the application's global stylesheets hook into it).
  *
- * La clé localStorage reprend celle de l'app historique (`billy_dark_mode`,
- * ex-LocalService) : les préférences existantes des utilisateurs restent lues.
+ * The localStorage key reuses the legacy app's one (`billy_dark_mode`,
+ * ex-LocalService): users' existing preferences are still read.
  */
 @Injectable({ providedIn: 'root' })
 export class BillyDarkModeService {
@@ -14,7 +14,7 @@ export class BillyDarkModeService {
 
   readonly darkMode = signal(localStorage.getItem(BillyDarkModeService.STORAGE_KEY) === 'true');
 
-  /** Applique la préférence persistée au <body> (appelé par la topbar). */
+  /** Applies the persisted preference to the <body> (called by the topbar). */
   init(): void {
     this.applyBodyClass();
   }

@@ -4,7 +4,7 @@
   display: flex;
 }
 
-// ── Variante toggle (segment-control) ─────────────────────────────────────────
+// ── Toggle variant (segment control) ──────────────────────────────────────────
 .ftb--toggle {
   gap: 2px;
   background: #f3f4f6;
@@ -39,7 +39,7 @@
   }
 }
 
-// ── Variante chips (pills individuelles) ──────────────────────────────────────
+// ── Chips variant (individual pills) ──────────────────────────────────────────
 .ftb--chips {
   gap: 4px;
   flex-wrap: wrap;
@@ -94,7 +94,7 @@
       &:hover { border-color: #7a8a90; color: #ced0d2; }
 
       &.active {
-        // Fond à 15 % d'opacité de la couleur active, bordure et texte inchangés
+        // Background at 15% opacity of the active color, border and text unchanged
         background: color-mix(in srgb, var(--opt-color, var(--ftb-color, #6366f1)) 15%, transparent);
       }
     }

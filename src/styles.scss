@@ -1,13 +1,13 @@
-// ── Styles globaux du site vitrine billy-layout ─────────────────────────────
-// Les feuilles de la lib sont résolues par stylePreprocessorOptions.includePaths
-// (projects/billy-layout/src/lib/styles) — mêmes noms qu'un consommateur externe.
+// ── Global styles of the billy-layout showcase site ─────────────────────────
+// The library stylesheets are resolved by stylePreprocessorOptions.includePaths
+// (projects/billy-layout/src/lib/styles) — same names as an external consumer.
 @use '@fortawesome/fontawesome-free/css/all.css';
 @use 'billy-reboot';
 @use 'billy-tokens';
 @use 'billy-dialog';
 @use 'billy-forms' as forms;
 
-// Tokens propres au site (déclinés en dark via body.dark-mode).
+// Site-specific tokens (dark variants via body.dark-mode).
 :root {
   --site-page-bg: #f4f6f8;
   --site-card-bg: #fff;
@@ -34,7 +34,7 @@ body.dark-mode {
   background-color: #1e292b;
 }
 
-// Conteneur standard des pages du site (sous billy-page-header).
+// Standard container for the site pages (below billy-page-header).
 .site-page {
   max-width: 1080px;
   margin: 0 auto;
@@ -47,7 +47,7 @@ body.dark-mode {
   }
 }
 
-// Carte blanche standard du site (fiches, démos).
+// Standard white card of the site (doc pages, demos).
 .site-card {
   background: var(--site-card-bg);
   border: 1px solid var(--billy-surface-border);
@@ -63,7 +63,7 @@ body.dark-mode {
   }
 }
 
-// ── Briques de démo (construites avec les mixins billy-forms de la lib) ─────
+// ── Demo building blocks (built with the library's billy-forms mixins) ──────
 .demo-btn {
   @include forms.billy-panel-button;
   @include forms.billy-panel-button-ghost;
@@ -96,7 +96,7 @@ body.dark-mode {
   width: 100%;
 }
 
-// Respect de prefers-reduced-motion pour tout le motion design du site.
+// Honor prefers-reduced-motion for all of the site's motion design.
 @media (prefers-reduced-motion: reduce) {
   .site-motion,
   .site-motion * {

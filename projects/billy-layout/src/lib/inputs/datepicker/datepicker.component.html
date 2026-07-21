@@ -9,7 +9,7 @@
     autocomplete="off"
     [placeholder]="placeholder()"
     [disabled]="isDisabled()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="ariaLabelText()"
     [attr.aria-invalid]="invalid() || null"
     [value]="text()"
     (input)="onInput($any($event.target).value)"
@@ -21,7 +21,7 @@
     [disabled]="isDisabled()"
     aria-haspopup="dialog"
     [attr.aria-expanded]="isOpen()"
-    aria-label="Ouvrir le calendrier"
+    [attr.aria-label]="i18n.strings().datepicker.openCalendar"
     (click)="toggle()">
     <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <rect x="3" y="5" width="18" height="16" rx="2.5"/>
@@ -43,12 +43,12 @@
     [style.top.px]="isMobile() || panelPos().openUp ? null : panelPos().top"
     [style.bottom.px]="!isMobile() && panelPos().openUp ? panelPos().bottom : null"
     role="dialog"
-    aria-label="Choisir une date"
+    [attr.aria-label]="i18n.strings().datepicker.chooseDate"
     [attr.aria-modal]="isMobile() ? true : null"
     (keydown)="onPanelKeydown($event)">
     <billy-datepicker-calendar
       [selected]="value()"
-      [locale]="locale()"
+      [locale]="localeText()"
       [autofocusDay]="true"
       (datePicked)="onDatePicked($event)" />
   </div>

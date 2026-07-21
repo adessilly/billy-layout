@@ -4,7 +4,7 @@
   min-width: 0;
 }
 
-.ajout-tile {
+.add-tile {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -15,13 +15,13 @@
   user-select: none;
 }
 
-.ajout-tile-import {
+.add-tile-import {
   background: #f4f6f7;
   color: #555;
   border: 2px dashed #ccc;
 }
 
-.ajout-tile-import:hover:not(.is-loading) {
+.add-tile-import:hover:not(.is-loading) {
   background: #e8f8fd;
   border-color: #23b7e5;
   color: #23b7e5;
@@ -29,13 +29,13 @@
   box-shadow: 0 4px 12px rgba(118, 118, 118, 0.2);
 }
 
-.ajout-tile.is-loading {
+.add-tile.is-loading {
   opacity: 0.65;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.ajout-tile-icon {
+.add-tile-icon {
   font-size: 1.2em;
   width: 34px;
   height: 34px;
@@ -47,18 +47,18 @@
   flex-shrink: 0;
 }
 
-.ajout-tile-content {
+.add-tile-content {
   display: flex;
   flex-direction: column;
 }
 
-.ajout-tile-title {
+.add-tile-title {
   font-weight: 600;
   font-size: 0.9em;
   line-height: 1.2;
 }
 
-.ajout-tile-subtitle {
+.add-tile-subtitle {
   font-size: 0.72em;
   opacity: 0.75;
   margin-top: 2px;

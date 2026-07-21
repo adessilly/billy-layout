@@ -1,29 +1,29 @@
 <div class="ips-group">
 
-  @if(prefixe() || prefixeIcon()) {
-    <span class="ips-addon ips-addon--prefixe"
-      [class.clickable]="suffixeClickable()"
-      (click)="askPrefixeClick()">
-      @if(prefixeIcon()) {
-        <i [class]="prefixeIcon()"></i>
+  @if(prefix() || prefixIcon()) {
+    <span class="ips-addon ips-addon--prefix"
+      [class.clickable]="suffixClickable()"
+      (click)="askPrefixClick()">
+      @if(prefixIcon()) {
+        <i [class]="prefixIcon()"></i>
       }
-      @if(prefixe()) {
-        <span>{{ prefixe() }}</span>
+      @if(prefix()) {
+        <span>{{ prefix() }}</span>
       }
     </span>
   }
 
   <ng-content></ng-content>
 
-  @if(suffixe() || suffixeIcon()) {
-    <span class="ips-addon ips-addon--suffixe"
-      [class.clickable]="suffixeClickable()"
-      (click)="askSuffixeClick()">
-      @if(suffixeIcon()) {
-        <i [class]="suffixeIcon()"></i>
+  @if(suffix() || suffixIcon()) {
+    <span class="ips-addon ips-addon--suffix"
+      [class.clickable]="suffixClickable()"
+      (click)="askSuffixClick()">
+      @if(suffixIcon()) {
+        <i [class]="suffixIcon()"></i>
       }
-      @if(suffixe()) {
-        <span>{{ suffixe() }}</span>
+      @if(suffix()) {
+        <span>{{ suffix() }}</span>
       }
     </span>
   }

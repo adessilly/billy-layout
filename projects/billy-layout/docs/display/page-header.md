@@ -1,47 +1,49 @@
 # billy-page-header — PageHeaderComponent
 
-> Catégorie `display` · source `projects/billy-layout/src/lib/display/page-header/` · standalone component
+> Category `display` · source `projects/billy-layout/src/lib/display/page-header/` · standalone component
 
-## Rôle
+## Purpose
 
-En-tête standard de page : titre `<h1>` + sous-titre optionnel, bouton « retour » optionnel placé avant le titre, et une zone d'actions projetée alignée à droite (`.zone-btn-header`). C'est le premier élément de quasi toutes les pages authentifiées, qui héberge le plus souvent un `billy-header-action-bar` et/ou des `billy-tabs size="sm"`.
+Standard page header: an `<h1>` title + optional subtitle, an optional "back" button placed before the title, and a projected actions area aligned to the right (`.zone-btn-header`). It is the first element of nearly every authenticated page, most often hosting a `billy-header-action-bar` and/or `billy-tabs size="sm"`.
 
-Utilisation dans `src/app` (vérifiée par grep, 15+ écrans) : `dashboard`, `achat-consult` / `achat-form` / `achat-list`, `vente-*`, `devis-*`, `agenda-list`, `client-consult` / `client-list`, `compte`, `peppol-inbox`, `prestations-agenda`…
+Usage in `src/app` (verified via grep, 15+ screens): `dashboard`, `achat-consult` / `achat-form` / `achat-list`, `vente-*`, `devis-*`, `agenda-list`, `client-consult` / `client-list`, `compte`, `peppol-inbox`, `prestations-agenda`…
 
 ## API
 
-**Sélecteur** : `billy-page-header` · **Import** : `import { PageHeaderComponent } from 'billy-layout';`
+**Selector**: `billy-page-header` · **Import**: `import { PageHeaderComponent } from 'billy-layout';`
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `titre` | `string` (**`input.required`**) | — | Titre de la page (rendu en `<h1>`). |
-| `sousTitre` | `string` | `''` | Sous-titre affiché sous le titre (masqué si vide). |
-| `retourVisible` | `boolean` | `false` | Affiche le bouton de retour (chevron gauche), placé avant le titre. |
-| `retourTitre` | `string` | `'Retour'` | Tooltip (`title`) et `aria-label` du bouton de retour. |
+| `title` | `string` (**`input.required`**) | — | Page title (rendered as an `<h1>`). |
+| `subtitle` | `string` | `''` | Subtitle displayed below the title (hidden when empty). |
+| `backVisible` | `boolean` | `false` | Shows the back button (left chevron), placed before the title. |
+| `backLabel` | `string` | i18n `pageHeader.back` (EN `'Back'`) | Tooltip (`title`) and `aria-label` of the back button. When the input is not set, the default comes from the i18n dictionary. |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
 | Output | Type | Description |
 |---|---|---|
-| `retour` | `output<void>` | Émis au clic sur le bouton de retour. La navigation est à la charge du parent. |
+| `back` | `output<void>` | Emitted when the back button is clicked. Navigation is the parent's responsibility. |
 
 ## Slots / projection
 
-- `<ng-content>` (par défaut) : projeté dans `.zone-btn-header` (`margin-left: auto`, flex, gap 10px) — boutons d'action, barre d'actions, onglets…
+- `<ng-content>` (default): projected into `.zone-btn-header` (`margin-left: auto`, flex, gap 10px) — action buttons, action bar, tabs…
 
-## Exemple d'utilisation
+## Usage example
 
-`achat-consult.component.html` :
+`achat-consult.component.html`:
 
 ```html
 <billy-page-header
-  [titre]="'Achat'"
-  sousTitre="Consultation"
-  [retourVisible]="true"
-  retourTitre="Retour aux achats"
-  (retour)="askRetour()">
+  [title]="'Purchase'"
+  subtitle="Details"
+  [backVisible]="true"
+  backLabel="Back to purchases"
+  (back)="askBack()">
 
   <billy-header-action-bar [actions]="headerActions"></billy-header-action-bar>
 
@@ -50,16 +52,16 @@ Utilisation dans `src/app` (vérifiée par grep, 15+ écrans) : `dashboard`, `ac
 
 ## Styles & theming
 
-- Couleurs **en dur** (pas de tokens `--billy-*`) : titre `#1E293B`, sous-titre `#94A3B8`, accents cyan `#0E97BB` / `#12B4DD` ; police `'Plus Jakarta Sans'`.
-- Bouton retour : fantôme (transparent) au repos, prend un relief « pilule » blanc + ombre au survol avec `translateX(-2px)` — même langage visuel que `billy-header-action-bar` ; focus visible via `outline`.
-- Dark mode via `:host-context(body.dark-mode)` : titres éclaircis, bouton retour repose sur `#1e2b2f`.
-- Mobile (`max-width: 767px`) : padding réduit, titre 19px, bouton retour agrandi (40px, cible tactile) et affiché **avec** son relief en permanence (pas de survol au doigt).
-- Le conteneur est en `flex-wrap: wrap` : sur écran étroit la zone d'actions passe à la ligne.
+- **Hard-coded** colors (no `--billy-*` tokens): title `#1E293B`, subtitle `#94A3B8`, cyan accents `#0E97BB` / `#12B4DD`; font `'Plus Jakarta Sans'`.
+- Back button: ghost (transparent) at rest, takes on a white "pill" relief + shadow on hover with `translateX(-2px)` — same visual language as `billy-header-action-bar`; visible focus via `outline`.
+- Dark mode via `:host-context(body.dark-mode)`: lightened titles, back button rests on `#1e2b2f`.
+- Mobile (`max-width: 767px`): reduced padding, 19px title, enlarged back button (40px, touch target) shown **with** its relief permanently (no hover on touch).
+- The container is `flex-wrap: wrap`: on narrow screens the actions area wraps to the next line.
 
-## Pièges & notes
+## Gotchas & notes
 
-- Le bouton de retour **n'effectue aucune navigation** : brancher `(retour)` (souvent `router.navigate` ou `location.back()`).
-- `retourTitre` alimente à la fois `title` et `aria-label` — le bouton n'affiche qu'un chevron, ce libellé est donc la seule information accessible.
-- Le composant rend un `<h1>` : ne l'utiliser qu'une fois par page (sémantique/SEO interne).
-- Fichier de style en **CSS** (pas SCSS) — pas de mixins `billy-*` disponibles ici.
-- `implements OnInit` avec un `ngOnInit()` vide : héritage historique, aucune logique d'initialisation.
+- The back button **performs no navigation**: wire `(back)` (usually `router.navigate` or `location.back()`).
+- `backLabel` feeds both `title` and `aria-label` — the button only shows a chevron, so this label is the only accessible information.
+- The component renders an `<h1>`: use it only once per page (semantics/internal SEO).
+- Style file in **CSS** (not SCSS) — no `billy-*` mixins available here.
+- `implements OnInit` with an empty `ngOnInit()`: historical leftover, no initialization logic.

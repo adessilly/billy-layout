@@ -9,10 +9,10 @@ interface SearchHit {
 }
 
 /**
- * Recherche de la topbar (slot [shell-search]), même ergonomie que la
- * recherche globale de billy-client : au repos une simple icône, le champ se
- * déploie au focus ; raccourci ⌘K / Ctrl+K (toggle), navigation aux flèches,
- * Entrée ouvre la fiche pointée, Échap referme.
+ * Topbar search (the [shell-search] slot), same ergonomics as billy-client's
+ * global search: a plain icon at rest, the field expands on focus; ⌘K / Ctrl+K
+ * shortcut (toggle), arrow-key navigation, Enter opens the highlighted doc
+ * page, Escape closes.
  */
 @Component({
   selector: 'site-doc-search',
@@ -35,10 +35,10 @@ interface SearchHit {
         <input #searchInput
                type="search"
                class="doc-search-input"
-               placeholder="Rechercher un composant…"
+               placeholder="Search for a component…"
                autocomplete="off"
                role="combobox"
-               aria-label="Rechercher un composant"
+               aria-label="Search for a component"
                aria-autocomplete="list"
                aria-controls="doc-search-listbox"
                [attr.aria-expanded]="open()"
@@ -50,7 +50,7 @@ interface SearchHit {
                (blur)="focused.set(false)"
                (keydown)="onKeydown($event)" />
         @if (term()) {
-          <button type="button" class="doc-search-clear" title="Effacer" aria-label="Effacer"
+          <button type="button" class="doc-search-clear" title="Clear" aria-label="Clear"
                   (click)="clear(); $event.stopPropagation()"><span aria-hidden="true">×</span></button>
         } @else if (expanded()) {
           <span class="doc-search-kbd" aria-hidden="true">
@@ -62,9 +62,9 @@ interface SearchHit {
       </div>
 
       @if (open()) {
-        <div class="doc-search-panel" id="doc-search-listbox" role="listbox" aria-label="Fiches composants">
+        <div class="doc-search-panel" id="doc-search-listbox" role="listbox" aria-label="Component doc pages">
           @if (hits().length === 0) {
-            <div class="doc-search-none">Aucune fiche ne correspond à « {{ term() }} »</div>
+            <div class="doc-search-none">No doc page matches "{{ term() }}"</div>
           }
           @for (hit of hits(); track hit.category.slug + '/' + hit.entry.slug; let i = $index) {
             <button type="button"
@@ -100,20 +100,20 @@ export class DocSearchComponent {
   readonly focused = signal(false);
   readonly activeIndex = signal(0);
 
-  /** Plateforme Apple : libellé du raccourci (⌘ vs Ctrl) + aria-keyshortcuts. */
+  /** Apple platform: shortcut label (⌘ vs Ctrl) + aria-keyshortcuts. */
   readonly isMac = typeof navigator !== 'undefined'
     && /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
   readonly shortcutKeys = this.isMac ? ['⌘', 'K'] : ['Ctrl', 'K'];
-  readonly shortcutHint = this.isMac ? 'Rechercher (⌘K)' : 'Rechercher (Ctrl+K)';
+  readonly shortcutHint = this.isMac ? 'Search (⌘K)' : 'Search (Ctrl+K)';
   readonly ariaKeyShortcut = this.isMac ? 'Meta+K' : 'Control+K';
 
-  /** Au repos, une simple icône ; déployé dès le focus ou une saisie en cours. */
+  /** At rest, a plain icon; expanded as soon as it is focused or has input. */
   readonly expanded = computed(() => this.focused() || this.term().trim().length > 0);
 
   readonly hits = computed<SearchHit[]>(() => {
     const query = this.term().trim().toLowerCase();
     if (query.length < 2) { return []; }
-    // Score : nom de la fiche (préfixe puis inclusion) > tags > résumé/catégorie.
+    // Scoring: doc page name (prefix then inclusion) > tags > summary/category.
     const scored: { hit: SearchHit; score: number }[] = [];
     for (const category of DOC_CATEGORIES) {
       for (const entry of category.entries) {
@@ -144,7 +144,7 @@ export class DocSearchComponent {
     return `doc-search-opt-${hit.category.slug}-${hit.entry.slug}`;
   }
 
-  /** ⌘K / Ctrl+K : focalise le champ ; un second appui referme et rend le focus. */
+  /** ⌘K / Ctrl+K: focuses the field; a second press closes and gives focus back. */
   onGlobalKeydown(event: KeyboardEvent): void {
     const isShortcut = (event.metaKey || event.ctrlKey)
       && !event.altKey && !event.shiftKey
@@ -162,7 +162,7 @@ export class DocSearchComponent {
     }
   }
 
-  /** Fermeture au clic extérieur (le panneau et le champ vivent dans l'hôte). */
+  /** Close on outside click (the panel and the field both live in the host). */
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as Node;
     if (!target.isConnected) { return; }

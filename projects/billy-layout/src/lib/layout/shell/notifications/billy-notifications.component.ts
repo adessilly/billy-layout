@@ -1,17 +1,18 @@
 import { Component, ElementRef, HostListener, computed, contentChildren, effect, inject, signal } from '@angular/core';
 import { BILLY_SHELL_CONFIG } from '../billy-shell-config';
 import { BillyIconComponent } from '../../../core/icon/billy-icon.component';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { BillyNotifCategory, BillyNotifCategoryId } from './billy-notif-category';
 import { BillyNotifActionComponent } from './billy-notif-action.component';
 
 /**
- * Cloche de notifications unifiée : panneau à deux niveaux
- * (catégories → éléments, avec bouton retour).
+ * Unified notification bell: two-level panel
+ * (categories → items, with a back button).
  *
- * Chaque catégorie est un composant autonome (voir BillyNotifCategory), fourni
- * par l'application en contenu projeté ; ce composant ne gère que la cloche,
- * la navigation entre niveaux et la synchronisation globale (déléguée à
- * `BILLY_SHELL_CONFIG.syncNotifications`).
+ * Each category is a self-contained component (see BillyNotifCategory),
+ * provided by the application as projected content; this component only
+ * handles the bell, the navigation between levels and the global
+ * synchronization (delegated to `BILLY_SHELL_CONFIG.syncNotifications`).
  */
 @Component({
   selector: 'billy-notifications',
@@ -24,18 +25,19 @@ import { BillyNotifActionComponent } from './billy-notif-action.component';
 })
 export class BillyNotificationsComponent {
 
+  protected readonly i18n = inject(BillyI18nService);
   private readonly config = inject(BILLY_SHELL_CONFIG, { optional: true });
   private readonly host = inject(ElementRef<HTMLElement>);
 
-  /** Les catégories projetées par l'application, dans l'ordre d'affichage. */
+  /** The categories projected by the application, in display order. */
   readonly categories = contentChildren(BillyNotifCategory);
 
-  /** Catégories déjà câblées (état poussé + outputs abonnés une seule fois). */
+  /** Categories already wired up (state pushed + outputs subscribed once). */
   private readonly wired = new WeakSet<BillyNotifCategory>();
 
   constructor() {
-    // Le contenu projeté ne peut pas être template-bindé : on pousse l'état du
-    // panneau dans les signals de chaque catégorie et on s'abonne à ses sorties.
+    // Projected content cannot be template-bound: we push the panel state
+    // into each category's signals and subscribe to its outputs.
     effect(() => {
       const categoryId = this.categoryId();
       const syncing = this.syncLoading();
@@ -64,9 +66,9 @@ export class BillyNotificationsComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as Node;
-    // Un clic qui a déclenché un re-render du panneau (changement de niveau)
-    // arrive ici avec une cible déjà détachée du DOM : ce n'est pas un clic
-    // extérieur, on ne ferme pas.
+    // A click that triggered a re-render of the panel (level change) arrives
+    // here with a target already detached from the DOM: it is not an outside
+    // click, so we do not close.
     if (!target.isConnected) {
       return;
     }
@@ -98,7 +100,7 @@ export class BillyNotificationsComponent {
     this.categoryId.set(null);
   }
 
-  /** Synchronisation globale (config app) puis rechargement des catégories. */
+  /** Global synchronization (app config) then reload of the categories. */
   async syncAll(): Promise<void> {
     if (this.syncLoading()) {
       return;

@@ -7,13 +7,13 @@
   padding: 0 22px;
   background: transparent;
   position: relative;
-  // Au-dessus du chrome des pages (barres sticky z-index 3-20), en dessous
-  // des overlays applicatifs (action-bar 200, action-sheet 500, modales).
+  // Above the pages' chrome (sticky bars z-index 3-20), below the
+  // application overlays (action-bar 200, action-sheet 500, modals).
   z-index: 50;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-// ── Hamburger animé ────────────────────────────────────────────────────────
+// ── Animated hamburger ─────────────────────────────────────────────────────
 .billy-topbar-burger {
   display: flex;
   flex-direction: column;
@@ -68,16 +68,16 @@
   }
 }
 
-// ── Recherche ──────────────────────────────────────────────────────────────
-// Alignée à gauche, juste après le logo : réduite à une icône au repos, elle
-// s'élargit au focus (cf. billy-search.component). `flex: none` pour ne pas
-// s'étirer et laisser la largeur être pilotée par le composant lui-même.
+// ── Search ─────────────────────────────────────────────────────────────────
+// Left-aligned, right after the logo: reduced to an icon at rest, it widens
+// on focus (cf. billy-search.component). `flex: none` so it does not stretch
+// and lets the width be driven by the component itself.
 .billy-topbar-search {
   flex: none;
   min-width: 0;
 }
 
-// ── Actions à droite ───────────────────────────────────────────────────────
+// ── Right-hand actions ─────────────────────────────────────────────────────
 .billy-topbar-actions {
   display: flex;
   align-items: center;
@@ -95,8 +95,8 @@
   flex: none;
 }
 
-// Bascule clair / sombre : l'icône pivote d'un demi-tour au changement de
-// thème (reprise du comportement de l'app historique).
+// Light / dark toggle: the icon rotates half a turn on theme change
+// (carried over from the legacy app's behavior).
 .btn-toggle-dark-mode billy-icon {
   display: flex;
   transition: transform .5s ease;
@@ -108,8 +108,8 @@
   }
 }
 
-// Boutons d'action : s'applique aussi aux composants de notification
-// existants (li.nav-item > a.nav-link) projetés dans la topbar.
+// Action buttons: also applies to the existing notification components
+// (li.nav-item > a.nav-link) projected into the topbar.
 .billy-topbar-actions ::ng-deep li {
   list-style: none;
 }
@@ -151,10 +151,10 @@
   }
 }
 
-// Menu du compte : dimensionnement de l'avatar géré par le composant lui-même.
-// (::ng-deep : l'élément est projeté depuis l'application, il ne porte pas
-// l'attribut de scope de la topbar. Ciblé par l'attribut de slot pour ne pas
-// dépendre du nom du composant applicatif.)
+// Account menu: avatar sizing handled by the component itself.
+// (::ng-deep: the element is projected from the application, it does not
+// carry the topbar's scope attribute. Targeted by the slot attribute so as
+// not to depend on the application component's name.)
 .billy-topbar-actions ::ng-deep [shell-account] {
   margin-left: 6px;
 }

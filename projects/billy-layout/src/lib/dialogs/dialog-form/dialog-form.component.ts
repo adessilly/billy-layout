@@ -10,7 +10,7 @@ import { BILLY_DIALOG_ROUTER } from '../dialog/billy-dialog-router';
 import { NgTemplateOutlet } from '@angular/common';
 import { first } from 'rxjs';
 
-// La coque visuelle (.billy-modal*) est globale : src/styles-dialog.scss.
+// The visual shell (.billy-modal*) is global: src/styles-dialog.scss.
 @Component({
     selector: 'billy-dialog-form',
     templateUrl: './dialog-form.component.html',
@@ -32,7 +32,7 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
   closeFromButtonAction = false;
   private afterClose: (() => void) | null = null;
 
-  // Navigation de fermeture d'overlay fournie par l'application (optionnelle).
+  // Overlay-close navigation provided by the application (optional).
   private dialogRouter = inject(BILLY_DIALOG_ROUTER, { optional: true });
 
   constructor(private cdr: ChangeDetectorRef) {}
@@ -55,17 +55,17 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
 
   openDialog(): void {
     document.body.appendChild(this.modalElement()?.nativeElement);
-    // Ouvrir le modal
+    // Open the modal
     this.modal = new Dialog( this.modalElement()?.nativeElement );
     this.modal.show();
     this.modal.listenClose().pipe(first()).subscribe(dialog => {
       if (this.afterClose) {
-        // Enchaînement closeThen : c'est l'action qui pilote la navigation.
+        // closeThen chaining: the action drives the navigation.
         this.afterClose();
       } else if (!this.destroyed) {
-        // Composant déjà détruit = fermeture pilotée par le routeur (overlay
-        // remplacé ou effacé) : ne pas re-naviguer, on écraserait un overlay
-        // fraîchement ouvert.
+        // Component already destroyed = close driven by the router (overlay
+        // replaced or cleared): do not navigate again, we would clobber a
+        // freshly opened overlay.
         this.closeDialog();
       }
       const closeFromStandardCancelDialog = (!this.closeFromButtonAction && !this.destroyed)
@@ -93,10 +93,10 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Ferme le dialogue (animation comprise) puis exécute `action`, à qui revient
-   * la navigation (autre overlay ou page). Naviguer sans attendre la fin de
-   * l'animation laisse le verrou de scroll du <body> être levé après coup, ce
-   * qui casse le scroll du dialogue suivant.
+   * Closes the dialog (animation included) then runs `action`, which owns the
+   * navigation (another overlay or a page). Navigating without waiting for the
+   * end of the animation lets the <body> scroll lock be released afterwards,
+   * which breaks scrolling in the next dialog.
    */
   closeThen(action: () => void): void {
     this.afterClose = action;

@@ -1,12 +1,13 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { CodeStatus } from '../../../core/utils/code-format';
 
 /**
- * Pastille d'état d'un champ « code » :
- * - saisie en cours → anneau de progression qui se remplit à la frappe
- * - vérifié         → coche qui se dessine
- * - non vérifiable  → info (structure conforme, pas de clé de contrôle connue)
- * - invalide        → alerte
+ * Status badge of a "code" field:
+ * - typing in progress → progress ring that fills as you type
+ * - verified           → check mark drawing itself
+ * - not verifiable     → info (structure conforms, no known check digit)
+ * - invalid            → alert
  */
 @Component({
   selector: 'billy-code-status',
@@ -20,19 +21,22 @@ import { CodeStatus } from '../../../core/utils/code-format';
 })
 export class CodeStatusComponent {
 
+  protected readonly i18n = inject(BillyI18nService);
+
   readonly status = input.required<CodeStatus>();
-  /** Avancement de la saisie (0 → 1) : remplit l'anneau. */
+  /** Typing progress (0 → 1): fills the ring. */
   readonly progress = input(0);
 
-  /** `pathLength="1"` sur le cercle : l'anneau se pilote directement en 0 → 1. */
+  /** `pathLength="1"` on the circle: the ring is driven directly in 0 → 1. */
   readonly dashoffset = computed(() => 1 - Math.min(1, Math.max(0, this.progress())));
 
   readonly label = computed(() => {
+    const strings = this.i18n.strings().codeField;
     switch (this.status()) {
-      case 'valid':      return 'Vérifié';
-      case 'invalid':    return 'Invalide';
-      case 'unverified': return 'Format conforme';
-      case 'partial':    return 'Saisie en cours';
+      case 'valid':      return strings.verified;
+      case 'invalid':    return strings.invalid;
+      case 'unverified': return strings.validFormat;
+      case 'partial':    return strings.typing;
       default:           return '';
     }
   });

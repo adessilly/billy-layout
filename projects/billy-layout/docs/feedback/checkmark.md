@@ -1,14 +1,14 @@
 # billy-checkmark, billy-checkmark-failed & billy-checkmark-loading
 
-> Catégorie `feedback` · sources `projects/billy-layout/src/lib/feedback/checkmark/`, `checkmark-failed/` et `checkmark-loading/` · standalone components
+> Category `feedback` · sources `projects/billy-layout/src/lib/feedback/checkmark/`, `checkmark-failed/` and `checkmark-loading/` · standalone components
 
-Trois composants jumeaux utilisés en tandem autour d'une opération asynchrone : le spinner circulaire pendant l'opération, la coche verte animée à son succès, la croix rouge à son échec. Les trois partagent exactement la même géométrie SVG (viewBox 64 × 64, anneau de rayon 23, trait 3, extrémités arrondies) : superposés, le passage du spinner à la coche ou à la croix est visuellement continu, sans saut.
+Three twin components used in tandem around an asynchronous operation: the circular spinner during the operation, the animated green check on success, the red cross on failure. All three share exactly the same SVG geometry (64 × 64 viewBox, ring of radius 23, stroke 3, rounded caps): stacked on top of each other, the transition from spinner to check or cross is visually continuous, with no jump.
 
-Usage app connu : `src/app/auth/pages/peppol-facture/peppol-send-animation-icon/` (animation d'envoi d'une facture Peppol).
+Known app usage: `src/app/auth/pages/peppol-facture/peppol-send-animation-icon/` (Peppol invoice sending animation).
 
 ---
 
-## API commune
+## Common API
 
 ```ts
 import {
@@ -19,20 +19,22 @@ import {
 } from 'billy-layout';
 ```
 
-Les trois composants exposent les mêmes inputs :
+All three components expose the same inputs:
 
-| Input | Type | Défaut | Rôle |
+| Input | Type | Default | Role |
 |---|---|---|---|
-| `label` | `string` | `'Succès'` / `'Échec'` / `'Chargement en cours'` | Libellé annoncé aux lecteurs d'écran (`role="img"` + `aria-label` sur le SVG). |
-| `color` | `CheckmarkColor` | `'success'` (coche, spinner) · `'danger'` (croix) | Couleur du design system. |
+| `label` | `string` | i18n `checkmark.success` / `.failed` / `.loading` (EN `'Success'` / `'Failed'` / `'Loading'`) | Label announced to screen readers (`role="img"` + `aria-label` on the SVG). When the input is not set, the default comes from the i18n dictionary. |
+| `color` | `CheckmarkColor` | `'success'` (check, spinner) · `'danger'` (cross) | Design system color. |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ```ts
 export type CheckmarkColor = 'success' | 'accent' | 'danger' | 'warning' | 'info';
 ```
 
-Correspondance des couleurs — le disque plein prend la teinte `base` de la [famille sémantique](../styles/styles.md#familles-sémantiques-statuts) du DS, donc **toutes suivent le dark mode** :
+Color mapping — the solid disc takes the `base` shade of the DS [semantic family](../styles/styles.md#semantic-families-statuses), so **all of them follow dark mode**:
 
-| Valeur | Couleur |
+| Value | Color |
 |---|---|
 | `success` | `var(--billy-success)` (`#16a34a`) |
 | `accent` | `var(--billy-accent)` (`#12b4dd`) |
@@ -40,34 +42,34 @@ Correspondance des couleurs — le disque plein prend la teinte `base` de la [fa
 | `warning` | `var(--billy-warning)` (`#ff902b`) |
 | `info` | `var(--billy-accent-strong)` (`#0e97bb`) |
 
-### Variables CSS de theming
+### Theming CSS variables
 
-| Variable | Défaut | Portée |
+| Variable | Default | Scope |
 |---|---|---|
-| `--billy-checkmark-size` | `156px` | Taille (largeur = hauteur) des trois composants. |
-| `--billy-checkmark-color` | `var(--billy-success, #16a34a)` | Couleur du disque et du spinner quand `color` vaut `success` (défaut). |
-| `--billy-checkmark-failed-color` | `var(--billy-danger, #dc2626)` | Couleur de la croix quand `color` vaut `danger` (défaut). |
-| `--billy-checkmark-loading-color` | `var(--billy-checkmark-color, #16a34a)` | Surcharge spécifique du spinner. |
-| `--billy-checkmark-check-color` | `#fff` | Couleur du trait de la coche et de la croix. |
+| `--billy-checkmark-size` | `156px` | Size (width = height) of all three components. |
+| `--billy-checkmark-color` | `var(--billy-success, #16a34a)` | Disc and spinner color when `color` is `success` (default). |
+| `--billy-checkmark-failed-color` | `var(--billy-danger, #dc2626)` | Cross color when `color` is `danger` (default). |
+| `--billy-checkmark-loading-color` | `var(--billy-checkmark-color, #16a34a)` | Spinner-specific override. |
+| `--billy-checkmark-check-color` | `#fff` | Stroke color of the check and the cross. |
 
-Un `color` explicite (autre que le défaut) prend le pas sur ces variables : l'input pose un attribut `data-color` sur l'hôte, résolu en SCSS via `:host([data-color='…'])`.
+An explicit `color` (other than the default) takes precedence over these variables: the input sets a `data-color` attribute on the host, resolved in SCSS via `:host([data-color='…'])`.
 
-### Exemple d'utilisation
+### Usage example
 
 ```html
 @if (loading()) {
   <billy-checkmark-loading />
-  <span class="checkmark-message">En cours d'envoi...</span>
+  <span class="checkmark-message">Sending...</span>
 } @else if (success()) {
   <billy-checkmark />
-  <span class="checkmark-message">Envoyé avec succès !</span>
+  <span class="checkmark-message">Sent successfully!</span>
 } @else if (error()) {
   <billy-checkmark-failed />
-  <span class="checkmark-message">L'envoi a échoué.</span>
+  <span class="checkmark-message">Sending failed.</span>
 }
 ```
 
-Pour une transition sans rupture, superposer le spinner et la marque finale (le spinner reste monté et s'estompe pendant que la coche/croix se dessine par-dessus) :
+For a seamless transition, stack the spinner and the final mark (the spinner stays mounted and fades out while the check/cross draws on top):
 
 ```html
 <div class="stack">
@@ -88,37 +90,37 @@ Pour une transition sans rupture, superposer le spinner et la marque finale (le 
 
 ## billy-checkmark — CheckmarkComponent
 
-Coche de succès animée. Séquence de motion (~1,4 s), jouée une fois au montage :
+Animated success check. Motion sequence (~1.4 s), played once on mount:
 
-1. **0 → 0,55 s** : l'anneau se trace depuis midi (dash-offset, courbe `cubic-bezier(0.65, 0, 0.35, 1)`).
-2. **0,4 → 0,85 s** : le disque plein « pop » du centre avec rebond élastique (`cubic-bezier(0.34, 1.56, 0.64, 1)`) et ombre portée colorée.
-3. **0,68 → 1,03 s** : la coche se dessine (extrémités rondes).
-4. **0,7 → 1,2 s** : léger rebond d'ensemble (scale 1,07 à 40 %).
-5. **0,78 s →** : un halo s'élargit et s'estompe, et six éclats « comètes » (dash-offset qui traverse le trait) fusent vers l'extérieur, légèrement décalés (30 ms entre chaque).
+1. **0 → 0.55 s**: the ring traces itself from twelve o'clock (dash-offset, `cubic-bezier(0.65, 0, 0.35, 1)` curve).
+2. **0.4 → 0.85 s**: the solid disc "pops" from the center with an elastic bounce (`cubic-bezier(0.34, 1.56, 0.64, 1)`) and a colored drop shadow.
+3. **0.68 → 1.03 s**: the check draws itself (rounded caps).
+4. **0.7 → 1.2 s**: slight overall bounce (scale 1.07 at 40%).
+5. **0.78 s →**: a halo expands and fades, and six "comet" bursts (dash-offset traveling along the stroke) shoot outward, slightly staggered (30 ms apart).
 
 ## billy-checkmark-failed — CheckmarkFailedComponent
 
-Croix d'échec animée, même langage que la coche mais vocabulaire « erreur » :
+Animated failure cross, same language as the check but with an "error" vocabulary:
 
-1. Anneau tracé et disque « pop » identiques à la coche (en rouge `danger` par défaut).
-2. **0,68 s puis 0,84 s** : les deux branches de la croix se dessinent l'une après l'autre.
-3. **0,72 → 1,17 s** : shake horizontal (±3 px amortis) — pas de rebond ni d'éclats, réservés au succès.
-4. **0,9 s →** : halo qui s'élargit et s'estompe.
+1. Traced ring and "pop" disc identical to the check (in `danger` red by default).
+2. **0.68 s then 0.84 s**: the two branches of the cross draw one after the other.
+3. **0.72 → 1.17 s**: horizontal shake (±3 px, damped) — no bounce or bursts, those are reserved for success.
+4. **0.9 s →**: halo that expands and fades.
 
 ## billy-checkmark-loading — CheckmarkLoadingComponent
 
-Spinner circulaire indéterminé type Material : une piste discrète (opacité 0,15) et un arc qui s'étire et se contracte (`stroke-dasharray`/`offset` animés, 1,4 s) pendant que l'ensemble tourne (1,8 s linéaire). Pour une roue de progression *déterminée* (pourcentage), utiliser `billy-circular-loading` à la place.
+Material-style indeterminate circular spinner: a discreet track (opacity 0.15) and an arc that stretches and contracts (animated `stroke-dasharray`/`offset`, 1.4 s) while the whole rotates (1.8 s linear). For a *determinate* progress ring (percentage), use `billy-circular-loading` instead.
 
 ---
 
-## Accessibilité & motion
+## Accessibility & motion
 
-- SVG `role="img"` + `aria-label` (input `label`) sur les trois composants.
-- `prefers-reduced-motion: reduce` : la coche et la croix apparaissent en fondu simple dans leur état final (pas de halo, éclats ni shake) ; le spinner ralentit (3 s/tour) avec un arc fixe.
+- SVG `role="img"` + `aria-label` (`label` input) on all three components.
+- `prefers-reduced-motion: reduce`: the check and the cross appear with a simple fade in their final state (no halo, bursts or shake); the spinner slows down (3 s/turn) with a fixed arc.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Les animations de la coche et de la croix se jouent au montage : pour les rejouer, détruire/recréer le composant (`@if`).
-- Le SVG a `overflow: visible` (le halo et l'ombre portée débordent du viewBox) : prévoir un peu d'air autour, et ne pas poser d'`overflow: hidden` sur un parent immédiat trop serré sous peine de retrouver le halo tronqué en carré.
-- Le halo et le disque utilisent `transform-box: fill-box` ; les éclats sont des traits en dash-offset — pas de SMIL, tout est en CSS (l'ancien spinner SMIL a été remplacé).
-- Démo : `/c/feedback/checkmark` (vitrine, superposition chargement → succès/échec, sélecteur de couleurs).
+- The check and cross animations play on mount: to replay them, destroy/recreate the component (`@if`).
+- The SVG has `overflow: visible` (the halo and drop shadow overflow the viewBox): leave some breathing room around it, and do not set `overflow: hidden` on a tight immediate parent or the halo will be clipped into a square.
+- The halo and the disc use `transform-box: fill-box`; the bursts are dash-offset strokes — no SMIL, everything is CSS (the old SMIL spinner has been replaced).
+- Demo: `/c/feedback/checkmark` (showcase, loading → success/failure stacking, color picker).

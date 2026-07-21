@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { ToastrService } from './toastr.service';
 import { ToastrInstance, ToastrType } from './toastr';
 
@@ -10,12 +11,12 @@ const TYPE_ICONS: Record<ToastrType, string> = {
 };
 
 /**
- * Carte de toast individuelle. La temporisation est portée par l'animation
- * CSS de la barre de progression : son `animationend` déclenche la fermeture,
- * et le survol la met en pause (le toast reste tant qu'on le lit).
+ * Individual toast card. The timing is carried by the CSS animation of the
+ * progress bar: its `animationend` triggers the dismissal, and hovering pauses
+ * it (the toast stays while it is being read).
  *
- * Sur mobile le toast s'affiche en pilule compacte (icône + titre) ;
- * un tap la déplie pour lire le message.
+ * On mobile the toast shows as a compact pill (icon + title);
+ * a tap expands it to read the message.
  */
 @Component({
   selector: 'billy-toastr',
@@ -29,12 +30,14 @@ export class ToastrComponent {
 
   private readonly toastrService = inject(ToastrService);
 
+  protected readonly i18n = inject(BillyI18nService);
+
   readonly toast = input.required<ToastrInstance>();
 
   readonly leaving = signal(false);
   readonly expanded = signal(false);
 
-  readonly icone = computed(() => this.toast().icone ?? TYPE_ICONS[this.toast().type]);
+  readonly icon = computed(() => this.toast().icon ?? TYPE_ICONS[this.toast().type]);
 
   toggleExpanded(): void {
     this.expanded.update(expanded => !expanded);
@@ -46,7 +49,7 @@ export class ToastrComponent {
       return;
     }
     this.leaving.set(true);
-    // Laisse l'animation de sortie (grid-collapse) se jouer avant le retrait.
+    // Lets the exit animation (grid-collapse) play before removal.
     setTimeout(() => this.toastrService.remove(this.toast().id), 250);
   }
 

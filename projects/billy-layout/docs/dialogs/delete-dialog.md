@@ -1,10 +1,10 @@
 # delete-dialog — `DeleteDialogComponent`
 
-> Catégorie `dialogs` · source `projects/billy-layout/src/lib/dialogs/delete-dialog/` · standalone component (`billy-delete-dialog`) + enum `MessageDialogClick`
+> Category `dialogs` · source `projects/billy-layout/src/lib/dialogs/delete-dialog/` · standalone component (`billy-delete-dialog`) + enum `MessageDialogClick`
 
-## Rôle
+## Purpose
 
-Dialogue de **confirmation de suppression** : carte centrée (max 420px) avec illustration SVG animée (le couvercle de la corbeille s'ouvre, le document tombe dedans), titre, message, bloc optionnel « élément concerné » (nom + prix), avertissement « Cette action est définitive. », et deux boutons — Annuler et un bouton danger (libellé configurable). Contrairement à `billy-dialog-form`, il **ne s'ouvre pas tout seul** : on le déclare dans le template et on l'ouvre programmatique­ment via `openDialog()` ou `openDialogAndWait()`.
+**Delete confirmation** dialog: a centered card (max 420px) with an animated SVG illustration (the trash-can lid opens, the document drops in), a title, a message, an optional "affected item" block (name + price), a "This action cannot be undone." warning, and two buttons — Cancel and a danger button (configurable label). Unlike `billy-dialog-form`, it does **not open by itself**: declare it in the template and open it programmatically via `openDialog()` or `openDialogAndWait()`.
 
 ## API
 
@@ -18,53 +18,55 @@ export enum MessageDialogClick {
 }
 ```
 
-Type de retour déclaré de la promesse d'`openDialogAndWait()` (voir Pièges : la valeur n'est pas réellement renseignée aujourd'hui).
+Declared return type of the `openDialogAndWait()` promise (see Gotchas: the value is not actually populated today).
 
-### Inputs (tous des `model()`, donc modifiables aussi par code)
+### Inputs (all `model()`, so they can also be set from code)
 
-| Model | Type | Défaut | Rendu |
+| Model | Type | Default | Rendered as |
 |---|---|---|---|
-| `titre` | `string` | `'Confirmation suppression'` | Titre `h5.del-title` |
-| `message` | `string` | `'Voulez-vous supprimer cet enregistrement ?'` | Paragraphe `.del-message` |
-| `productName` | `string` | `''` | Nom de l'élément dans le bloc `.del-item` (affiché si non vide) |
-| `prix` | `number` | `0` | Prix formaté `currency:'EUR'` (affiché si non nul) |
-| `label` | `string` | `''` | Suffixe affiché **après le prix** (ex. « HTVA ») |
-| `labelValidate` | `string` | `'Supprimer'` | Libellé du bouton danger |
+| `title` | `string` | i18n `deleteDialog.title` (EN `'Delete confirmation'`) | `h5.del-title` heading |
+| `message` | `string` | i18n `deleteDialog.message` (EN `'Do you want to delete this record?'`) | `.del-message` paragraph |
+| `productName` | `string` | `''` | Item name in the `.del-item` block (shown when non-empty) |
+| `price` | `number` | `0` | Price formatted with `currency:'EUR'` (shown when non-zero) |
+| `label` | `string` | `''` | Suffix displayed **after the price** (e.g. "excl. VAT") |
+| `labelValidate` | `string` | i18n `deleteDialog.confirm` (EN `'Delete'`) | Danger button label |
+
+When these inputs are not set, the defaults come from the i18n dictionary. The warning ("This action cannot be undone."), the Cancel button and the close cross's `aria-label` are not inputs: they come from `deleteDialog.warning` / `.cancel` / `.close`. Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
-| Output | Type | Émis quand |
+| Output | Type | Emitted when |
 |---|---|---|
-| `delete` | `string` (valeur `'delete'`) | L'utilisateur clique le bouton danger. Le bouton porte aussi `data-billy-dismiss` : le dialogue se ferme dans la foulée. |
+| `delete` | `string` (value `'delete'`) | The user clicks the danger button. The button also carries `data-billy-dismiss`: the dialog closes right after. |
 
-### Méthodes publiques
+### Public methods
 
-| Méthode | Signature | Description |
+| Method | Signature | Description |
 |---|---|---|
-| `openDialog` | `openDialog(): void` | Déplace la racine `#modalDelete` sous `<body>` (`document.body.appendChild`), crée un `new Dialog(...)`, `show()`, et au `listenClose()` (première émission) retire l'élément du `<body>`. |
-| `openDialogAndWait` | `openDialogAndWait(titre: string, sousTitre: string, label: string): Promise<MessageDialogClick>` | Variante « promesse » : pose `titre`, `productName` (= `sousTitre`) et `label`, ouvre le dialogue et rend une promesse **résolue uniquement à la confirmation** (clic sur le bouton danger). |
-| `askDelete` | `askDelete(): void` | Handler du bouton danger : émet `delete` puis résout la promesse en attente le cas échéant. Appelé par le template. |
+| `openDialog` | `openDialog(): void` | Moves the `#modalDelete` root under `<body>` (`document.body.appendChild`), creates a `new Dialog(...)`, calls `show()`, and on `listenClose()` (first emission) removes the element from `<body>`. |
+| `openDialogAndWait` | `openDialogAndWait(title: string, subtitle: string, label: string): Promise<MessageDialogClick>` | "Promise" variant: sets `title`, `productName` (= `subtitle`) and `label`, opens the dialog and returns a promise **resolved only on confirmation** (danger button click). |
+| `askDelete` | `askDelete(): void` | Danger button handler: emits `delete`, then resolves any pending promise. Called by the template. |
 
-### Fermeture
+### Closing
 
-Croix `.del-close`, bouton « Annuler » et bouton danger portent tous `data-billy-dismiss` ; Échap et clic sur le fond ferment aussi (comportement standard de `Dialog`).
+The `.del-close` cross, the "Cancel" button and the danger button all carry `data-billy-dismiss`; Escape and a backdrop click also close (standard `Dialog` behavior).
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel : `src/app/auth/pages/devis/devis-card/devis-card.component.*` (même motif dans vente-card, achat-card, devis-form, etc.).
+Real-world usage: `src/app/auth/pages/devis/devis-card/devis-card.component.*` (same pattern in vente-card, achat-card, devis-form, etc.).
 
-Template :
+Template:
 
 ```html
 <billy-delete-dialog
-  message="Voulez-vous supprimer ce devis ?"
+  message="Do you want to delete this quote?"
   [productName]="d.libelle"
-  [prix]="d.prix"
+  [price]="d.prix"
   (delete)="onDeleteConfirmed()" #deleteDialog>
 </billy-delete-dialog>
 ```
 
-Composant :
+Component:
 
 ```ts
 readonly deleteDialog = viewChild.required<DeleteDialogComponent>('deleteDialog');
@@ -74,26 +76,26 @@ askDelete(): void {
 }
 ```
 
-Variante promesse (usage réel : `src/app/shared/components/uploadmanager/upload-manager-list/upload-manager-list.component.ts`) :
+Promise variant (real-world usage: `src/app/shared/components/uploadmanager/upload-manager-list/upload-manager-list.component.ts`):
 
 ```ts
-this.deleteDialog().openDialogAndWait('Voulez-vous supprimer ce fichier ?', fichier.fileName, '')
-  .then(async () => { /* suppression confirmée */ });
+this.deleteDialog().openDialogAndWait('Do you want to delete this file?', file.fileName, '')
+  .then(async () => { /* deletion confirmed */ });
 ```
 
 ## Styles & theming
 
-- Coque de base : classes globales `.billy-modal*` (`lib/styles/_billy-dialog.scss`) + SCSS de composant `delete-dialog.component.scss` (classes préfixées `del-`).
-- `z-index: 9000` sur `.del-modal` : passe **au-dessus** des overlays `billy-dialog-form` (cas : suppression demandée depuis un dialogue).
-- Entrée personnalisée : léger « pop » (`translateY(14px) scale(0.96)` → none) à la place du glissement standard de `.billy-modal-dialog`.
-- Couleurs via tokens `--billy-*` (`--billy-surface`, `--billy-surface-border`, `--billy-danger`…) → dark mode automatique. La modale vivant sous `<body>`, seuls les attributs `_ngcontent` suivent les nœuds : **pas de `:host`** dans le SCSS (commentaire d'en-tête du fichier).
-- L'animation SVG (halo, ondes, couvercle, feuille) rejoue à chaque ouverture grâce au passage `display: none → block` piloté par `Dialog`.
+- Base shell: global `.billy-modal*` classes (`lib/styles/_billy-dialog.scss`) + component SCSS `delete-dialog.component.scss` (classes prefixed `del-`).
+- `z-index: 9000` on `.del-modal`: sits **above** the `billy-dialog-form` overlays (case: deletion requested from within a dialog).
+- Custom entrance: a slight "pop" (`translateY(14px) scale(0.96)` → none) instead of the standard `.billy-modal-dialog` slide.
+- Colors via `--billy-*` tokens (`--billy-surface`, `--billy-surface-border`, `--billy-danger`…) → automatic dark mode. Since the modal lives under `<body>`, only the `_ngcontent` attributes travel with the nodes: **no `:host`** in the SCSS (see the file's header comment).
+- The SVG animation (halo, ripples, lid, sheet) replays on every opening thanks to the `display: none → block` switch driven by `Dialog`.
 
-## Pièges & notes
+## Gotchas & notes
 
-- **`openDialogAndWait` ne résout jamais en cas d'annulation** (Annuler, croix, Échap, clic-fond) : la promesse reste pendante. Ne pas `await` en série avec du code qui doit s'exécuter quoi qu'il arrive ; réserver le `.then(...)` au chemin « confirmé ». La promesse est par ailleurs résolue **sans valeur** (`undefined`), malgré le type déclaré `Promise<MessageDialogClick>` — ne pas tester la valeur de retour.
-- **Le 3ᵉ paramètre d'`openDialogAndWait` alimente `label`** (le suffixe affiché après le prix), **pas** `labelValidate` (le libellé du bouton). Pour changer le libellé du bouton, passer par `[labelValidate]` ou `labelValidate.set(...)`.
-- `openDialogAndWait` ne touche pas à `message` : le message reste celui posé par input (ou le défaut) ; le « sous-titre » passé va dans `productName`.
-- Le bloc `.del-item` n'apparaît que si `productName` **ou** `prix` est truthy ; un prix à `0` n'est pas affiché.
-- Rouvrir le dialogue est sûr : chaque `openDialog()` crée une nouvelle instance `Dialog`, et une ouverture précédente non soldée est écrasée côté promesse (le résolveur est remplacé).
-- L'output s'appelle `delete` : dans un template, se lie `(delete)="..."` — attention aux collisions de nommage en TypeScript (`delete` est un mot-clé ; l'output est accessible via `this.delete` malgré tout).
+- **`openDialogAndWait` never resolves on cancellation** (Cancel, cross, Escape, backdrop click): the promise stays pending. Do not `await` it in series with code that must run either way; keep the `.then(...)` for the "confirmed" path only. The promise is also resolved **without a value** (`undefined`), despite the declared `Promise<MessageDialogClick>` type — do not test the return value.
+- **The 3rd `openDialogAndWait` parameter feeds `label`** (the suffix displayed after the price), **not** `labelValidate` (the button label). To change the button label, use `[labelValidate]` or `labelValidate.set(...)`.
+- `openDialogAndWait` does not touch `message`: the message stays whatever the input set (or the default); the "subtitle" argument goes into `productName`.
+- The `.del-item` block appears only if `productName` **or** `price` is truthy; a price of `0` is not displayed.
+- Reopening the dialog is safe: every `openDialog()` creates a fresh `Dialog` instance, and an unresolved previous opening is overwritten on the promise side (the resolver is replaced).
+- The output is named `delete`: in a template, bind `(delete)="..."` — beware of naming collisions in TypeScript (`delete` is a keyword; the output is still reachable via `this.delete`).

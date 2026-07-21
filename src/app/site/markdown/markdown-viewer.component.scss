@@ -1,6 +1,6 @@
-// Habillage design-system du markdown rendu (fiches docs/).
-// ViewEncapsulation.None : tout est préfixé .site-md / .site-md-body pour ne
-// rien laisser fuir hors du viewer.
+// Design-system dressing of the rendered markdown (docs/ pages).
+// ViewEncapsulation.None: everything is prefixed .site-md / .site-md-body so
+// nothing leaks outside the viewer.
 .site-md {
   position: relative;
   min-height: 120px;
@@ -114,7 +114,7 @@
       line-height: 1.6;
     }
 
-    // Étiquette du langage (coin supérieur droit du bloc).
+    // Language label (top-right corner of the block).
     &[data-lang]::after {
       content: attr(data-lang);
       position: absolute;
@@ -162,9 +162,9 @@
   img { max-width: 100%; }
 }
 
-// ── Colorisation syntaxique (highlight.js, thème maison billy) ──────────────
-// Palette claire alignée sur l'accent cyan du DS ; les valeurs sombres sont
-// portées par body.dark-mode (mêmes règles, variables redéfinies).
+// ── Syntax highlighting (highlight.js, in-house billy theme) ────────────────
+// Light palette aligned with the DS cyan accent; the dark values are carried
+// by body.dark-mode (same rules, redefined variables).
 .site-md-body {
   --md-code-fg:       #374151;
   --md-code-comment:  #9ca3af;

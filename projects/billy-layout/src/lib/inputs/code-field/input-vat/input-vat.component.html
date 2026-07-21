@@ -6,7 +6,7 @@
   [class.cfd-shell--invalid]="showError()"
   [class.cfd-shell--disabled]="isDisabled()">
 
-  <billy-code-glyph class="cfd-glyph" kind="tva"></billy-code-glyph>
+  <billy-code-glyph class="cfd-glyph" kind="vat"></billy-code-glyph>
 
   <input #codeInput class="cfd-input" type="text"
     [id]="inputId() || uid"
@@ -20,8 +20,8 @@
     (focus)="onFocus()"
     (blur)="onBlur()" />
 
-  <!-- Action facultative accolée au champ (ex. <app-bce-search codeAction>).
-       Sans rien de projeté, le champ reste exactement ce qu'il était. -->
+  <!-- Optional action attached to the field (e.g. <app-bce-search codeAction>).
+       With nothing projected, the field stays exactly what it was. -->
   <ng-content select="[codeAction]"></ng-content>
 
   <billy-code-status [status]="status()" [progress]="progress()"></billy-code-status>

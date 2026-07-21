@@ -1,5 +1,6 @@
-import { Component, computed, forwardRef, input, signal } from '@angular/core';
+import { Component, computed, forwardRef, inject, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
 let nextUniqueId = 0;
@@ -11,13 +12,13 @@ export interface PasswordCriterion {
 }
 
 /**
- * Champ mot de passe du design system : icône cadenas, œil afficher/masquer,
- * et — en option — jauge de robustesse animée avec liste de critères
- * (`checkStrength`) ou indicateur de correspondance live (`compareTo`,
- * pour un champ de confirmation).
+ * Design-system password field: padlock icon, show/hide eye toggle,
+ * and — optionally — an animated strength meter with a criteria list
+ * (`checkStrength`) or a live match indicator (`compareTo`,
+ * for a confirmation field).
  *
- * ControlValueAccessor : s'utilise avec formControlName. La jauge est purement
- * indicative, la validité reste portée par les validators du formulaire.
+ * ControlValueAccessor: used with formControlName. The meter is purely
+ * indicative; validity remains the responsibility of the form validators.
  */
 @Component({
   selector: 'billy-input-password',
@@ -32,15 +33,17 @@ export interface PasswordCriterion {
 })
 export class InputPasswordComponent implements ControlValueAccessor {
 
+  protected readonly i18n = inject(BillyI18nService);
+
   label = input('');
   mandatory = input(false);
   placeholder = input('••••••••');
   autocomplete = input('new-password');
-  /** Affiche la jauge de robustesse et la liste des critères sous le champ. */
+  /** Shows the strength meter and the criteria list below the field. */
   checkStrength = input(false);
-  /** Valeur à égaler (champ de confirmation) : affiche l'indicateur de correspondance. */
+  /** Value to match (confirmation field): shows the match indicator. */
   compareTo = input<string | null>(null);
-  /** État invalide piloté par le parent (ex. contrôle touché et en erreur). */
+  /** Invalid state driven by the parent (e.g. control touched and in error). */
   invalid = input(false);
 
   readonly inputId = `billy-password-${nextUniqueId++}`;
@@ -55,12 +58,13 @@ export class InputPasswordComponent implements ControlValueAccessor {
 
   readonly criteria = computed<PasswordCriterion[]>(() => {
     const v = this.value();
+    const strings = this.i18n.strings().password;
     return [
-      { key: 'length',  label: '8 caractères minimum',   met: v.length >= 8 },
-      { key: 'lower',   label: 'Une lettre minuscule',   met: /[a-z]/.test(v) },
-      { key: 'upper',   label: 'Une lettre majuscule',   met: /[A-Z]/.test(v) },
-      { key: 'digit',   label: 'Un chiffre',             met: /\d/.test(v) },
-      { key: 'special', label: 'Un caractère spécial',   met: /[^A-Za-z0-9\s]/.test(v) }
+      { key: 'length',  label: strings.minLength, met: v.length >= 8 },
+      { key: 'lower',   label: strings.lowercase, met: /[a-z]/.test(v) },
+      { key: 'upper',   label: strings.uppercase, met: /[A-Z]/.test(v) },
+      { key: 'digit',   label: strings.digit,     met: /\d/.test(v) },
+      { key: 'special', label: strings.special,   met: /[^A-Za-z0-9\s]/.test(v) }
     ];
   });
 
@@ -68,18 +72,19 @@ export class InputPasswordComponent implements ControlValueAccessor {
     if (!this.value().length) {
       return { level: 0, label: '', tone: 'none' };
     }
+    const strings = this.i18n.strings().password;
     const met = this.criteria().filter(c => c.met).length;
-    if (met <= 2) { return { level: 1, label: 'Faible',    tone: 'weak' }; }
-    if (met === 3) { return { level: 2, label: 'Moyen',     tone: 'fair' }; }
-    if (met === 4) { return { level: 3, label: 'Bon',       tone: 'good' }; }
-    return { level: 4, label: 'Excellent', tone: 'strong' };
+    if (met <= 2) { return { level: 1, label: strings.weak,      tone: 'weak' }; }
+    if (met === 3) { return { level: 2, label: strings.fair,      tone: 'fair' }; }
+    if (met === 4) { return { level: 3, label: strings.good,      tone: 'good' }; }
+    return { level: 4, label: strings.excellent, tone: 'strong' };
   });
 
   readonly matches = computed(() =>
     this.compareTo() !== null && this.value().length > 0 && this.value() === this.compareTo());
 
-  // Le panneau de robustesse se déplie au focus (les attentes sont visibles
-  // avant de taper) et reste ouvert tant que le champ n'est pas vide.
+  // The strength panel unfolds on focus (expectations are visible before
+  // typing) and stays open as long as the field is not empty.
   readonly panelOpen = computed(() =>
     this.checkStrength() && (this.focused() || this.value().length > 0));
 

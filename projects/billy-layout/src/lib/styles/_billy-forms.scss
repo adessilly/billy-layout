@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// BILLy — mixins de formulaire (consomment les tokens de src/styles-tokens.scss)
-// Usage : @use '../../../../shared/styles/billy-forms' as forms;
-//         .mon-input { @include forms.billy-input; }
-// Le dark mode est automatique : les tokens changent sous body.dark-mode.
+// BILLy — form mixins (consume the tokens from src/styles-tokens.scss)
+// Usage: @use '../../../../shared/styles/billy-forms' as forms;
+//        .my-input { @include forms.billy-input; }
+// Dark mode is automatic: the tokens change under body.dark-mode.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Champ de saisie de la famille formulaire (input, textarea, trigger de select)
+// Input field of the form family (input, textarea, select trigger)
 @mixin billy-input {
   background: var(--billy-input-bg, #fff);
   border: 1px solid var(--billy-input-border, #e5e7eb);
@@ -22,23 +22,23 @@
   }
 }
 
-// État invalide à combiner avec billy-input (classe Angular .is-invalid)
+// Invalid state to combine with billy-input (Angular class .is-invalid)
 @mixin billy-input-invalid {
   border-color: var(--billy-danger, #dc2626);
 
   &:focus { box-shadow: 0 0 0 3px var(--billy-danger-ring, rgba(220, 38, 38, 0.08)); }
 }
 
-// Uniquement l'état focus (pour un élément non-input, ex. bouton de dropdown
-// dont l'ouverture doit refléter le focus)
+// Focus state only (for a non-input element, e.g. a dropdown button whose
+// open state must reflect focus)
 @mixin billy-focus {
   outline: none;
   border-color: var(--billy-focus-border, #66afe9);
   box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
 }
 
-// Addon d'input-group : bouton accolé ou associé à un champ
-// (ex. « + client » des formulaires vente/devis, dropdown-toggle du tva-field)
+// Input-group addon: button attached or tied to a field
+// (e.g. the "+ client" of the sale/quote forms, the vat-field dropdown-toggle)
 @mixin billy-addon-button {
   background: var(--billy-addon-bg, #f9fafb);
   border: 1px solid var(--billy-input-border, #e5e7eb);
@@ -51,29 +51,29 @@
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Champs, boutons et groupes autonomes — sans Bootstrap
+// Standalone fields, buttons and groups — without Bootstrap
 //
-// `billy-input` ci-dessus ne pose que la *peau* (couleurs, bord, focus) : les
-// composants qui s'en servaient gardaient `class="form-control"` pour la boîte
-// (display, largeur, hauteur, padding). Les mixins qui suivent apportent aussi
-// la boîte, et rendent le composant indépendant de Bootstrap.
+// `billy-input` above only lays down the *skin* (colors, border, focus): the
+// components using it kept `class="form-control"` for the box (display,
+// width, height, padding). The mixins that follow also bring the box, and
+// make the component independent of Bootstrap.
 //
-// La géométrie reprend celle du thème (hauteur 2.1875rem, padding .375rem 1rem,
-// interligne 1.52857) pour que la bascule ne déplace rien ; seule la peau suit
-// les tokens --billy-*, donc le rayon passe de 4px à 8px et le focus au bleu du
-// design system. Le dark mode reste automatique.
+// The geometry mirrors the theme's (2.1875rem height, .375rem 1rem padding,
+// 1.52857 line-height) so the switch shifts nothing; only the skin follows
+// the --billy-* tokens, so the radius goes from 4px to 8px and the focus to
+// the design system blue. Dark mode remains automatic.
 //
-// Attention aux tailles de police : le thème Angle surchargeait celles de
-// Bootstrap (.form-control et .input-group-text à .875rem au lieu de 1rem, .btn
-// à 13px). C'est la valeur du thème qui fait foi ici — la racine est à 16px,
-// reprendre le 1rem de Bootstrap grossirait les champs face au reste de l'app.
+// Mind the font sizes: the Angle theme overrode Bootstrap's (.form-control
+// and .input-group-text at .875rem instead of 1rem, .btn at 13px). The
+// theme's value is authoritative here — the root is at 16px, taking back
+// Bootstrap's 1rem would enlarge the fields against the rest of the app.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Hauteur d'un champ. Exposée (`forms.$field-height`) parce qu'un bouton accolé
-// à un champ doit s'y aligner : billy-button, lui, n'impose pas de hauteur.
+// Field height. Exposed (`forms.$field-height`) because a button attached to
+// a field must align with it: billy-button itself imposes no height.
 $field-height: 2.1875rem;
 
-// Champ de saisie complet (remplace .form-control)
+// Complete input field (replaces .form-control)
 @mixin billy-field {
   display: block;
   width: 100%;
@@ -96,14 +96,14 @@ $field-height: 2.1875rem;
   &.is-invalid { @include billy-input-invalid; }
 }
 
-// Zone de texte : même champ, mais qui grandit avec son contenu.
+// Text area: same field, but one that grows with its content.
 @mixin billy-textarea {
   @include billy-field;
   height: auto;
 }
 
-// Socle d'un bouton (remplace .btn). Sans couleur : la combiner avec une des
-// variantes de bouton plus bas, ou habiller le bouton dans le composant.
+// Button base (replaces .btn). Colorless: combine it with one of the button
+// variants below, or dress the button in the component.
 @mixin billy-button {
   display: inline-block;
   padding: 0.375rem 1rem;
@@ -129,8 +129,8 @@ $field-height: 2.1875rem;
   }
 }
 
-// Groupe « champ + addon accolé » (remplace .input-group).
-// Le champ prend la place restante ; les coins se rejoignent au milieu.
+// "Field + attached addon" group (replaces .input-group).
+// The field takes the remaining space; the corners meet in the middle.
 @mixin billy-input-group {
   position: relative;
   display: flex;
@@ -138,7 +138,7 @@ $field-height: 2.1875rem;
   align-items: stretch;
   width: 100%;
 
-  // Le champ ne doit pas imposer sa largeur : c'est le groupe qui la porte.
+  // The field must not impose its width: the group carries it.
   > .billy-field,
   > input,
   > select {
@@ -148,32 +148,32 @@ $field-height: 2.1875rem;
     min-width: 0;
   }
 
-  // Coins : arrondis à l'extérieur du groupe, droits à la jonction.
+  // Corners: rounded on the outside of the group, straight at the junction.
   > :not(:last-child) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
 
   > :not(:first-child) {
-    margin-left: -1px; // les bordures se superposent au lieu de doubler
+    margin-left: -1px; // borders overlap instead of doubling up
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 
-  // Le champ focalisé passe devant, sinon son halo passerait sous l'addon.
+  // The focused field moves to the front, or its halo would slide under the addon.
   > :focus,
   > :focus-within {
     z-index: 2;
   }
 }
 
-// Texte ou bouton accolé au champ dans un billy-input-group.
+// Text or button attached to the field in a billy-input-group.
 //
-// La hauteur est fixée sur celle du champ, elle n'est PAS déduite du contenu :
-// c'est une boîte flex, donc un addon textuel (« € ») est plus haut qu'un addon
-// à icône seule, et il dépasserait du champ (le groupe est en align-items:
-// stretch, mais le champ, lui, a une hauteur fixe et ne suit pas). Le contenu
-// est centré verticalement, d'où l'absence de padding vertical.
+// The height is pinned to the field's, it is NOT derived from the content:
+// this is a flex box, so a text addon ("€") is taller than an icon-only one,
+// and it would stick out of the field (the group uses align-items: stretch,
+// but the field itself has a fixed height and does not follow). The content
+// is centered vertically, hence the absence of vertical padding.
 @mixin billy-input-group-addon {
   display: flex;
   align-items: center;
@@ -192,14 +192,14 @@ $field-height: 2.1875rem;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Boutons d'action de footer de panneau latéral
-// Même langage visuel que <billy-save-bar> (fantôme pour annuler / plein accent
-// avec relief pour valider), mais à échelle réduite : la chrome de carte de la
-// save-bar et son min-width de 128px par bouton ne tiennent pas dans la largeur
-// d'un panneau. À utiliser quand une save-bar ne rentre pas (agenda, prestations).
+// Side-panel footer action buttons
+// Same visual language as <billy-save-bar> (ghost to cancel / full accent
+// with relief to confirm), but at a reduced scale: the save-bar's card
+// chrome and its 128px min-width per button do not fit in a panel's width.
+// Use when a save-bar does not fit (calendar, services).
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Socle commun à tous les boutons du footer
+// Base shared by all footer buttons
 @mixin billy-panel-button {
   display: inline-flex;
   align-items: center;
@@ -228,7 +228,7 @@ $field-height: 2.1875rem;
   }
 }
 
-// Annuler / Non : bouton fantôme discret (cf. .btn-cancel de billy-save-bar)
+// Cancel / No: discreet ghost button (cf. billy-save-bar's .btn-cancel)
 @mixin billy-panel-button-ghost {
   background: transparent;
   border-color: var(--billy-input-border, #e5e7eb);
@@ -241,7 +241,7 @@ $field-height: 2.1875rem;
   }
 }
 
-// Enregistrer : plein accent + relief au survol (cf. .btn-save de billy-save-bar)
+// Save: full accent + relief on hover (cf. billy-save-bar's .btn-save)
 @mixin billy-panel-button-submit {
   background: var(--billy-accent, #12b4dd);
   color: #fff;
@@ -254,7 +254,7 @@ $field-height: 2.1875rem;
   }
 }
 
-// Confirmation de suppression : le destructif prend la place du bouton principal
+// Delete confirmation: the destructive action takes the main button's place
 @mixin billy-panel-button-destructive {
   background: var(--billy-danger, #dc2626);
   color: #fff;
@@ -267,8 +267,8 @@ $field-height: 2.1875rem;
   }
 }
 
-// Supprimer : icône seule (~36px), poussée à gauche pour éloigner l'action
-// destructive du bouton de validation
+// Delete: icon only (~36px), pushed to the left to keep the destructive
+// action away from the confirm button
 @mixin billy-panel-button-delete-icon {
   margin-right: auto;
   padding: 8px 11px;

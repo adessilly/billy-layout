@@ -6,13 +6,13 @@
        (click)="toggleExpanded()">
     <span class="toast-accent" aria-hidden="true"></span>
     <div class="toast-icon" aria-hidden="true">
-      <i class="{{ icone() }}"></i>
+      <i class="{{ icon() }}"></i>
     </div>
     <div class="toast-texts">
-      <div class="toast-title">{{ toast().titre }}</div>
+      <div class="toast-title">{{ toast().title }}</div>
       <div class="toast-message">{{ toast().message }}</div>
     </div>
-    <button type="button" class="toast-close" aria-label="Fermer" (click)="close($event)">
+    <button type="button" class="toast-close" [attr.aria-label]="i18n.strings().toastr.close" (click)="close($event)">
       <i class="fa-solid fa-xmark"></i>
     </button>
     <div class="toast-progress"

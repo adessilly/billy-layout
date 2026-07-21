@@ -1,7 +1,7 @@
 import { afterNextRender, Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
 import { DOC_ENTRY_COUNT } from '../../site/doc-registry';
 
-/** Commandes copiables présentées dans la section installation. */
+/** Copyable commands shown in the installation section. */
 const COMMANDS = {
   npm: 'npm install billy-layout',
   git: 'git clone git@bitbucket.org:comptabilly/billy-layout.git',
@@ -10,10 +10,10 @@ const COMMANDS = {
 type CommandKey = keyof typeof COMMANDS;
 
 /**
- * Section « installation » de l'accueil : deux terminaux animés (npm install
- * et git clone) avec copie de la commande en un clic. Les animations — frappe
- * de la commande, sortie, pictogrammes SVG qui se dessinent — démarrent quand
- * la section entre dans le viewport.
+ * "Installation" section of the home page: two animated terminals (npm install
+ * and git clone) with one-click command copy. The animations — command typing,
+ * output, self-drawing SVG pictograms — start when the section enters the
+ * viewport.
  */
 @Component({
   selector: 'site-install-section',
@@ -29,10 +29,10 @@ export class InstallSectionComponent {
   protected readonly entryCount = DOC_ENTRY_COUNT;
   protected readonly commands = COMMANDS;
 
-  /** La section est entrée dans le viewport : lance les animations. */
+  /** The section has entered the viewport: start the animations. */
   protected readonly visible = signal(false);
 
-  /** Clé de la dernière commande copiée (retour visuel + annonce SR). */
+  /** Key of the last copied command (visual feedback + SR announcement). */
   protected readonly copied = signal<CommandKey | null>(null);
 
   private resetTimer: ReturnType<typeof setTimeout> | undefined;
@@ -49,7 +49,7 @@ export class InstallSectionComponent {
         clearTimeout(this.resetTimer);
         this.resetTimer = setTimeout(() => this.copied.set(null), 2200);
       })
-      .catch(() => { /* presse-papiers indisponible : pas de retour "copié" */ });
+      .catch(() => { /* clipboard unavailable: no "copied" feedback */ });
   }
 
   private observeViewport(): void {

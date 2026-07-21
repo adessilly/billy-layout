@@ -3,8 +3,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { BillyIconComponent, BillyIconName } from '../../core/icon/billy-icon.component';
 
 /**
- * Bouton de navigation réutilisable de la sidebar :
- * icône billy-icon + libellé, état actif (routerLinkActive) et badge optionnel.
+ * Reusable navigation button of the sidebar:
+ * billy-icon icon + label, active state (routerLinkActive) and optional badge.
  */
 @Component({
   selector: 'billy-nav-item',
@@ -19,7 +19,7 @@ export class BillyNavItemComponent {
   readonly label = input.required<string>();
   readonly collapsed = input(false);
   readonly badge = input<string | null>(null);
-  /** `info` (défaut) : compteur discret. `notification` : pastille rouge qui appelle l'action. */
+  /** `info` (default): discreet counter. `notification`: red dot that calls for action. */
   readonly badgeVariant = input<'info' | 'notification'>('info');
 
 }

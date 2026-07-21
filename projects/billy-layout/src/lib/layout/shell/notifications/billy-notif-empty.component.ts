@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BillyIconComponent } from '../../../core/icon/billy-icon.component';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 
-/** État vide d'une liste de notifications : « rien à traiter ». */
+/** Empty state of a notification list: "nothing to handle". */
 @Component({
   selector: 'billy-notif-empty',
   imports: [BillyIconComponent],
@@ -10,8 +11,8 @@ import { BillyIconComponent } from '../../../core/icon/billy-icon.component';
       <span class="billy-notif-empty-icon">
         <billy-icon name="check" [size]="24" [strokeWidth]="1.8" />
       </span>
-      <div class="billy-notif-empty-title">Rien à traiter ici</div>
-      <div class="billy-notif-empty-text">Tout est à jour dans cette catégorie.</div>
+      <div class="billy-notif-empty-title">{{ i18n.strings().notifications.emptyTitle }}</div>
+      <div class="billy-notif-empty-text">{{ i18n.strings().notifications.emptySubtitle }}</div>
     </div>
   `,
   styles: `
@@ -54,4 +55,5 @@ import { BillyIconComponent } from '../../../core/icon/billy-icon.component';
   `,
 })
 export class BillyNotifEmptyComponent {
+  protected readonly i18n = inject(BillyI18nService);
 }

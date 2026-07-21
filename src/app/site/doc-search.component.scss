@@ -6,14 +6,14 @@
   position: relative;
 }
 
-// ── Champ ────────────────────────────────────────────────────────────────────
-// Deux états (même ergonomie que la recherche globale de billy-client) : au
-// repos une simple icône de 40px ; au focus le champ se déploie en douceur.
+// ── Field ────────────────────────────────────────────────────────────────────
+// Two states (same ergonomics as billy-client's global search): a plain 40px
+// icon at rest; on focus the field smoothly expands.
 .doc-search-field {
   display: flex;
   align-items: center;
-  gap: 0;                      // Replié : pas d'espace parasite → icône centrée.
-  width: 40px;                 // Replié : juste l'icône.
+  gap: 0;                      // Collapsed: no stray gap → centered icon.
+  width: 40px;                 // Collapsed: just the icon.
   height: 40px;
   padding: 0;
   justify-content: center;
@@ -32,7 +32,7 @@
     box-shadow .2s ease,
     color .2s ease;
 
-  // Survol au repos : léger fond pour signaler la cliquabilité.
+  // Hover at rest: subtle background to signal clickability.
   &:not(.expanded):hover {
     background: var(--billy-addon-hover-bg);
     color: var(--billy-input-color);
@@ -64,7 +64,7 @@
   transition: transform .2s ease;
 }
 
-// Repliée, l'icône « respire » au survol pour inviter au clic.
+// Collapsed, the icon "breathes" on hover to invite a click.
 .doc-search-field:not(.expanded):hover .doc-search-icon {
   transform: scale(1.08);
 }
@@ -82,7 +82,7 @@
   opacity: 0;
   transition: opacity .18s ease;
 
-  // Replié : l'input ne prend aucune place et n'est pas cliquable.
+  // Collapsed: the input takes no space and is not clickable.
   .doc-search-field:not(.expanded) & {
     flex: none;
     width: 0;
@@ -96,7 +96,7 @@
 
   &::placeholder { color: var(--billy-input-placeholder); }
 
-  // Croix native de <input type="search"> masquée : on gère la nôtre.
+  // Native <input type="search"> clear cross hidden: we manage our own.
   &::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
@@ -116,7 +116,7 @@
   &:hover { color: var(--billy-input-color); }
 }
 
-// Badge du raccourci clavier (⌘K / Ctrl+K), visible champ déployé et vide.
+// Keyboard shortcut badge (⌘K / Ctrl+K), visible when expanded and empty.
 .doc-search-kbd {
   flex: none;
   display: flex;
@@ -137,7 +137,7 @@
   }
 }
 
-// ── Panneau de résultats ─────────────────────────────────────────────────────
+// ── Results panel ────────────────────────────────────────────────────────────
 .doc-search-panel {
   position: absolute;
   top: calc(100% + 8px);

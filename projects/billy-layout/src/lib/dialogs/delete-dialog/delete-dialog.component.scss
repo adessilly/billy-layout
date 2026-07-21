@@ -1,9 +1,9 @@
-// Confirmation de suppression : coque alignée sur billy-dialog-form (radius 16px,
-// tokens --billy-* → dark mode automatique — la modale vit sous <body>, seuls
-// les attributs _ngcontent suivent, donc pas de :host ici).
+// Delete confirmation: shell aligned with billy-dialog-form (16px radius,
+// --billy-* tokens → automatic dark mode — the modal lives under <body>, only
+// the _ngcontent attributes follow, hence no :host here).
 
 .del-modal {
-  // Au-dessus des overlays dialog-form (suppression demandée depuis un dialogue).
+  // Above the dialog-form overlays (deletion requested from a dialog).
   z-index: 9000;
 }
 
@@ -26,7 +26,7 @@
   text-align: center;
 }
 
-// Entrée : léger pop, à la place du glissement vers le bas de .billy-modal-dialog.
+// Entrance: a slight pop, instead of the downward slide of .billy-modal-dialog.
 .del-modal .del-dialog {
   transform: translateY(14px) scale(0.96);
   transition: transform 0.25s ease-out;
@@ -35,7 +35,7 @@
   transform: none;
 }
 
-// ── Croix de fermeture (même recette que dialog-form-header) ───────────────
+// ── Close cross (same recipe as dialog-form-header) ────────────────────────
 .del-close {
   position: absolute;
   top: 14px;
@@ -135,8 +135,8 @@
   transform-origin: 92% 70%;
 }
 
-// Les animations se rejouent à chaque ouverture : le display none→block posé
-// par Dialog (dialog-utils.ts) réinitialise les keyframes.
+// The animations replay on every opening: the display none→block applied
+// by Dialog (dialog-utils.ts) resets the keyframes.
 .del-modal.is-open {
   .del-svg   { animation: del-pop 0.35s ease-out both; }
   .del-lid   { animation: del-lid 1.9s cubic-bezier(0.34, 1.3, 0.64, 1) 0.25s both; }
@@ -179,7 +179,7 @@
   75%, 100% { transform: scale(1.3); opacity: 0; }
 }
 
-// ── Contenu ─────────────────────────────────────────────────────────────────
+// ── Content ─────────────────────────────────────────────────────────────────
 .del-body {
   padding: 10px 28px 4px;
 }
@@ -216,7 +216,7 @@
   overflow-wrap: anywhere;
 }
 
-.del-item-prix {
+.del-item-price {
   font-size: 15px;
   font-weight: 700;
   color: var(--del-danger);
@@ -287,7 +287,7 @@
 // ── Responsive ──────────────────────────────────────────────────────────────
 @media (max-width: 480px) {
   .del-actions {
-    // Empilé : l'action destructrice en premier, Annuler dessous.
+    // Stacked: the destructive action first, Cancel below.
     flex-direction: column-reverse;
     gap: 8px;
   }

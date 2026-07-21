@@ -15,20 +15,20 @@ import {
 } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
 
-/** billy-panel : la coque de panneau flottant, ancrée par le parent. */
+/** billy-panel : the floating panel shell, anchored by the parent. */
 @Component({
   selector: 'demo-billy-panel',
   imports: [BillyPanelComponent, ClickOutsideDirective, DemoStageComponent],
   template: `
-    <demo-stage titre="Un panneau flottant ancré" description="Purement présentationnel : l'état open, l'ancrage et la fermeture (clic extérieur) sont pilotés par le parent.">
+    <demo-stage title="An anchored floating panel" description="Purely presentational: the open state, anchoring and closing (outside click) are driven by the parent.">
       <div class="bp-anchor" (clickOutside)="open.set(false)" [listenClickOutside]="open()">
         <button type="button" class="demo-btn--submit" (click)="open.set(!open())">
-          {{ open() ? 'Fermer' : 'Ouvrir' }} le panneau
+          {{ open() ? 'Close' : 'Open' }} the panel
         </button>
-        <billy-panel [open]="open()" heading="Exports" subheading="Documents de la période">
-          <div class="bp-item">📄 Journal des ventes (PDF)</div>
-          <div class="bp-item">📊 Écritures comptables (CSV)</div>
-          <div class="bp-item">🧾 Justificatifs (ZIP)</div>
+        <billy-panel [open]="open()" heading="Exports" subheading="Documents for the period">
+          <div class="bp-item">📄 Sales journal (PDF)</div>
+          <div class="bp-item">📊 Accounting entries (CSV)</div>
+          <div class="bp-item">🧾 Receipts (ZIP)</div>
         </billy-panel>
       </div>
     </demo-stage>
@@ -62,18 +62,18 @@ export class BillyPanelDemoComponent {
   readonly open = signal(false);
 }
 
-/** billy-consult-card : la carte titrée des écrans de lecture. */
+/** billy-consult-card : the titled card of read-only screens. */
 @Component({
   selector: 'demo-consult-card',
   imports: [ConsultCardComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Un bloc d'information en consultation" description="Titre à pastille, badge de comptage, et une seule action contextuelle projetée dans [card-actions]." [center]="false">
-      <billy-consult-card label="Pièces jointes" icon="fa-solid fa-paperclip" [badge]="3">
-        <button card-actions type="button" class="demo-btn" (click)="toastr.info('Ouverture du gestionnaire (simulée).', 'Gérer')">Gérer</button>
+    <demo-stage title="An information block in consult mode" description="Icon-chip title, count badge, and a single contextual action projected into [card-actions]." [center]="false">
+      <billy-consult-card label="Attachments" icon="fa-solid fa-paperclip" [badge]="3">
+        <button card-actions type="button" class="demo-btn" (click)="toastr.info('Opening the manager (simulated).', 'Manage')">Manage</button>
         <div class="cc-files">
-          <div class="cc-file"><i class="fa-solid fa-file-pdf"></i> facture-scan.pdf</div>
-          <div class="cc-file"><i class="fa-solid fa-file-image"></i> ticket-caisse.jpg</div>
-          <div class="cc-file"><i class="fa-solid fa-file-code"></i> facture-ubl.xml</div>
+          <div class="cc-file"><i class="fa-solid fa-file-pdf"></i> invoice-scan.pdf</div>
+          <div class="cc-file"><i class="fa-solid fa-file-image"></i> receipt.jpg</div>
+          <div class="cc-file"><i class="fa-solid fa-file-code"></i> invoice-ubl.xml</div>
         </div>
       </billy-consult-card>
     </demo-stage>
@@ -104,25 +104,25 @@ export class ConsultCardDemoComponent {
   readonly toastr = inject(ToastrService);
 }
 
-/** billy-nav-card : la tuile de navigation des grilles d'accueil. */
+/** billy-nav-card : the navigation tile of home grids. */
 @Component({
   selector: 'demo-nav-card',
   imports: [NavCardComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Une grille de points d'entrée" description="Sélecteur d'attribut sur <a> ou <button> : la navigation reste portée par l'hôte. Pastille-icône, badge de comptage, chevron au survol et apparition en cascade ([stagger]). Les cartes de la page d'accueil sont ce composant." [center]="false">
+    <demo-stage title="A grid of entry points" description="Attribute selector on <a> or <button>: navigation stays on the host. Icon chip, count badge, chevron on hover and staggered entrance ([stagger]). The home page cards are this component." [center]="false">
       <div class="nc-grid">
         <button type="button" billy-nav-card
-                label="Ventes" icon="ventes" [badge]="12"
-                description="Factures, notes de crédit et suivi des paiements."
-                [stagger]="0" (click)="note('Ventes')"></button>
+                label="Sales" icon="sales" [badge]="12"
+                description="Invoices, credit notes and payment tracking."
+                [stagger]="0" (click)="note('Sales')"></button>
         <button type="button" billy-nav-card
-                label="Achats" icon="achats" [badge]="0"
-                description="Un badge à 0 s'affiche — null le masque."
-                [stagger]="1" (click)="note('Achats')"></button>
+                label="Purchases" icon="purchases" [badge]="0"
+                description="A badge at 0 is shown — null hides it."
+                [stagger]="1" (click)="note('Purchases')"></button>
         <button type="button" billy-nav-card
-                label="Agenda" icon="agenda" [chevron]="false"
-                description="Sans badge ni chevron : juste la tuile."
-                [stagger]="2" (click)="note('Agenda')"></button>
+                label="Calendar" icon="calendar" [chevron]="false"
+                description="No badge, no chevron: just the tile."
+                [stagger]="2" (click)="note('Calendar')"></button>
       </div>
     </demo-stage>
   `,
@@ -139,23 +139,23 @@ export class NavCardDemoComponent {
   private readonly toastr = inject(ToastrService);
 
   note(destination: string): void {
-    this.toastr.info(`Navigation vers « ${destination} » (simulée).`, 'nav-card');
+    this.toastr.info(`Navigating to "${destination}" (simulated).`, 'nav-card');
   }
 
 }
 
-/** billy-page-header : l'en-tête de page (celui du site est le même). */
+/** billy-page-header : the page header (this site's is the same one). */
 @Component({
   selector: 'demo-page-header',
   imports: [PageHeaderComponent, HeaderActionBarComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="L'en-tête d'une page métier" description="Titre + sous-titre + bouton retour optionnel ; les boutons d'action y sont projetés (header-action-bar). L'en-tête de cette page-ci est le même composant." [center]="false">
+    <demo-stage title="The header of a business page" description="Title + subtitle + optional back button; the action buttons are projected into it (header-action-bar). The header of this very page is the same component." [center]="false">
       <div class="ph-frame">
         <billy-page-header
-          titre="Ventes"
-          sousTitre="Liste de vos ventes"
-          [retourVisible]="true"
-          (retour)="toastr.info('Retour (simulé).', 'Navigation')">
+          title="Sales"
+          subtitle="List of your sales"
+          [backVisible]="true"
+          (back)="toastr.info('Back (simulated).', 'Navigation')">
           <billy-header-action-bar [actions]="actions" />
         </billy-page-header>
       </div>
@@ -175,20 +175,20 @@ export class PageHeaderDemoComponent {
   readonly toastr = inject(ToastrService);
 
   readonly actions: HeaderAction[] = [
-    { label: 'Exporter', icon: 'fa-solid fa-download', title: 'Exporter la liste', click: () => this.toastr.info('Export (simulé).', 'Exporter') },
-    { label: 'Ajouter une vente', icon: 'fa-solid fa-plus', title: 'Ajouter une vente', variant: 'primary', click: () => this.toastr.success('Formulaire de vente (simulé).', 'Ajouter') },
+    { label: 'Export', icon: 'fa-solid fa-download', title: 'Export the list', click: () => this.toastr.info('Export (simulated).', 'Export') },
+    { label: 'Add a sale', icon: 'fa-solid fa-plus', title: 'Add a sale', variant: 'primary', click: () => this.toastr.success('Sale form (simulated).', 'Add') },
   ];
 
 }
 
-/** billy-header-action-bar : le vocabulaire complet des actions. */
+/** billy-header-action-bar : the full action vocabulary. */
 @Component({
   selector: 'demo-header-action-bar',
   imports: [HeaderActionBarComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Le trio d'actions canonique" description="Les actions sans variant se regroupent en segment ; une seule primary par page, danger réservé au destructif (cf. guidelines §1).">
+    <demo-stage title="The canonical action trio" description="Actions without a variant group into a segment; a single primary per page, danger reserved for destructive actions (see guidelines §1).">
       <billy-header-action-bar [actions]="actions" />
-      <div class="demo-note">Réduisez la fenêtre : la barre passe en icônes seules (d'où l'importance d'un title par action).</div>
+      <div class="demo-note">Shrink the window: the bar collapses to icons only (hence the importance of a title per action).</div>
     </demo-stage>
   `,
 })
@@ -197,33 +197,33 @@ export class HeaderActionBarDemoComponent {
   private readonly toastr = inject(ToastrService);
 
   readonly actions: HeaderAction[] = [
-    { label: 'Dupliquer', icon: 'fa-solid fa-copy', title: 'Dupliquer', click: () => this.note('Dupliquer') },
-    { label: 'Télécharger', icon: 'fa-solid fa-download', title: 'Télécharger le PDF', click: () => this.note('Télécharger') },
-    { label: 'Envoyer', icon: 'fa-solid fa-paper-plane', title: 'Envoyer par email', variant: 'primary', click: () => this.note('Envoyer') },
-    { label: 'Supprimer', icon: 'fa-solid fa-trash-can', title: 'Supprimer', variant: 'danger', click: () => this.note('Supprimer') },
+    { label: 'Duplicate', icon: 'fa-solid fa-copy', title: 'Duplicate', click: () => this.note('Duplicate') },
+    { label: 'Download', icon: 'fa-solid fa-download', title: 'Download the PDF', click: () => this.note('Download') },
+    { label: 'Send', icon: 'fa-solid fa-paper-plane', title: 'Send by email', variant: 'primary', click: () => this.note('Send') },
+    { label: 'Delete', icon: 'fa-solid fa-trash-can', title: 'Delete', variant: 'danger', click: () => this.note('Delete') },
   ];
 
   private note(action: string): void {
-    this.toastr.info(`Action « ${action} » cliquée.`, 'header-action-bar');
+    this.toastr.info(`Action "${action}" clicked.`, 'header-action-bar');
   }
 
 }
 
-/** billy-tabs : onglets projetés, montés en permanence. */
+/** billy-tabs : projected tabs, permanently mounted. */
 @Component({
   selector: 'demo-tabs',
   imports: [TabsComponent, TabComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Onglets segmentés" description="Mode projeté : les panneaux restent montés, seul l'affichage bascule — la pastille active glisse. (La page que vous lisez utilise le même composant pour Démo / Documentation.)" [center]="false">
+    <demo-stage title="Segmented tabs" description="Projected mode: the panels stay mounted, only their visibility toggles — the active pill slides. (The page you are reading uses the same component for Demo / Documentation.)" [center]="false">
       <billy-tabs>
-        <billy-tab label="Encodage" icon="fa-solid fa-pen">
-          <div class="tab-pane">Contenu de l'onglet <strong>Encodage</strong> — jamais détruit, son état persiste.</div>
+        <billy-tab label="Entry" icon="fa-solid fa-pen">
+          <div class="tab-pane">Content of the <strong>Entry</strong> tab — never destroyed, its state persists.</div>
         </billy-tab>
-        <billy-tab label="Paiements" icon="fa-solid fa-coins">
-          <div class="tab-pane">Contenu de l'onglet <strong>Paiements</strong>.</div>
+        <billy-tab label="Payments" icon="fa-solid fa-coins">
+          <div class="tab-pane">Content of the <strong>Payments</strong> tab.</div>
         </billy-tab>
-        <billy-tab label="Historique" icon="fa-solid fa-clock-rotate-left">
-          <div class="tab-pane">Contenu de l'onglet <strong>Historique</strong>.</div>
+        <billy-tab label="History" icon="fa-solid fa-clock-rotate-left">
+          <div class="tab-pane">Content of the <strong>History</strong> tab.</div>
         </billy-tab>
       </billy-tabs>
     </demo-stage>
@@ -242,22 +242,22 @@ export class HeaderActionBarDemoComponent {
 })
 export class TabsDemoComponent {}
 
-/** billy-filter-toggle-buttons : segments et chips de filtrage. */
+/** billy-filter-toggle-buttons : segments and filter chips. */
 @Component({
   selector: 'demo-filter-toggle-buttons',
   imports: [FilterToggleButtonsComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Filtrer par segments" description="Variante toggle pour les périodes, variante chips colorées pour les statuts — value null = « tout »." [center]="false">
+    <demo-stage title="Filter by segments" description="Toggle variant for periods, colored chips variant for statuses — value null = 'all'." [center]="false">
       <div class="ftb-col">
         <div>
-          <div class="ftb-label">variant="toggle" · période</div>
-          <billy-filter-toggle-buttons [options]="periodes" [value]="periode()" (valueChange)="periode.set($event)" />
+          <div class="ftb-label">variant="toggle" · period</div>
+          <billy-filter-toggle-buttons [options]="periods" [value]="period()" (valueChange)="period.set($event)" />
         </div>
         <div>
-          <div class="ftb-label">variant="chips" · statut</div>
-          <billy-filter-toggle-buttons variant="chips" [options]="statuts" [value]="statut()" (valueChange)="statut.set($event)" />
+          <div class="ftb-label">variant="chips" · status</div>
+          <billy-filter-toggle-buttons variant="chips" [options]="statuses" [value]="status()" (valueChange)="status.set($event)" />
         </div>
-        <div class="demo-note">période : <code>{{ periode() ?? 'toutes' }}</code> · statut : <code>{{ statut() ?? 'tous' }}</code></div>
+        <div class="demo-note">period: <code>{{ period() ?? 'all' }}</code> · status: <code>{{ status() ?? 'all' }}</code></div>
       </div>
     </demo-stage>
   `,
@@ -281,21 +281,21 @@ export class TabsDemoComponent {}
 })
 export class FilterToggleButtonsDemoComponent {
 
-  readonly periode = signal<string | null>('2026');
-  readonly statut = signal<string | null>(null);
+  readonly period = signal<string | null>('2026');
+  readonly status = signal<string | null>(null);
 
-  readonly periodes: FilterToggleOption[] = [
-    { value: null, label: 'Tout' },
+  readonly periods: FilterToggleOption[] = [
+    { value: null, label: 'All' },
     { value: '2026', label: '2026' },
     { value: '2025', label: '2025' },
-    { value: 'T3', label: 'Trimestre 3' },
+    { value: 'Q3', label: 'Quarter 3' },
   ];
 
-  readonly statuts: FilterToggleOption[] = [
-    { value: null, label: 'Tous' },
-    { value: 'payee', label: 'Payées', activeColor: '#15803d', activeBg: '#dcfce7' },
-    { value: 'attente', label: 'En attente', activeColor: '#b45309', activeBg: '#fef3c7' },
-    { value: 'echue', label: 'Échues', activeColor: '#dc2626', activeBg: '#fee2e2' },
+  readonly statuses: FilterToggleOption[] = [
+    { value: null, label: 'All' },
+    { value: 'paid', label: 'Paid', activeColor: '#15803d', activeBg: '#dcfce7' },
+    { value: 'pending', label: 'Pending', activeColor: '#b45309', activeBg: '#fef3c7' },
+    { value: 'overdue', label: 'Overdue', activeColor: '#dc2626', activeBg: '#fee2e2' },
   ];
 
 }

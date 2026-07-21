@@ -1,5 +1,5 @@
-// Tuile de navigation cliquable. Le dark mode est entièrement porté par les
-// tokens --billy-* : pas de bloc dark local.
+// Clickable navigation tile. Dark mode is entirely carried by the
+// --billy-* tokens: no local dark block.
 
 :host {
   display: flex;
@@ -13,7 +13,7 @@
   text-decoration: none;
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 
-  // Reset pour l'usage <button billy-nav-card>.
+  // Reset for the <button billy-nav-card> usage.
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -33,12 +33,12 @@
   }
 }
 
-// Apparition en cascade : delay = stagger × 60ms (+ délai de base optionnel,
-// --billy-nav-card-base-delay, posé par le conteneur).
+// Staggered entrance: delay = stagger × 60ms (+ optional base delay,
+// --billy-nav-card-base-delay, set by the container).
 @media (prefers-reduced-motion: no-preference) {
   :host {
-    // backwards (et non both) : une fois l'animation finie, elle ne doit plus
-    // écraser le transform du :hover.
+    // backwards (not both): once the animation is done, it must no longer
+    // override the :hover transform.
     animation: billyNavCardIn .45s ease backwards;
     animation-delay: calc(var(--billy-nav-card-stagger, 0) * 60ms + var(--billy-nav-card-base-delay, 0ms));
   }

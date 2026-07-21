@@ -2,16 +2,16 @@
 
 @include code.billy-code-field;
 
-// Une adresse n'est pas un code : ni chasse fixe, ni interlettrage élargi —
-// « rn » et « m » doivent rester distincts, mais du texte reste du texte.
+// An address is not a code: no fixed pitch, no widened letter-spacing —
+// "rn" and "m" must stay distinct, but text remains text.
 .cfd-input--text {
   font-weight: 500;
   letter-spacing: normal;
   font-variant-numeric: normal;
 }
 
-// ── Correction proposée ──────────────────────────────────────────────────────
-// Prend la place du message : c'est le message, en cliquable.
+// ── Suggested correction ─────────────────────────────────────────────────────
+// Takes the place of the message: it is the message, made clickable.
 .cfd-suggest {
   min-width: 0;
   padding: 0;

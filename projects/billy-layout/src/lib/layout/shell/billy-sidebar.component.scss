@@ -1,6 +1,6 @@
-// Le host doit être un conteneur flex qui s'étire sur toute la hauteur du
-// body du shell, sinon le nav garde une hauteur auto et le pied de version
-// (margin-top: auto) reste collé au dernier élément du menu.
+// The host must be a flex container stretching over the full height of the
+// shell body, otherwise the nav keeps an auto height and the version footer
+// (margin-top: auto) stays stuck to the last menu item.
 :host {
   display: flex;
   flex: none;

@@ -1,6 +1,28 @@
 {
   "name": "billy-layout",
-  "version": "0.1.1",
+  "version": "1.0.0",
+  "description": "Angular design system & application shell: topbar/sidebar layout, SCSS design tokens, form fields (CVA), dialogs, feedback components and file viewers. Docs shipped in the package, AI-assistant ready.",
+  "license": "MIT",
+  "author": "Adrien Dessilly",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adessilly/billy-layout.git"
+  },
+  "homepage": "https://github.com/adessilly/billy-layout#readme",
+  "bugs": {
+    "url": "https://github.com/adessilly/billy-layout/issues"
+  },
+  "keywords": [
+    "angular",
+    "design-system",
+    "components",
+    "layout",
+    "shell",
+    "signals",
+    "standalone-components",
+    "scss",
+    "dark-mode"
+  ],
   "peerDependencies": {
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",

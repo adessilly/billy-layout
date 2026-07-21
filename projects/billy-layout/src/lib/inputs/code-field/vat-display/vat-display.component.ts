@@ -1,23 +1,23 @@
 import { Component, booleanAttribute, computed, input } from '@angular/core';
-import { TvaUtils } from '../../../core/utils/tva-utils';
+import { VatUtils } from '../../../core/utils/vat-utils';
 import { CodeValueComponent } from '../code-value/code-value.component';
 
 /**
- * Affichage d'un numéro de TVA en lecture : « BE0690614660 » devient
- * « BE 0690.614.660 », préfixe pays et points en gris.
+ * Read-only display of a VAT number: "BE0690614660" becomes
+ * "BE 0690.614.660", country prefix and dots in gray.
  *
- * Robuste par construction : une valeur sale est d'abord nettoyée, un pays sans
- * règle de découpage est affiché tel quel derrière son préfixe.
+ * Robust by construction: a dirty value is cleaned first, and a country with
+ * no splitting rule is shown as-is behind its prefix.
  *
  * ```html
- * <billy-tva-display [value]="client.tva"></billy-tva-display>
+ * <billy-vat-display [value]="client.vat"></billy-vat-display>
  * ```
  */
 @Component({
-  selector: 'billy-tva-display',
+  selector: 'billy-vat-display',
   imports: [CodeValueComponent],
   template: `
-    <billy-code-value kind="tva"
+    <billy-code-value kind="vat"
       [segments]="segments()"
       [raw]="raw()"
       [empty]="empty()"
@@ -27,14 +27,15 @@ import { CodeValueComponent } from '../code-value/code-value.component';
   `,
   styles: `:host { display: inline-flex; max-width: 100%; }`,
 })
-export class TvaDisplayComponent {
+export class VatDisplayComponent {
 
   readonly value = input<string | null | undefined>('');
-  readonly empty = input('Non renseigné');
+  /** Falls back to the i18n dictionary (codeDisplay.empty) inside <billy-code-value>. */
+  readonly empty = input<string>();
   readonly glyph = input(false, { transform: booleanAttribute });
   readonly copyable = input(true, { transform: booleanAttribute });
 
-  readonly raw = computed(() => TvaUtils.sanitize(this.value()));
-  readonly segments = computed(() => TvaUtils.format(this.value()));
+  readonly raw = computed(() => VatUtils.sanitize(this.value()));
+  readonly segments = computed(() => VatUtils.format(this.value()));
 
 }

@@ -1,72 +1,74 @@
-# billy-button-upload — ButtonUploadComponent
+# billy-upload-button — UploadButtonComponent
 
-> Catégorie `buttons` · source `projects/billy-layout/src/lib/buttons/button-upload/` · standalone component
+> Category `buttons` · source `projects/billy-layout/src/lib/buttons/upload-button/` · standalone component
 
-## Rôle
+## Purpose
 
-Tuile d'import de fichier : même anatomie qu'`billy-button-ajout` (pastille d'icône + titre + sous-titre) mais en style « zone d'import » (fond gris, bord pointillé), avec un `<input type="file">` caché déclenché au clic et un état `loading` (spinner + « Chargement... », tuile inerte). Émet le fichier choisi ; c'est le point d'entrée du scan de facture par IA. Utilisé dans `src/app/auth/pages/home/home-actions/home-actions.component.html` (« Scanner une facture ») et `src/app/auth/pages/dashboard/dashboard-list-achat/dashboard-list-achat.component.html`.
+File-import tile: same anatomy as `billy-add-button` (icon badge + title + subtitle) but styled as an "import zone" (grey background, dashed border), with a hidden `<input type="file">` triggered on click and a `loading` state (spinner + "Loading...", inert tile). Emits the chosen file; it is the entry point of the AI invoice scan. Used in `src/app/auth/pages/home/home-actions/home-actions.component.html` ("Scan an invoice") and `src/app/auth/pages/dashboard/dashboard-list-achat/dashboard-list-achat.component.html`.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
-import { ButtonUploadComponent } from 'billy-layout';
+import { UploadButtonComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-button-upload>`.
+Selector: `<billy-upload-button>`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string` | `'Importer'` | Titre de la tuile (remplacé par « Chargement... » pendant `loading`). |
-| `subtitle` | `string` | `'Depuis un fichier'` | Sous-titre, toujours affiché. |
-| `accept` | `string` | `'.pdf,.jpg,.jpeg,.png,.gif'` | Valeur de l'attribut `accept` de l'input fichier. |
-| `loading` | `boolean` | `false` | État chargement : spinner à la place de l'icône, tuile estompée et non cliquable (`pointer-events: none`). |
+| `label` | `string` | i18n `uploadButton.label` (EN `'Import'`) | Tile title (replaced by the i18n `uploadButton.loading` text, EN `'Loading…'`, while `loading`). |
+| `subtitle` | `string` | i18n `uploadButton.subtitle` (EN `'From a file'`) | Subtitle, always displayed. |
+| `accept` | `string` | `'.pdf,.jpg,.jpeg,.png,.gif'` | Value of the file input's `accept` attribute. |
+| `loading` | `boolean` | `false` | Loading state: spinner instead of the icon, tile dimmed and not clickable (`pointer-events: none`). |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
 | Output | Payload | Description |
 |---|---|---|
-| `fileSelected` | `File` | Fichier choisi dans le sélecteur natif (un seul fichier). Non émis si l'utilisateur annule. |
+| `fileSelected` | `File` | File chosen in the native picker (single file). Not emitted if the user cancels. |
 
-### Méthodes publiques
+### Public methods
 
-| Méthode | Description |
+| Method | Description |
 |---|---|
-| `trigger()` | Ouvre le sélecteur de fichier natif (clic programmatique sur l'input caché, obtenu via `viewChild.required`). Appelée par la tuile, utilisable aussi depuis le parent. |
-| `onFileChange(event: Event)` | Handler du `(change)` : émet `fileSelected` puis **réinitialise la valeur de l'input**, pour que re-choisir le même fichier redéclenche l'événement. |
+| `trigger()` | Opens the native file picker (programmatic click on the hidden input, obtained via `viewChild.required`). Called by the tile, also usable from the parent. |
+| `onFileChange(event: Event)` | `(change)` handler: emits `fileSelected` then **resets the input's value**, so that re-choosing the same file re-triggers the event. |
 
 ## Slots / projection
 
-Aucun — tout passe par les inputs.
+None — everything goes through the inputs.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/home/home-actions/home-actions.component.html` :
+Real usage in `src/app/auth/pages/home/home-actions/home-actions.component.html`:
 
 ```html
-<billy-button-upload
+<billy-upload-button
   class="action-item action-upload"
-  label="Scanner une facture"
-  subtitle="Import IA"
+  label="Scan an invoice"
+  subtitle="AI import"
   [loading]="uploadLoading()"
   (fileSelected)="onFileSelected($event)">
-</billy-button-upload>
+</billy-upload-button>
 ```
 
 ## Styles & theming
 
-- `:host { display: block; flex: 1; min-width: 0 }` : conçu pour une grille d'actions flex, aux côtés d'`billy-button-ajout`.
-- Style import : fond `#f4f6f7`, texte `#555`, bord 2px **pointillé** `#ccc` ; au survol (hors loading), la tuile passe à l'accent (#23b7e5, fond `#e8f8fd`, élévation + ombre).
-- `is-loading` : opacité 0.65, `cursor: not-allowed`, `pointer-events: none`.
-- Couleurs codées en dur, pas de token `--billy-*` ; **pas de règles dark mode** (contrairement à `billy-button-ajout`) : le fond gris clair reste tel quel sous `body.dark-mode`.
+- `:host { display: block; flex: 1; min-width: 0 }`: designed for a flex action grid, next to `billy-add-button`.
+- Import style: `#f4f6f7` background, `#555` text, 2px **dashed** `#ccc` border; on hover (unless loading), the tile switches to the accent (#23b7e5, `#e8f8fd` background, elevation + shadow).
+- `is-loading`: opacity 0.65, `cursor: not-allowed`, `pointer-events: none`.
+- Hard-coded colors, no `--billy-*` token; **no dark mode rules** (unlike `billy-add-button`): the light grey background stays as is under `body.dark-mode`.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Comme `billy-button-ajout`, la tuile est un `<div>` cliquable, pas un `<button>` : pas d'accessibilité clavier native.
-- Mono-fichier : `input.files?.[0]` — pas d'attribut `multiple`, un seul `fileSelected` par sélection.
-- L'input est réinitialisé après chaque sélection : reprendre le même fichier deux fois de suite fonctionne (le `change` natif ne se déclencherait pas sinon).
-- `accept` est indicatif (filtre du sélecteur natif) : ne dispense pas d'une validation du type côté consommateur.
-- Le libellé « Chargement... » est codé en dur dans le template (seul `labelSaveLoading`-like absent) ; le sous-titre, lui, reste affiché pendant le chargement.
+- Like `billy-add-button`, the tile is a clickable `<div>`, not a `<button>`: no native keyboard accessibility.
+- Single-file only: `input.files?.[0]` — no `multiple` attribute, one `fileSelected` per selection.
+- The input is reset after each selection: picking the same file twice in a row works (the native `change` would not fire otherwise).
+- `accept` is indicative (native picker filter): it does not replace a type validation on the consumer side.
+- The loading label comes from the i18n dictionary (`uploadButton.loading`, EN "Loading…") — there is no `labelSaveLoading`-like input to override it per instance; the subtitle, however, stays visible while loading.

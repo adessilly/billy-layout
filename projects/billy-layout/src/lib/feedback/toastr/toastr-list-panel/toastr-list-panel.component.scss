@@ -1,5 +1,5 @@
-// Pile de toasts, ancrée sous la topbar (66px). Le conteneur laisse passer
-// les clics ; seules les cartes sont interactives.
+// Toast stack, anchored below the topbar (66px). The container lets clicks
+// pass through; only the cards are interactive.
 .toastr-stack {
   position: fixed;
   top: 78px;
@@ -12,7 +12,7 @@
   pointer-events: none;
 }
 
-// Mobile : pilules centrées sous la topbar, largeur au contenu.
+// Mobile: pills centered below the topbar, sized to their content.
 @media (max-width: 767.98px) {
   .toastr-stack {
     top: 74px;

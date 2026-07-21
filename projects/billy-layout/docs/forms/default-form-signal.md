@@ -1,43 +1,43 @@
-# (classe de base, sans sélecteur) — DefaultFormSignalComponent
+# (base class, no selector) — DefaultFormSignalComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/default-form/default-form-signal.component.ts` · standalone component (template vide, destiné à l'héritage)
+> Category `forms` · source `projects/billy-layout/src/lib/forms/default-form/default-form-signal.component.ts` · standalone component (empty template, meant to be inherited)
 
-## Rôle
+## Purpose
 
-Classe de base pour les formulaires routés « création / édition » à l'ère signals : elle reçoit le paramètre de route `:id` via `withComponentInputBinding` (input `id`), le normalise en `beanId` (nombre ou `null`) et en déduit `editionMode`. Un composant de formulaire l'étend, appelle `super()` et dispose des trois signaux. Utilisée par `src/app/auth/pages/achat/achat-form/achat-form.component.ts` (`AchatFormComponent extends DefaultFormSignalComponent`) — seul consommateur à ce jour, l'achat étant le premier formulaire migré. **Note** : la variante historique routée `DefaultFormComponent` (lecture de l'`ActivatedRoute`, navigation, etc.) est restée dans l'app, `src/app/shared/components/default-form/`, et sert encore à devis-form, vente-form, client-form, vente-paiements…
+Base class for routed "create / edit" forms in the signals era: it receives the `:id` route parameter via `withComponentInputBinding` (input `id`), normalizes it into `beanId` (number or `null`) and derives `editionMode` from it. A form component extends it, calls `super()` and gets the three signals. Used by `src/app/auth/pages/achat/achat-form/achat-form.component.ts` (`AchatFormComponent extends DefaultFormSignalComponent`) — the only consumer to date, purchases being the first migrated form. **Note**: the historical routed variant `DefaultFormComponent` (imperative `ActivatedRoute` reading, navigation, etc.) stayed in the app, `src/app/shared/components/default-form/`, and still powers devis-form, vente-form, client-form, vente-paiements…
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { DefaultFormSignalComponent } from 'billy-layout';
 ```
 
-Pas de sélecteur ni de template (`template: ''`) : ce composant ne se place pas dans un template, il s'**étend**.
+No selector and no template (`template: ''`): this component is not placed in a template, it is **extended**.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `id` | `number \| null` | `null` | Paramètre de route `:id`, poussé automatiquement par `withComponentInputBinding`. Arrive en pratique comme `string`, `undefined` (paramètre absent) ou `null`. |
+| `id` | `number \| null` | `null` | `:id` route parameter, pushed automatically by `withComponentInputBinding`. In practice arrives as `string`, `undefined` (parameter absent) or `null`. |
 
-Pas d'output.
+No outputs.
 
-### Membres publics (signaux dérivés)
+### Public members (derived signals)
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `beanId` | `linkedSignal<number \| null>` | `id` normalisé : `null` si `id` est `null`, `undefined` ou non numérique ; sinon `+id`. `linkedSignal` : recalculé à chaque changement de route, mais **réassignable** par la sous-classe (ex. `set` après création pour basculer en édition sans naviguer). |
-| `editionMode` | `computed<boolean>` | `true` dès que `beanId` n'est pas `null` — mode édition vs création. |
+| `beanId` | `linkedSignal<number \| null>` | Normalized `id`: `null` if `id` is `null`, `undefined` or non-numeric; otherwise `+id`. `linkedSignal`: recomputed on every route change, but **reassignable** by the subclass (e.g. `set` after creation to switch to edit mode without navigating). |
+| `editionMode` | `computed<boolean>` | `true` as soon as `beanId` is not `null` — edit mode vs create mode. |
 
 ## Slots / projection
 
-Aucun (pas de template).
+None (no template).
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/achat/achat-form/achat-form.component.ts` :
+Real usage in `src/app/auth/pages/achat/achat-form/achat-form.component.ts`:
 
 ```ts
 import { DefaultFormSignalComponent } from 'billy-layout';
@@ -47,22 +47,22 @@ export class AchatFormComponent extends DefaultFormSignalComponent implements Af
   constructor(/* ... */) {
     super();
     effect(() => {
-      // beanId()/editionMode() réagissent au paramètre :id de la route
+      // beanId()/editionMode() react to the :id route parameter
       this.beanToForm(this.achatState.data());
     });
   }
 }
 ```
 
-La route correspondante expose `:id` et l'app est configurée avec `withComponentInputBinding()` pour que le paramètre alimente l'input `id`.
+The corresponding route exposes `:id` and the app is configured with `withComponentInputBinding()` so the parameter feeds the `id` input.
 
 ## Styles & theming
 
-Aucun style (`styleUrls: []`) — la classe ne rend rien.
+No styles (`styleUrls: []`) — the class renders nothing.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **`withComponentInputBinding` pousse `undefined`** quand le paramètre `:id` est absent (route de création) : la garde de `beanId` teste explicitement `null`, `undefined` **et** `Number.isNaN(+id)` — `Number.isNaN(undefined)` vaut `false` car `Number.isNaN` ne coerce pas, d'où le test séparé.
-- `beanId` est un `linkedSignal`, pas un `computed` : il se resynchronise sur la route mais peut être écrasé localement (`this.beanId.set(nouvelId)`), ce qui fait basculer `editionMode` sans navigation.
-- La classe importe `OnInit` sans l'implémenter — import mort, sans effet.
-- Ne pas confondre avec `DefaultFormComponent` (`src/app/shared/components/default-form/`), la variante non-signals restée dans l'app : API différente (ActivatedRoute impérative), toujours majoritaire dans les formulaires.
+- **`withComponentInputBinding` pushes `undefined`** when the `:id` parameter is absent (creation route): the `beanId` guard explicitly tests `null`, `undefined` **and** `Number.isNaN(+id)` — `Number.isNaN(undefined)` is `false` because `Number.isNaN` does not coerce, hence the separate check.
+- `beanId` is a `linkedSignal`, not a `computed`: it resynchronizes with the route but can be overridden locally (`this.beanId.set(newId)`), which flips `editionMode` without navigating.
+- The class imports `OnInit` without implementing it — dead import, no effect.
+- Not to be confused with `DefaultFormComponent` (`src/app/shared/components/default-form/`), the non-signals variant that stayed in the app: different API (imperative ActivatedRoute), still the majority in forms.

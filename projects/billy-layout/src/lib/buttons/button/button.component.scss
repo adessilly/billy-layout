@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// billy-button — bouton d'action polyvalent
+// billy-button — all-purpose action button
 //
-// 3 axes indépendants : couleur (5 teintes du DS) × variante (plein/contour/texte,
-// arrondi ou non) × taille. Chaque couleur expose un petit jeu de variables
-// locales (--btn-*) que les variantes consomment ; les teintes sont choisies
-// pour passer WCAG AA (texte ≥ 4.5:1) en clair comme en sombre.
+// 3 independent axes: color (5 DS tints) × variant (plain/outline/text,
+// rounded or not) × size. Each color exposes a small set of local variables
+// (--btn-*) that the variants consume; the tints are chosen to pass WCAG AA
+// (text ≥ 4.5:1) in both light and dark mode.
 // ═══════════════════════════════════════════════════════════════════════════
 
 :host {
@@ -12,7 +12,7 @@
   vertical-align: middle;
   max-width: 100%;
 
-  // Respecte la préférence système « réduire les animations ».
+  // Honors the system "reduce motion" preference.
   @media (prefers-reduced-motion: reduce) {
     .billy-btn,
     .billy-btn * {
@@ -21,9 +21,9 @@
   }
 }
 
-// ── Base commune ────────────────────────────────────────────────────────────
+// ── Shared base ─────────────────────────────────────────────────────────────
 .billy-btn {
-  // Valeurs par défaut, surchargées par les classes de couleur.
+  // Default values, overridden by the color classes.
   --btn-solid: var(--billy-accent, #12b4dd);
   --btn-on-solid: #fff;
   --btn-fg: #0e7490;
@@ -88,7 +88,7 @@
     transition: transform 0.16s ease;
   }
 
-  // ── Interactions communes ──────────────────────────────────────────────
+  // ── Shared interactions ────────────────────────────────────────────────
   &:active:not(:disabled) {
     transform: translateY(0.5px) scale(0.98);
     transition-duration: 0.05s;
@@ -111,21 +111,21 @@
   }
 
   &.is-loading {
-    // Le contenu reste, seule l'interactivité est neutralisée.
+    // The content stays; only the interactivity is disabled.
     .billy-btn__spinner {
       animation-duration: 0.9s;
     }
   }
 }
 
-// ── Palettes de couleur ─────────────────────────────────────────────────────
-// Chaque couleur mappe une famille sémantique du DS (--billy-<hue>-*) sur les
-// variables locales que consomment les variantes. Plus aucune valeur en dur ici
-// (hors fallbacks) : le dark mode arrive automatiquement via body.dark-mode
-// (tokens), sans bloc dark local. `primary` reprend l'Accent de marque.
-// solid  : fond des pleins · on-solid : texte du plein
-// fg     : teinte des variantes contour/texte (= `-strong`, lisible sur clair)
-// soft   : voile teinté du survol contour/texte
+// ── Color palettes ──────────────────────────────────────────────────────────
+// Each color maps a semantic DS family (--billy-<hue>-*) onto the local
+// variables the variants consume. No more hard-coded values here (besides
+// fallbacks): dark mode arrives automatically via body.dark-mode (tokens),
+// with no local dark block. `primary` reuses the brand Accent.
+// solid  : plain background · on-solid : plain text
+// fg     : tint of the outline/text variants (= `-strong`, readable on light)
+// soft   : tinted veil of the outline/text hover
 .billy-btn--neutral {
   --btn-solid: var(--billy-neutral, #6b7280);
   --btn-on-solid: #fff;
@@ -145,7 +145,7 @@
 }
 
 .billy-btn--primary {
-  --btn-solid: var(--billy-accent, #12b4dd); // cyan de marque, vif
+  --btn-solid: var(--billy-accent, #12b4dd); // vivid brand cyan
   --btn-on-solid: #fff;
   --btn-fg: var(--billy-accent-strong, #0e7490);
   --btn-soft: var(--billy-accent-soft, rgba(18, 180, 221, 0.14));
@@ -154,7 +154,7 @@
 }
 
 .billy-btn--warning {
-  --btn-solid: var(--billy-warning, #ff902b); // orange de la save-bar
+  --btn-solid: var(--billy-warning, #ff902b); // save-bar orange
   --btn-on-solid: #fff;
   --btn-fg: var(--billy-warning-strong, #b45309);
   --btn-soft: var(--billy-warning-soft, rgba(255, 144, 43, 0.16));
@@ -171,7 +171,7 @@
   --btn-ring: var(--billy-error-ring, rgba(239, 68, 68, 0.35));
 }
 
-// ── Tailles ─────────────────────────────────────────────────────────────────
+// ── Sizes ───────────────────────────────────────────────────────────────────
 .billy-btn--small {
   --btn-pad-y: 5px;
   --btn-pad-x: 12px;
@@ -192,9 +192,9 @@
   --btn-gap: 10px;
 }
 
-// ── Variante : plein ────────────────────────────────────────────────────────
-// Fill plat (teinte pleine, sans dégradé). Au survol : léger assombrissement et
-// ombre douce — effet discret, sans relief brillant.
+// ── Variant: plain ──────────────────────────────────────────────────────────
+// Flat fill (solid tint, no gradient). On hover: slight darkening and a soft
+// shadow — a discreet effect, without glossy relief.
 .billy-btn--plain,
 .billy-btn--plain-rounded {
   background: var(--btn-solid);
@@ -214,7 +214,7 @@
   }
 }
 
-// ── Variante : contour ──────────────────────────────────────────────────────
+// ── Variant: outline ────────────────────────────────────────────────────────
 .billy-btn--outline,
 .billy-btn--outline-rounded {
   background: transparent;
@@ -232,10 +232,10 @@
   }
 }
 
-// ── Variante : texte ────────────────────────────────────────────────────────
-// `text`         : simple voile teinté au survol (coins du gabarit).
-// `text-rounded` : une pilule pleinement arrondie apparaît au survol
-//                  (fondu + léger zoom), le libellé restant en place.
+// ── Variant: text ───────────────────────────────────────────────────────────
+// `text`         : simple tinted veil on hover (preset corners).
+// `text-rounded` : a fully rounded pill appears on hover
+//                  (fade + slight zoom), with the label staying in place.
 .billy-btn--text,
 .billy-btn--text-rounded {
   background: transparent;
@@ -261,7 +261,7 @@
 .billy-btn--text-rounded {
   overflow: visible;
 
-  // La pilule survient depuis un fond neutre, scellée derrière le contenu.
+  // The pill emerges from a neutral background, sealed behind the content.
   &::before {
     content: '';
     position: absolute;
@@ -290,17 +290,17 @@
   }
 }
 
-// ── Variante : ghost (bouton « Retour » de la save-bar) ─────────────────────
-// Reprend le bouton d'annulation de la save-bar : fantôme discret, SANS bord au
-// repos (texte estompé), voile gris au survol, et halo (« bord ») au focus via
-// le focus-ring commun. Câblé sur les tokens d'input du DS (dark mode auto).
-// Volontairement neutre : `color` n'a pas d'effet ici.
+// ── Variant: ghost (the save-bar "Back" button) ─────────────────────────────
+// Mirrors the save-bar cancel button: discreet ghost, with NO border at rest
+// (faded text), gray veil on hover, and a halo ("border") on focus via the
+// shared focus-ring. Wired to the DS input tokens (automatic dark mode).
+// Deliberately neutral: `color` has no effect here.
 .billy-btn--ghost,
 .billy-btn--ghost-rounded {
   --btn-ring: var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
 
   background: transparent;
-  border-color: transparent; // pas de bord au repos
+  border-color: transparent; // no border at rest
   color: var(--billy-text-muted, #6b7280);
   box-shadow: none;
 
@@ -315,7 +315,7 @@
   }
 }
 
-// ── Coins en pilule ─────────────────────────────────────────────────────────
+// ── Pill corners ────────────────────────────────────────────────────────────
 .billy-btn--plain-rounded,
 .billy-btn--outline-rounded,
 .billy-btn--text-rounded,
@@ -324,7 +324,7 @@
   border-radius: 999px;
 }
 
-// ── Icône seule : gabarit carré aux coins du variant ────────────────────────
+// ── Icon only: square footprint with the variant's corners ──────────────────
 .billy-btn--icon-only {
   --btn-pad-x: var(--btn-pad-y);
   aspect-ratio: 1 / 1;
@@ -336,7 +336,7 @@
   }
 }
 
-// ── Pleine largeur ──────────────────────────────────────────────────────────
+// ── Full width ──────────────────────────────────────────────────────────────
 .billy-btn--block {
   width: 100%;
 }

@@ -3,11 +3,11 @@ import { IbanUtils } from '../../../core/utils/iban-utils';
 import { CodeValueComponent } from '../code-value/code-value.component';
 
 /**
- * Affichage d'un IBAN en lecture : « BE68539007547034 » devient
- * « BE 68 5390 0754 7034 », code pays et espaces en gris.
+ * Read-only display of an IBAN: "BE68539007547034" becomes
+ * "BE 68 5390 0754 7034", country code and spaces in gray.
  *
  * ```html
- * <billy-iban-display [value]="client.compte"></billy-iban-display>
+ * <billy-iban-display [value]="client.account"></billy-iban-display>
  * ```
  */
 @Component({
@@ -27,7 +27,8 @@ import { CodeValueComponent } from '../code-value/code-value.component';
 export class IbanDisplayComponent {
 
   readonly value = input<string | null | undefined>('');
-  readonly empty = input('Non renseigné');
+  /** Falls back to the i18n dictionary (codeDisplay.empty) inside <billy-code-value>. */
+  readonly empty = input<string>();
   readonly glyph = input(false, { transform: booleanAttribute });
   readonly copyable = input(true, { transform: booleanAttribute });
 

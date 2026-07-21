@@ -1,5 +1,5 @@
-// Coque de panneau flottant réutilisable — extraite du panneau de
-// notifications (.billy-notif-panel) pour partager le même langage visuel.
+// Reusable floating panel shell — extracted from the notifications panel
+// (.billy-notif-panel) to share the same visual language.
 
 :host {
   display: contents;
@@ -29,7 +29,7 @@
   }
 }
 
-// ── Entête ─────────────────────────────────────────────────────────────────
+// ── Header ─────────────────────────────────────────────────────────────────
 .billy-panel-header {
   display: flex;
   flex-direction: column;
@@ -60,7 +60,7 @@
   padding: 6px;
 }
 
-// ── Mobile : panneau collé aux bords ───────────────────────────────────────
+// ── Mobile: panel pinned to the edges ──────────────────────────────────────
 @media (max-width: 767.98px) {
   .billy-panel {
     position: fixed;

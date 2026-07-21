@@ -4,7 +4,7 @@
   min-width: 0;
 }
 
-.ajout-tile {
+.add-tile {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -15,20 +15,20 @@
   user-select: none;
 }
 
-.ajout-tile-manual {
+.add-tile-manual {
   background: transparent;
   color: #23b7e5;
   border: 2px solid #23b7e5;
 }
 
-.ajout-tile-manual:hover {
+.add-tile-manual:hover {
   background: #e8f8fd;
   color: #1aa3ce;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(35, 183, 229, 0.2);
 }
 
-.ajout-tile-icon {
+.add-tile-icon {
   font-size: 1.2em;
   width: 34px;
   height: 34px;
@@ -40,36 +40,36 @@
   flex-shrink: 0;
 }
 
-.ajout-tile-content {
+.add-tile-content {
   display: flex;
   flex-direction: column;
 }
 
-.ajout-tile-title {
+.add-tile-title {
   font-weight: 600;
   font-size: 0.9em;
   line-height: 1.2;
 }
 
-.ajout-tile-subtitle {
+.add-tile-subtitle {
   font-size: 0.72em;
   opacity: 0.75;
   margin-top: 2px;
 }
 
 /* ── Dark mode ─────────────────────────────────────────────── */
-:host-context(.dark-mode) .ajout-tile-manual {
+:host-context(.dark-mode) .add-tile-manual {
   background: transparent;
   color: #23b7e5;
   border-color: #23b7e5;
 }
 
-:host-context(.dark-mode) .ajout-tile-manual:hover {
+:host-context(.dark-mode) .add-tile-manual:hover {
   background: rgba(35, 183, 229, 0.12);
   color: #23b7e5;
   box-shadow: 0 4px 12px rgba(35, 183, 229, 0.15);
 }
 
-:host-context(.dark-mode) .ajout-tile-icon {
+:host-context(.dark-mode) .add-tile-icon {
   background: rgba(35, 183, 229, 0.1);
 }

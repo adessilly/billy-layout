@@ -3,23 +3,23 @@ import {
 } from './code-format';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Comptes bancaires au format IBAN.
+// Bank accounts in IBAN format.
 //
-// Valeur canonique : « BE68539007547034 ».
-// Affichage        : « BE 68 5390 0754 7034 » — code pays et espaces grisés.
+// Canonical value: "BE68539007547034".
+// Display:         "BE 68 5390 0754 7034" — country code and spaces greyed out.
 //
-// La clé de contrôle (ISO 7064, modulo 97) est universelle : elle vaut pour
-// tous les pays, y compris ceux dont on ignore la longueur. On ne déclare donc
-// « invalide » qu'un IBAN complet dont la clé tombe à côté.
+// The check digit (ISO 7064, modulo 97) is universal: it holds for every
+// country, including those whose length we do not know. So we only declare
+// "invalid" a complete IBAN whose check comes out wrong.
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Longueur maximale d'un IBAN (norme ISO 13616). */
+/** Maximum length of an IBAN (ISO 13616 standard). */
 const MAX_LENGTH = 34;
 
-/** À défaut de longueur connue pour le pays, un IBAN plausible fait au moins ça. */
+/** Absent a known length for the country, a plausible IBAN is at least this. */
 const MIN_LENGTH = 15;
 
-/** Longueur totale de l'IBAN, par pays. */
+/** Total IBAN length, per country. */
 const LENGTHS: Record<string, number> = {
   AT: 20, BE: 16, BG: 22, CH: 21, CY: 28, CZ: 24, DE: 22, DK: 18,
   EE: 20, ES: 24, FI: 18, FR: 27, GB: 22, GR: 27, HR: 21, HU: 28,
@@ -28,24 +28,48 @@ const LENGTHS: Record<string, number> = {
 };
 
 const COUNTRIES: Record<string, string> = {
-  AT: 'Autriche',   BE: 'Belgique',  BG: 'Bulgarie',    CH: 'Suisse',
-  CY: 'Chypre',     CZ: 'Tchéquie',  DE: 'Allemagne',   DK: 'Danemark',
-  EE: 'Estonie',    ES: 'Espagne',   FI: 'Finlande',    FR: 'France',
-  GB: 'Royaume-Uni', GR: 'Grèce',    HR: 'Croatie',     HU: 'Hongrie',
-  IE: 'Irlande',    IT: 'Italie',    LI: 'Liechtenstein', LT: 'Lituanie',
-  LU: 'Luxembourg', LV: 'Lettonie',  MC: 'Monaco',      MT: 'Malte',
-  NL: 'Pays-Bas',   NO: 'Norvège',   PL: 'Pologne',     PT: 'Portugal',
-  RO: 'Roumanie',   SE: 'Suède',     SI: 'Slovénie',    SK: 'Slovaquie',
+  AT: 'Austria',    BE: 'Belgium',  BG: 'Bulgaria',      CH: 'Switzerland',
+  CY: 'Cyprus',     CZ: 'Czechia',  DE: 'Germany',       DK: 'Denmark',
+  EE: 'Estonia',    ES: 'Spain',    FI: 'Finland',       FR: 'France',
+  GB: 'United Kingdom', GR: 'Greece', HR: 'Croatia',     HU: 'Hungary',
+  IE: 'Ireland',    IT: 'Italy',    LI: 'Liechtenstein', LT: 'Lithuania',
+  LU: 'Luxembourg', LV: 'Latvia',   MC: 'Monaco',        MT: 'Malta',
+  NL: 'Netherlands', NO: 'Norway',  PL: 'Poland',        PT: 'Portugal',
+  RO: 'Romania',    SE: 'Sweden',   SI: 'Slovenia',      SK: 'Slovakia',
+};
+
+/** User-visible diagnostics of `describe`, per locale. */
+const MESSAGES: Record<'en' | 'fr', {
+  startCountry: string;
+  charsExpected: (country: string, length: number) => string;
+  stillTyping: (country: string) => string;
+  valid: string;
+  invalidChecksum: string;
+}> = {
+  en: {
+    startCountry: 'An IBAN starts with the country code (BE, LU, FR…)',
+    charsExpected: (country, length) => `${country}: ${length} characters expected`,
+    stillTyping: country => `${country} — still typing`,
+    valid: 'Valid IBAN',
+    invalidChecksum: 'The IBAN check digits are incorrect',
+  },
+  fr: {
+    startCountry: 'Un IBAN commence par le code pays (BE, LU, FR…)',
+    charsExpected: (country, length) => `${country} : ${length} caractères attendus`,
+    stillTyping: country => `${country} — saisie en cours`,
+    valid: 'IBAN valide',
+    invalidChecksum: 'Clé de contrôle IBAN est incorrecte',
+  },
 };
 
 export abstract class IbanUtils {
 
-  /** Forme canonique : « BE68 5390-0754.7034 » → « BE68539007547034 ». */
+  /** Canonical form: "BE68 5390-0754.7034" → "BE68539007547034". */
   static sanitize(raw: string | null | undefined): string {
     return keepAlnum(raw, MAX_LENGTH);
   }
 
-  /** Rien à compléter sur un IBAN : le nettoyage suffit. */
+  /** Nothing to complete on an IBAN: cleaning up is enough. */
   static normalize(raw: string | null | undefined): string {
     return IbanUtils.sanitize(raw);
   }
@@ -55,12 +79,29 @@ export abstract class IbanUtils {
     return /^[A-Z]{2}/.test(value) ? value.slice(0, 2) : null;
   }
 
-  static countryLabel(raw: string | null | undefined): string | null {
+  /**
+   * Country name, or null if the country is not listed. Without a locale the
+   * built-in English map is used; with one, `Intl.DisplayNames` translates
+   * when it can, and the English map covers the rest.
+   */
+  static countryLabel(raw: string | null | undefined, locale?: string): string | null {
     const country = IbanUtils.country(raw);
-    return country ? COUNTRIES[country] ?? null : null;
+    if (!country) { return null; }
+
+    if (locale) {
+      try {
+        const label = new Intl.DisplayNames([locale], { type: 'region' }).of(country);
+        // `of` may echo the code back: treat that as a miss.
+        if (label && label !== country) { return label; }
+      } catch {
+        // Unknown locale or code Intl cannot handle: fall back to the map.
+      }
+    }
+
+    return COUNTRIES[country] ?? null;
   }
 
-  /** Segments d'affichage : groupes de 4, code pays et espaces marqués `muted`. */
+  /** Display segments: groups of 4, country code and spaces marked `muted`. */
   static format(raw: string | null | undefined): CodeSegment[] {
     const value = IbanUtils.sanitize(raw);
     if (!value) { return []; }
@@ -69,16 +110,16 @@ export abstract class IbanUtils {
     return groupByChunks(value, 4, ' ', mutedHead);
   }
 
-  /** Le même rendu, à plat : c'est le masque appliqué au champ de saisie. */
+  /** The same rendering, flattened: the mask applied to the input field. */
   static formatText(raw: string | null | undefined): string {
     return segmentsToText(IbanUtils.format(raw));
   }
 
   /**
-   * Clé de contrôle ISO 7064 : les 4 premiers caractères passent à la fin, les
-   * lettres deviennent des nombres (A = 10 … Z = 35), et le tout modulo 97 doit
-   * valoir 1. Le reste se calcule chiffre par chiffre — un IBAN dépasse la
-   * précision d'un `number`.
+   * ISO 7064 check: the first 4 characters move to the end, letters become
+   * numbers (A = 10 … Z = 35), and the whole thing modulo 97 must equal 1.
+   * The remainder is computed digit by digit — an IBAN exceeds the precision
+   * of a `number`.
    */
   static isValid(raw: string | null | undefined): boolean {
     const value = IbanUtils.sanitize(raw);
@@ -90,11 +131,14 @@ export abstract class IbanUtils {
     return IbanUtils.mod97(value) === 1;
   }
 
-  /** Diagnostic affiché sous le champ (état, pays, message, progression). */
-  static describe(raw: string | null | undefined): CodeInfo {
+  /** Diagnostic shown under the field (status, country, message, progress). */
+  static describe(raw: string | null | undefined, locale: 'en' | 'fr' = 'en'): CodeInfo {
+    const messages = MESSAGES[locale];
     const value = IbanUtils.sanitize(raw);
     const country = IbanUtils.country(value);
-    const countryLabel = country ? COUNTRIES[country] ?? null : null;
+    const countryLabel = locale === 'fr'
+      ? IbanUtils.countryLabel(value, 'fr')
+      : country ? COUNTRIES[country] ?? null : null;
     const base: CodeInfo = { status: 'empty', country, countryLabel, message: '', progress: 0 };
 
     if (!value) { return base; }
@@ -104,25 +148,25 @@ export abstract class IbanUtils {
     const info = { ...base, progress };
 
     if (!country) {
-      return { ...info, status: 'partial', message: 'Un IBAN commence par le code pays (BE, LU, FR…)' };
+      return { ...info, status: 'partial', message: messages.startCountry };
     }
 
-    const pays = countryLabel ?? country;
+    const countryName = countryLabel ?? country;
 
     if (expected) {
       if (value.length < expected) {
-        return { ...info, status: 'partial', message: `${pays} : ${expected} caractères attendus` };
+        return { ...info, status: 'partial', message: messages.charsExpected(countryName, expected) };
       }
       if (value.length > expected) {
-        return { ...info, status: 'invalid', message: `${pays} : ${expected} caractères attendus` };
+        return { ...info, status: 'invalid', message: messages.charsExpected(countryName, expected) };
       }
     } else if (value.length < MIN_LENGTH) {
-      return { ...info, status: 'partial', message: `${pays} — saisie en cours` };
+      return { ...info, status: 'partial', message: messages.stillTyping(countryName) };
     }
 
     return IbanUtils.isValid(value)
-      ? { ...info, status: 'valid',   message: 'IBAN valide' }
-      : { ...info, status: 'invalid', message: 'Clé de contrôle IBAN est incorrecte' };
+      ? { ...info, status: 'valid',   message: messages.valid }
+      : { ...info, status: 'invalid', message: messages.invalidChecksum };
   }
 
   private static mod97(value: string): number {
@@ -130,7 +174,7 @@ export abstract class IbanUtils {
     let remainder = 0;
 
     for (const char of rearranged) {
-      // A → « 10 », Z → « 35 » : une lettre pèse deux chiffres.
+      // A → "10", Z → "35": a letter weighs two digits.
       const digits = char >= 'A' ? String(char.charCodeAt(0) - 55) : char;
       for (const digit of digits) {
         remainder = (remainder * 10 + Number(digit)) % 97;

@@ -1,20 +1,20 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  billy-reboot — normalisation globale du design system BILLy
+//  billy-reboot — global normalization for the BILLy design system
 //
-//  Le DS entier dépend de ce reboot (en particulier `* { box-sizing: border-box }` :
-//  aucun autre fichier n'en pose). Extrait de la couche de compat Bootstrap
-//  (billy-legacy.scss, app-side) lors de l'isolation en librairie : les valeurs
-//  reproduisent le rendu calculé du stack Bootstrap+Angle d'origine — ne pas les
-//  « moderniser » sans re-vérifier la parité visuelle des pages métier.
+//  The entire DS relies on this reboot (in particular `* { box-sizing: border-box }`:
+//  no other file sets it). Extracted from the Bootstrap compat layer
+//  (billy-legacy.scss, app-side) when the library was isolated: the values
+//  reproduce the computed rendering of the original Bootstrap+Angle stack — do
+//  not "modernize" them without re-checking visual parity on business pages.
 //
-//  Consommation : `@use 'billy-reboot';` (via includePaths → billy-layout/styles).
-//  Aujourd'hui chargé par billy-legacy.scss (même position de cascade qu'avant
-//  l'extraction) ; le jour où la couche de compat disparaît, ce fichier devra être
-//  chargé depuis styles.scss.
+//  Consumption: `@use 'billy-reboot';` (via includePaths → billy-layout/styles).
+//  Currently loaded by billy-legacy.scss (same cascade position as before the
+//  extraction); once the compat layer goes away, this file will have to be
+//  loaded from styles.scss.
 //
-//  Prérequis fonts (chargées par l'application, cf. index.html) :
-//  « Source Sans Pro » (base des pages métier). Le shell et les composants du DS
-//  utilisent « Plus Jakarta Sans ».
+//  Font prerequisites (loaded by the application, see index.html):
+//  "Source Sans Pro" (base of business pages). The shell and DS components
+//  use "Plus Jakarta Sans".
 // ════════════════════════════════════════════════════════════════════════════
 
 *,
@@ -72,7 +72,7 @@ p {
 ol, ul {
   margin-top: 0;
   margin-bottom: 1rem;
-  padding-left: 2rem; // indentation par défaut BS5 (le rendu d'origine)
+  padding-left: 2rem; // BS5 default indentation (the original rendering)
 }
 
 hr {
@@ -84,7 +84,7 @@ hr {
   color: inherit;
   border: 0;
   border-top: 1px solid #e4eaec;
-  opacity: 0.25; // base BS5 (l'app n'emploie pas <hr> ; fidélité de reproduction)
+  opacity: 0.25; // BS5 base (the app does not use <hr>; kept for faithful reproduction)
 }
 
 a {
@@ -100,8 +100,8 @@ a {
 
 strong, b { font-weight: bolder; }
 
-// Reboot BS : le texte secondaire garde ses proportions relatives (sinon un
-// <small> repasse à 100% — régression sur achat-ai-review-panel).
+// BS reboot: secondary text keeps its relative proportions (otherwise a
+// <small> jumps back to 100% — regression on achat-ai-review-panel).
 small { font-size: 80%; }
 
 sub, sup {

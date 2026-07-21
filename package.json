@@ -6,7 +6,7 @@
     "start": "ng serve --port 4201",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test billy-layout",
     "build:prod": "ng build billy-layout-project --configuration production",
     "lib:version": "node -p \"require('./projects/billy-layout/package.json').version\"",
     "docker:build-only": "docker buildx build -t adessilly/billy-layout:$(npm run -s lib:version) -t adessilly/billy-layout:latest . --load",
@@ -14,6 +14,7 @@
     "docker:build": "npm i --force && npm run build:prod && npm run docker:build-only",
     "docker:deploy": "npm i --force && npm run build:prod && npm run docker:deploy-only",
     "build:lib": "ng build billy-layout",
+    "test:lib": "ng test billy-layout",
     "deploy:lib": "npm run build:lib && npm publish ./dist/billy-layout --registry https://registry.npmjs.org/"
   },
   "private": true,

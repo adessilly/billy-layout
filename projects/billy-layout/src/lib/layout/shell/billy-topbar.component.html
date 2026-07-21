@@ -4,13 +4,13 @@
           type="button"
           [class.collapsed]="shell.sidebarCollapsed()"
           (click)="shell.toggleSidebar()"
-          title="Replier / déplier le menu">
+          [title]="i18n.strings().topbar.toggleMenu">
     <span></span>
     <span></span>
     <span></span>
   </button>
 
-  <a class="billy-topbar-logo" [routerLink]="homeLink" title="Accueil">
+  <a class="billy-topbar-logo" [routerLink]="homeLink" [title]="i18n.strings().topbar.home">
     <img src="assets/images/icon-384.png" alt="BILLy" />
   </a>
 
@@ -21,7 +21,7 @@
   <ul class="billy-topbar-actions">
 
     <li class="nav-item billy-topbar-action btn-toggle-dark-mode">
-      <a class="nav-link" (click)="toggleDarkMode()" title="Mode clair / sombre">
+      <a class="nav-link" (click)="toggleDarkMode()" [title]="i18n.strings().topbar.darkMode">
         <billy-icon name="dark-mode" [size]="19" [strokeWidth]="1.8" />
       </a>
     </li>
@@ -33,7 +33,7 @@
     <ng-content select="[shell-account]" />
 
     <li class="nav-item billy-topbar-action">
-      <a class="nav-link" (click)="logout()" title="Me déconnecter">
+      <a class="nav-link" (click)="logout()" [title]="i18n.strings().topbar.logout">
         <billy-icon name="logout" [size]="19" [strokeWidth]="1.8" />
       </a>
     </li>

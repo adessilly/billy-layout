@@ -2,14 +2,14 @@
 
   <div class="dpc-header">
     <button type="button" class="dpc-nav" (click)="goPrev()"
-      [attr.aria-label]="view() === 'days' ? 'Mois précédent' : 'Année précédente'">
+      [attr.aria-label]="view() === 'days' ? i18n.strings().datepicker.prevMonth : i18n.strings().datepicker.prevYear">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </button>
 
     <button type="button" class="dpc-title" (click)="toggleView()"
-      [attr.aria-label]="view() === 'days' ? title() + ' — choisir le mois et l\'année' : 'Revenir aux jours'"
+      [attr.aria-label]="view() === 'days' ? title() + ' — ' + i18n.strings().datepicker.chooseMonthYear : i18n.strings().datepicker.backToDays"
       [attr.aria-expanded]="view() === 'months'">
       {{ title() }}
       <svg class="dpc-title__caret" [class.dpc-title__caret--open]="view() === 'months'"
@@ -19,7 +19,7 @@
     </button>
 
     <button type="button" class="dpc-nav" (click)="goNext()"
-      [attr.aria-label]="view() === 'days' ? 'Mois suivant' : 'Année suivante'">
+      [attr.aria-label]="view() === 'days' ? i18n.strings().datepicker.nextMonth : i18n.strings().datepicker.nextYear">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M9 6l6 6-6 6"/>
       </svg>
@@ -59,7 +59,7 @@
       </tbody>
     </table>
   } @else {
-    <div class="dpc-months" role="listbox" aria-label="Choisir un mois" (keydown)="onMonthsKeydown($event)">
+    <div class="dpc-months" role="listbox" [attr.aria-label]="i18n.strings().datepicker.chooseMonth" (keydown)="onMonthsKeydown($event)">
       @for (month of monthNames(); track $index) {
         <button type="button" class="dpc-month" role="option"
           [class.dpc-month--current]="$index === viewMonth().month"
@@ -73,7 +73,7 @@
   }
 
   <div class="dpc-footer">
-    <button type="button" class="dpc-today-btn" (click)="pickToday()">Aujourd'hui</button>
+    <button type="button" class="dpc-today-btn" (click)="pickToday()">{{ i18n.strings().datepicker.today }}</button>
   </div>
 
   <span class="dpc-sr-only" aria-live="polite">{{ title() }}</span>

@@ -1,20 +1,20 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// BILLy — coque des dialogues modaux (remplace .modal* de Bootstrap)
-// Moteur associé : src/app/shared/utils/dialog-utils.ts (classe Dialog).
+// BILLy — modal dialog shell (replaces Bootstrap's .modal*)
+// Companion engine: src/app/shared/utils/dialog-utils.ts (Dialog class).
 //
-// Feuille globale (et non styles de composant) pour deux raisons :
-//  - les dialogues sont déplacés sous <body> à l'ouverture ;
-//  - trois composants partagent la coque (dialog-form, delete, ai-extract) :
-//    la scoper reviendrait à la dupliquer trois fois.
+// Global stylesheet (rather than component styles) for two reasons:
+//  - dialogs are moved under <body> on open;
+//  - three components share the shell (dialog-form, delete, ai-extract):
+//    scoping it would mean duplicating it three times.
 //
-// La géométrie reprend celle de Bootstrap (500px, modal-xl, marges) pour que la
-// migration ne déplace aucun dialogue ; les couleurs viennent des tokens
-// --billy-* de styles-tokens.scss, donc le dark mode est automatique.
+// The geometry mirrors Bootstrap's (500px, modal-xl, margins) so the
+// migration does not shift any dialog; colors come from the --billy-* tokens
+// in styles-tokens.scss, so dark mode is automatic.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Racine : plein écran, sert à la fois de fond, de zone de clic-pour-fermer et
-// de conteneur de défilement. `display` est piloté en JS (none ↔ block) : c'est
-// ce passage qui rejoue les animations d'illustration des dialogues.
+// Root: full screen, serves at once as backdrop, click-to-close zone and
+// scroll container. `display` is driven from JS (none ↔ block): that switch
+// is what replays the dialogs' illustration animations.
 .billy-modal {
   position: fixed;
   inset: 0;
@@ -31,9 +31,8 @@
   opacity: 1;
 }
 
-// Enveloppe centrée. `pointer-events: none` laisse les clics de la gouttière
-// atteindre la racine (= fermeture au clic sur le fond) ; le contenu les
-// reprend à son compte.
+// Centered wrapper. `pointer-events: none` lets gutter clicks reach the
+// root (= close on backdrop click); the content takes them back for itself.
 .billy-modal-dialog {
   position: relative;
   width: auto;
@@ -66,7 +65,7 @@
   }
 }
 
-// Équivalent de .modal-xl : élargi par paliers, comme Bootstrap.
+// Equivalent of .modal-xl: widened in steps, like Bootstrap.
 @media (min-width: 992px) {
   .billy-modal-dialog--large { max-width: 800px; }
 }
@@ -75,8 +74,8 @@
   .billy-modal-dialog--large { max-width: 1140px; }
 }
 
-// Carte du dialogue : même langage visuel que billy-card (surface, bord fin,
-// rayon 16px, ombre douce).
+// Dialog card: same visual language as billy-card (surface, thin border,
+// 16px radius, soft shadow).
 .billy-modal-content {
   position: relative;
   display: flex;
@@ -123,7 +122,7 @@
   > i { margin-right: 10px; }
 }
 
-// Verrou de défilement, posé par Dialog tant qu'un dialogue est ouvert.
+// Scroll lock, set by Dialog while a dialog is open.
 body.billy-dialog-open {
   overflow: hidden;
 }

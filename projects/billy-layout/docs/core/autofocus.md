@@ -1,37 +1,37 @@
 # [billyAutofocus] — AutofocusDirective
 
-> Catégorie `core` · source `projects/billy-layout/src/lib/core/autofocus/autofocus.directive.ts` · directive
+> Category `core` · source `projects/billy-layout/src/lib/core/autofocus/autofocus.directive.ts` · directive
 
-## Rôle
+## Purpose
 
-Directive minimaliste qui donne le focus à son élément hôte dès que la vue est initialisée (`ngAfterViewInit` → `nativeElement.focus()`). Pensée pour les champs qu'on veut prêts à la frappe à l'ouverture d'un formulaire ou d'un dialogue, là où l'attribut HTML natif `autofocus` ne rejoue pas sur du contenu inséré dynamiquement par Angular.
+Minimalist directive that gives focus to its host element as soon as the view is initialized (`ngAfterViewInit` → `nativeElement.focus()`). Intended for fields you want ready for typing when a form or dialog opens, where the native HTML `autofocus` attribute does not replay on content inserted dynamically by Angular.
 
-**Aucun usage dans l'application à ce jour** (vérifié par grep dans `src/app` — seul l'export dans `public-api.ts` la référence, avec la note « NB : aucun usage app à ce jour »). Elle est conservée dans la librairie comme brique disponible.
+**No usage in the application to date** (verified by grep in `src/app` — only the export in `public-api.ts` references it, with the note "NB: no app usage to date"). It is kept in the library as an available building block.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { AutofocusDirective } from 'billy-layout';
 ```
 
-Sélecteur : `[billyAutofocus]` · standalone (défaut Angular ≥ 19 ; pas de flag explicite).
+Selector: `[billyAutofocus]` · standalone (the default since Angular ≥ 19; no explicit flag).
 
 ### Inputs / Outputs
 
-Aucun. La directive n'a ni input, ni output, ni méthode publique : poser l'attribut suffit.
+None. The directive has no input, output, or public method: setting the attribute is enough.
 
-| Cycle de vie | Effet |
+| Lifecycle | Effect |
 |---|---|
-| `ngAfterViewInit` | `this.el.nativeElement.focus()` sur l'élément hôte. |
+| `ngAfterViewInit` | `this.el.nativeElement.focus()` on the host element. |
 
-## Exemple d'utilisation
+## Usage example
 
-Pas d'usage réel à citer ; usage type :
+No real usage to cite; typical usage:
 
 ```html
-<input class="billy-field" type="text" billyAutofocus [(ngModel)]="libelle" />
+<input class="billy-field" type="text" billyAutofocus [(ngModel)]="label" />
 ```
 
 ```ts
@@ -45,11 +45,11 @@ import { AutofocusDirective } from 'billy-layout';
 
 ## Styles & theming
 
-Aucun style. Rappel : le reboot du DS pose `*:focus { outline: 0 !important }` — le focus donné par la directive ne se voit donc que si le champ a son propre style de focus (les mixins `billy-input`/`billy-field` en fournissent un).
+No styles. Reminder: the DS reboot sets `*:focus { outline: 0 !important }` — the focus given by the directive is therefore only visible if the field has its own focus style (the `billy-input`/`billy-field` mixins provide one).
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **API pré-signals** : injection par constructeur (`private el: ElementRef`) et hook de cycle de vie classique — pas de `inject()`, pas d'`effect`. Fonctionne tel quel en zoneless (aucune dépendance à la détection de changements), mais une modernisation passerait par `inject(ElementRef)` + `afterNextRender`.
-- Le focus est donné **une seule fois**, à l'initialisation de la vue. Un élément monté dans un `@if` refocalise à chaque recréation ; un élément simplement re-affiché (CSS) ne refocalise pas.
-- Pas de garde : si l'hôte n'est pas focusable (pas un champ, pas de `tabindex`), l'appel `focus()` est silencieusement sans effet.
-- Dans un dialogue déplacé sous `<body>` (moteur `Dialog`), vérifier que la directive s'exécute après que l'élément soit visible — un `focus()` sur un élément en `display: none` ne fait rien ; c'est le composant de dialogue qui doit orchestrer le focus à l'ouverture le cas échéant.
+- **Pre-signals API**: constructor injection (`private el: ElementRef`) and a classic lifecycle hook — no `inject()`, no `effect`. Works as is in zoneless mode (no dependency on change detection), but a modernization would go through `inject(ElementRef)` + `afterNextRender`.
+- The focus is given **once**, at view initialization. An element mounted inside an `@if` refocuses on every recreation; an element merely re-shown (CSS) does not refocus.
+- No guard: if the host is not focusable (not a field, no `tabindex`), the `focus()` call is silently a no-op.
+- In a dialog moved under `<body>` (the `Dialog` engine), check that the directive runs after the element is visible — a `focus()` on a `display: none` element does nothing; it is then up to the dialog component to orchestrate focus on open.

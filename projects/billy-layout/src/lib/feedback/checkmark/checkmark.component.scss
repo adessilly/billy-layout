@@ -1,5 +1,5 @@
-// Séquence : tracé de l'anneau → pop du disque → tracé de la coche,
-// accompagnés d'un rebond global, d'un halo qui se propage et d'éclats.
+// Sequence: ring stroke → disc pop → check stroke,
+// with a global bounce, an expanding halo and burst particles.
 $ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
 $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -9,8 +9,8 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   --_cm-color: var(--billy-checkmark-color, var(--billy-success, #16a34a));
 }
 
-// Couleurs du design system — familles sémantiques --billy-* (le disque plein
-// prend la teinte `base`, vive). `--billy-checkmark-color` reste surchargeable.
+// Design system colors — --billy-* semantic families (the filled disc
+// uses the vivid `base` shade). `--billy-checkmark-color` stays overridable.
 :host([data-color='accent'])  { --_cm-color: var(--billy-accent, #12b4dd); }
 :host([data-color='danger'])  { --_cm-color: var(--billy-danger, #dc2626); }
 :host([data-color='warning']) { --_cm-color: var(--billy-warning, #ff902b); }
@@ -21,8 +21,8 @@ $ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   height: var(--billy-checkmark-size, 156px);
   display: block;
   margin: auto;
-  // Le halo et l'ombre portée débordent du viewBox : sans overflow visible
-  // ils sont tronqués net sur les bords du SVG.
+  // The halo and drop shadow overflow the viewBox: without visible overflow
+  // they would be clipped hard at the SVG edges.
   overflow: visible;
   color: var(--_cm-color);
   animation: checkmark-pop 0.5s $ease-pop 0.7s both;

@@ -1,26 +1,26 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// BILLy — design tokens globaux
-// Source de vérité des couleurs/formes des formulaires et accents.
-// Les valeurs dark sont portées par body.dark-mode : tout composant qui
-// consomme ces variables (y compris les overlays déplacés sous <body>)
-// hérite automatiquement du bon thème, sans bloc dark local.
-// Mixins associées : src/app/shared/styles/billy-forms.scss
+// BILLy — global design tokens
+// Source of truth for form colors/shapes and accents.
+// Dark values are carried by body.dark-mode: any component that
+// consumes these variables (including overlays moved under <body>)
+// automatically inherits the right theme, without a local dark block.
+// Related mixins: src/app/shared/styles/billy-forms.scss
 // ═══════════════════════════════════════════════════════════════════════════
 
 :root {
-  // ── Accent (bleu du thème) ──────────────────────────────────────────────
-  --billy-accent:        #12b4dd; // icônes, checks, pastilles
-  --billy-accent-strong: #0e97bb; // textes accentués (liens, totaux, sélection)
-  --billy-accent-soft:   #e6f7fc; // fonds teintés (survol, actif, badges)
-  --billy-accent-border: #a5dff2; // bordures teintées (survol de zones)
+  // ── Accent (theme blue) ─────────────────────────────────────────────────
+  --billy-accent:        #12b4dd; // icons, checks, dots
+  --billy-accent-strong: #0e97bb; // accented text (links, totals, selection)
+  --billy-accent-soft:   #e6f7fc; // tinted backgrounds (hover, active, badges)
+  --billy-accent-border: #a5dff2; // tinted borders (area hover)
 
-  // ── Couleurs sémantiques (statuts) ──────────────────────────────────────
-  // Cinq familles de statut sur le même modèle qu'Accent, source de vérité
-  // partagée par les boutons, toasts, checkmarks et save-bar. Chaque famille
-  // expose : `base` (rempli vif) · `-strong` (texte/icône, ≥ AA sur clair, et
-  // s'éclaircit en dark pour rester lisible) · `-soft` / `-soft-strong` (voiles
-  // teintés de survol) · `-ring` (halo de focus). `primary` n'a pas de famille
-  // propre : c'est l'Accent de marque ci-dessus.
+  // ── Semantic colors (statuses) ──────────────────────────────────────────
+  // Five status families modeled after Accent, the shared source of truth
+  // for buttons, toasts, checkmarks and the save-bar. Each family exposes:
+  // `base` (vivid fill) · `-strong` (text/icon, ≥ AA on light, and lightens
+  // in dark to stay readable) · `-soft` / `-soft-strong` (tinted hover
+  // veils) · `-ring` (focus halo). `primary` has no family of its own:
+  // it is the brand Accent above.
   --billy-neutral:             #6b7280;
   --billy-neutral-strong:      #374151;
   --billy-neutral-soft:        rgba(100, 116, 139, 0.12);
@@ -39,7 +39,7 @@
   --billy-success-soft-strong: rgba(22, 163, 74, 0.2);
   --billy-success-ring:        rgba(22, 163, 74, 0.35);
 
-  --billy-warning:             #ff902b; // orange de la save-bar
+  --billy-warning:             #ff902b; // save-bar orange
   --billy-warning-strong:      #b45309;
   --billy-warning-soft:        rgba(255, 144, 43, 0.16);
   --billy-warning-soft-strong: rgba(255, 144, 43, 0.28);
@@ -51,11 +51,11 @@
   --billy-error-soft-strong:   rgba(239, 68, 68, 0.22);
   --billy-error-ring:          rgba(239, 68, 68, 0.35);
 
-  // ── Focus (bleu par défaut du thème) ────────────────────────────────────
+  // ── Focus (theme default blue) ──────────────────────────────────────────
   --billy-focus-border:  #66afe9;
   --billy-focus-ring:    rgba(102, 175, 233, 0.15);
 
-  // ── Champs de saisie ────────────────────────────────────────────────────
+  // ── Input fields ────────────────────────────────────────────────────────
   --billy-input-bg:             #fff;
   --billy-input-border:         #e5e7eb;
   --billy-input-border-hover:   #9ca3af;
@@ -65,23 +65,23 @@
   --billy-input-disabled-bg:    #f3f4f6;
   --billy-input-disabled-color: #9ca3af;
 
-  // ── Addons d'input-group (boutons accolés aux champs) ───────────────────
+  // ── Input-group addons (buttons attached to fields) ─────────────────────
   --billy-addon-bg:          #f9fafb;
   --billy-addon-color:       #6b7280;
   --billy-addon-hover-bg:    #f3f4f6;
   --billy-addon-hover-color: #374151;
 
-  // ── Surfaces flottantes (dropdowns, panneaux) et divers ─────────────────
+  // ── Floating surfaces (dropdowns, panels) and misc ──────────────────────
   --billy-surface:        #fff;
   --billy-surface-border: #e5e7eb;
   --billy-surface-shadow: 0 10px 30px rgba(17, 24, 39, 0.12), 0 2px 8px rgba(17, 24, 39, 0.06);
   --billy-divider:        #f3f4f6;
   --billy-text-muted:     #9ca3af;
-  --billy-text-soft:      #6b7280; // labels, textes d'introduction
+  --billy-text-soft:      #6b7280; // labels, introductory text
   --billy-danger:         #dc2626;
   --billy-danger-ring:    rgba(220, 38, 38, 0.08);
 
-  // ── Cartes & sections (panneaux de pages — mixins billy-cards.scss) ─────
+  // ── Cards & sections (page panels — billy-cards.scss mixins) ────────────
   --billy-card-shadow:    0 1px 2px rgba(17, 24, 39, 0.04);
   --billy-section-bg:     #fafbfc;
   --billy-section-border: #eceff3;
@@ -94,11 +94,11 @@ body.dark-mode {
   --billy-accent-soft:   rgba(18, 180, 221, 0.15);
   --billy-accent-border: #0e97bb;
 
-  // ── Couleurs sémantiques (statuts) — dark ───────────────────────────────
-  // Les pleins (`base`) s'assombrissent d'un cran ; les teintes texte/icône
-  // (`-strong`) s'éclaircissent pour rester lisibles sur fond sombre. Les
-  // `-ring` héritent des valeurs claires (halo inchangé). Valeurs alignées sur
-  // les anciens overrides dark du bouton (migration sans changement visuel).
+  // ── Semantic colors (statuses) — dark ───────────────────────────────────
+  // Fills (`base`) darken one notch; text/icon tints (`-strong`) lighten to
+  // stay readable on a dark background. The `-ring` values inherit the light
+  // ones (halo unchanged). Values aligned with the button's former dark
+  // overrides (migration with no visual change).
   --billy-neutral:             #4b5563;
   --billy-neutral-strong:      #cbd5e1;
   --billy-neutral-soft:        rgba(148, 163, 184, 0.14);

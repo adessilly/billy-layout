@@ -1,7 +1,7 @@
 @if (visibleActions.length > 0) {
   <div class="hab">
 
-    <!-- Actions neutres : segmented button group -->
+    <!-- Neutral actions: segmented button group -->
     @if (groupedActions.length > 0) {
       <div class="hab-group">
         @for (action of groupedActions; track action.label) {
@@ -17,7 +17,7 @@
       </div>
     }
 
-    <!-- Actions mises en avant : pilules autonomes -->
+    <!-- Highlighted actions: standalone pills -->
     @for (action of standaloneActions; track action.label) {
       <button
         class="hab-btn"

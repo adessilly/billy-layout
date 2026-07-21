@@ -1,8 +1,8 @@
 @use 'billy-cards' as cards;
 
-// Carte de consultation à section unique : carte blanche + titre à pastille,
-// SANS sous-panneau gris (réservé aux cartes multi-sections, cf. docs/billy-cards.md).
-// Le dark mode est porté par les tokens --billy-* : pas de bloc dark local.
+// Single-section consult card: white card + badge-style title,
+// WITHOUT the grey sub-panel (reserved for multi-section cards, see docs/billy-cards.md).
+// Dark mode is carried by the --billy-* tokens: no local dark block.
 
 :host {
   display: block;
@@ -33,14 +33,14 @@
   gap: 8px;
   margin-left: auto;
 
-  // Les actions projetées ne reprennent pas la typo du titre.
+  // Projected actions do not inherit the title typography.
   text-transform: none;
   letter-spacing: normal;
   font-weight: 400;
 
-  // Les boutons d'action projetés (btn-outline-secondary de Bootstrap) ont des
-  // couleurs figées en clair : on les repose sur les tokens --billy-* pour que
-  // le dark mode suive. ::ng-deep car le contenu projeté appartient au parent.
+  // Projected action buttons (Bootstrap's btn-outline-secondary) have colors
+  // hard-coded for light mode: we rebase them on the --billy-* tokens so that
+  // dark mode follows. ::ng-deep because the projected content belongs to the parent.
   ::ng-deep .btn.btn-outline-secondary {
     border-color: var(--billy-input-border);
     color: var(--billy-text-soft);

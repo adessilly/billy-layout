@@ -14,11 +14,11 @@ export class BillySidebarComponent {
   readonly shell = inject(BillyShellService);
   private readonly config = inject(BILLY_SHELL_CONFIG, { optional: true });
 
-  /** Liens, version et badges fournis par l'application (BILLY_SHELL_CONFIG). */
+  /** Links, version and badges provided by the application (BILLY_SHELL_CONFIG). */
   readonly links = this.config?.menuLinks ?? [];
   readonly version = this.config?.version ?? '';
 
-  /** Badges par libellé de menu (ex. envois Peppol en cours sur « Ventes »). */
+  /** Badges by menu label (e.g. Peppol submissions in progress on "Sales"). */
   readonly badges = computed<Record<string, string | null>>(() =>
     this.config?.menuBadges?.() ?? {});
 

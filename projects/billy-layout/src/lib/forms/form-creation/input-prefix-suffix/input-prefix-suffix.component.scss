@@ -1,12 +1,12 @@
-// Champ encadré d'un préfixe et/ou d'un suffixe (« N° », « € », « % »…).
-// Autonome depuis la sortie de Bootstrap : plus de .input-group ni de
-// .input-group-prepend/append (ces deux-là venaient de Bootstrap 4, que seul le
-// thème Angle définissait encore). Couleurs via les tokens --billy-*.
+// Field framed by a prefix and/or a suffix ("No.", "€", "%"…).
+// Self-contained since Bootstrap was dropped: no more .input-group nor
+// .input-group-prepend/append (those two came from Bootstrap 4, which only the
+// Angle theme still defined). Colors via the --billy-* tokens.
 @use 'billy-forms' as forms;
 
-// Groupe écrit à la main plutôt qu'avec le mixin billy-input-group : le champ
-// est projeté par le consommateur, donc les sélecteurs enfants (`>`) du mixin
-// ne l'atteignent pas — il porte l'attribut _ngcontent de SA page, pas le nôtre.
+// Group written by hand rather than with the billy-input-group mixin: the field
+// is projected by the consumer, so the mixin's child selectors (`>`) cannot
+// reach it — it carries the _ngcontent attribute of ITS page, not ours.
 .ips-group {
   position: relative;
   display: flex;
@@ -16,18 +16,18 @@
   margin-bottom: 1rem; // ex-.mb-3
 }
 
-// ── Préfixe / suffixe ───────────────────────────────────────────────────────
+// ── Prefix / suffix ─────────────────────────────────────────────────────────
 .ips-addon {
   @include forms.billy-input-group-addon;
 }
 
-// Un seul bord à la jonction : l'addon cède le sien au champ.
-.ips-addon--prefixe {
+// A single border at the junction: the addon yields its own to the field.
+.ips-addon--prefix {
   border-right: 0;
   border-radius: var(--billy-input-radius, 8px) 0 0 var(--billy-input-radius, 8px);
 }
 
-.ips-addon--suffixe {
+.ips-addon--suffix {
   border-left: 0;
   border-radius: 0 var(--billy-input-radius, 8px) var(--billy-input-radius, 8px) 0;
 }
@@ -40,17 +40,17 @@
   color: var(--billy-accent-strong, #0e97bb);
 }
 
-// ── Champ projeté ───────────────────────────────────────────────────────────
-// ::ng-deep est nécessaire : le champ vient du consommateur (ng-content) et ne
-// porte pas notre attribut de scope. On ne lui donne QUE sa place dans le
-// groupe — pas sa boîte ni sa peau.
+// ── Projected field ─────────────────────────────────────────────────────────
+// ::ng-deep is required: the field comes from the consumer (ng-content) and
+// does not carry our scope attribute. We only give it its place in the
+// group — not its box nor its skin.
 //
-// Tentant d'y inclure billy-field, mais ce serait un abus : `.ips-group[scope]
-// input` (0,2,1) bat le `.form-control[scope]` (0,2,0) de la page, donc le
-// wrapper imposerait sa typographie au champ d'un consommateur qui a la sienne
-// (le « n° » de vente-form est à 13px, pas à l'échelle du design system). La
-// boîte reste au consommateur : les trois pages qui nous utilisent projettent
-// toutes un `.form-control`.
+// Tempting to include billy-field here, but that would be an abuse: `.ips-group[scope]
+// input` (0,2,1) beats the page's `.form-control[scope]` (0,2,0), so the
+// wrapper would force its typography onto the field of a consumer that has its
+// own (the "No." of vente-form is 13px, off the design system scale). The box
+// stays with the consumer: the three pages that use us all project a
+// `.form-control`.
 .ips-group ::ng-deep input,
 .ips-group ::ng-deep select {
   flex: 1 1 auto;
@@ -58,21 +58,21 @@
   min-width: 0;
 }
 
-// Champ focalisé au-dessus des addons, sinon son halo passerait dessous.
+// Focused field above the addons, otherwise its halo would slip underneath.
 .ips-group ::ng-deep input:focus,
 .ips-group ::ng-deep select:focus {
   z-index: 2;
 }
 
-// Coins droits du côté où un addon est accolé.
-.ips-group:has(.ips-addon--prefixe) ::ng-deep input,
-.ips-group:has(.ips-addon--prefixe) ::ng-deep select {
+// Square corners on the side where an addon is attached.
+.ips-group:has(.ips-addon--prefix) ::ng-deep input,
+.ips-group:has(.ips-addon--prefix) ::ng-deep select {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.ips-group:has(.ips-addon--suffixe) ::ng-deep input,
-.ips-group:has(.ips-addon--suffixe) ::ng-deep select {
+.ips-group:has(.ips-addon--suffix) ::ng-deep input,
+.ips-group:has(.ips-addon--suffix) ::ng-deep select {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }

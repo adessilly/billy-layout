@@ -4,7 +4,7 @@
   display: flex;
 }
 
-// ── Cloche ─────────────────────────────────────────────────────────────────
+// ── Bell ───────────────────────────────────────────────────────────────────
 .billy-notif-bell {
   position: relative;
   display: flex;
@@ -29,8 +29,8 @@
     color: #0E97BB;
   }
 
-  // Carillon quand il y a au moins une notification (panneau fermé) :
-  // la cloche pivote depuis son point d'accroche puis se pose longuement.
+  // Chime when there is at least one notification (panel closed):
+  // the bell swings from its anchor point then rests for a long while.
   &.ringing billy-icon {
     transform-origin: 50% 15%;
     animation: billyBellRing 6s ease-in-out infinite;
@@ -72,7 +72,7 @@
   border: 2px solid #F4F6F8;
 }
 
-// ── Panneau ────────────────────────────────────────────────────────────────
+// ── Panel ──────────────────────────────────────────────────────────────────
 .billy-notif-panel {
   position: absolute;
   top: calc(100% + 14px);
@@ -107,7 +107,7 @@
   animation: billyNotifIn .2s ease;
 }
 
-// ── Entête ─────────────────────────────────────────────────────────────────
+// ── Header ─────────────────────────────────────────────────────────────────
 .billy-notif-header {
   display: flex;
   align-items: center;
@@ -154,7 +154,7 @@
   padding: 3px 9px;
 }
 
-// ── Niveau 1 · catégories ──────────────────────────────────────────────────
+// ── Level 1 · categories ───────────────────────────────────────────────────
 .billy-notif-cat {
   display: flex;
   align-items: center;
@@ -216,14 +216,14 @@
   color: #C5D0DB;
 }
 
-// ── Pied d'actions du niveau 1 ─────────────────────────────────────────────
+// ── Level 1 actions footer ─────────────────────────────────────────────────
 .billy-notif-footer {
   border-top: 1px solid #F1F4F7;
   margin-top: 4px;
   padding-top: 6px;
 }
 
-// ── Mobile : panneau plein écran en largeur ────────────────────────────────
+// ── Mobile: full-width panel ───────────────────────────────────────────────
 @media (max-width: 767.98px) {
   .billy-notif-panel {
     position: fixed;

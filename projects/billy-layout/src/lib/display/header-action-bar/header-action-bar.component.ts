@@ -14,12 +14,12 @@ export class HeaderActionBarComponent {
     return this.actions().filter(a => !a.hidden);
   }
 
-  /** Actions neutres → regroupées dans un segmented button group. */
+  /** Neutral actions → grouped in a segmented button group. */
   get groupedActions(): HeaderAction[] {
     return this.visibleActions.filter(a => !a.variant || a.variant === 'default');
   }
 
-  /** Actions mises en avant (primary / danger) → pilules autonomes. */
+  /** Highlighted actions (primary / danger) → standalone pills. */
   get standaloneActions(): HeaderAction[] {
     return this.visibleActions.filter(a => a.variant === 'primary' || a.variant === 'danger');
   }

@@ -1,7 +1,7 @@
 <ng-template>
   <div class="billy-modal-header">
     <ng-content></ng-content>
-    <button type="button" class="close" data-billy-dismiss aria-label="Fermer">
+    <button type="button" class="close" data-billy-dismiss [attr.aria-label]="i18n.strings().deleteDialog.close">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>

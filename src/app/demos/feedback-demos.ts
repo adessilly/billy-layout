@@ -12,21 +12,23 @@ import {
   ToastrService,
 } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
+import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
 import { EmptyStateType, FilterToggleButtonsComponent } from 'billy-layout';
 
-/** ToastrService : les quatre humeurs, empilées et minutées en CSS. */
+/** ToastrService : the four moods, stacked and timed in CSS. */
 @Component({
   selector: 'demo-toastr',
-  imports: [DemoStageComponent],
+  imports: [DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Pousser un toast" description="ToastrService.success / info / warning / error — minuteur en animation CSS, pile plafonnée, pilule compacte sur mobile.">
+    <demo-stage title="Push a toast" description="ToastrService.success / info / warning / error — CSS-animated timer, capped stack, compact pill on mobile.">
+      <demo-locale-toggle stage-controls />
       <div class="toastr-row">
-        <button type="button" class="demo-btn--submit" (click)="toastr.success('La facture 2026-042 est envoyée.', 'Envoyé')">success</button>
-        <button type="button" class="demo-btn" (click)="toastr.info('3 achats attendent votre validation.')">info</button>
-        <button type="button" class="demo-btn" (click)="toastr.warning('Le n° de TVA du client semble invalide.')">warning</button>
-        <button type="button" class="demo-btn--destructive" (click)="toastr.error('L’envoi Peppol a échoué, réessayez.', 'Erreur')">error</button>
+        <button type="button" class="demo-btn--submit" (click)="toastr.success('Invoice 2026-042 has been sent.', 'Sent')">success</button>
+        <button type="button" class="demo-btn" (click)="toastr.info('3 purchases are awaiting your validation.')">info</button>
+        <button type="button" class="demo-btn" (click)="toastr.warning('The client VAT number looks invalid.')">warning</button>
+        <button type="button" class="demo-btn--destructive" (click)="toastr.error('The Peppol delivery failed, please retry.')">error</button>
       </div>
-      <div class="demo-note">Les toasts apparaissent en haut à droite (billy-toastr-list-panel, monté à la racine du site).</div>
+      <div class="demo-note">Toasts appear at the top right (billy-toastr-list-panel, mounted at the site root).</div>
     </demo-stage>
   `,
   styles: `
@@ -42,16 +44,15 @@ export class ToastrDemoComponent {
   readonly toastr = inject(ToastrService);
 }
 
-/** billy-snackbar : le bandeau global « nouvelle version ». */
+/** billy-snackbar : the global "new version" banner. */
 @Component({
   selector: 'demo-snackbar',
-  imports: [SnackbarComponent, DemoStageComponent],
+  imports: [SnackbarComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Le bandeau de mise à jour" description="Un seul usage dans BILLy : signaler une nouvelle version du front, avec bouton d'action et croix pour ignorer.">
-      <button type="button" class="demo-btn--submit" (click)="visible.set(true)">Simuler une nouvelle version</button>
+    <demo-stage title="The update banner" description="A single use in BILLy: announcing a new front-end version, with an action button and a cross to dismiss.">
+      <demo-locale-toggle stage-controls />
+      <button type="button" class="demo-btn--submit" (click)="visible.set(true)">Simulate a new version</button>
       <billy-snackbar
-        message="Nouvelle version disponible."
-        buttonLabel="Mettre à jour"
         [(visible)]="visible"
         (buttonClick)="update()" />
     </demo-stage>
@@ -65,24 +66,24 @@ export class SnackbarDemoComponent {
 
   update(): void {
     this.visible.set(false);
-    this.toastr.success('Le site serait rechargé avec la nouvelle version.', 'Mise à jour');
+    this.toastr.success('The site would reload with the new version.', 'Update');
   }
 
 }
 
-/** billy-loading : l'overlay de chargement d'une zone. */
+/** billy-loading : the loading overlay for an area. */
 @Component({
   selector: 'demo-app-loading',
   imports: [AppLoadingComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Recouvrir une zone en chargement" description="Le parent doit être en position: relative ; l'overlay recouvre toute sa surface tant que loading est vrai.">
+    <demo-stage title="Cover a loading area" description="The parent must be position: relative; the overlay covers its whole surface while loading is true.">
       <div class="al-card">
         <div class="al-line w70"></div>
         <div class="al-line w90"></div>
         <div class="al-line w50"></div>
         <billy-loading [loading]="loading()" />
       </div>
-      <button type="button" class="demo-btn--submit" (click)="reload()">Recharger la zone (2 s)</button>
+      <button type="button" class="demo-btn--submit" (click)="reload()">Reload the area (2 s)</button>
     </demo-stage>
   `,
   styles: `
@@ -121,12 +122,12 @@ export class AppLoadingDemoComponent {
 
 }
 
-/** billy-checkmark + billy-checkmark-failed + billy-checkmark-loading : la coche animée. */
+/** billy-checkmark + billy-checkmark-failed + billy-checkmark-loading : the animated check. */
 @Component({
   selector: 'demo-checkmark',
   imports: [CheckmarkComponent, CheckmarkFailedComponent, CheckmarkLoadingComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="La coche de succès et la croix d'échec" description="La coche verte, la croix rouge (avec son shake d'erreur) et le spinner partagent la même géométrie.">
+    <demo-stage title="The success check and the failure cross" description="The green check, the red cross (with its error shake) and the spinner share the same geometry.">
       <div class="cm-row">
         <div class="cm-block">
           @if (played()) {
@@ -146,11 +147,11 @@ export class AppLoadingDemoComponent {
         </div>
       </div>
       <div class="cm-actions">
-        <button type="button" class="demo-btn" (click)="replay()">Rejouer</button>
+        <button type="button" class="demo-btn" (click)="replay()">Replay</button>
       </div>
     </demo-stage>
 
-    <demo-stage titre="Du chargement au succès ou à l'échec" description="Les composants partagent la même géométrie : superposé, le spinner s'estompe pendant que la coche ou la croix se dessine par-dessus, sans rupture visuelle.">
+    <demo-stage title="From loading to success or failure" description="The components share the same geometry: layered, the spinner fades out while the check or the cross draws itself on top, with no visual break.">
       <div class="cm-row">
         <div class="cm-block">
           <div class="cm-stack">
@@ -159,7 +160,7 @@ export class AppLoadingDemoComponent {
               <billy-checkmark class="cm-layer" />
             }
           </div>
-          <span class="demo-note">→ succès</span>
+          <span class="demo-note">→ success</span>
         </div>
         <div class="cm-block">
           <div class="cm-stack">
@@ -168,16 +169,16 @@ export class AppLoadingDemoComponent {
               <billy-checkmark-failed class="cm-layer" />
             }
           </div>
-          <span class="demo-note">→ échec</span>
+          <span class="demo-note">→ failure</span>
         </div>
       </div>
       <div class="cm-actions">
-        <button type="button" class="demo-btn" (click)="run()">Relancer</button>
+        <button type="button" class="demo-btn" (click)="run()">Run again</button>
       </div>
     </demo-stage>
 
-    <demo-stage titre="Couleurs du design system" description="L'input color accepte success, accent, danger, warning et info — appliqué à la coche, à la croix et au spinner. Défauts : success pour la coche et le spinner, danger pour la croix.">
-      <div class="cm-colors" role="group" aria-label="Choix de la couleur">
+    <demo-stage title="Design system colors" description="The color input accepts success, accent, danger, warning and info — applied to the check, the cross and the spinner. Defaults: success for the check and the spinner, danger for the cross.">
+      <div class="cm-colors" role="group" aria-label="Color choice">
         @for (c of colors; track c) {
           <button
             type="button"
@@ -263,11 +264,11 @@ export class CheckmarkDemoComponent {
 
   readonly played = signal(true);
 
-  /** Démo superposition : le spinner laisse place à la coche ou à la croix. */
+  /** Layering demo: the spinner gives way to the check or the cross. */
   readonly state = signal<'loading' | 'done'>('loading');
   private stateTimer?: ReturnType<typeof setTimeout>;
 
-  /** Démo couleurs. */
+  /** Colors demo. */
   readonly colors: CheckmarkColor[] = ['success', 'accent', 'danger', 'warning', 'info'];
   readonly color = signal<CheckmarkColor>('success');
   readonly colorPlayed = signal(true);
@@ -287,20 +288,20 @@ export class CheckmarkDemoComponent {
     this.stateTimer = setTimeout(() => this.state.set('done'), 2000);
   }
 
-  setColor(couleur: CheckmarkColor): void {
-    this.color.set(couleur);
+  setColor(color: CheckmarkColor): void {
+    this.color.set(color);
     this.colorPlayed.set(false);
     setTimeout(() => this.colorPlayed.set(true), 50);
   }
 
 }
 
-/** billy-circular-loading : anneau de progression déterminé. */
+/** billy-circular-loading : determinate progress ring. */
 @Component({
   selector: 'demo-circular-loading',
   imports: [FormsModule, CircularLoadingComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Une progression déterminée" description="L'anneau suit [percent] — glissez pour le piloter.">
+    <demo-stage title="A determinate progress" description="The ring follows [percent] — drag to drive it.">
       <div class="cl-col">
         <billy-circular-loading [percent]="percent()" />
         <label class="cl-slider">
@@ -333,12 +334,13 @@ export class CircularLoadingDemoComponent {
   readonly percent = signal(65);
 }
 
-/** billy-empty-state : les 7 illustrations d'états vides. */
+/** billy-empty-state : the 7 empty-state illustrations. */
 @Component({
   selector: 'demo-empty-state',
-  imports: [EmptyStateComponent, FilterToggleButtonsComponent, DemoStageComponent],
+  imports: [EmptyStateComponent, FilterToggleButtonsComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Les états vides illustrés" description="Un type par concept métier + le type 'recherche' (sans CTA) pour les filtrages sans résultat." [center]="false">
+    <demo-stage title="The illustrated empty states" description="One type per business concept + the 'search' type (no CTA) for filterings with no result." [center]="false">
+      <demo-locale-toggle stage-controls />
       <div stage-controls>
         <billy-filter-toggle-buttons [options]="options" [value]="type()" (valueChange)="pick($event)" />
       </div>
@@ -361,27 +363,27 @@ export class EmptyStateDemoComponent {
 
   private readonly toastr = inject(ToastrService);
 
-  readonly type = signal<EmptyStateType>('vente');
+  readonly type = signal<EmptyStateType>('sale');
   readonly visible = signal(true);
 
   readonly options = [
-    { value: 'vente', label: 'vente' },
-    { value: 'achat', label: 'achat' },
-    { value: 'devis', label: 'devis' },
+    { value: 'sale', label: 'sale' },
+    { value: 'purchase', label: 'purchase' },
+    { value: 'quote', label: 'quote' },
     { value: 'client', label: 'client' },
-    { value: 'recherche', label: 'recherche' },
+    { value: 'search', label: 'search' },
   ];
 
   pick(value: string | null): void {
     if (!value) { return; }
-    // Re-monte le composant pour rejouer l'animation d'entrée de l'illustration.
+    // Remount the component to replay the illustration's entrance animation.
     this.visible.set(false);
     this.type.set(value as EmptyStateType);
     setTimeout(() => this.visible.set(true), 30);
   }
 
   created(): void {
-    this.toastr.info('Le CTA relaie l’action primary du header (cf. guidelines §2).', 'CTA');
+    this.toastr.info('The CTA relays the header primary action (see guidelines §2).', 'CTA');
   }
 
 }

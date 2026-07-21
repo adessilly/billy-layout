@@ -1,6 +1,7 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 
-/** Couleurs du design system utilisables par la coche et son spinner. */
+/** Design system colors usable by the checkmark and its spinner. */
 export type CheckmarkColor = 'success' | 'accent' | 'danger' | 'warning' | 'info';
 
 @Component({
@@ -11,10 +12,14 @@ export type CheckmarkColor = 'success' | 'accent' | 'danger' | 'warning' | 'info
 })
 export class CheckmarkComponent {
 
-  /** Libellé annoncé aux lecteurs d'écran. */
-  readonly label = input('Succès');
+  protected readonly i18n = inject(BillyI18nService);
 
-  /** Couleur du design system. */
+  /** Label announced to screen readers. */
+  readonly label = input<string>();
+
+  /** Design system color. */
   readonly color = input<CheckmarkColor>('success');
+
+  protected readonly labelText = computed(() => this.label() ?? this.i18n.strings().checkmark.success);
 
 }

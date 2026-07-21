@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BillyNotifCategory, BillyNotifEmptyComponent, BillyNotifItemComponent, provideBillyNotifCategory } from 'billy-layout';
 
-interface Nouveaute {
+interface Highlight {
   category: string;
   slug: string;
   label: string;
@@ -10,13 +10,13 @@ interface Nouveaute {
 }
 
 /**
- * Catégorie de démonstration de la cloche : les dernières fiches à découvrir.
- * Montre le contrat BillyNotifCategory (compteur, refresh, navigation).
+ * Demo category for the bell: the latest doc pages to discover.
+ * Shows the BillyNotifCategory contract (counter, refresh, navigation).
  */
 @Component({
-  selector: 'site-notif-nouveautes',
+  selector: 'site-notif-whats-new',
   imports: [BillyNotifItemComponent, BillyNotifEmptyComponent],
-  providers: [provideBillyNotifCategory(() => NotifNouveautesComponent)],
+  providers: [provideBillyNotifCategory(() => NotifWhatsNewComponent)],
   template: `
     @if (active()) {
       <div class="billy-notif-level">
@@ -31,8 +31,8 @@ interface Nouveaute {
               [initialSource]="item.label"
               [title]="item.label"
               [sub]="item.sub"
-              status="À découvrir"
-              (click)="openFiche(item)" />
+              status="To discover"
+              (click)="openEntry(item)" />
           }
         </div>
       </div>
@@ -57,33 +57,33 @@ interface Nouveaute {
     }
   `,
 })
-export class NotifNouveautesComponent extends BillyNotifCategory {
+export class NotifWhatsNewComponent extends BillyNotifCategory {
 
-  readonly id = 'entrantes' as const;
-  readonly label = 'À découvrir';
-  readonly sub = 'Les fiches emblématiques de la lib';
+  readonly id = 'incoming' as const;
+  readonly label = 'To discover';
+  readonly sub = 'The library’s flagship doc pages';
   readonly icon = 'bell' as const;
   readonly iconBg = '#E6F7FC';
   readonly iconColor = '#0E97BB';
 
   private readonly router = inject(Router);
 
-  readonly items = signal<Nouveaute[]>([
-    { category: 'layout', slug: 'billy-shell', label: 'billy-shell', sub: 'La coque qui habille ce site' },
-    { category: 'layout', slug: 'billy-notifications', label: 'billy-notifications', sub: 'La cloche que vous venez d’ouvrir' },
-    { category: 'inputs', slug: 'datepicker', label: 'datepicker', sub: 'Popover desktop, bottom-sheet mobile' },
-    { category: 'feedback', slug: 'empty-state', label: 'empty-state', sub: '7 illustrations d’états vides' },
-    { category: 'forms', slug: 'save-bar', label: 'save-bar', sub: 'La conclusion de tout formulaire' },
+  readonly items = signal<Highlight[]>([
+    { category: 'layout', slug: 'billy-shell', label: 'billy-shell', sub: 'The shell that frames this site' },
+    { category: 'layout', slug: 'billy-notifications', label: 'billy-notifications', sub: 'The bell you just opened' },
+    { category: 'inputs', slug: 'datepicker', label: 'datepicker', sub: 'Desktop popover, mobile bottom-sheet' },
+    { category: 'feedback', slug: 'empty-state', label: 'empty-state', sub: '7 empty-state illustrations' },
+    { category: 'forms', slug: 'save-bar', label: 'save-bar', sub: 'The conclusion of every form' },
   ]);
 
   readonly count = signal(this.items().length).asReadonly();
 
   async refresh(): Promise<void> {
-    // Démo : rien à recharger, on simule une latence réseau.
+    // Demo: nothing to reload, we simulate network latency.
     await new Promise(resolve => setTimeout(resolve, 600));
   }
 
-  openFiche(item: Nouveaute): void {
+  openEntry(item: Highlight): void {
     this.navigated.emit();
     void this.router.navigate(['/c', item.category, item.slug]);
   }

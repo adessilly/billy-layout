@@ -1,47 +1,49 @@
 # billy-snackbar — SnackbarComponent
 
-> Catégorie `feedback` · source `projects/billy-layout/src/lib/feedback/snackbar/snackbar.component.ts` · standalone component
+> Category `feedback` · source `projects/billy-layout/src/lib/feedback/snackbar/snackbar.component.ts` · standalone component
 
-## Rôle
+## Role
 
-Bandeau flottant en bas d'écran de type « snackbar » PWA, conçu pour annoncer qu'une **nouvelle version de l'application est disponible** et proposer un bouton de mise à jour (rechargement). Le composant est purement présentationnel : il ne détecte rien lui-même, la visibilité est pilotée de l'extérieur via le model `visible`. Il est monté une seule fois dans `src/app/app.component.html` (racine de l'app), alimenté par `UpdateService` qui positionne `shouldRefresh`.
+PWA-style "snackbar" floating banner at the bottom of the screen, designed to announce that a **new version of the application is available** and offer an update (reload) button. The component is purely presentational: it detects nothing by itself, visibility is driven from the outside via the `visible` model. It is mounted once in `src/app/app.component.html` (app root), fed by `UpdateService` which sets `shouldRefresh`.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { SnackbarComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-snackbar`.
+Selector: `billy-snackbar`.
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `message` | `input<string>` | `'Nouvelle version disponible.'` | Texte du bandeau (repris comme libellé du bouton compact mobile). |
-| `buttonTitle` | `input<string>` | `'Cliquez ici pour rafraîchir et mettre à jour'` | Attribut `title` des boutons d'action. |
-| `buttonLabel` | `input<string>` | `'Mettre à jour'` | Libellé du bouton d'action desktop. |
-| `closeTitle` | `input<string>` | `'ignorer ce message'` | Attribut `title` du bouton de fermeture. |
-| `visible` | `model<boolean>` | `false` | Affiche/masque le bandeau ; two-way bindable (`[(visible)]`). Le bouton de fermeture le repasse à `false`. |
+| `message` | `input<string>` | i18n `snackbar.message` (EN `'New version available.'`) | Banner text (reused as the label of the compact mobile button). |
+| `buttonTitle` | `input<string>` | i18n `snackbar.buttonTitle` (EN `'Click here to refresh and update'`) | `title` attribute of the action buttons. |
+| `buttonLabel` | `input<string>` | i18n `snackbar.buttonLabel` (EN `'Update'`) | Label of the desktop action button. |
+| `closeTitle` | `input<string>` | i18n `snackbar.closeTitle` (EN `'Ignore this message'`) | `title` attribute of the close button. |
+| `visible` | `model<boolean>` | `false` | Shows/hides the banner; two-way bindable (`[(visible)]`). The close button sets it back to `false`. |
+
+When the inputs are not set, the defaults come from the i18n dictionary. Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
 | Output | Type | Description |
 |---|---|---|
-| `buttonClick` | `output<void>` | Émis au clic sur le bouton d'action (desktop ou compact mobile). Le parent déclenche typiquement le rechargement de la page. |
+| `buttonClick` | `output<void>` | Emitted on action button click (desktop or compact mobile). The parent typically triggers the page reload. |
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel (`src/app/app.component.html`) :
+Real-world usage (`src/app/app.component.html`):
 
 ```html
 <billy-snackbar
-  [message]="'Nouvelle version disponible.'"
-  [buttonTitle]="'cliquez ici pour rafraîchir la page et mettre à jour'"
-  [buttonLabel]="'Mettre à jour'"
-  [closeTitle]="'ignorer ce message'"
+  [message]="'New version available.'"
+  [buttonTitle]="'click here to refresh the page and update'"
+  [buttonLabel]="'Update'"
+  [closeTitle]="'dismiss this message'"
   (buttonClick)="askRefreshPage()"
   [(visible)]="shouldRefresh">
 </billy-snackbar>
@@ -49,17 +51,17 @@ Usage réel (`src/app/app.component.html`) :
 
 ## Styles & theming
 
-- Zone fixe pleine largeur en bas (`position: fixed; bottom: 0; z-index: 100000`), respecte le safe-area iOS (`padding-bottom: max(16px, env(safe-area-inset-bottom))`).
-- Entrée/sortie : translation verticale hors écran avec courbe à rebond `cubic-bezier(0.34, 1.56, 0.64, 1)` (0,45 s) déclenchée par la classe `.pwa-snackbar-zone-active` ; `pointer-events: none` quand masqué.
-- Carte « glassmorphism » : fond `rgba(255,255,255,.92)` + `backdrop-filter: blur(16px)`, ombres multiples, `max-width: 560px`. Pas de tokens `--billy-*` : palette autonome (icône et bouton en dégradé `#4f8ef7 → #6c63ff`).
-- Icônes du jeu maison [`billy-icon`](../core/billy-icon.md) : `refresh` (icône d'entête et bouton compact mobile), `bolt` (bouton d'action desktop), `close` (croix) — aucune dépendance Font Awesome.
-- **Dark mode** via la règle globale `body.dark-mode .pwa-snackbar` : fond sombre translucide, textes et bouton de fermeture adaptés (pas de `:host-context` ici — les styles ciblent la classe globale).
-- **Mobile (≤ 480px)** : l'icône et le bloc message+bouton desktop sont masqués au profit d'un **bouton compact unique fusionné** (`.pwa-snackbar__btn-compact`, icône + message, pleine largeur) — un seul tap pour mettre à jour ; la croix reste séparée.
-- Accessibilité : `role="alert"` + `aria-live="polite"` sur la zone, `aria-label="Ignorer"` sur la croix.
+- Full-width fixed zone at the bottom (`position: fixed; bottom: 0; z-index: 100000`), respects the iOS safe area (`padding-bottom: max(16px, env(safe-area-inset-bottom))`).
+- Enter/leave: off-screen vertical translation with a bouncy curve `cubic-bezier(0.34, 1.56, 0.64, 1)` (0.45 s) triggered by the `.pwa-snackbar-zone-active` class; `pointer-events: none` when hidden.
+- "Glassmorphism" card: `rgba(255,255,255,.92)` background + `backdrop-filter: blur(16px)`, multiple shadows, `max-width: 560px`. No `--billy-*` tokens: standalone palette (icon and button in a `#4f8ef7 → #6c63ff` gradient).
+- Icons from the in-house [`billy-icon`](../core/billy-icon.md) set: `refresh` (header icon and compact mobile button), `bolt` (desktop action button), `close` (cross) — no Font Awesome dependency.
+- **Dark mode** via the global rule `body.dark-mode .pwa-snackbar`: translucent dark background, adapted texts and close button (no `:host-context` here — the styles target the global class).
+- **Mobile (≤ 480px)**: the icon and the desktop message+button block are hidden in favor of a **single merged compact button** (`.pwa-snackbar__btn-compact`, icon + message, full width) — one tap to update; the cross stays separate.
+- Accessibility: `role="alert"` + `aria-live="polite"` on the zone; the cross's `aria-label` comes from the i18n dictionary (`snackbar.dismiss`, EN "Dismiss").
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Le composant ne se ferme jamais tout seul (pas d'auto-hide) : c'est au parent de gérer `visible`.
-- Cliquer sur le bouton d'action n'affecte pas `visible` : le parent est censé recharger la page (ou fermer explicitement).
-- Les textes par défaut sont déjà en français et orientés « mise à jour PWA » ; le composant est néanmoins réutilisable pour un autre bandeau bas d'écran en surchargeant les inputs.
-- `z-index: 100000` : passe au-dessus de tout, y compris les toasts (10000) et les dialogues.
+- The component never closes itself (no auto-hide): managing `visible` is up to the parent.
+- Clicking the action button does not affect `visible`: the parent is expected to reload the page (or close explicitly).
+- The default texts are geared toward the "PWA update" use case; the component is nonetheless reusable for any other bottom banner by overriding the inputs.
+- `z-index: 100000`: sits above everything, including toasts (10000) and dialogs.

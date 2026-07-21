@@ -2,11 +2,11 @@ import { Component, input } from '@angular/core';
 import { BillyIconComponent, BillyIconName } from '../../core/icon/billy-icon.component';
 
 /**
- * Carte de navigation : tuile cliquable avec pastille-icône, libellé,
- * badge de comptage, description et chevron de survol.
+ * Navigation card: clickable tile with an icon chip, label,
+ * count badge, description and hover chevron.
  *
- * Sélecteur d'attribut sur `<a>` ou `<button>` : la navigation (routerLink,
- * href, click) reste portée par le consommateur, la carte n'est que l'habillage.
+ * Attribute selector on `<a>` or `<button>`: navigation (routerLink,
+ * href, click) stays with the consumer, the card is only the dressing.
  */
 @Component({
   selector: 'a[billy-nav-card], button[billy-nav-card]',
@@ -19,22 +19,22 @@ import { BillyIconComponent, BillyIconName } from '../../core/icon/billy-icon.co
 })
 export class NavCardComponent {
 
-  /** Libellé principal de la carte. */
+  /** Main label of the card. */
   readonly label = input.required<string>();
 
-  /** Icône de la pastille (jeu billy-icon). */
+  /** Chip icon (billy-icon set). */
   readonly icon = input.required<BillyIconName>();
 
-  /** Description courte sous le libellé. Chaîne vide = masquée. */
+  /** Short description below the label. Empty string = hidden. */
   readonly description = input('');
 
-  /** Badge numérique après le libellé. `null` = pas de badge (un `0` s'affiche). */
+  /** Numeric badge after the label. `null` = no badge (a `0` is displayed). */
   readonly badge = input<number | null>(null);
 
-  /** Chevron « aller vers » révélé au survol. */
+  /** "Go to" chevron revealed on hover. */
   readonly chevron = input(true);
 
-  /** Index d'apparition : décale l'animation d'entrée de 60 ms par carte. */
+  /** Appearance index: offsets the entrance animation by 60 ms per card. */
   readonly stagger = input(0);
 
 }

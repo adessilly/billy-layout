@@ -2,12 +2,12 @@
   align-items: center;
   gap: 12px;
   padding: 18px 20px 14px;
-  /* Épuré : pas de séparateur, le contenu du header porte la hiérarchie. */
+  /* Clean look: no separator, the header content carries the hierarchy. */
   border-bottom: none;
 }
 
-/* Croix de fermeture : petit bouton arrondi discret. Couleurs via tokens
-   --billy-* → dark mode automatique (la modale est déplacée sous <body>). */
+/* Close cross: small, discreet rounded button. Colors via --billy-* tokens
+   → automatic dark mode (the modal is moved under <body>). */
 .billy-modal-header .close {
   display: inline-flex;
   align-items: center;

@@ -1,15 +1,15 @@
 import { Component, booleanAttribute, input } from '@angular/core';
 
 /**
- * Coque de panneau flottant « Billy » : carte glass arrondie, ombre douce et
- * animation d'ouverture (issue du panneau de notifications, ici isolée pour
- * être réutilisable). Purement présentationnel : l'état `open` et la fermeture
- * (clic extérieur, échap…) sont pilotés par le composant appelant.
+ * "Billy" floating panel shell: rounded glass card, soft shadow and
+ * opening animation (extracted from the notifications panel, isolated here
+ * for reuse). Purely presentational: the `open` state and closing
+ * (outside click, escape…) are driven by the calling component.
  *
- *   <billy-panel [open]="open()" heading="Mon compte">…</billy-panel>
+ *   <billy-panel [open]="open()" heading="My account">…</billy-panel>
  *
- * L'ancrage (position, alignement) est laissé au parent, qui place ce composant
- * dans un conteneur `position: relative`.
+ * Anchoring (position, alignment) is left to the parent, which places this
+ * component inside a `position: relative` container.
  */
 @Component({
   selector: 'billy-panel',
@@ -32,13 +32,13 @@ import { Component, booleanAttribute, input } from '@angular/core';
 })
 export class BillyPanelComponent {
 
-  /** Le panneau est-il déployé ? */
+  /** Is the panel expanded? */
   readonly open = input(false, { transform: booleanAttribute });
 
-  /** Titre optionnel affiché dans l'entête. */
+  /** Optional title shown in the header. */
   readonly heading = input<string>();
 
-  /** Sous-titre optionnel (sous le titre). */
+  /** Optional subtitle (below the title). */
   readonly subheading = input<string>();
 
 }

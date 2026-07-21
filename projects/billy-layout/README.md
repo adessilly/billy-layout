@@ -1,103 +1,113 @@
 # billy-layout
 
-Layout + design system BILLy : shell applicatif (topbar, sidebar, notifications,
-barre de navigation mobile), tokens & mixins SCSS, champs de formulaire,
-panneaux, dialogues et composants de feedback.
+[![npm version](https://img.shields.io/npm/v/billy-layout)](https://www.npmjs.com/package/billy-layout)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/adessilly/billy-layout/blob/main/LICENSE)
 
-Extraite de billy-client sans dépendance Bootstrap ni dépendance au code
-métier — voir `library-migration.md` à la racine du workspace pour l'historique
-et les décisions.
+BILLy layout + design system for Angular: application shell (topbar, sidebar,
+notifications, mobile navigation bar), SCSS tokens & mixins, form fields,
+panels, dialogs and feedback components.
 
-**📚 Documentation développeur : [docs/README.md](docs/README.md)** — une fiche
-par composant (API, exemples, theming, pièges).
-**🧭 Guidelines UX : [docs/ux-guidelines.md](docs/ux-guidelines.md)** — conventions
-d'assemblage des écrans (boutons de header, listes, consult-card, save-bar).
+Extracted from a production invoicing application, without Bootstrap and
+without any business-code dependency.
 
-> La documentation est **embarquée dans le paquet publié** : une fois la librairie
-> installée, tout est lisible dans `node_modules/billy-layout/docs/` (assistants IA
-> compris — commencez par `docs/README.md` puis `docs/ux-guidelines.md`).
+**📚 Developer documentation: [docs/README.md](docs/README.md)** — one page per
+component (API, examples, theming, pitfalls).
+**🧭 UX guidelines: [docs/ux-guidelines.md](docs/ux-guidelines.md)** — screen
+assembly conventions (header buttons, lists, consult cards, save bar).
 
-**🤖 Assistant IA (Claude Code, etc.)** : le paquet embarque
-[docs/claude.md](docs/claude.md), un contexte prêt à l'emploi. Ajoutez cette
-ligne au `CLAUDE.md` de votre application et votre assistant connaîtra le
-layout, le design system et les composants installés :
+> The documentation is **shipped inside the published package**: once the
+> library is installed, everything is readable from
+> `node_modules/billy-layout/docs/` (AI assistants included — start with
+> `docs/README.md`, then `docs/ux-guidelines.md`).
+
+**🤖 AI assistant (Claude Code, etc.)**: the package embeds
+[docs/claude.md](docs/claude.md), a ready-to-use context. Add this line to your
+application's `CLAUDE.md` and your assistant will know the layout, the design
+system and the installed components:
 
 ```markdown
 @node_modules/billy-layout/docs/claude.md
 ```
 
-## Arborescence
+## Source layout
 
-`src/lib/` est organisé par catégories (miroir de `docs/`) :
+`src/lib/` is organized by category (mirrors `docs/`):
 
-| Dossier | Contenu |
+| Folder | Content |
 |---|---|
-| `core/` | briques transverses : billy-icon, click-outside, autofocus, utils TVA/IBAN/email |
-| `layout/` | shell applicatif (topbar/sidebar/notifications) + action-bar mobile |
-| `inputs/` | champs de saisie CVA : datepicker, dropdown, code-field, input-emails, input-password, button-switch, attachment-button |
-| `forms/` | structure de formulaires : form-creation, default-form-signal, save-bar, form-side-panel |
-| `buttons/` | tuiles d'action : button-ajout, button-upload |
-| `dialogs/` | moteur `Dialog`, dialog-form, delete-dialog |
+| `core/` | cross-cutting building blocks: billy-icon, click-outside, autofocus, VAT/IBAN/email utils |
+| `layout/` | application shell (topbar/sidebar/notifications) + mobile action bar |
+| `inputs/` | CVA form fields: datepicker, dropdown, code-field, input-emails, input-password, button-switch, attachment-button |
+| `forms/` | form structure: form-creation, default-form-signal, save-bar, form-side-panel |
+| `buttons/` | action tiles: add-button, upload-button |
+| `dialogs/` | `Dialog` engine, dialog-form, delete-dialog |
 | `feedback/` | toastr, snackbar, loaders, empty-state |
 | `display/` | billy-panel, consult-card, page-header, header-action-bar, tabs, filter-toggle-buttons |
-| `viewers/` | visionneuses de fichiers (pdf/image/xml) |
-| `styles/` | SCSS partagés : tokens, reboot, mixins (assets publiés sous `styles/`) |
+| `viewers/` | file viewers (pdf/image/xml) |
+| `styles/` | shared SCSS: tokens, reboot, mixins (published under `styles/`) |
 
-## Consommation dans le workspace
+## Consuming the library
 
-- **TypeScript** : `import { … } from 'billy-layout'` — le `tsconfig.json` racine
-  mappe le paquet sur `projects/billy-layout/src/public-api.ts` (compilation par
-  les sources, pas besoin de builder la lib en dev).
-- **SCSS** : les feuilles partagées vivent dans `src/lib/styles/` et sont
-  résolues par `stylePreprocessorOptions.includePaths` (angular.json) :
+- **TypeScript**: `import { … } from 'billy-layout'`. Inside this workspace the
+  root `tsconfig.json` maps the package to `projects/billy-layout/src/public-api.ts`
+  (source compilation — no need to build the lib during development).
+- **SCSS**: the shared stylesheets live in `src/lib/styles/` and are resolved
+  through `stylePreprocessorOptions.includePaths` (angular.json):
 
   ```scss
-  @use 'billy-forms' as forms;   // mixins des champs/boutons
-  @use 'billy-cards' as cards;   // mixins des cartes/sections
+  @use 'billy-forms' as forms;   // field/button mixins
+  @use 'billy-cards' as cards;   // card/section mixins
   @use 'billy-code-field' as code;
-  @use 'billy-tokens';           // variables CSS --billy-* (:root + dark)
-  @use 'billy-dialog';           // coque modale .billy-modal*
-  @use 'billy-reboot';           // normalisation globale (box-sizing…)
+  @use 'billy-tokens';           // CSS variables --billy-* (:root + dark)
+  @use 'billy-dialog';           // modal shell .billy-modal*
+  @use 'billy-reboot';           // global normalization (box-sizing…)
   ```
 
-  À la publication, ces fichiers sont expédiés dans `billy-layout/styles/`
-  (assets ng-packagr) : un consommateur externe ajoute ce dossier à ses
+  When published, these files are shipped under `billy-layout/styles/`
+  (ng-packagr assets): an external consumer adds that folder to its
   `includePaths`.
 
-## Prérequis côté application
+## Application prerequisites
 
-- **Fonts** (chargées par l'application, cf. `src/index.html`) :
-  « Plus Jakarta Sans » (shell + design system). « Source Sans Pro » n'est
-  requise que par la couche de compat legacy de billy-client (`billy-reboot`
-  l'utilise comme police de base des pages métier).
-- **Tokens & thème** : charger `billy-tokens` dans les styles globaux ; le mode
-  sombre repose sur la classe `body.dark-mode`, gérée par `BillyDarkModeService`
-  (clé localStorage `billy_dark_mode`).
-- **Providers** (voir `app.config.ts` de billy-client pour l'exemple complet) :
-  - `BILLY_SHELL_CONFIG` — liens du menu, version, homeLink, logout, badges,
-    synchro des notifications ;
-  - `BILLY_DIALOG_ROUTER` (optionnel) — fermeture des overlays routés pour
-    `billy-dialog-form` ;
-  - `BILLY_FILE_SOURCE` — source de contenu des viewers `app-file-viewer-*`.
+- **Fonts** (loaded by the application, see `src/index.html`):
+  "Plus Jakarta Sans" (shell + design system). "Source Sans Pro" is only needed
+  by the legacy compatibility layer (`billy-reboot` uses it as the base font of
+  business pages).
+- **Tokens & theme**: load `billy-tokens` in the global styles; dark mode relies
+  on the `body.dark-mode` class, managed by `BillyDarkModeService`
+  (localStorage key `billy_dark_mode`).
+- **Providers**:
+  - `BILLY_SHELL_CONFIG` — menu links, version, homeLink, logout, badges,
+    notification sync;
+  - `BILLY_DIALOG_ROUTER` (optional) — closes routed overlays for
+    `billy-dialog-form`;
+  - `BILLY_FILE_SOURCE` — content source for the `billy-file-viewer-*` viewers.
 
-## Shell : slots
+## Shell: slots
 
-`<billy-shell>` projette trois zones métier vers la topbar :
+`<billy-shell>` projects three application zones into the topbar:
 
 ```html
 <billy-shell>
-  <app-billy-search shell-search />
+  <app-search shell-search />
   <billy-notifications shell-notifications>
-    <!-- catégories : composants qui étendent BillyNotifCategory -->
+    <!-- categories: components extending BillyNotifCategory -->
   </billy-notifications>
-  <app-billy-account-menu shell-account />
+  <app-account-menu shell-account />
   <router-outlet />
 </billy-shell>
 ```
 
-## Build & publication
+## Build & publish
 
 ```bash
-ng build billy-layout   # ng-packagr → dist/billy-layout (FESM + DTS + styles/)
+ng build billy-layout   # ng-packagr → dist/billy-layout (FESM + DTS + styles/ + docs/)
 cd dist/billy-layout && npm publish
 ```
+
+## Migrating from 0.x
+
+The pre-1.0 API used French identifiers. Version 1.0.0 renamed the entire
+public API to English — see
+[breaking-changes.md](https://github.com/adessilly/billy-layout/blob/main/breaking-changes.md)
+for the complete old → new table (designed to be applied by an AI agent).

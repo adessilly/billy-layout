@@ -1,29 +1,29 @@
-# Feuilles SCSS partagées — tokens, reboot, mixins, coques
+# Shared SCSS sheets — tokens, reboot, mixins, shells
 
-> Catégorie `styles` · source `projects/billy-layout/src/lib/styles/` · mixins SCSS + feuilles globales
+> Category `styles` · source `projects/billy-layout/src/lib/styles/` · SCSS mixins + global sheets
 
-## Rôle
+## Role
 
-Le design system BILLy côté CSS : six feuilles qui portent les tokens `--billy-*` (source de vérité des couleurs/formes, dark mode compris), la normalisation globale, les mixins de formulaires et de cartes, et deux « coques » partagées (champs code, dialogues modaux). Tout composant de la librairie comme de l'app s'habille avec ces briques ; le dark mode est automatique partout puisque seuls les tokens changent sous `body.dark-mode`.
+The CSS side of the BILLy design system: six sheets carrying the `--billy-*` tokens (the source of truth for colors/shapes, dark mode included), the global normalization, the form and card mixins, and two shared "shells" (code fields, modal dialogs). Every component — in the library and in the app — dresses itself with these building blocks; dark mode is automatic everywhere since only the tokens change under `body.dark-mode`.
 
-## Consommation
+## Consumption
 
-Les feuilles se résolvent **par nom nu**, sans chemin relatif, grâce aux include paths configurés des deux côtés :
+The sheets resolve **by bare name**, without relative paths, thanks to the include paths configured on both sides:
 
 - **Application** — `angular.json` → `projects.billy-client.architect.build.options.stylePreprocessorOptions.includePaths: ["projects/billy-layout/src/lib/styles"]`.
-- **Librairie packagée** — `projects/billy-layout/ng-package.json` → `lib.styleIncludePaths: ["src/lib/styles"]` pour la compilation des composants, et un bloc `assets` qui copie `src/lib/styles/**/*.scss` vers `dist/billy-layout/styles` (les `.scss` sont livrés en source pour les consommateurs).
+- **Packaged library** — `projects/billy-layout/ng-package.json` → `lib.styleIncludePaths: ["src/lib/styles"]` for component compilation, plus an `assets` block that copies `src/lib/styles/**/*.scss` to `dist/billy-layout/styles` (the `.scss` files ship as source for consumers).
 
-Deux modes d'usage :
+Two usage modes:
 
 ```scss
-// 1. Mixins, dans un SCSS de composant :
+// 1. Mixins, in a component SCSS file:
 @use 'billy-forms' as forms;
 @use 'billy-cards' as cards;
 
-.mon-input { @include forms.billy-field; }
-.mon-panneau { @include cards.billy-card; }
+.my-input { @include forms.billy-field; }
+.my-panel { @include cards.billy-card; }
 
-// 2. Feuilles globales, chargées une fois :
+// 2. Global sheets, loaded once:
 // src/styles.scss
 @use 'billy-tokens';
 @use 'billy-dialog';
@@ -31,158 +31,158 @@ Deux modes d'usage :
 @use 'billy-reboot';
 ```
 
-| Feuille | Nature | Chargement |
+| Sheet | Nature | Loading |
 |---|---|---|
-| `_billy-tokens.scss` | globale (émet du CSS) | une fois, dans `src/styles.scss` |
-| `_billy-reboot.scss` | globale (émet du CSS) | une fois, aujourd'hui via `billy-legacy.scss` |
-| `_billy-dialog.scss` | globale (émet du CSS) | une fois, dans `src/styles.scss` |
-| `_billy-forms.scss` | mixins + `$field-height` | `@use` dans chaque composant consommateur |
-| `_billy-cards.scss` | mixins | `@use` dans chaque composant consommateur |
-| `_billy-code-field.scss` | une mixin de coque | `@use` dans les composants `code-field` |
+| `_billy-tokens.scss` | global (emits CSS) | once, in `src/styles.scss` |
+| `_billy-reboot.scss` | global (emits CSS) | once, currently via `billy-legacy.scss` |
+| `_billy-dialog.scss` | global (emits CSS) | once, in `src/styles.scss` |
+| `_billy-forms.scss` | mixins + `$field-height` | `@use` in every consuming component |
+| `_billy-cards.scss` | mixins | `@use` in every consuming component |
+| `_billy-code-field.scss` | a single shell mixin | `@use` in the `code-field` components |
 
 ---
 
-## `_billy-tokens` — design tokens globaux
+## `_billy-tokens` — global design tokens
 
-Source de vérité des couleurs et formes. Les valeurs light sont posées sur `:root`, les valeurs dark sur **`body.dark-mode`** : tout consommateur — y compris les overlays déplacés sous `<body>` (dialogues, dropdowns) — hérite du bon thème sans bloc dark local.
+The source of truth for colors and shapes. Light values sit on `:root`, dark values on **`body.dark-mode`**: every consumer — including overlays relocated under `<body>` (dialogs, dropdowns) — inherits the right theme without a local dark block.
 
-Principaux tokens par famille (light → dark quand la valeur change) :
+Main tokens by family (light → dark when the value changes):
 
-| Famille | Tokens | Light | Dark |
+| Family | Tokens | Light | Dark |
 |---|---|---|---|
-| **Accent** | `--billy-accent` | `#12b4dd` | idem |
-| | `--billy-accent-strong` (liens, totaux, sélection) | `#0e97bb` | `#7dd3ec` |
-| | `--billy-accent-soft` (fonds teintés) | `#e6f7fc` | `rgba(18,180,221,.15)` |
+| **Accent** | `--billy-accent` | `#12b4dd` | same |
+| | `--billy-accent-strong` (links, totals, selection) | `#0e97bb` | `#7dd3ec` |
+| | `--billy-accent-soft` (tinted backgrounds) | `#e6f7fc` | `rgba(18,180,221,.15)` |
 | | `--billy-accent-border` | `#a5dff2` | `#0e97bb` |
-| **Sémantique** (statuts) | `--billy-neutral` / `-strong` | `#6b7280` / `#374151` | `#4b5563` / `#cbd5e1` |
+| **Semantic** (statuses) | `--billy-neutral` / `-strong` | `#6b7280` / `#374151` | `#4b5563` / `#cbd5e1` |
 | `neutral · info · success · warning · error` | `--billy-info` / `-strong` | `#3b82f6` / `#1d4ed8` | `#2563eb` / `#60a5fa` |
-| chacune : `base` (rempli vif), | `--billy-success` / `-strong` | `#16a34a` / `#15803d` | `#22c55e` / `#4ade80` |
-| `-strong` (texte/icône, ≥ AA), | `--billy-warning` / `-strong` | `#ff902b` / `#b45309` | `#d97706` / `#fbbf24` |
+| each: `base` (vivid fill), | `--billy-success` / `-strong` | `#16a34a` / `#15803d` | `#22c55e` / `#4ade80` |
+| `-strong` (text/icon, ≥ AA), | `--billy-warning` / `-strong` | `#ff902b` / `#b45309` | `#d97706` / `#fbbf24` |
 | `-soft` / `-soft-strong`, `-ring` | `--billy-error` / `-strong` | `#ef4444` / `#b91c1c` | `#dc2626` / `#f87171` |
-| **Focus** | `--billy-focus-border` | `#66afe9` | idem |
+| **Focus** | `--billy-focus-border` | `#66afe9` | same |
 | | `--billy-focus-ring` | `rgba(102,175,233,.15)` | `.25` |
-| **Champs** | `--billy-input-bg` / `-border` / `-border-hover` / `-color` / `-placeholder` | `#fff` / `#e5e7eb` / `#9ca3af` / `#374151` / `#c2c8d0` | `#121d1f` / `#49545a` / `#6b7a80` / `#ced0d2` / `#4b5563` |
-| | `--billy-input-radius` | `8px` | idem |
+| **Fields** | `--billy-input-bg` / `-border` / `-border-hover` / `-color` / `-placeholder` | `#fff` / `#e5e7eb` / `#9ca3af` / `#374151` / `#c2c8d0` | `#121d1f` / `#49545a` / `#6b7a80` / `#ced0d2` / `#4b5563` |
+| | `--billy-input-radius` | `8px` | same |
 | | `--billy-input-disabled-bg` / `-color` | `#f3f4f6` / `#9ca3af` | `#172224` / `#5a6a70` |
 | **Addons** | `--billy-addon-bg` / `-color` / `-hover-bg` / `-hover-color` | `#f9fafb` / `#6b7280` / `#f3f4f6` / `#374151` | `#212e31` / `#7a8a90` / `#2d3d42` / `#ced0d2` |
-| **Surfaces** | `--billy-surface` / `-border` / `-shadow` | `#fff` / `#e5e7eb` / ombre douce | `#1c282b` / `#49545a` / ombre noire |
+| **Surfaces** | `--billy-surface` / `-border` / `-shadow` | `#fff` / `#e5e7eb` / soft shadow | `#1c282b` / `#49545a` / black shadow |
 | | `--billy-divider`, `--billy-text-muted`, `--billy-text-soft` | `#f3f4f6`, `#9ca3af`, `#6b7280` | `#2a3a3e`, `#5a6a70`, `#7a8a90` |
-| **Danger** | `--billy-danger` / `--billy-danger-ring` | `#dc2626` / `rgba(220,38,38,.08)` | idem / `.15` |
-| **Cartes & sections** | `--billy-card-shadow`, `--billy-section-bg` / `-border` / `-title` | ombre 4% / `#fafbfc` / `#eceff3` / `#374151` | ombre 25% / `#1a2629` / `#2e3d41` / `#9aadb3` |
+| **Danger** | `--billy-danger` / `--billy-danger-ring` | `#dc2626` / `rgba(220,38,38,.08)` | same / `.15` |
+| **Cards & sections** | `--billy-card-shadow`, `--billy-section-bg` / `-border` / `-title` | 4% shadow / `#fafbfc` / `#eceff3` / `#374151` | 25% shadow / `#1a2629` / `#2e3d41` / `#9aadb3` |
 
-### Familles sémantiques (statuts)
+### Semantic families (statuses)
 
-Cinq familles de statut — `neutral`, `info`, `success`, `warning`, `error` — bâties sur le même modèle qu'`Accent`, **source de vérité unique** des teintes de statut du DS. Chacune expose cinq variables :
+Five status families — `neutral`, `info`, `success`, `warning`, `error` — built on the same model as `Accent`, the **single source of truth** for the DS status hues. Each exposes five variables:
 
-| Variante | Rôle |
+| Variant | Role |
 |---|---|
-| `--billy-<hue>` (`base`) | Rempli **vif** : fond d'un bouton plein, disque d'un checkmark. S'assombrit d'un cran en dark. |
-| `--billy-<hue>-strong` | Teinte **texte/icône** (contour, libellé, glyphe) : ≥ AA 4.5:1 sur surface claire, **s'éclaircit en dark** pour rester lisible. |
-| `--billy-<hue>-soft` / `-soft-strong` | Voiles teintés (survol / actif des variantes contour & texte, pastille d'icône de toast). |
-| `--billy-<hue>-ring` | Halo de focus (`box-shadow`). |
+| `--billy-<hue>` (`base`) | **Vivid** fill: background of a filled button, disc of a checkmark. Darkens one step in dark mode. |
+| `--billy-<hue>-strong` | **Text/icon** tint (outline, label, glyph): ≥ AA 4.5:1 on light surfaces, **lightens in dark mode** to stay readable. |
+| `--billy-<hue>-soft` / `-soft-strong` | Tinted washes (hover / active states of outline & text variants, toast icon chip). |
+| `--billy-<hue>-ring` | Focus halo (`box-shadow`). |
 
-`primary` n'a **pas** de famille propre : c'est l'`Accent` de marque (`--billy-accent*`). Consommateurs : [`billy-button`](../buttons/button.md) (map `base`/`-strong`/`-soft`/`-ring` sur ses `--btn-*`), [`toastr`](../feedback/toastr.md) (accent = `-strong`, pastille = `-soft`), [`checkmark`](../feedback/checkmark.md) & `checkmark-failed` (disque = `base`), [`save-bar`](../forms/save-bar.md) (via `billy-button`). Un seul point à changer pour reteinter un statut partout.
-
----
-
-## `_billy-reboot` — normalisation globale
-
-Reset/normalize du DS, extrait de la couche de compat Bootstrap. **Tout le DS en dépend**, en particulier `* { box-sizing: border-box }` — aucun autre fichier ne le pose. Fixe : racine à `16px`, body en « Source Sans Pro » `0.875rem` / `line-height 1.52857` / fond `#f5f7fa`, échelle de titres, liens `#5d9cec`, `small { font-size: 80% }`, `*:focus { outline: 0 !important }`, resets `button/input/textarea/fieldset/table`.
-
-Points d'attention :
-
-- Les valeurs **reproduisent le rendu calculé du stack Bootstrap + Angle d'origine** — ne pas les « moderniser » sans re-vérifier la parité visuelle des pages métier.
-- Chargé aujourd'hui par `src/app/layout/layout-ui-loader/billy-legacy.scss` (même position de cascade qu'avant l'extraction) ; quand la couche de compat disparaîtra, le charger depuis `styles.scss`.
-- Prérequis fonts chargées par l'application (`index.html`) : « Source Sans Pro » (pages métier) ; le shell et le DS utilisent « Plus Jakarta Sans ».
+`primary` has **no** family of its own: it is the brand `Accent` (`--billy-accent*`). Consumers: [`billy-button`](../buttons/button.md) (maps `base`/`-strong`/`-soft`/`-ring` onto its `--btn-*`), [`toastr`](../feedback/toastr.md) (accent = `-strong`, chip = `-soft`), [`checkmark`](../feedback/checkmark.md) & `checkmark-failed` (disc = `base`), [`save-bar`](../forms/save-bar.md) (via `billy-button`). A single place to change to retint a status everywhere.
 
 ---
 
-## `_billy-forms` — mixins de formulaire
+## `_billy-reboot` — global normalization
 
-Consommation : `@use 'billy-forms' as forms;`. Dark mode automatique via les tokens. Deux générations de mixins :
+The DS reset/normalize, extracted from the Bootstrap compat layer. **The entire DS depends on it**, in particular `* { box-sizing: border-box }` — no other file sets it. It fixes: root at `16px`, body in "Source Sans Pro" `0.875rem` / `line-height 1.52857` / `#f5f7fa` background, the heading scale, `#5d9cec` links, `small { font-size: 80% }`, `*:focus { outline: 0 !important }`, `button/input/textarea/fieldset/table` resets.
 
-**Peau seule** (historiquement combinées avec `.form-control` de Bootstrap) :
+Points of attention:
+
+- The values **reproduce the computed rendering of the original Bootstrap + Angle stack** — do not "modernize" them without re-checking visual parity on the business pages.
+- Currently loaded by `src/app/layout/layout-ui-loader/billy-legacy.scss` (same cascade position as before the extraction); once the compat layer is gone, load it from `styles.scss`.
+- Prerequisite: fonts loaded by the application (`index.html`): "Source Sans Pro" (business pages); the shell and the DS use "Plus Jakarta Sans".
+
+---
+
+## `_billy-forms` — form mixins
+
+Consumption: `@use 'billy-forms' as forms;`. Dark mode is automatic via the tokens. Two generations of mixins:
+
+**Skin only** (historically combined with Bootstrap's `.form-control`):
 
 | Mixin | Usage |
 |---|---|
-| `billy-input` | Peau d'un champ : fond, bordure, rayon, placeholder, état focus (bordure + ring). |
-| `billy-input-invalid` | État invalide, à combiner avec `billy-input` (classe Angular `.is-invalid`). |
-| `billy-focus` | Uniquement l'état focus — pour un élément non-input (ex. trigger de dropdown ouvert). |
-| `billy-addon-button` | Peau d'un addon accolé à un champ (fond gris, hover). |
+| `billy-input` | Field skin: background, border, radius, placeholder, focus state (border + ring). |
+| `billy-input-invalid` | Invalid state, combined with `billy-input` (Angular's `.is-invalid` class). |
+| `billy-focus` | The focus state alone — for a non-input element (e.g. an open dropdown trigger). |
+| `billy-addon-button` | Skin of an addon attached to a field (grey background, hover). |
 
-**Boîte complète, sans Bootstrap** — la géométrie reprend celle du thème Angle (hauteur `2.1875rem`, padding `.375rem 1rem`, interligne `1.52857`, police `.875rem` pour les champs et `13px` pour les boutons — c'est le thème qui fait foi, pas le `1rem` de Bootstrap) :
+**Full box, without Bootstrap** — the geometry matches the Angle theme (height `2.1875rem`, padding `.375rem 1rem`, line-height `1.52857`, `.875rem` font for fields and `13px` for buttons — the theme is authoritative, not Bootstrap's `1rem`):
 
 | Mixin / variable | Usage |
 |---|---|
-| `$field-height` (`2.1875rem`) | Exposée pour aligner un bouton accolé à un champ. |
-| `billy-field` | Champ complet (remplace `.form-control`) : boîte + peau + états disabled/readonly + `.is-invalid`. |
-| `billy-textarea` | Même champ, hauteur auto (grandit avec le contenu). |
-| `billy-button` | Socle d'un bouton (remplace `.btn`), sans couleur — à combiner avec une variante. |
-| `billy-input-group` | Groupe « champ + addon accolé » (remplace `.input-group`) : coins joints, bordures superposées, champ focalisé passé en `z-index: 2`. |
-| `billy-input-group-addon` | Texte/bouton accolé au champ ; hauteur **fixée** à `$field-height` (pas déduite du contenu), contenu centré verticalement. |
+| `$field-height` (`2.1875rem`) | Exposed to align a button attached to a field. |
+| `billy-field` | Complete field (replaces `.form-control`): box + skin + disabled/readonly states + `.is-invalid`. |
+| `billy-textarea` | Same field, auto height (grows with the content). |
+| `billy-button` | Button base (replaces `.btn`), colorless — combine with a variant. |
+| `billy-input-group` | "Field + attached addon" group (replaces `.input-group`): joined corners, overlapping borders, focused field raised to `z-index: 2`. |
+| `billy-input-group-addon` | Text/button attached to the field; height **fixed** at `$field-height` (not derived from the content), content vertically centered. |
 
-**Boutons de footer de panneau latéral** — même langage que `<billy-save-bar>` mais à échelle réduite (à utiliser quand une save-bar ne rentre pas : agenda, prestations) :
-
-| Mixin | Usage |
-|---|---|
-| `billy-panel-button` | Socle commun (13px, 600, enfoncement à l'`:active`, disabled). |
-| `billy-panel-button-ghost` | Annuler / Non : fantôme discret. |
-| `billy-panel-button-submit` | Enregistrer : plein accent + relief au survol. |
-| `billy-panel-button-destructive` | Confirmation de suppression : rouge plein, prend la place du bouton principal. |
-| `billy-panel-button-delete-icon` | Supprimer en icône seule (~36px), `margin-right: auto` pour l'éloigner du bouton de validation. |
-
----
-
-## `_billy-cards` — cartes & sections de panneaux
-
-Consommation : `@use 'billy-cards' as cards;`. Visuel « carte blanche + sections grises à pastille » introduit sur la page Compte (`compte-form`) et généralisé aux écrans de consultation (`billy-consult-card`, `achat-document`, …).
+**Side-panel footer buttons** — same visual language as `<billy-save-bar>` but at a reduced scale (use when a save-bar does not fit: agenda, services):
 
 | Mixin | Usage |
 |---|---|
-| `billy-card` | Carte englobante : surface, bord fin, rayon 16px, ombre discrète (`--billy-card-shadow`). |
-| `billy-section` | Section interne : fond gris doux (`--billy-section-bg`), rayon 12px. |
-| `billy-section-title` | Titre de section : 12px, capitales, gras, flex avec gap pour la pastille. |
-| `billy-section-icon` | Pastille-icône 26×26 du titre (fond `--billy-accent-soft`, texte `--billy-accent-strong`). |
-| `billy-intro` | Paragraphe d'introduction sous le titre (12.5px, `--billy-text-soft`). |
+| `billy-panel-button` | Common base (13px, 600, pressed-in `:active`, disabled). |
+| `billy-panel-button-ghost` | Cancel / No: discreet ghost. |
+| `billy-panel-button-submit` | Save: solid accent + raised hover. |
+| `billy-panel-button-destructive` | Delete confirmation: solid red, takes the main button's place. |
+| `billy-panel-button-delete-icon` | Icon-only delete (~36px), `margin-right: auto` to keep it away from the confirm button. |
 
 ---
 
-## `_billy-code-field` — coque des champs « code »
+## `_billy-cards` — cards & panel sections
 
-Consommation : `@use 'billy-code-field' as code;` puis `@include code.billy-code-field;` **au niveau racine du SCSS d'un composant** (la mixin contient des règles `:host`). Un seul jeu de classes `.cfd-*` partagé par `billy-input-tva`, `billy-input-iban` et `billy-input-email` : ils ne diffèrent que par leur symbole et leurs messages, pas par leur boîte.
+Consumption: `@use 'billy-cards' as cards;`. The "white card + grey chip-titled sections" look, introduced on the Account page (`compte-form`) and generalized to consult screens (`billy-consult-card`, `achat-document`, …).
 
-- `.cfd-shell` : boîte du champ (flex, `billy-input`), modificateurs `--focus`, `--valid`, `--invalid`, `--disabled`. Choix assumé : **le champ valide garde sa bordure neutre** (la validation se lit à la coche/symbole/message) ; seule l'erreur garde son cadre.
-- `.cfd-input` : saisie nue dans la shell — 13px semi-gras, `font-variant-numeric: tabular-nums` (chasse fixe : les groupes restent alignés et la valeur ne « respire » pas pendant la frappe).
-- `.cfd-glyph` : symbole du champ (couleur d'état, léger scale au focus).
-- `.cfd-meta` : ligne d'information sous le champ, **hauteur réservée** (`min-height: 17px`) — le message apparaît/disparaît sans pousser le champ suivant.
-- `.cfd-country` : puce pays (fond accent doux, animation d'entrée `cfd-chip-in`).
-- `.cfd-msg` + `--ok` / `--info` / `--error` : message d'état.
-- Le vert de validation garde une valeur locale (`--cfd-ok: #16a34a`, `#4ade80` en dark via `:host-context(body.dark-mode)`) : il lui faut du vert **vif en clair** _et_ **clair en dark**, un couple que la famille `--billy-success` (base sombre en dark) ne restitue pas d'un seul token. Les valeurs restent alignées sur `--billy-success` (`base` light) / `--billy-success-strong` (dark). Animations neutralisées sous `prefers-reduced-motion`.
-
----
-
-## `_billy-dialog` — coque des dialogues modaux `.billy-modal*`
-
-Feuille **globale** (chargée dans `src/styles.scss`), remplaçante des `.modal*` de Bootstrap. Moteur associé : la classe `Dialog` (`dialogs/dialog/dialog-utils.ts`). Globale et non scopée pour deux raisons : les dialogues sont déplacés sous `<body>` à l'ouverture, et trois composants partagent la coque (dialog-form, delete, ai-extract).
-
-| Classe | Rôle |
+| Mixin | Usage |
 |---|---|
-| `.billy-modal` | Racine plein écran : fond assombri, zone de clic-pour-fermer, conteneur de défilement. `display` piloté en JS (`none ↔ block`) — c'est ce passage qui rejoue les animations d'illustration. `z-index: 1055`. |
-| `.billy-modal.is-open` | État ouvert : fondu d'opacité + glissement du dialogue (`translateY(-30px) → none`). |
-| `.billy-modal-dialog` | Enveloppe centrée, `max-width: 500px` (géométrie Bootstrap conservée pour ne déplacer aucun dialogue). `pointer-events: none` pour laisser les clics de la gouttière atteindre la racine ; le contenu les reprend. |
-| `.billy-modal-dialog--centered` | Centrage vertical (`min-height: calc(100% - 3.5rem)`). |
-| `.billy-modal-dialog--large` | Équivalent `.modal-xl` : `800px` dès 992px, `1140px` dès 1200px. |
-| `.billy-modal-content` | Carte du dialogue — même langage que `billy-card` (surface, bord fin, rayon 16px, `--billy-surface-shadow`), `pointer-events: auto`. |
-| `.billy-modal-header` / `-body` / `-footer` / `-title` | Structure interne (paddings 1rem / footer 0.75rem aligné à droite). |
-| `body.billy-dialog-open` | Verrou de défilement (`overflow: hidden`), posé par `Dialog` tant qu'un dialogue est ouvert. |
+| `billy-card` | Enclosing card: surface, thin border, 16px radius, discreet shadow (`--billy-card-shadow`). |
+| `billy-section` | Inner section: soft grey background (`--billy-section-bg`), 12px radius. |
+| `billy-section-title` | Section title: 12px, uppercase, bold, flex with a gap for the chip. |
+| `billy-section-icon` | 26×26 title icon chip (`--billy-accent-soft` background, `--billy-accent-strong` text). |
+| `billy-intro` | Introductory paragraph under the title (12.5px, `--billy-text-soft`). |
 
-Responsive : marges réduites sous 576px. Transitions neutralisées sous `prefers-reduced-motion`.
+---
 
-## Pièges & notes
+## `_billy-code-field` — shell of the "code" fields
 
-- **Ordre de cascade** : `billy-reboot` doit rester à sa position actuelle (chargé par `billy-legacy.scss`) tant que la couche de compat existe ; `billy-tokens` et `billy-dialog` se chargent dans `src/styles.scss`.
-- Les mixins n'émettent **rien** tant qu'on ne les `@include` pas — les `@use` multiples dans les composants ne dupliquent pas de CSS. À l'inverse, `billy-tokens`/`billy-reboot`/`billy-dialog` émettent du CSS au `@use` : ne les charger qu'une fois, globalement.
-- Toutes les couleurs des mixins ont un fallback en dur (`var(--billy-x, #hex)`) : un composant fonctionne même si les tokens ne sont pas chargés, mais sans dark mode — charger `billy-tokens` reste requis.
-- Le dark mode repose sur la classe **`body.dark-mode`** (posée par `BillyDarkModeService`) : pas de `@media (prefers-color-scheme)` ici.
-- `billy-code-field` référence `:host` / `:host-context` : réservée aux styles de composant (ViewEncapsulation par défaut), pas à une feuille globale.
-- Dans le paquet distribué, les `.scss` sont copiés dans `dist/billy-layout/styles` : un consommateur externe doit ajouter ce dossier à ses propres `includePaths`.
+Consumption: `@use 'billy-code-field' as code;` then `@include code.billy-code-field;` **at the root level of a component's SCSS** (the mixin contains `:host` rules). A single set of `.cfd-*` classes shared by `billy-input-vat`, `billy-input-iban` and `billy-input-email`: they differ only in their symbol and messages, not in their box.
+
+- `.cfd-shell`: the field box (flex, `billy-input`), with `--focus`, `--valid`, `--invalid`, `--disabled` modifiers. A deliberate choice: **a valid field keeps its neutral border** (validity reads from the checkmark/symbol/message); only the error keeps its frame.
+- `.cfd-input`: bare input inside the shell — 13px semi-bold, `font-variant-numeric: tabular-nums` (fixed advance width: groups stay aligned and the value does not "breathe" while typing).
+- `.cfd-glyph`: the field's symbol (state color, slight scale on focus).
+- `.cfd-meta`: information line below the field, with **reserved height** (`min-height: 17px`) — the message appears/disappears without pushing the next field.
+- `.cfd-country`: country chip (soft accent background, `cfd-chip-in` entrance animation).
+- `.cfd-msg` + `--ok` / `--info` / `--error`: status message.
+- The validation green keeps a local value (`--cfd-ok: #16a34a`, `#4ade80` in dark via `:host-context(body.dark-mode)`): it needs a green that is **vivid in light** _and_ **light in dark**, a pair that the `--billy-success` family (dark base in dark mode) cannot deliver from a single token. The values stay aligned with `--billy-success` (light `base`) / `--billy-success-strong` (dark). Animations are disabled under `prefers-reduced-motion`.
+
+---
+
+## `_billy-dialog` — modal dialog shell `.billy-modal*`
+
+A **global** sheet (loaded in `src/styles.scss`), replacing Bootstrap's `.modal*`. Companion engine: the `Dialog` class (`dialogs/dialog/dialog-utils.ts`). Global rather than scoped for two reasons: dialogs are relocated under `<body>` on open, and three components share the shell (dialog-form, delete, ai-extract).
+
+| Class | Role |
+|---|---|
+| `.billy-modal` | Full-screen root: dimmed background, click-to-close area, scroll container. `display` driven from JS (`none ↔ block`) — this toggle is what replays the illustration animations. `z-index: 1055`. |
+| `.billy-modal.is-open` | Open state: opacity fade + dialog slide (`translateY(-30px) → none`). |
+| `.billy-modal-dialog` | Centered wrapper, `max-width: 500px` (Bootstrap geometry kept so no dialog shifts). `pointer-events: none` so gutter clicks reach the root; the content re-enables them. |
+| `.billy-modal-dialog--centered` | Vertical centering (`min-height: calc(100% - 3.5rem)`). |
+| `.billy-modal-dialog--large` | `.modal-xl` equivalent: `800px` from 992px, `1140px` from 1200px. |
+| `.billy-modal-content` | The dialog card — same language as `billy-card` (surface, thin border, 16px radius, `--billy-surface-shadow`), `pointer-events: auto`. |
+| `.billy-modal-header` / `-body` / `-footer` / `-title` | Inner structure (1rem paddings / 0.75rem right-aligned footer). |
+| `body.billy-dialog-open` | Scroll lock (`overflow: hidden`), set by `Dialog` while a dialog is open. |
+
+Responsive: reduced margins under 576px. Transitions disabled under `prefers-reduced-motion`.
+
+## Pitfalls & notes
+
+- **Cascade order**: `billy-reboot` must stay at its current position (loaded by `billy-legacy.scss`) as long as the compat layer exists; `billy-tokens` and `billy-dialog` load in `src/styles.scss`.
+- Mixins emit **nothing** until you `@include` them — multiple `@use` statements across components do not duplicate CSS. Conversely, `billy-tokens`/`billy-reboot`/`billy-dialog` emit CSS on `@use`: load them only once, globally.
+- Every color in the mixins has a hard-coded fallback (`var(--billy-x, #hex)`): a component works even without the tokens loaded, but without dark mode — loading `billy-tokens` remains required.
+- Dark mode relies on the **`body.dark-mode`** class (set by `BillyDarkModeService`): no `@media (prefers-color-scheme)` here.
+- `billy-code-field` references `:host` / `:host-context`: it belongs in component styles (default ViewEncapsulation), not in a global sheet.
+- In the distributed package, the `.scss` files are copied to `dist/billy-layout/styles`: an external consumer must add that folder to its own `includePaths`.

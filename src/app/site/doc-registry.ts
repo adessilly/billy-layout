@@ -1,18 +1,18 @@
 import { BillyIconName } from 'billy-layout';
 
-/** Fiche d'un composant de la librairie présenté par le site. */
+/** Doc page of a library component presented by the site. */
 export interface DocEntry {
-  /** Slug d'URL et nom du fichier markdown (sans extension). */
+  /** URL slug and markdown file name (without extension). */
   slug: string;
-  /** Nom affiché (balise, service ou famille). */
+  /** Displayed name (tag, service or family). */
   label: string;
-  /** Résumé d'une ligne (repris de docs/README.md). */
+  /** One-line summary (taken from docs/README.md). */
   summary: string;
-  /** Tags de recherche complémentaires. */
+  /** Additional search tags. */
   tags?: string[];
 }
 
-/** Catégorie de composants — miroir de l'arborescence docs/ et src/lib/. */
+/** Component category — mirrors the docs/ and src/lib/ tree. */
 export interface DocCategory {
   slug: string;
   label: string;
@@ -26,120 +26,121 @@ export const DOC_CATEGORIES: DocCategory[] = [
     slug: 'core',
     label: 'Core',
     icon: 'check',
-    intro: 'Briques transverses : icônes maison, directives utilitaires et utils de valeurs (TVA, IBAN, email).',
+    intro: 'Cross-cutting building blocks: in-house icons, utility directives and value utils (VAT, IBAN, email).',
     entries: [
-      { slug: 'billy-icon', label: 'billy-icon', summary: 'Jeu d’icônes SVG maison (type BillyIconName), micro-animations au survol.', tags: ['icone', 'svg'] },
-      { slug: 'click-outside', label: 'click-outside', summary: 'Directive [clickOutside] + ClickOutsideService : fermeture des dropdowns en zoneless.', tags: ['directive', 'dropdown'] },
-      { slug: 'autofocus', label: 'autofocus', summary: 'Directive [billyAutofocus] : focus automatique à l’affichage.', tags: ['directive', 'focus'] },
-      { slug: 'code-utils', label: 'code-utils', summary: 'code-format (segments/statuts) + TvaUtils, IbanUtils, EmailUtils (validation et suggestions).', tags: ['tva', 'iban', 'email', 'validation'] },
+      { slug: 'billy-icon', label: 'billy-icon', summary: 'In-house SVG icon set (BillyIconName type), micro-animations on hover.', tags: ['icon', 'svg'] },
+      { slug: 'click-outside', label: 'click-outside', summary: 'Directive [clickOutside] + ClickOutsideService: closing dropdowns in zoneless.', tags: ['directive', 'dropdown'] },
+      { slug: 'autofocus', label: 'autofocus', summary: 'Directive [billyAutofocus]: automatic focus on display.', tags: ['directive', 'focus'] },
+      { slug: 'code-utils', label: 'code-utils', summary: 'code-format (segments/statuses) + VatUtils, IbanUtils, EmailUtils (validation and suggestions).', tags: ['vat', 'iban', 'email', 'validation'] },
+      { slug: 'i18n', label: 'i18n', summary: "provideBillyI18n('en' | 'fr') + BillyI18nService: built-in strings, overridable and runtime-switchable.", tags: ['i18n', 'locale', 'french'] },
     ],
   },
   {
     slug: 'layout',
     label: 'Layout',
     icon: 'open',
-    intro: 'Le shell applicatif complet : topbar, sidebar repliable, cloche de notifications et navigation mobile.',
+    intro: 'The complete application shell: topbar, collapsible sidebar, notification bell and mobile navigation.',
     entries: [
-      { slug: 'billy-shell', label: 'billy-shell', summary: 'Le point d’entrée : coque topbar + sidebar + contenu, token BILLY_SHELL_CONFIG.', tags: ['shell', 'coque'] },
-      { slug: 'billy-topbar', label: 'billy-topbar', summary: 'Topbar, slots shell-search / shell-notifications / shell-account, BillyDarkModeService.', tags: ['topbar', 'dark mode'] },
-      { slug: 'billy-sidebar', label: 'billy-sidebar', summary: 'Sidebar (liens, version, badges via config) + billy-nav-item.', tags: ['menu', 'navigation'] },
-      { slug: 'billy-notifications', label: 'billy-notifications', summary: 'Cloche à deux niveaux, base abstraite BillyNotifCategory, briques item/empty/action.', tags: ['cloche', 'notification'] },
-      { slug: 'action-bar', label: 'action-bar', summary: 'Navigation mobile en bas d’écran, onglets BillyActionBarTab[] fournis par l’app.', tags: ['mobile', 'navigation'] },
+      { slug: 'billy-shell', label: 'billy-shell', summary: 'The entry point: topbar + sidebar + content shell, BILLY_SHELL_CONFIG token.', tags: ['shell', 'frame'] },
+      { slug: 'billy-topbar', label: 'billy-topbar', summary: 'Topbar, shell-search / shell-notifications / shell-account slots, BillyDarkModeService.', tags: ['topbar', 'dark mode'] },
+      { slug: 'billy-sidebar', label: 'billy-sidebar', summary: 'Sidebar (links, version, badges via config) + billy-nav-item.', tags: ['menu', 'navigation'] },
+      { slug: 'billy-notifications', label: 'billy-notifications', summary: 'Two-level bell, abstract base BillyNotifCategory, item/empty/action building blocks.', tags: ['bell', 'notification'] },
+      { slug: 'action-bar', label: 'action-bar', summary: 'Mobile bottom-of-screen navigation, BillyActionBarTab[] tabs provided by the app.', tags: ['mobile', 'navigation'] },
     ],
   },
   {
     slug: 'inputs',
     label: 'Inputs',
-    icon: 'devis',
-    intro: 'Champs de saisie ControlValueAccessor : dates, listes, codes formatés, emails, mot de passe…',
+    icon: 'quotes',
+    intro: 'ControlValueAccessor input fields: dates, lists, formatted codes, emails, password…',
     entries: [
-      { slug: 'datepicker', label: 'datepicker', summary: 'CVA ‘yyyy-MM-dd’ | null : popover desktop, bottom-sheet mobile + calendrier autonome.', tags: ['date', 'calendrier'] },
-      { slug: 'dropdown', label: 'dropdown', summary: 'Liste déroulante DropdownOption, mode recherche, parité select2.', tags: ['select', 'liste'] },
-      { slug: 'code-field', label: 'code-field', summary: 'La famille codes : input-tva / input-iban / input-email + affichages tva-display / iban-display.', tags: ['tva', 'iban', 'email'] },
-      { slug: 'input-emails', label: 'input-emails', summary: 'Saisie multi-emails : tags + suggestions (availableEmails fourni par le consommateur).', tags: ['email', 'tags'] },
-      { slug: 'input-password', label: 'input-password', summary: 'Mot de passe avec jauge de robustesse (checkStrength) et correspondance (compareTo).', tags: ['mot de passe'] },
-      { slug: 'button-switch', label: 'button-switch', summary: 'Toggle booléen CVA façon iOS.', tags: ['toggle', 'switch'] },
-      { slug: 'attachment-button', label: 'attachment-button', summary: 'Pièces jointes [(files)] + panneau liste.', tags: ['fichier', 'upload'] },
+      { slug: 'datepicker', label: 'datepicker', summary: "CVA 'yyyy-MM-dd' | null: desktop popover, mobile bottom-sheet + standalone calendar.", tags: ['date', 'calendar'] },
+      { slug: 'dropdown', label: 'dropdown', summary: 'DropdownOption dropdown list, search mode, select2 parity.', tags: ['select', 'list'] },
+      { slug: 'code-field', label: 'code-field', summary: 'The codes family: input-vat / input-iban / input-email + vat-display / iban-display views.', tags: ['vat', 'iban', 'email'] },
+      { slug: 'input-emails', label: 'input-emails', summary: 'Multi-email input: tags + suggestions (availableEmails provided by the consumer).', tags: ['email', 'tags'] },
+      { slug: 'input-password', label: 'input-password', summary: 'Password with strength gauge (checkStrength) and match check (compareTo).', tags: ['password'] },
+      { slug: 'button-switch', label: 'button-switch', summary: 'iOS-style boolean CVA toggle.', tags: ['toggle', 'switch'] },
+      { slug: 'attachment-button', label: 'attachment-button', summary: 'Attachments [(files)] + list panel.', tags: ['file', 'upload'] },
     ],
   },
   {
     slug: 'forms',
     label: 'Forms',
-    icon: 'prestations',
-    intro: 'La structure des formulaires : lignes label + champ, panneaux titrés, save-bar sticky, panneau latéral.',
+    icon: 'services',
+    intro: 'Form structure: label + field rows, titled panels, sticky save-bar, side panel.',
     entries: [
-      { slug: 'input-line', label: 'input-line', summary: 'Ligne label + champ projeté (obligatoire, infobulle).', tags: ['ligne', 'label'] },
-      { slug: 'consult-line', label: 'consult-line', summary: 'Pendant lecture seule d’input-line.', tags: ['consultation'] },
-      { slug: 'input-prefixe-suffixe', label: 'input-prefixe-suffixe', summary: 'Groupe champ + préfixe/suffixe cliquables.', tags: ['addon'] },
-      { slug: 'label-clipboard', label: 'label-clipboard', summary: 'Libellé copiable dans le presse-papier.', tags: ['copie', 'presse-papier'] },
-      { slug: 'default-form-signal', label: 'default-form-signal', summary: 'Classe de base signals des formulaires add/edit.', tags: ['formulaire', 'signals'] },
-      { slug: 'save-bar', label: 'save-bar', summary: 'Barre sticky Enregistrer/Annuler (variantes, mode dialogue).', tags: ['enregistrer', 'sticky'] },
-      { slug: 'form-side-panel', label: 'form-side-panel', summary: 'Panneau latéral avec overlay et verrou de scroll.', tags: ['panneau', 'overlay'] },
+      { slug: 'input-line', label: 'input-line', summary: 'Label + projected field row (required marker, tooltip).', tags: ['row', 'label'] },
+      { slug: 'consult-line', label: 'consult-line', summary: 'Read-only counterpart of input-line.', tags: ['consult'] },
+      { slug: 'input-prefix-suffix', label: 'input-prefix-suffix', summary: 'Field group + clickable prefix/suffix.', tags: ['addon'] },
+      { slug: 'label-clipboard', label: 'label-clipboard', summary: 'Label copyable to the clipboard.', tags: ['copy', 'clipboard'] },
+      { slug: 'default-form-signal', label: 'default-form-signal', summary: 'Signals base class for add/edit forms.', tags: ['form', 'signals'] },
+      { slug: 'save-bar', label: 'save-bar', summary: 'Sticky Save/Cancel bar (variants, dialog mode).', tags: ['save', 'sticky'] },
+      { slug: 'form-side-panel', label: 'form-side-panel', summary: 'Side panel with overlay and scroll lock.', tags: ['panel', 'overlay'] },
     ],
   },
   {
     slug: 'buttons',
     label: 'Buttons',
     icon: 'plus',
-    intro: 'Le bouton d’action polyvalent et les tuiles d’action des écrans d’accueil : ajouter et importer.',
+    intro: 'The versatile action button and the action tiles of home screens: add and import.',
     entries: [
-      { slug: 'button', label: 'button', summary: 'Bouton d’action polyvalent : 5 couleurs × 6 variantes × 3 tailles, label et/ou icône.', tags: ['bouton', 'action', 'cta', 'variante'] },
-      { slug: 'button-ajout', label: 'button-ajout', summary: 'Tuile d’action « ajouter » (label + sous-titre + icône).', tags: ['tuile', 'ajout'] },
-      { slug: 'button-upload', label: 'button-upload', summary: 'Tuile d’import de fichier (input caché, re-sélection possible).', tags: ['tuile', 'import'] },
+      { slug: 'button', label: 'button', summary: 'Versatile action button: 5 colors × 6 variants × 3 sizes, label and/or icon.', tags: ['button', 'action', 'cta', 'variant'] },
+      { slug: 'add-button', label: 'add-button', summary: '"Add" action tile (label + subtitle + icon).', tags: ['tile', 'add'] },
+      { slug: 'upload-button', label: 'upload-button', summary: 'File import tile (hidden input, re-selection possible).', tags: ['tile', 'import'] },
     ],
   },
   {
     slug: 'dialogs',
     label: 'Dialogs',
-    icon: 'compte',
-    intro: 'Le moteur Dialog (pile, verrou, gestes de fermeture) et les dialogues prêts à l’emploi.',
+    icon: 'account',
+    intro: 'The Dialog engine (stack, lock, close gestures) and the ready-to-use dialogs.',
     entries: [
-      { slug: 'dialog', label: 'dialog', summary: 'La classe Dialog (pile, verrou compté, gestes de fermeture), markup .billy-modal, BILLY_DIALOG_ROUTER.', tags: ['modale'] },
-      { slug: 'dialog-form', label: 'dialog-form', summary: 'billy-dialog-form + header/body/footer, closeThen, déplacement sous <body>.', tags: ['modale', 'formulaire'] },
-      { slug: 'delete-dialog', label: 'delete-dialog', summary: 'Confirmation de suppression (openDialog / openDialogAndWait).', tags: ['suppression', 'confirmation'] },
+      { slug: 'dialog', label: 'dialog', summary: 'The Dialog class (stack, counted lock, close gestures), .billy-modal markup, BILLY_DIALOG_ROUTER.', tags: ['modal'] },
+      { slug: 'dialog-form', label: 'dialog-form', summary: 'billy-dialog-form + header/body/footer, closeThen, relocation under <body>.', tags: ['modal', 'form'] },
+      { slug: 'delete-dialog', label: 'delete-dialog', summary: 'Delete confirmation (openDialog / openDialogAndWait).', tags: ['delete', 'confirmation'] },
     ],
   },
   {
     slug: 'feedback',
     label: 'Feedback',
     icon: 'bell',
-    intro: 'Toasts, snackbar, loaders et états vides illustrés.',
+    intro: 'Toasts, snackbar, loaders and illustrated empty states.',
     entries: [
-      { slug: 'toastr', label: 'toastr', summary: 'ToastrService + toasts (minuteur en animation CSS, pile plafonnée, pilule mobile).', tags: ['toast', 'notification'] },
-      { slug: 'snackbar', label: 'snackbar', summary: 'Bandeau « nouvelle version » global.', tags: ['bandeau'] },
-      { slug: 'app-loading', label: 'app-loading', summary: 'billy-loading : overlay de chargement (parent position: relative requis).', tags: ['loader', 'chargement'] },
-      { slug: 'checkmark', label: 'checkmark', summary: 'Coche animée, croix d’échec + spinner checkmark-loading (couleurs du DS).', tags: ['coche', 'animation', 'erreur'] },
-      { slug: 'circular-loading', label: 'circular-loading', summary: 'Anneau de progression déterminé.', tags: ['progression'] },
-      { slug: 'empty-state', label: 'empty-state', summary: 'États vides illustrés (7 types, CTA).', tags: ['vide', 'illustration'] },
+      { slug: 'toastr', label: 'toastr', summary: 'ToastrService + toasts (CSS-animated timer, capped stack, mobile pill).', tags: ['toast', 'notification'] },
+      { slug: 'snackbar', label: 'snackbar', summary: 'Global "new version" banner.', tags: ['banner'] },
+      { slug: 'app-loading', label: 'app-loading', summary: 'billy-loading: loading overlay (parent position: relative required).', tags: ['loader', 'loading'] },
+      { slug: 'checkmark', label: 'checkmark', summary: 'Animated checkmark, failure cross + checkmark-loading spinner (DS colors).', tags: ['checkmark', 'animation', 'error'] },
+      { slug: 'circular-loading', label: 'circular-loading', summary: 'Determinate progress ring.', tags: ['progress'] },
+      { slug: 'empty-state', label: 'empty-state', summary: 'Illustrated empty states (7 types, CTA).', tags: ['empty', 'illustration'] },
     ],
   },
   {
     slug: 'display',
     label: 'Display',
-    icon: 'ventes',
-    intro: 'La structure de page : en-têtes, barres d’actions, cartes de consultation, onglets et filtres.',
+    icon: 'sales',
+    intro: 'Page structure: headers, action bars, consult cards, tabs and filters.',
     entries: [
-      { slug: 'billy-panel', label: 'billy-panel', summary: 'Coque de panneau flottant (ancrage par le parent).', tags: ['panneau', 'flottant'] },
-      { slug: 'consult-card', label: 'consult-card', summary: 'Carte de consultation (slot [card-actions], règle anti-imbrication).', tags: ['carte'] },
-      { slug: 'nav-card', label: 'nav-card', summary: 'Tuile de navigation a[billy-nav-card] (pastille-icône, badge, chevron, cascade).', tags: ['carte', 'navigation', 'tuile'] },
-      { slug: 'page-header', label: 'page-header', summary: 'En-tête de page (titre, retour, zone de boutons).', tags: ['titre', 'header'] },
-      { slug: 'header-action-bar', label: 'header-action-bar', summary: 'Barre d’actions d’en-tête (HeaderAction).', tags: ['actions', 'boutons'] },
-      { slug: 'tabs', label: 'tabs', summary: 'billy-tabs / billy-tab (mode projeté ou piloté, onglets montés en permanence).', tags: ['onglets'] },
-      { slug: 'filter-toggle-buttons', label: 'filter-toggle-buttons', summary: 'Filtres segmentés (variantes toggle/chips).', tags: ['filtres', 'segments'] },
+      { slug: 'billy-panel', label: 'billy-panel', summary: 'Floating panel shell (anchored by the parent).', tags: ['panel', 'floating'] },
+      { slug: 'consult-card', label: 'consult-card', summary: 'Consult card ([card-actions] slot, anti-nesting rule).', tags: ['card'] },
+      { slug: 'nav-card', label: 'nav-card', summary: 'Navigation tile a[billy-nav-card] (icon chip, badge, chevron, cascade).', tags: ['card', 'navigation', 'tile'] },
+      { slug: 'page-header', label: 'page-header', summary: 'Page header (title, back, buttons area).', tags: ['title', 'header'] },
+      { slug: 'header-action-bar', label: 'header-action-bar', summary: 'Header action bar (HeaderAction).', tags: ['actions', 'buttons'] },
+      { slug: 'tabs', label: 'tabs', summary: 'billy-tabs / billy-tab (projected or driven mode, permanently mounted tabs).', tags: ['tabs'] },
+      { slug: 'filter-toggle-buttons', label: 'filter-toggle-buttons', summary: 'Segmented filters (toggle/chips variants).', tags: ['filters', 'segments'] },
     ],
   },
   {
     slug: 'viewers',
     label: 'Viewers',
     icon: 'search',
-    intro: 'Les visionneuses de fichiers : toolbar commune + rendus PDF, image et XML.',
+    intro: 'The file viewers: shared toolbar + PDF, image and XML renderings.',
     entries: [
-      { slug: 'file-viewer', label: 'file-viewer', summary: 'Toolbar + viewers pdf/image/xml, contrat BILLY_FILE_SOURCE / BillyViewerFile.', tags: ['pdf', 'image', 'xml'] },
+      { slug: 'file-viewer', label: 'file-viewer', summary: 'Toolbar + pdf/image/xml viewers, BILLY_FILE_SOURCE / BillyViewerFile contract.', tags: ['pdf', 'image', 'xml'] },
     ],
   },
 ];
 
-/** Nombre total de fiches composants. */
+/** Total number of component doc pages. */
 export const DOC_ENTRY_COUNT = DOC_CATEGORIES.reduce((n, c) => n + c.entries.length, 0);
 
 export function findCategory(slug: string | null): DocCategory | undefined {

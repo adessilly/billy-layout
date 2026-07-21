@@ -8,8 +8,8 @@ svg {
   overflow: visible;
 }
 
-// Micro-animations des icônes : les parties taguées (anim-*) s'animent quand
-// un ancêtre portant la classe .billy-icon-hover-zone est survolé.
+// Icon micro-animations: the tagged parts (anim-*) animate when an ancestor
+// carrying the .billy-icon-hover-zone class is hovered.
 .anim-drop,
 .anim-rise,
 .anim-lift,
@@ -35,7 +35,7 @@ svg {
   }
 }
 
-// Les keyframes sans from/to reviennent d'eux-mêmes à l'état de repos.
+// Keyframes without from/to settle back to the resting state on their own.
 @keyframes billy-ico-drop {
   40% { transform: translateY(2.5px); }
 }

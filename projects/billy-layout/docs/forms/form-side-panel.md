@@ -1,44 +1,44 @@
 # billy-form-side-panel — FormSidePanelComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/form-side-panel/` · standalone component
+> Category `forms` · source `projects/billy-layout/src/lib/forms/form-side-panel/` · standalone component
 
-## Rôle
+## Purpose
 
-Panneau latéral coulissant depuis la droite, avec overlay semi-transparent et **verrou de scroll du body** : tant que le panneau est monté, la page derrière ne défile plus, et la position de scroll est restaurée à la fermeture. Le composant ne gère que le conteneur (overlay + panneau animé) : le contenu (formulaire de liaison, revue IA…) est projeté, et l'ouverture/fermeture est pilotée par le consommateur via un `@if`. Utilisé notamment dans `src/app/auth/pages/achat/achat-consult/achat-consult.component.html` (liaison agenda + revue IA), `src/app/auth/pages/achat/achat-form/achat-form.component.html` (revue IA), `src/app/auth/pages/vente/vente-consult/vente-consult.component.html`, `src/app/auth/pages/prestations/prestations-agenda/prestations-agenda.component.html` et `src/app/auth/pages/agenda/agenda-list/agenda-list.component.html`.
+Side panel sliding in from the right, with a semi-transparent overlay and a **body scroll lock**: as long as the panel is mounted, the page behind it no longer scrolls, and the scroll position is restored on close. The component only manages the container (overlay + animated panel): the content (link form, AI review…) is projected, and opening/closing is driven by the consumer via an `@if`. Used notably in `src/app/auth/pages/achat/achat-consult/achat-consult.component.html` (agenda link + AI review), `src/app/auth/pages/achat/achat-form/achat-form.component.html` (AI review), `src/app/auth/pages/vente/vente-consult/vente-consult.component.html`, `src/app/auth/pages/prestations/prestations-agenda/prestations-agenda.component.html` and `src/app/auth/pages/agenda/agenda-list/agenda-list.component.html`.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { FormSidePanelComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-form-side-panel>`.
+Selector: `<billy-form-side-panel>`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `wide` | `boolean` | `false` | Panneau large : 440px au lieu de 360px (sans effet sous 768px, où le panneau est plein écran). |
+| `wide` | `boolean` | `false` | Wide panel: 440px instead of 360px (no effect below 768px, where the panel is full screen). |
 
 ### Outputs
 
 | Output | Payload | Description |
 |---|---|---|
-| `overlayClick` | `void` | Clic sur l'overlay. Le composant **ne se ferme pas tout seul** : c'est au consommateur de démonter le panneau (ex. `(overlayClick)="visible.set(false)"`). |
+| `overlayClick` | `void` | Click on the overlay. The component **does not close itself**: it's up to the consumer to unmount the panel (e.g. `(overlayClick)="visible.set(false)"`). |
 
-### Méthodes publiques
+### Public methods
 
-Aucune. Cycle de vie : `ngOnInit` pose le verrou de scroll (voir Pièges), `ngOnDestroy` le retire et restaure la position.
+None. Lifecycle: `ngOnInit` sets the scroll lock (see Pitfalls), `ngOnDestroy` removes it and restores the position.
 
 ## Slots / projection
 
-`<ng-content>` unique dans `.panel` (colonne flex pleine hauteur) : le contenu fournit son propre header/footer et son scroll interne.
+Single `<ng-content>` inside `.panel` (full-height flex column): the content provides its own header/footer and its internal scrolling.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/achat/achat-consult/achat-consult.component.html` :
+Real usage in `src/app/auth/pages/achat/achat-consult/achat-consult.component.html`:
 
 ```html
 @if (liaisonVisible()) {
@@ -53,7 +53,7 @@ Usage réel dans `src/app/auth/pages/achat/achat-consult/achat-consult.component
 }
 ```
 
-Variante large, dans `src/app/auth/pages/prestations/prestations-agenda/prestations-agenda.component.html` :
+Wide variant, in `src/app/auth/pages/prestations/prestations-agenda/prestations-agenda.component.html`:
 
 ```html
 <billy-form-side-panel [wide]="true" (overlayClick)="onBulkCancelled()">
@@ -61,14 +61,14 @@ Variante large, dans `src/app/auth/pages/prestations/prestations-agenda/prestati
 
 ## Styles & theming
 
-- `:host { display: contents }` : l'hôte ne crée pas de boîte, overlay et panneau se positionnent en `fixed` directement.
-- Overlay : `rgba(0,0,0,0.15)`, `z-index: 1050` — au-dessus de la save-bar sticky (1001), sous les toasts/modales (9000+) ; fondu 0.2s. Panneau : `z-index: 1051`, glissement 0.25s depuis la droite, ombre portée vers la gauche.
-- Fond du panneau : blanc codé en dur, avec dark mode explicite via `:host-context(.dark-mode) .panel { background: #172224 }` (pas de token `--billy-surface` ici).
-- Mobile (≤768px) : panneau plein écran (width 100%).
+- `:host { display: contents }`: the host creates no box; overlay and panel position themselves as `fixed` directly.
+- Overlay: `rgba(0,0,0,0.15)`, `z-index: 1050` — above the sticky save-bar (1001), below toasts/modals (9000+); 0.2s fade. Panel: `z-index: 1051`, 0.25s slide from the right, drop shadow toward the left.
+- Panel background: hard-coded white, with explicit dark mode via `:host-context(.dark-mode) .panel { background: #172224 }` (no `--billy-surface` token here).
+- Mobile (≤768px): full-screen panel (width 100%).
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **Verrou de scroll body** : à l'init, le composant mémorise `window.scrollY` puis fige le body (`position: fixed; top: -scrollY; width: 100%`) et garde `overflow-y: scroll` pour préserver la largeur de la scrollbar desktop (pas de décalage de mise en page). À la destruction, il remet les styles à vide et `scrollTo(0, scrollY)`. Conséquences : (1) le verrou écrase les styles inline du body — ne pas empiler deux side-panels ni un autre mécanisme de verrou en même temps, le second détruit restaurerait des styles vides et une position obsolète ; (2) le panneau doit être monté/démonté via `@if`, pas masqué en CSS, sinon le verrou reste actif.
-- `overlayClick` est une simple notification : sans handler qui démonte le panneau, cliquer l'overlay ne ferme rien. Pas de fermeture sur `Escape` non plus.
-- Pas de focus-trap ni d'attributs ARIA : l'accessibilité clavier est à la charge du contenu projeté.
-- Le contenu doit gérer son propre débordement (`overflow-y: auto` sur sa zone scrollable) : `.panel` est une colonne flex plein écran sans scroll par défaut.
+- **Body scroll lock**: on init, the component records `window.scrollY` then freezes the body (`position: fixed; top: -scrollY; width: 100%`) and keeps `overflow-y: scroll` to preserve the desktop scrollbar width (no layout shift). On destroy, it clears the styles and calls `scrollTo(0, scrollY)`. Consequences: (1) the lock overwrites the body's inline styles — do not stack two side-panels or another lock mechanism at the same time, as the second one destroyed would restore empty styles and a stale position; (2) the panel must be mounted/unmounted via `@if`, not hidden in CSS, otherwise the lock stays active.
+- `overlayClick` is a mere notification: without a handler that unmounts the panel, clicking the overlay closes nothing. No close on `Escape` either.
+- No focus trap and no ARIA attributes: keyboard accessibility is the projected content's responsibility.
+- The content must manage its own overflow (`overflow-y: auto` on its scrollable area): `.panel` is a full-screen flex column with no scrolling by default.

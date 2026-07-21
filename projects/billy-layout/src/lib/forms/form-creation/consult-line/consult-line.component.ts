@@ -4,7 +4,6 @@ import { Component, input } from '@angular/core';
     selector: 'billy-consult-line',
     templateUrl: './consult-line.component.html',
     styleUrls: ['./consult-line.component.scss'],
-    standalone: true
 })
 export class ConsultLineComponent {
 

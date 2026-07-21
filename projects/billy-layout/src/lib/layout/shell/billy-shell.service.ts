@@ -3,15 +3,15 @@ import { Injectable, effect, signal } from '@angular/core';
 const SIDEBAR_COLLAPSED_KEY = 'billy-shell.sidebar-collapsed';
 
 /**
- * État partagé du shell applicatif (topbar + sidebar).
- * L'état replié de la sidebar est persisté dans le localStorage.
+ * Shared state of the application shell (topbar + sidebar).
+ * The collapsed state of the sidebar is persisted in localStorage.
  */
 @Injectable({ providedIn: 'root' })
 export class BillyShellService {
 
   readonly sidebarCollapsed = signal<boolean>(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true');
 
-  /** Sur mobile la sidebar devient un tiroir superposé au contenu. */
+  /** On mobile the sidebar becomes a drawer overlaid on the content. */
   readonly mobileSidebarOpen = signal(false);
 
   constructor() {

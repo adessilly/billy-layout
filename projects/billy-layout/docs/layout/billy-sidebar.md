@@ -1,10 +1,10 @@
 # billy-sidebar — BillySidebarComponent
 
-> Catégorie `layout` · source `projects/billy-layout/src/lib/layout/shell/billy-sidebar.component.*` · standalone component (+ `billy-nav-item`)
+> Category `layout` · source `projects/billy-layout/src/lib/layout/shell/billy-sidebar.component.*` · standalone component (+ `billy-nav-item`)
 
-## Rôle
+## Role
 
-Menu latéral du shell : rend la liste de liens fournie par `BILLY_SHELL_CONFIG.menuLinks` (headings de section + liens routés via `billy-nav-item`), affiche les badges dynamiques (`menuBadges`) et la version de l'application en pied. Deux modes pilotés par `BillyShellService` : replié en colonne d'icônes (80px) sur desktop, tiroir superposé au contenu sur mobile. Dans billy-client la sidebar n'est jamais instanciée directement : c'est `BillyShellComponent` qui la pose, et les liens viennent de `src/app/layout/menus-admin-links.ts` via le provider de `src/app/app.config.ts`.
+The shell's side menu: renders the list of links provided by `BILLY_SHELL_CONFIG.menuLinks` (section headings + routed links via `billy-nav-item`), displays the dynamic badges (`menuBadges`) and the application version in the footer. Two modes driven by `BillyShellService`: collapsed into an icon column (80px) on desktop, drawer overlaid on the content on mobile. In billy-client the sidebar is never instantiated directly: `BillyShellComponent` places it, and the links come from `src/app/layout/menus-admin-links.ts` via the provider in `src/app/app.config.ts`.
 
 ## API — BillySidebarComponent
 
@@ -12,22 +12,22 @@ Menu latéral du shell : rend la liste de liens fournie par `BILLY_SHELL_CONFIG.
 import { BillySidebarComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-sidebar`. Aucun input ni output : tout vient du token et du service.
+Selector: `billy-sidebar`. No input or output: everything comes from the token and the service.
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `shell` | `BillyShellService` | Classes `.collapsed` / `.mobile-open` ; un clic sur un lien appelle `shell.closeMobileSidebar()`. |
-| `links` | `BillyMenuLink[]` | `config?.menuLinks ?? []` (lu une fois à la construction). |
-| `version` | `string` | `config?.version ?? ''` — pied de sidebar (« Version x.y.z » déplié, la valeur seule replié). |
-| `badges` | `computed<Record<string, string \| null>>` | Déballe `config.menuBadges` (ex. envois Peppol en cours sur « Ventes »). Clé = `text` de l'entrée de menu. |
+| `shell` | `BillyShellService` | `.collapsed` / `.mobile-open` classes; clicking a link calls `shell.closeMobileSidebar()`. |
+| `links` | `BillyMenuLink[]` | `config?.menuLinks ?? []` (read once at construction). |
+| `version` | `string` | `config?.version ?? ''` — sidebar footer ("Version x.y.z" when expanded, the bare value when collapsed). |
+| `badges` | `computed<Record<string, string \| null>>` | Unwraps `config.menuBadges` (e.g. in-progress Peppol sendings on "Sales"). Key = the menu entry's `text`. |
 
-Tokens consommés : `BILLY_SHELL_CONFIG` (`{ optional: true }`).
+Consumed tokens: `BILLY_SHELL_CONFIG` (`{ optional: true }`).
 
-Rendu : `@for (item of links; track item.text)` — `item.heading` donne un `<div class="billy-sidebar-heading">`, sinon un `<billy-nav-item>` avec `item.link!`, `item.icon!`, `item.text`, l'état replié et le badge éventuel.
+Rendering: `@for (item of links; track item.text)` — `item.heading` yields a `<div class="billy-sidebar-heading">`, otherwise a `<billy-nav-item>` with `item.link!`, `item.icon!`, `item.text`, the collapsed state and the optional badge.
 
-## Exemple d'utilisation
+## Usage example
 
-La sidebar est alimentée par le provider de `src/app/app.config.ts` :
+The sidebar is fed by the provider in `src/app/app.config.ts`:
 
 ```ts
 {
@@ -37,7 +37,7 @@ La sidebar est alimentée par le provider de `src/app/app.config.ts` :
     version: environment.version,
     menuBadges: computed(() => {
       const count = peppolLogFactureService.inProgressLogs().length;
-      return { Ventes: count > 0 ? String(count) : null };
+      return { Sales: count > 0 ? String(count) : null };
     }),
     // …
   }),
@@ -46,22 +46,22 @@ La sidebar est alimentée par le provider de `src/app/app.config.ts` :
 
 ## Styles & theming (sidebar)
 
-- `:host { display: flex; flex: none; }` — indispensable : le host doit s'étirer sur toute la hauteur du body du shell, sinon le `<nav>` garde une hauteur auto et le pied de version (`margin-top: auto`) reste collé au dernier lien.
-- Largeur 250px, 80px en `.collapsed`, transition `.3s cubic-bezier(.4, 0, .2, 1)` ; police `'Plus Jakarta Sans'`.
-- Headings : uppercase 11px `#9AA7B4`, centrés et estompés (`opacity: .35`) en mode replié.
-- Pied de version : bordure haute `#E7ECF1`, pastille accent `#12B4DD` avec halo `#E6F7FC`.
-- Mobile (< 767.98px) : `position: fixed` sous la topbar (`top: 66px`, `z-index: 40`), largeur forcée `250px !important`, fond `#F4F6F8`, glissement `translateX(-100%)` → `none` avec `.mobile-open`.
-- Dark mode via `:host-context(body.dark-mode)` : headings `#64747c`, bordure `#49545a`, halo de pastille `rgba(18, 180, 221, .18)`, fond mobile `#1e292b`.
+- `:host { display: flex; flex: none; }` — essential: the host must stretch over the full height of the shell body, otherwise the `<nav>` keeps an auto height and the version footer (`margin-top: auto`) stays stuck to the last link.
+- Width 250px, 80px when `.collapsed`, transition `.3s cubic-bezier(.4, 0, .2, 1)`; font `'Plus Jakarta Sans'`.
+- Headings: uppercase 11px `#9AA7B4`, centered and faded (`opacity: .35`) in collapsed mode.
+- Version footer: top border `#E7ECF1`, accent dot `#12B4DD` with `#E6F7FC` halo.
+- Mobile (< 767.98px): `position: fixed` below the topbar (`top: 66px`, `z-index: 40`), width forced to `250px !important`, `#F4F6F8` background, slide `translateX(-100%)` → `none` with `.mobile-open`.
+- Dark mode via `:host-context(body.dark-mode)`: headings `#64747c`, border `#49545a`, dot halo `rgba(18, 180, 221, .18)`, mobile background `#1e292b`.
 
 ---
 
 # billy-nav-item — BillyNavItemComponent
 
-> Catégorie `layout` · source `projects/billy-layout/src/lib/layout/shell/billy-nav-item.component.*` · standalone component
+> Category `layout` · source `projects/billy-layout/src/lib/layout/shell/billy-nav-item.component.*` · standalone component
 
-## Rôle
+## Role
 
-Bouton de navigation réutilisable de la sidebar : icône `billy-icon` + libellé, état actif automatique (`routerLinkActive="active"`) et badge optionnel. En mode replié il ne montre que l'icône (le libellé passe en `title`) et le badge se colle en coin.
+Reusable navigation button of the sidebar: `billy-icon` icon + label, automatic active state (`routerLinkActive="active"`) and optional badge. In collapsed mode it only shows the icon (the label becomes a `title`) and the badge sticks to the corner.
 
 ## API
 
@@ -69,30 +69,30 @@ Bouton de navigation réutilisable de la sidebar : icône `billy-icon` + libell�
 import { BillyNavItemComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-nav-item`.
+Selector: `billy-nav-item`.
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `link` | `string` | requis | Route passée à `routerLink`. |
-| `icon` | `BillyIconName` | requis | Icône `billy-icon` (taille 21). |
-| `label` | `string` | requis | Libellé ; sert de tooltip (`title`) quand replié. |
-| `collapsed` | `boolean` | `false` | Mode icône seule. |
-| `badge` | `string \| null` | `null` | Contenu du badge ; `null` = pas de badge. |
-| `badgeVariant` | `'info' \| 'notification'` | `'info'` | `info` : compteur discret (fond `--billy-accent-soft`, texte `--billy-accent-strong`) pour une information de comptage. `notification` : pastille rouge `#EF4444` qui appelle l'action (éléments à traiter). |
+| `link` | `string` | required | Route passed to `routerLink`. |
+| `icon` | `BillyIconName` | required | `billy-icon` icon (size 21). |
+| `label` | `string` | required | Label; used as a tooltip (`title`) when collapsed. |
+| `collapsed` | `boolean` | `false` | Icon-only mode. |
+| `badge` | `string \| null` | `null` | Badge content; `null` = no badge. |
+| `badgeVariant` | `'info' \| 'notification'` | `'info'` | `info`: discreet counter (`--billy-accent-soft` background, `--billy-accent-strong` text) for count information. `notification`: red `#EF4444` dot calling for action (items to process). |
 
-Pas d'output : le `(click)` se pose sur l'élément hôte côté appelant (la sidebar l'utilise pour fermer le tiroir mobile).
+No output: the `(click)` is placed on the host element by the caller (the sidebar uses it to close the mobile drawer).
 
 ## Styles & theming (nav-item)
 
-- Lien pilule radius 12px, `#5B6B79`, hover `#EAEFF3` avec micro-translation `translateX(3px)` ; actif `#E6F7FC` / `#0E97BB` en semi-bold.
-- `.billy-nav-item-accent` : barrette accent `#12B4DD` débordant à gauche (`left: -14px`), visible uniquement actif **et** non replié.
-- Badge poussé à droite (`margin-left: auto`) ; variante `info` (défaut) en tons accent doux (mêmes tokens que les badges de comptage de consult-card/nav-card), variante `notification` en `#EF4444` blanc. En mode replié il devient un point positionné en haut à droite de l'icône.
-- Dark mode via `:host-context(body.dark-mode)` : texte `#9fb0ba`, hover `#2a373b`, actif `rgba(18, 180, 221, .14)` / `#4fc3e0`.
-- La classe hôte `billy-icon-hover-zone` déclenche les micro-animations des icônes billy-icon au survol.
+- Pill link with 12px radius, `#5B6B79`, hover `#EAEFF3` with a `translateX(3px)` micro-translation; active `#E6F7FC` / `#0E97BB` in semi-bold.
+- `.billy-nav-item-accent`: accent bar `#12B4DD` overflowing to the left (`left: -14px`), visible only when active **and** not collapsed.
+- Badge pushed to the right (`margin-left: auto`); `info` variant (default) in soft accent tones (same tokens as the count badges of consult-card/nav-card), `notification` variant in `#EF4444` with white text. In collapsed mode it becomes a dot positioned at the top right of the icon.
+- Dark mode via `:host-context(body.dark-mode)`: text `#9fb0ba`, hover `#2a373b`, active `rgba(18, 180, 221, .14)` / `#4fc3e0`.
+- The `billy-icon-hover-zone` host class triggers the billy-icon micro-animations on hover.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- `links` et `version` sont lus **une fois** à la construction : `menuLinks`/`version` ne sont pas réactifs (contrairement à `menuBadges`, qui est un `Signal`). Changer le menu à chaud nécessiterait de recréer le shell.
-- Les badges sont indexés par le **libellé** (`item.text`) : renommer une entrée du menu casse silencieusement son badge (cf. `{ Ventes: … }` dans app.config.ts).
-- Sur les entrées non-heading, `link` et `icon` sont déréférencés avec `!` par la sidebar : une entrée sans `heading: true` doit impérativement fournir `link` et `icon`.
-- `routerLinkActive` sans `exact` : un lien parent reste actif sur ses sous-routes.
+- `links` and `version` are read **once** at construction: `menuLinks`/`version` are not reactive (unlike `menuBadges`, which is a `Signal`). Changing the menu on the fly would require recreating the shell.
+- Badges are indexed by the **label** (`item.text`): renaming a menu entry silently breaks its badge (cf. `{ Sales: … }` in app.config.ts).
+- On non-heading entries, `link` and `icon` are dereferenced with `!` by the sidebar: an entry without `heading: true` must provide `link` and `icon`.
+- `routerLinkActive` without `exact`: a parent link stays active on its sub-routes.

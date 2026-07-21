@@ -1,4 +1,5 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, computed, inject, input, model, output } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
 @Component({
@@ -9,10 +10,17 @@ import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 })
 export class SnackbarComponent {
 
-  message = input('Nouvelle version disponible.');
-  buttonTitle = input('Cliquez ici pour rafraîchir et mettre à jour');
-  buttonLabel = input('Mettre à jour');
-  closeTitle = input('ignorer ce message');
+  protected readonly i18n = inject(BillyI18nService);
+
+  message = input<string>();
+  buttonTitle = input<string>();
+  buttonLabel = input<string>();
+  closeTitle = input<string>();
+
+  protected readonly messageText = computed(() => this.message() ?? this.i18n.strings().snackbar.message);
+  protected readonly buttonTitleText = computed(() => this.buttonTitle() ?? this.i18n.strings().snackbar.buttonTitle);
+  protected readonly buttonLabelText = computed(() => this.buttonLabel() ?? this.i18n.strings().snackbar.buttonLabel);
+  protected readonly closeTitleText = computed(() => this.closeTitle() ?? this.i18n.strings().snackbar.closeTitle);
 
   visible = model(false);
   buttonClick = output();

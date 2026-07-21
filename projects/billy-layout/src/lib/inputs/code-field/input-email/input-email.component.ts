@@ -1,22 +1,23 @@
-import { Component, computed, forwardRef } from '@angular/core';
+import { Component, computed, forwardRef, inject } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CodeFieldBase } from '../code-field.base';
 import { CodeGlyphComponent } from '../code-glyph/code-glyph.component';
 import { CodeStatusComponent } from '../code-status/code-status.component';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { EmailUtils } from '../../../core/utils/email-utils';
 
 /**
- * Saisie d'une adresse email — même coque, même pastille et mêmes états que
- * <billy-input-tva> et <billy-input-iban>, sans masque : une adresse ne se découpe
- * pas en groupes.
+ * Entry of an email address — same shell, same badge and same states as
+ * <billy-input-vat> and <billy-input-iban>, without a mask: an address does
+ * not split into groups.
  *
- * Le modèle ne reçoit que la forme canonique : espaces (fréquents au copier-
- * coller depuis un mail ou un PDF) et caractères interdits sont retirés à la
- * frappe comme au chargement. La casse, elle, est laissée intacte.
+ * The model only ever receives the canonical form: spaces (frequent when
+ * copy-pasting from an email or a PDF) and forbidden characters are removed
+ * while typing as well as on load. The case, however, is left untouched.
  *
- * L'état bleu « à vérifier » sert ici à la faute de frappe : « gmial.com » est
- * une adresse structurellement valide, qu'aucun validateur ne refusera — le
- * champ propose la correction, et un clic l'applique.
+ * The blue "to verify" state serves the typo here: "gmial.com" is a
+ * structurally valid address that no validator will reject — the field offers
+ * the correction, and one click applies it.
  *
  * ```html
  * <billy-input-email inputId="cf-email" [formField]="formClient.email"></billy-input-email>
@@ -35,15 +36,17 @@ import { EmailUtils } from '../../../core/utils/email-utils';
 })
 export class InputEmailComponent extends CodeFieldBase {
 
-  readonly info = computed(() => EmailUtils.describe(this.value()));
+  protected readonly i18n = inject(BillyI18nService);
 
-  /** Domaine saisi — affiché en pastille, comme le pays d'un n° de TVA. */
+  readonly info = computed(() => EmailUtils.describe(this.value(), this.i18n.locale()));
+
+  /** Typed domain — shown as a badge, like the country of a VAT number. */
   readonly domain = computed(() => EmailUtils.domain(this.value()));
 
-  /** Adresse corrigée proposée, ou null s'il n'y a rien à redire. */
+  /** Suggested corrected address, or null if there is nothing to flag. */
   readonly suggestion = computed(() => EmailUtils.suggest(this.value()));
 
-  /** Applique la correction proposée : le champ est le propriétaire de la valeur. */
+  /** Applies the suggested correction: the field owns the value. */
   applySuggestion(): void {
     const suggestion = this.suggestion();
     if (!suggestion) { return; }
@@ -51,9 +54,9 @@ export class InputEmailComponent extends CodeFieldBase {
     this.setFieldValue(suggestion);
   }
 
-  // Une adresse n'a pas de liant : tout ce que `sanitize` garde est significatif.
-  // Le curseur se compte donc sur l'ensemble des caractères, et les branches
-  // « effacer par-dessus un séparateur » du socle ne se déclenchent jamais.
+  // An address has no glue: everything `sanitize` keeps is significant.
+  // The caret is therefore counted over all characters, and the base's
+  // "delete across a separator" branches never trigger.
   protected override isSignificant(char: string): boolean {
     return EmailUtils.isAllowed(char);
   }

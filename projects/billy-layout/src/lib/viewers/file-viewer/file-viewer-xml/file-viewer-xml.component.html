@@ -1,8 +1,8 @@
-@let fichierTpl = fichier();
-@if (visible() && fichierTpl) {
+@let fileTpl = file();
+@if (visible() && fileTpl) {
   <div class="viewer">
-    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fichierTpl.fileName" icon="fa-solid fa-file-code" (closeViewer)="hide()">
-      <button type="button" class="viewer-btn" [title]="copied() ? 'Copié !' : 'Copier le contenu'" (click)="copyToClipboard()">
+    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fileTpl.fileName" icon="fa-solid fa-file-code" (closeViewer)="hide()">
+      <button type="button" class="viewer-btn" [title]="copied() ? i18n.strings().viewer.copied : i18n.strings().viewer.copy" (click)="copyToClipboard()">
         <i [class]="copied() ? 'fa-solid fa-check' : 'fa-solid fa-copy'"></i>
       </button>
     </billy-file-viewer-toolbar>
@@ -14,7 +14,7 @@
       } @else if (xmlHtml()) {
         <pre class="xml-content"><code [innerHTML]="xmlHtml()"></code></pre>
       } @else {
-        <div class="viewer-empty">Impossible d'afficher ce fichier.</div>
+        <div class="viewer-empty">{{ i18n.strings().viewer.cannotDisplay }}</div>
       }
     </div>
   </div>

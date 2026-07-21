@@ -1,8 +1,8 @@
-@let fichierTpl = fichier();
+@let fileTpl = file();
 @let imageUrlTrustedTpl = imageUrlTrusted();
-@if (visible() && fichierTpl && imageUrlTrustedTpl) {
+@if (visible() && fileTpl && imageUrlTrustedTpl) {
   <div class="viewer">
-    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fichierTpl.fileName" icon="fa-solid fa-image" (closeViewer)="hide()">
+    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fileTpl.fileName" icon="fa-solid fa-image" (closeViewer)="hide()">
     </billy-file-viewer-toolbar>
     <div class="viewer-body">
       @if (loading()) {
@@ -10,7 +10,7 @@
           <i class="fa-solid fa-sync fa-spin"></i>
         </div>
       } @else {
-        <img [src]="imageUrlTrustedTpl" [alt]="fichierTpl.fileName" />
+        <img [src]="imageUrlTrustedTpl" [alt]="fileTpl.fileName" />
       }
     </div>
   </div>

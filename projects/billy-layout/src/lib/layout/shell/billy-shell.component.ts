@@ -4,8 +4,8 @@ import { BillySidebarComponent } from './billy-sidebar.component';
 import { BillyTopbarComponent } from './billy-topbar.component';
 
 /**
- * Coque applicative BILLy : topbar + sidebar repliable + zone de contenu.
- * Le contenu de la page est projeté via <ng-content> (pas de footer).
+ * BILLy application shell: topbar + collapsible sidebar + content area.
+ * The page content is projected via <ng-content> (no footer).
  */
 @Component({
   selector: 'billy-shell',

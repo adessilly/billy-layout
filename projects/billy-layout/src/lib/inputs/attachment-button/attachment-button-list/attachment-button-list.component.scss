@@ -26,8 +26,8 @@
       color: #495057;
     }
 
-    // Ex-.btn-close de Bootstrap. La boîte 1em et l'opacité 0.5 venaient de lui
-    // et n'étaient pas surchargées : reprises telles quelles pour ne rien changer.
+    // Formerly Bootstrap's .btn-close. The 1em box and the 0.5 opacity came from
+    // it and were not overridden: kept as-is so nothing changes.
     .abl-close {
       box-sizing: content-box;
       width: 1em;
@@ -111,9 +111,9 @@
     background-color: #f8f9fa;
     border-radius: 0 0 0.375rem 0.375rem;
 
-    // Ex-.btn .btn-link de Bootstrap : le bouton porte maintenant sa propre boîte.
-    // Couleur prise sur l'accent du design system (l'ancien var(--primary) venait
-    // du :root du thème Angle, et var(--primary-dark) n'existait nulle part).
+    // Formerly Bootstrap's .btn .btn-link: the button now carries its own box.
+    // Color taken from the design-system accent (the old var(--primary) came
+    // from the Angle theme's :root, and var(--primary-dark) existed nowhere).
     .abl-add {
       width: 100%;
       display: flex;

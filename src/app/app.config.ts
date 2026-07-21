@@ -1,22 +1,18 @@
-import { ApplicationConfig, LOCALE_ID, computed, inject, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, computed, inject, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { PreloadAllModules, provideRouter, withComponentInputBinding, withInMemoryScrolling, withPreloading } from '@angular/router';
-import { registerLocaleData } from '@angular/common';
-import localeFr from '@angular/common/locales/fr';
 import { BILLY_SHELL_CONFIG, BillyMenuLink, BillyShellConfig, ToastrService } from 'billy-layout';
 
 import { routes } from './app.routes';
 import { DOC_CATEGORIES } from './site/doc-registry';
 import { version as libraryVersion } from '../../projects/billy-layout/package.json';
 
-registerLocaleData(localeFr);
-
-/** Menu latéral : pages du guide + une entrée par catégorie de composants. */
+/** Side menu: guide pages + one entry per component category. */
 const MENU_LINKS: BillyMenuLink[] = [
   { text: 'Documentation', heading: true },
-  { text: 'Accueil', link: '/', icon: 'accueil' },
-  { text: 'Guidelines UX', link: '/guidelines', icon: 'agenda' },
+  { text: 'Home', link: '/', icon: 'home' },
+  { text: 'UX guidelines', link: '/guidelines', icon: 'calendar' },
   { text: 'Styles & tokens', link: '/styles', icon: 'dark-mode' },
-  { text: 'Composants', heading: true },
+  { text: 'Components', heading: true },
   ...DOC_CATEGORIES.map((category): BillyMenuLink => ({
     text: category.label,
     link: `/c/${category.slug}`,
@@ -27,7 +23,6 @@ const MENU_LINKS: BillyMenuLink[] = [
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    { provide: LOCALE_ID, useValue: 'fr-FR' },
     provideRouter(
       routes,
       withComponentInputBinding(),
@@ -42,12 +37,12 @@ export const appConfig: ApplicationConfig = {
           menuLinks: MENU_LINKS,
           version: libraryVersion,
           homeLink: '/',
-          logout: () => toastr.info('Ceci est le site vitrine de billy-layout : il n’y a pas de session à fermer 😉', 'Déconnexion'),
-          // Badge par catégorie : le nombre de fiches, pour démontrer menuBadges.
+          logout: () => toastr.info('This is the billy-layout showcase site: there is no session to close 😉', 'Log out'),
+          // Badge per category: the number of doc pages, to demonstrate menuBadges.
           menuBadges: computed(() => Object.fromEntries(
             DOC_CATEGORIES.map(category => [category.label, String(category.entries.length)]),
           )),
-          // Démo de la synchro globale de la cloche : simple temporisation.
+          // Demo of the bell's global sync: a simple delay.
           syncNotifications: () => new Promise(resolve => setTimeout(resolve, 1200)),
         };
       },

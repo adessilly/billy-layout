@@ -2,14 +2,14 @@ import { afterNextRender, Component, DestroyRef, ElementRef, inject, signal } fr
 import { BillyIconComponent } from 'billy-layout';
 import { DOC_ENTRY_COUNT } from '../../site/doc-registry';
 
-/** Ligne à ajouter dans le CLAUDE.md de l'application consommatrice. */
+/** Line to add to the consuming application's CLAUDE.md. */
 const CLAUDE_IMPORT_LINE = '@node_modules/billy-layout/docs/claude.md';
 
 /**
- * Section « assistant IA » de l'accueil : un éditeur CLAUDE.md où la ligne
- * d'import du contexte embarqué se tape toute seule, reliée par un flux SVG
- * animé aux connaissances que l'assistant acquiert (fiches composants,
- * guidelines UX, tokens). Les animations démarrent à l'entrée dans le viewport.
+ * "AI assistant" section of the home page: a CLAUDE.md editor where the
+ * embedded-context import line types itself, linked by an animated SVG flow
+ * to the knowledge the assistant gains (component doc pages, UX guidelines,
+ * tokens). The animations start when the section enters the viewport.
  */
 @Component({
   selector: 'site-claude-section',
@@ -26,10 +26,10 @@ export class ClaudeSectionComponent {
   protected readonly entryCount = DOC_ENTRY_COUNT;
   protected readonly importLine = CLAUDE_IMPORT_LINE;
 
-  /** La section est entrée dans le viewport : lance les animations. */
+  /** The section has entered the viewport: start the animations. */
   protected readonly visible = signal(false);
 
-  /** La ligne d'import vient d'être copiée (retour visuel + annonce SR). */
+  /** The import line has just been copied (visual feedback + SR announcement). */
   protected readonly copied = signal(false);
 
   private resetTimer: ReturnType<typeof setTimeout> | undefined;
@@ -46,7 +46,7 @@ export class ClaudeSectionComponent {
         clearTimeout(this.resetTimer);
         this.resetTimer = setTimeout(() => this.copied.set(false), 2200);
       })
-      .catch(() => { /* presse-papiers indisponible : pas de retour "copié" */ });
+      .catch(() => { /* clipboard unavailable: no "copied" feedback */ });
   }
 
   private observeViewport(): void {

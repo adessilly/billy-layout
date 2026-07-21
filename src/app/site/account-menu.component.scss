@@ -87,3 +87,45 @@ billy-panel {
   transform: translateX(-4px);
   transition: opacity .15s ease, transform .15s ease;
 }
+
+.account-menu-lang {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid var(--billy-border, rgba(0, 0, 0, .08));
+  margin-bottom: 6px;
+}
+
+.account-menu-lang-label {
+  font-size: 11.5px;
+  color: var(--billy-text-soft);
+}
+
+.account-menu-lang-switch {
+  display: inline-flex;
+  border: 1px solid var(--billy-border, rgba(0, 0, 0, .12));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.account-menu-lang-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--billy-text-soft);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+
+  &:hover {
+    color: var(--site-heading);
+  }
+
+  &--active {
+    background: var(--billy-accent);
+    color: #fff;
+  }
+}

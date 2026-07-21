@@ -1,9 +1,9 @@
 @use 'billy-forms' as forms;
 
-// Ex-.form-control de Bootstrap : la boîte du champ est portée ici (c'est une
-// div qui se fait passer pour un champ, les tags vivant à l'intérieur). La peau
-// (bord, rayon, focus) suit les tokens --billy-* du design system ; le dark mode
-// est donc automatique.
+// Formerly Bootstrap's .form-control: the field box is carried here (it is a
+// div posing as a field, with the tags living inside). The skin (border,
+// radius, focus) follows the design system's --billy-* tokens; dark mode is
+// therefore automatic.
 .email-tags-container {
   display: flex;
   flex-wrap: wrap;

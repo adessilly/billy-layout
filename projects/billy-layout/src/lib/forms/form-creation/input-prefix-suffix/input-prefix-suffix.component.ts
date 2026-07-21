@@ -1,30 +1,29 @@
 import { Component, input, output } from '@angular/core';
 
 @Component({
-    selector: 'billy-input-prefixe-suffixe',
-    templateUrl: './input-prefixe-suffixe.component.html',
-    styleUrls: ['./input-prefixe-suffixe.component.scss'],
-    standalone: true
+    selector: 'billy-input-prefix-suffix',
+    templateUrl: './input-prefix-suffix.component.html',
+    styleUrls: ['./input-prefix-suffix.component.scss'],
 })
-export class InputPrefixeSuffixeComponent {
+export class InputPrefixSuffixComponent {
 
-  prefixe = input('');
-  suffixe = input('');
-  prefixeIcon = input('');
-  suffixeIcon = input('');
-  prefixeClickable = input<boolean>(false);
-  suffixeClickable = input<boolean>(false);
-  suffixeClick = output<void>();
-  prefixeClick = output<void>();
+  prefix = input('');
+  suffix = input('');
+  prefixIcon = input('');
+  suffixIcon = input('');
+  prefixClickable = input<boolean>(false);
+  suffixClickable = input<boolean>(false);
+  suffixClick = output<void>();
+  prefixClick = output<void>();
 
-  askSuffixeClick() {
-    if(this.suffixeClickable())
-      this.suffixeClick.emit();
+  askSuffixClick() {
+    if(this.suffixClickable())
+      this.suffixClick.emit();
   }
 
-  askPrefixeClick() {
-    if(this.prefixeClickable())
-      this.prefixeClick.emit();
+  askPrefixClick() {
+    if(this.prefixClickable())
+      this.prefixClick.emit();
   }
 
 }

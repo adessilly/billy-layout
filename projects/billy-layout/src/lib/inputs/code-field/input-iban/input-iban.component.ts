@@ -1,22 +1,24 @@
-import { Component, computed, forwardRef } from '@angular/core';
+import { Component, computed, forwardRef, inject } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CodeFieldBase } from '../code-field.base';
 import { CodeGlyphComponent } from '../code-glyph/code-glyph.component';
 import { CodeStatusComponent } from '../code-status/code-status.component';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { IbanUtils } from '../../../core/utils/iban-utils';
 
 /**
- * Saisie d'un compte bancaire au format IBAN.
+ * Entry of a bank account in IBAN format.
  *
- * Même contrat que <billy-input-tva> : le modèle ne reçoit que la forme canonique
- * — « BE68539007547034 » — quels que soient les espaces, points ou tirets tapés,
- * collés ou renvoyés par le backend ; le champ affiche « BE 68 5390 0754 7034 ».
+ * Same contract as <billy-input-vat>: the model only ever receives the
+ * canonical form — "BE68539007547034" — whatever spaces, dots or dashes are
+ * typed, pasted or returned by the backend; the field displays
+ * "BE 68 5390 0754 7034".
  *
- * La clé de contrôle (ISO 7064, modulo 97) est vérifiée dès que l'IBAN est
- * complet — une faute de frappe se voit tout de suite, quel que soit le pays.
+ * The check digits (ISO 7064, modulo 97) are verified as soon as the IBAN is
+ * complete — a typo shows up right away, whatever the country.
  *
  * ```html
- * <billy-input-iban inputId="cf-compte" [formField]="formClient.compte"></billy-input-iban>
+ * <billy-input-iban inputId="cf-account" [formField]="formClient.account"></billy-input-iban>
  * ```
  */
 @Component({
@@ -32,7 +34,9 @@ import { IbanUtils } from '../../../core/utils/iban-utils';
 })
 export class InputIbanComponent extends CodeFieldBase {
 
-  readonly info = computed(() => IbanUtils.describe(this.value()));
+  protected readonly i18n = inject(BillyI18nService);
+
+  readonly info = computed(() => IbanUtils.describe(this.value(), this.i18n.locale()));
 
   protected sanitize(raw: string): string {
     return IbanUtils.sanitize(raw);

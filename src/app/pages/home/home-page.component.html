@@ -6,52 +6,52 @@
     <div class="hero-copy">
       <div class="hero-eyebrow">
         <span class="hero-dot"></span>
-        Design system BILLy · angular library
+        BILLy design system · angular library
       </div>
       <h1 class="hero-title">
         billy&#8209;layout<span class="hero-cursor"></span>
       </h1>
       <p class="hero-pitch">
-        Le shell applicatif, les {{ entryCount }} composants qui habillent
-        BILLy — extraits en librairie Angular autonome. Ce site est lui-même
-        construit avec la librairie&nbsp;: la topbar, la sidebar, la cloche et
-        chaque carte que vous voyez en font partie.
+        The application shell and the {{ entryCount }} components that dress
+        BILLy — extracted into a standalone Angular library. This site is
+        itself built with the library: the topbar, the sidebar, the bell and
+        every card you see are part of it.
       </p>
       <div class="hero-ctas">
-        <a class="hero-cta hero-cta--primary" routerLink="/composants">
+        <a class="hero-cta hero-cta--primary" routerLink="/components">
           <billy-icon name="open" [size]="17" [strokeWidth]="2" />
-          Explorer les composants
+          Explore the components
         </a>
         <a class="hero-cta" routerLink="/guidelines">
-          <billy-icon name="agenda" [size]="17" [strokeWidth]="2" />
-          Guidelines UX
+          <billy-icon name="calendar" [size]="17" [strokeWidth]="2" />
+          UX guidelines
         </a>
       </div>
 
       <div class="hero-stats">
         <div class="hero-stat">
           <span class="hero-stat-value">{{ entryCount }}</span>
-          <span class="hero-stat-label">fiches composants</span>
+          <span class="hero-stat-label">component doc pages</span>
         </div>
         <div class="hero-stat">
           <span class="hero-stat-value">{{ categories.length }}</span>
-          <span class="hero-stat-label">catégories</span>
+          <span class="hero-stat-label">categories</span>
         </div>
         <div class="hero-stat">
           <span class="hero-stat-value">0</span>
-          <span class="hero-stat-label">dépendance Bootstrap</span>
+          <span class="hero-stat-label">Bootstrap dependencies</span>
         </div>
       </div>
     </div>
 
-    <!-- Maquette d'écran BILLy qui s'assemble (SVG + motion design). -->
+    <!-- BILLy screen mockup assembling itself (SVG + motion design). -->
     <div class="hero-visual" aria-hidden="true">
       <svg viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
 
-        <!-- halo d'accent -->
+        <!-- accent halo -->
         <circle class="hv-halo" cx="300" cy="200" r="170" />
 
-        <!-- fenêtre applicative -->
+        <!-- application window -->
         <g class="hv-window">
           <rect x="70" y="40" width="380" height="320" rx="18" class="hv-frame" />
 
@@ -83,7 +83,7 @@
             <rect x="372" y="114" width="46" height="6" rx="3" fill="#fff" opacity=".85" />
           </g>
 
-          <!-- cartes de liste -->
+          <!-- list cards -->
           <g class="hv-piece hv-card1">
             <rect x="188" y="152" width="246" height="54" rx="12" class="hv-card" />
             <circle cx="212" cy="179" r="11" class="hv-accent-soft-fill" />
@@ -108,7 +108,7 @@
           </g>
         </g>
 
-        <!-- toast flottant -->
+        <!-- floating toast -->
         <g class="hv-piece hv-toast">
           <rect x="330" y="18" width="164" height="44" rx="12" class="hv-card hv-elevated" />
           <circle cx="352" cy="40" r="10" class="hv-success-fill" />
@@ -117,7 +117,7 @@
           <rect x="370" y="45" width="64" height="7" rx="3.5" class="hv-line hv-soft" />
         </g>
 
-        <!-- pastille datepicker flottante -->
+        <!-- floating datepicker chip -->
         <g class="hv-piece hv-chip">
           <rect x="24" y="250" width="112" height="70" rx="14" class="hv-card hv-elevated" />
           <rect x="38" y="264" width="84" height="8" rx="4" class="hv-accent-soft-fill" />
@@ -140,13 +140,13 @@
   <!-- ── Installation (npm / git clone) ───────────────────────────────── -->
   <site-install-section />
 
-  <!-- ── Assistant IA (contexte CLAUDE.md embarqué) ───────────────────── -->
+  <!-- ── AI assistant (embedded CLAUDE.md context) ─────────────────────── -->
   <site-claude-section />
 
-  <!-- ── Catégories ───────────────────────────────────────────────────── -->
+  <!-- ── Categories ────────────────────────────────────────────────────── -->
   <section class="cats">
-    <h2 class="cats-title">Les composants, par catégorie</h2>
-    <p class="cats-sub">L’arborescence du site est le miroir de <code>src/lib/</code> et de <code>docs/</code>.</p>
+    <h2 class="cats-title">The components, by category</h2>
+    <p class="cats-sub">The site's tree mirrors <code>src/lib/</code> and <code>docs/</code>.</p>
 
     <div class="cats-grid">
       @for (category of categories; track category.slug; let i = $index) {

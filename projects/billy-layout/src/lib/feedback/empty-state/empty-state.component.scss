@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// Empty state — illustration animée + titre + CTA
+// Empty state — animated illustration + title + CTA
 // ═══════════════════════════════════════════════════════════════════════════
 
 .empty-wrap {
@@ -19,12 +19,12 @@
   animation: es-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-// Ombre portée teintée par concept
-.empty-wrap--achat  .empty-svg { filter: drop-shadow(0 10px 28px rgba(255, 122, 89, 0.16)); }
-.empty-wrap--vente  .empty-svg { filter: drop-shadow(0 10px 28px rgba(16, 185, 129, 0.15)); }
-.empty-wrap--devis  .empty-svg { filter: drop-shadow(0 10px 28px rgba(245, 158, 11, 0.16)); }
+// Drop shadow tinted per concept
+.empty-wrap--purchase  .empty-svg { filter: drop-shadow(0 10px 28px rgba(255, 122, 89, 0.16)); }
+.empty-wrap--sale  .empty-svg { filter: drop-shadow(0 10px 28px rgba(16, 185, 129, 0.15)); }
+.empty-wrap--quote  .empty-svg { filter: drop-shadow(0 10px 28px rgba(245, 158, 11, 0.16)); }
 .empty-wrap--client .empty-svg { filter: drop-shadow(0 10px 28px rgba(124, 58, 237, 0.14)); }
-.empty-wrap--recherche .empty-svg { filter: drop-shadow(0 10px 28px rgba(100, 116, 139, 0.14)); }
+.empty-wrap--search .empty-svg { filter: drop-shadow(0 10px 28px rgba(100, 116, 139, 0.14)); }
 
 .empty-title {
   font-size: 17px;
@@ -72,22 +72,22 @@
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Motion design des illustrations
+// Illustration motion design
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Flottement principal de la scène
+// Main scene float
 .es-float {
   animation: es-float 5s ease-in-out infinite;
 }
 
-// Étincelles qui scintillent
+// Twinkling sparkles
 .es-sparkle {
   transform-box: fill-box;
   transform-origin: center;
   animation: es-twinkle 2.6s ease-in-out infinite;
 }
 
-// Points décoratifs qui ondulent
+// Decorative dots bobbing
 .es-dot {
   transform-box: fill-box;
   transform-origin: center;
@@ -97,14 +97,14 @@
   &.es-dot--3 { animation-delay: -2.6s; }
 }
 
-// Badge qui pulse (payé, +, horloge…)
+// Pulsing badge (paid, +, clock…)
 .es-pop {
   transform-box: fill-box;
   transform-origin: center;
   animation: es-pop 2.8s ease-in-out infinite;
 }
 
-// ── Achat : rayon de scan + pièce ──
+// ── Purchase: scan beam + coin ──
 .es-scan {
   animation: es-scan 3.4s ease-in-out infinite;
 }
@@ -115,7 +115,7 @@
   animation: es-coin 3.8s ease-in-out infinite;
 }
 
-// ── Vente : flèche qui se dessine + barres ──
+// ── Sale: self-drawing arrow + bars ──
 .es-draw {
   stroke-dasharray: 70;
   stroke-dashoffset: 70;
@@ -136,7 +136,7 @@
   &.es-bar--2 { animation-delay: -0.4s; }
 }
 
-// ── Devis : signature manuscrite + stylo + aiguille ──
+// ── Quote: handwritten signature + pen + clock hand ──
 .es-sign {
   stroke-dasharray: 82;
   stroke-dashoffset: 82;
@@ -155,7 +155,7 @@
   animation: es-spin 7s linear infinite;
 }
 
-// ── Client : orbite + avatars qui respirent ──
+// ── Client: orbit + breathing avatars ──
 .es-orbit {
   transform-box: view-box;
   transform-origin: 100px 86px;
@@ -169,14 +169,14 @@
   &.es-bob--r { animation-delay: -3s; }
 }
 
-// ── Récurrences : arc en rotation ──
+// ── Recurring: rotating arc ──
 .es-rotor {
   transform-box: view-box;
   transform-origin: 100px 87px;
   animation: es-spin 9s linear infinite;
 }
 
-// ── Recherche : loupe qui balaie ──
+// ── Search: sweeping magnifier ──
 .es-sweep {
   animation: es-sweep 4.6s ease-in-out infinite;
 }
@@ -269,7 +269,7 @@
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Accessibilité & dark mode
+// Accessibility & dark mode
 // ═══════════════════════════════════════════════════════════════════════════
 
 @media (prefers-reduced-motion: reduce) {

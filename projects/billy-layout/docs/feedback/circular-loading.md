@@ -1,38 +1,38 @@
 # billy-circular-loading — CircularLoadingComponent
 
-> Catégorie `feedback` · source `projects/billy-layout/src/lib/feedback/circular-loading/circular-loading.component.ts` · standalone component
+> Category `feedback` · source `projects/billy-layout/src/lib/feedback/circular-loading/circular-loading.component.ts` · standalone component
 
-## Rôle
+## Role
 
-Anneau de progression **déterminé** : un cercle SVG dont le trait se remplit proportionnellement à l'input `percent` (technique stroke-dasharray/dashoffset, adaptée du CodePen jeremenichelli/vegymB). À la différence de `billy-checkmark-loading` (spinner indéterminé), il visualise un pourcentage précis, typiquement une progression d'upload. **Aucun usage actuel dans `src/app`** (vérifié par grep) : le composant est exporté par la lib (`public-api.ts`) mais orphelin — candidat à réutilisation ou suppression.
+**Determinate** progress ring: an SVG circle whose stroke fills proportionally to the `percent` input (stroke-dasharray/dashoffset technique, adapted from the CodePen jeremenichelli/vegymB). Unlike `billy-checkmark-loading` (indeterminate spinner), it visualizes a precise percentage, typically an upload progress. **No current usage in `src/app`** (verified via grep): the component is exported by the lib (`public-api.ts`) but orphaned — a candidate for reuse or removal.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { CircularLoadingComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-circular-loading`.
+Selector: `billy-circular-loading`.
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `percent` | `input<number>` | `0` | Pourcentage de progression (0–100). Chaque changement met à jour l'offset du trait (transition CSS de 0,35 s). |
+| `percent` | `input<number>` | `0` | Progress percentage (0–100). Each change updates the stroke offset (0.35 s CSS transition). |
 
-Pas d'output.
+No output.
 
-### Membres notables
+### Notable members
 
-- `circle = viewChild<ElementRef<SVGCircleElement>>('circle')` — référence au cercle SVG.
-- `setProgress(percent: number): void` — calcule et applique le `stroke-dashoffset` (`circumference - percent/100 * circumference`). Appelé par `ngAfterViewInit` et `ngOnChanges`.
-- `radius` / `circumference` — mesurés sur le cercle réel dans `ngAfterViewInit`, où le `stroke-dasharray` est initialisé.
+- `circle = viewChild<ElementRef<SVGCircleElement>>('circle')` — reference to the SVG circle.
+- `setProgress(percent: number): void` — computes and applies the `stroke-dashoffset` (`circumference - percent/100 * circumference`). Called by `ngAfterViewInit` and `ngOnChanges`.
+- `radius` / `circumference` — measured on the actual circle in `ngAfterViewInit`, where the `stroke-dasharray` is initialized.
 
-## Exemple d'utilisation
+## Usage example
 
-Aucun usage dans `src/app` à ce jour. Usage type :
+No usage in `src/app` to date. Typical usage:
 
 ```html
 <billy-circular-loading [percent]="uploadProgress()"></billy-circular-loading>
@@ -40,14 +40,14 @@ Aucun usage dans `src/app` à ce jour. Usage type :
 
 ## Styles & theming
 
-- SVG fixe **44 × 44 px**, cercle `r=21`, trait de 2 px, couleur codée en dur `#23b7e5` (bleu Angle historique — pas de token `--billy-*`).
-- Le remplissage part du haut : `transform: rotate(-90deg)` sur le cercle.
-- Progression animée par `transition: 0.35s stroke-dashoffset` (fichier `circular-loading.component.css` — CSS simple, pas SCSS).
-- Pas de dark mode, pas de gestion `prefers-reduced-motion`.
+- Fixed **44 × 44 px** SVG, circle `r=21`, 2 px stroke, hard-coded color `#23b7e5` (historical Angle blue — no `--billy-*` token).
+- The fill starts from the top: `transform: rotate(-90deg)` on the circle.
+- Progress animated via `transition: 0.35s stroke-dashoffset` (file `circular-loading.component.css` — plain CSS, not SCSS).
+- No dark mode, no `prefers-reduced-motion` handling.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- La géométrie est mesurée dans `ngAfterViewInit` : un `percent` initial non nul n'est peint qu'après le premier rendu (le `ngOnChanges` d'avant-vue est ignoré car `circle()` est encore indéfini — et `circumference` vaudrait 0).
-- `percent` n'est pas borné : une valeur > 100 produit un offset négatif (anneau « surrempli » visuellement plein), une valeur négative un anneau vide.
-- Composant à moitié migré signals : `percent` est un `input()` signal mais la mise à jour passe encore par `ngOnChanges` + manipulation directe du DOM (pas d'`effect`). `ngOnInit` est vide.
-- Taille et couleur non paramétrables sans surcharge CSS depuis le parent.
+- The geometry is measured in `ngAfterViewInit`: a non-zero initial `percent` is only painted after the first render (the pre-view `ngOnChanges` is ignored because `circle()` is still undefined — and `circumference` would be 0).
+- `percent` is not clamped: a value > 100 produces a negative offset (an "overfilled" ring that looks full), a negative value an empty ring.
+- Half-migrated to signals: `percent` is a signal `input()` but updates still go through `ngOnChanges` + direct DOM manipulation (no `effect`). `ngOnInit` is empty.
+- Size and color are not configurable without CSS overrides from the parent.

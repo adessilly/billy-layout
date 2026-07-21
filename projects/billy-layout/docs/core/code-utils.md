@@ -1,150 +1,151 @@
-# Utils de codes — code-format, TvaUtils, IbanUtils, EmailUtils
+# Code utils — code-format, VatUtils, IbanUtils, EmailUtils
 
-> Catégorie `core` · source `projects/billy-layout/src/lib/core/utils/{code-format,tva-utils,iban-utils,email-utils}.ts` · classes & fonctions utilitaires (sans dépendance Angular)
+> Category `core` · source `projects/billy-layout/src/lib/core/utils/{code-format,vat-utils,iban-utils,email-utils}.ts` · utility classes & functions (no Angular dependency)
 
-## Rôle
+## Purpose
 
-Socle de validation et de formatage des « codes » saisis puis relus dans Billy : numéros de TVA, IBAN et adresses email. Le contrat est le même partout : une **valeur canonique** (compacte, majuscules, sans séparateur — c'est elle seule qui va au backend), un **rendu en segments** (fragments marqués `muted` pour griser préfixe pays et séparateurs sans que chaque composant rejoue le découpage), et un **diagnostic** (`describe()` → `CodeInfo`) prêt à afficher sous le champ. Consommateurs : les champs `code-field` de la librairie (`billy-input-tva`, `billy-input-iban`, `billy-input-email`, `billy-tva-display`, `billy-iban-display`, `billy-code-value`) et, côté app, `bce-search`, `client-form`, `client-fiche`, `compte-document`.
+Validation and formatting foundation for the "codes" typed and then displayed throughout Billy: VAT numbers, IBANs and email addresses. The contract is the same everywhere: a **canonical value** (compact, uppercase, no separators — the only form sent to the backend), a **segment rendering** (fragments flagged `muted` to gray out the country prefix and separators without each component redoing the splitting), and a **diagnostic** (`describe()` → `CodeInfo`) ready to display under the field. Consumers: the library's `code-field` components (`billy-input-vat`, `billy-input-iban`, `billy-input-email`, `billy-vat-display`, `billy-iban-display`, `billy-code-value`) and, on the app side, `bce-search`, `client-form`, `client-fiche`, `compte-document`.
 
 ```ts
 import {
   CodeInfo, CodeSegment, CodeStatus,
-  TvaUtils, IbanUtils, EmailUtils,
+  VatUtils, IbanUtils, EmailUtils,
   keepAlnum, groupBySizes, groupByChunks, segmentsToText, isAlnum, countAlnum,
 } from 'billy-layout';
 ```
 
 ---
 
-## code-format — socle commun
+## code-format — shared foundation
 
-### Types exportés
+### Exported types
 
 ```ts
-/** Fragment de rendu. `muted` : préfixe pays ou séparateur → affiché en gris. */
+/** Rendering fragment. `muted`: country prefix or separator → displayed in gray. */
 interface CodeSegment { text: string; muted: boolean; }
 
 type CodeStatus = 'empty' | 'partial' | 'invalid' | 'unverified' | 'valid';
 
-/** Diagnostic complet d'un code, prêt à être affiché sous le champ. */
+/** Full diagnostic of a code, ready to be displayed under the field. */
 interface CodeInfo {
   status: CodeStatus;
-  country: string | null;       // code ISO détecté (« BE »), ou null
-  countryLabel: string | null;  // nom du pays en français, ou null
-  message: string;              // message court sous le champ
-  progress: number;             // avancement de la saisie 0 → 1 (anneau de progression)
+  country: string | null;       // detected ISO code ("BE"), or null
+  countryLabel: string | null;  // country name (English by default, localized via `locale`), or null
+  message: string;              // short message under the field
+  progress: number;             // input progress 0 → 1 (progress ring)
 }
 ```
 
-Sémantique de `CodeStatus` :
+`CodeStatus` semantics:
 
-| Statut | Sens |
+| Status | Meaning |
 |---|---|
-| `empty` | rien de saisi |
-| `partial` | saisie en cours, trop courte pour être jugée |
-| `invalid` | structure ou clé de contrôle en défaut |
-| `unverified` | structure conforme mais aucune clé de contrôle connue pour ce pays — on n'invente pas une erreur |
-| `valid` | clé de contrôle vérifiée |
+| `empty` | nothing typed |
+| `partial` | input in progress, too short to be judged |
+| `invalid` | structure or check digit fails |
+| `unverified` | structure conforms but no known check digit for this country — we don't invent an error |
+| `valid` | check digit verified |
 
-### Fonctions
+### Functions
 
-| Fonction | Signature | Sémantique |
+| Function | Signature | Semantics |
 |---|---|---|
-| `isAlnum` | `(char: string) => boolean` | Vrai si le caractère est `[A-Z0-9]` (insensible à la casse). |
-| `keepAlnum` | `(raw, maxLength) => string` | Forme canonique : majuscules, seulement `[A-Z0-9]`, tronquée à `maxLength`. Points, espaces, tirets, accents, symboles : ignorés. |
-| `countAlnum` | `(text: string) => number` | Nombre de caractères alphanumériques d'un texte (utile pour mapper une position de curseur entre valeur brute et masque). |
-| `groupBySizes` | `(body, sizes: number[], separator) => CodeSegment[]` | Découpe selon des tailles de groupes variables (TVA belge : `[4, 3, 3]`). Tolérant : une valeur trop courte est découpée jusqu'où elle va (formatage au fil de la frappe), un surplus est collé à la fin plutôt que tronqué. Séparateurs `muted`. |
-| `groupByChunks` | `(value, size, separator, mutedHead = 0) => CodeSegment[]` | Découpe en groupes de taille fixe (IBAN : par 4) en grisant les `mutedHead` premiers caractères (code pays). La grille des séparateurs suit le code complet : « BE68 5390 0754 7034 ». |
-| `segmentsToText` | `(segments) => string` | Aplatit les segments en texte — c'est le masque du champ de saisie. |
+| `isAlnum` | `(char: string) => boolean` | True if the character is `[A-Z0-9]` (case-insensitive). |
+| `keepAlnum` | `(raw, maxLength) => string` | Canonical form: uppercase, only `[A-Z0-9]`, truncated at `maxLength`. Dots, spaces, dashes, accents, symbols: ignored. |
+| `countAlnum` | `(text: string) => number` | Number of alphanumeric characters in a text (useful for mapping a cursor position between raw value and mask). |
+| `groupBySizes` | `(body, sizes: number[], separator) => CodeSegment[]` | Splits by variable group sizes (Belgian VAT: `[4, 3, 3]`). Tolerant: a value that is too short is split as far as it goes (format-as-you-type), any surplus is appended at the end rather than truncated. `muted` separators. |
+| `groupByChunks` | `(value, size, separator, mutedHead = 0) => CodeSegment[]` | Splits into fixed-size groups (IBAN: by 4) while graying out the first `mutedHead` characters (country code). The separator grid follows the full code: "BE68 5390 0754 7034". |
+| `segmentsToText` | `(segments) => string` | Flattens the segments to text — this is the input field's mask. |
 
-Les segments adjacents de même teinte sont fusionnés (via le `push` interne) : le DOM produit est minimal.
+Adjacent segments with the same tint are merged (via the internal `push`): the resulting DOM is minimal.
 
 ---
 
-## TvaUtils — numéros de TVA intracommunautaires
+## VatUtils — intra-community VAT numbers
 
-Canonique `BE0690614660` · affichage `BE 0690.614.660` (préfixe et points grisés). Classe abstraite, méthodes statiques uniquement. **Seule la Belgique a une clé de contrôle implémentée** (modulo 97) ; pour 8 pays (`BE FR LU NL DE ES IT PT`) la longueur du corps est connue et vérifiée, et ~30 pays ont un libellé français. Un numéro étranger conforme est `unverified`, jamais « valide » par excès.
+Canonical `BE0690614660` · display `BE 0690.614.660` (prefix and dots grayed out). Abstract class, static methods only. **Only Belgium has an implemented check digit** (modulo 97); for 8 countries (`BE FR LU NL DE ES IT PT`) the body length is known and verified, and ~30 countries have a label. A conforming foreign number is `unverified`, never over-optimistically "valid".
 
-| Méthode statique | Retour | Sémantique |
+| Static method | Returns | Semantics |
 |---|---|---|
-| `sanitize(raw)` | `string` | Canonique : `keepAlnum` borné à 14 caractères (2 lettres + 12, max UE). |
-| `country(raw)` | `string \| null` | Code pays, ou `null` tant que les 2 lettres ne sont pas là. |
-| `countryLabel(raw)` | `string \| null` | Nom français du pays, ou `null` si non répertorié. |
-| `normalize(raw, defaultCountry = 'BE')` | `string` | Complétion en fin de saisie : chiffres seuls → préfixe `BE` ajouté (et zéro de tête restauré : 9-10 chiffres → `BE` + pad à 10) ; ancien format `BE` + 9 chiffres → `BE0…`. |
-| `format(raw)` | `CodeSegment[]` | Segments d'affichage : préfixe pays + espace `muted`, corps groupé selon la règle du pays (BE `4.3.3` points, FR `2 3 3 3` espaces, …). Sans pays, des chiffres sont traités comme un futur numéro belge. |
-| `formatText(raw)` | `string` | `format` à plat — le masque du champ. |
-| `checksum(raw)` | `boolean \| null` | Clé de contrôle. `null` = pays sans contrôle connu (non-BE) → on ne se prononce pas. Belgique : `97 − (8 premiers chiffres % 97) === 2 derniers`. |
-| `isStructureValid(raw)` | `boolean` | Structure internationale plausible : `^[A-Z]{2}[A-Z0-9]{8,12}$` (sans juger la clé). |
-| `digits(raw)` | `string` | Chiffres seuls — le format attendu par la recherche BCE/KBO (utilisé par `bce-search`, `client-fiche`, `compte-document`). |
-| `describe(raw)` | `CodeInfo` | Diagnostic complet : pays, message contextuel (« Numéro belge : 10 chiffres attendus », « France — format conforme »…), progression vers la longueur attendue (12 par défaut si pays sans règle). |
+| `sanitize(raw)` | `string` | Canonical: `keepAlnum` capped at 14 characters (2 letters + 12, EU max). |
+| `country(raw)` | `string \| null` | Country code, or `null` until the 2 letters are present. |
+| `countryLabel(raw, locale?)` | `string \| null` | Country name in English by default, or `null` if not listed. The optional `locale` parameter uses `Intl.DisplayNames` for localized names, falling back to the built-in English map for `XI`/`EL` or unknown locales. |
+| `normalize(raw, defaultCountry = 'BE')` | `string` | Completion at the end of input: digits only → `BE` prefix added (and leading zero restored: 9-10 digits → `BE` + pad to 10); legacy format `BE` + 9 digits → `BE0…`. |
+| `format(raw)` | `CodeSegment[]` | Display segments: country prefix + `muted` space, body grouped by country rule (BE `4.3.3` dots, FR `2 3 3 3` spaces, …). Without a country, digits are treated as a future Belgian number. |
+| `formatText(raw)` | `string` | Flattened `format` — the field's mask. |
+| `checksum(raw)` | `boolean \| null` | Check digit. `null` = country without a known check (non-BE) → no verdict. Belgium: `97 − (first 8 digits % 97) === last 2`. |
+| `isStructureValid(raw)` | `boolean` | Plausible international structure: `^[A-Z]{2}[A-Z0-9]{8,12}$` (without judging the check digit). |
+| `digits(raw)` | `string` | Digits only — the format expected by the BCE/KBO search (used by `bce-search`, `client-fiche`, `compte-document`). |
+| `describe(raw, locale?)` | `CodeInfo` | Full diagnostic: country, contextual message ("Belgian number: 10 digits expected", "France — format conforms"…), progress toward the expected length (12 by default for a country without a rule). Optional `locale: 'en' \| 'fr'` (default `'en'`) localizes the messages and the country label. |
 
-Grille de `describe` : BE complet → `valid`/`invalid` selon la clé ; pays à règle → longueur exacte exigée (`partial` en dessous, `invalid` au-delà, `unverified` pile) ; pays sans règle → `unverified` dès que la structure internationale passe.
+`describe` decision grid: complete BE → `valid`/`invalid` depending on the check digit; country with a rule → exact length required (`partial` below, `invalid` above, `unverified` exactly at it); country without a rule → `unverified` as soon as the international structure passes.
 
-Usage réel (`src/app/shared/components/bce-search/bce-search.component.ts`) :
+Real usage (`src/app/shared/components/bce-search/bce-search.component.ts`):
 
 ```ts
-import { TvaUtils } from 'billy-layout';
+import { VatUtils } from 'billy-layout';
 readonly canSearch = computed(() =>
-  !!this.bce() && TvaUtils.checksum(this.tva()) === true);
+  !!this.bce() && VatUtils.checksum(this.tva()) === true);
 ```
 
 ---
 
-## IbanUtils — comptes bancaires IBAN
+## IbanUtils — IBAN bank accounts
 
-Canonique `BE68539007547034` · affichage `BE 68 5390 0754 7034` (code pays et espaces grisés). Contrairement à la TVA, la **clé de contrôle ISO 7064 (modulo 97) est universelle** : elle se vérifie pour tous les pays, y compris ceux dont la longueur est inconnue. 32 pays ont leur longueur totale répertoriée (BE : 16, FR : 27, LU : 20, …).
+Canonical `BE68539007547034` · display `BE 68 5390 0754 7034` (country code and spaces grayed out). Unlike VAT, the **ISO 7064 check digit (modulo 97) is universal**: it can be verified for every country, including those whose length is unknown. 32 countries have their total length on record (BE: 16, FR: 27, LU: 20, …).
 
-| Méthode statique | Retour | Sémantique |
+| Static method | Returns | Semantics |
 |---|---|---|
-| `sanitize(raw)` | `string` | Canonique : `keepAlnum` borné à 34 (max ISO 13616). |
-| `normalize(raw)` | `string` | Alias de `sanitize` — rien à compléter sur un IBAN. |
-| `country(raw)` / `countryLabel(raw)` | `string \| null` | Comme TvaUtils. |
-| `format(raw)` | `CodeSegment[]` | `groupByChunks(value, 4, ' ', 2)` — groupes de 4, les 2 lettres pays grisées. |
-| `formatText(raw)` | `string` | Le masque du champ. |
-| `isValid(raw)` | `boolean` | Structure `^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$` + longueur du pays si connue + `mod97 === 1`. Le modulo se calcule chiffre par chiffre (lettres → 10..35, les 4 premiers caractères passés à la fin) : un IBAN dépasse la précision d'un `number`. |
-| `describe(raw)` | `CodeInfo` | `partial` tant que la longueur pays (ou le minimum plausible de 15) n'est pas atteinte, `invalid` si trop long ou clé fausse (« Clé de contrôle IBAN est incorrecte »), `valid` sinon. La progression vise la longueur du pays. |
+| `sanitize(raw)` | `string` | Canonical: `keepAlnum` capped at 34 (ISO 13616 max). |
+| `normalize(raw)` | `string` | Alias of `sanitize` — nothing to complete on an IBAN. |
+| `country(raw)` / `countryLabel(raw, locale?)` | `string \| null` | Same as VatUtils. |
+| `format(raw)` | `CodeSegment[]` | `groupByChunks(value, 4, ' ', 2)` — groups of 4, the 2 country letters grayed out. |
+| `formatText(raw)` | `string` | The field's mask. |
+| `isValid(raw)` | `boolean` | Structure `^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$` + country length if known + `mod97 === 1`. The modulo is computed digit by digit (letters → 10..35, first 4 characters moved to the end): an IBAN exceeds the precision of a `number`. |
+| `describe(raw, locale?)` | `CodeInfo` | `partial` until the country length (or the plausible minimum of 15) is reached, `invalid` if too long or check digit wrong ("IBAN check digits are incorrect"), `valid` otherwise. Progress targets the country length. Optional `locale: 'en' \| 'fr'` (default `'en'`) localizes the messages. |
 
-Il n'existe pas de statut `unverified` en pratique pour l'IBAN : la clé étant universelle, un IBAN complet est `valid` ou `invalid`.
+In practice there is no `unverified` status for IBAN: since the check is universal, a complete IBAN is either `valid` or `invalid`.
 
 ---
 
-## EmailUtils — adresses email
+## EmailUtils — email addresses
 
-Pas de masque (une adresse ne se découpe pas en groupes), mais le même contrat : valeur canonique, `describe()`, et une valeur ajoutée spécifique — la **détection de faute de frappe sur le domaine** (« gmial.com » est structurellement valide, mais c'est presque sûrement une erreur qui enverrait une facture dans le vide). **La casse n'est jamais touchée** : la partie locale n'est pas formellement insensible à la casse (RFC 5321).
+No mask (an address doesn't split into groups), but the same contract: canonical value, `describe()`, and one specific added value — **domain typo detection** ("gmial.com" is structurally valid, but it's almost certainly a mistake that would send an invoice into the void). **Case is never touched**: the local part is not formally case-insensitive (RFC 5321).
 
-| Méthode statique | Retour | Sémantique |
+| Static method | Returns | Semantics |
 |---|---|---|
-| `isAllowed(char)` | `boolean` | Caractère autorisé : `atext` RFC 5322 + `@` + point. |
-| `sanitize(raw)` | `string` | Canonique : caractères interdits (dont espaces) retirés, bornée à 254 (RFC 5321). |
-| `isValid(raw)` | `boolean` | Structure : partie locale à segments pointés + domaine à labels + TLD alphabétique ≥ 2. |
-| `domain(raw)` | `string \| null` | Ce qui suit le **dernier** `@`, ou `null`. |
-| `suggest(raw)` | `string \| null` | Adresse corrigée si le domaine est à une distance de Damerau-Levenshtein ≤ 1 (≤ 2 si domaine > 10 caractères) d'un des ~25 domaines courants belges/français (`gmail.com`, `skynet.be`, `telenet.be`, `proximus.be`, …) sans en être un. `null` si rien à redire ou doute trop grand. |
-| `describe(raw)` | `CodeInfo` | `country`/`countryLabel` toujours `null`. Progression par jalons : partie locale 0.35 → `@` 0.7 → domaine pointé 1. Messages ciblés : `@` manquant, nom manquant avant `@`, double `@`, domaine incomplet ; une suggestion produit `unverified` avec « Vouliez-vous dire jean@gmail.com ? » ; sinon `valid`. |
+| `isAllowed(char)` | `boolean` | Allowed character: RFC 5322 `atext` + `@` + dot. |
+| `sanitize(raw)` | `string` | Canonical: forbidden characters (including spaces) removed, capped at 254 (RFC 5321). |
+| `isValid(raw)` | `boolean` | Structure: local part with dotted segments + domain with labels + alphabetic TLD ≥ 2. |
+| `domain(raw)` | `string \| null` | Whatever follows the **last** `@`, or `null`. |
+| `suggest(raw)` | `string \| null` | Corrected address if the domain is at a Damerau-Levenshtein distance ≤ 1 (≤ 2 if the domain is > 10 characters) from one of ~25 common Belgian/French domains (`gmail.com`, `skynet.be`, `telenet.be`, `proximus.be`, …) without being one. `null` if nothing to flag or too much doubt. |
+| `describe(raw, locale?)` | `CodeInfo` | `country`/`countryLabel` always `null`. Milestone-based progress: local part 0.35 → `@` 0.7 → dotted domain 1. Targeted messages: missing `@`, missing name before `@`, double `@`, incomplete domain; a suggestion yields `unverified` with "Did you mean john@gmail.com?"; otherwise `valid`. Optional `locale: 'en' \| 'fr'` (default `'en'`) localizes the messages. |
 
-La distance interne est **Damerau-Levenshtein** (insertion, suppression, substitution **et transposition**) : « gmial » pour « gmail » — deux lettres interverties, la faute la plus courante — compte pour 1, là où Levenshtein seul la compterait 2 et la laisserait passer. Court-circuit si l'écart de longueur dépasse 2.
+The internal distance is **Damerau-Levenshtein** (insertion, deletion, substitution **and transposition**): "gmial" for "gmail" — two swapped letters, the most common typo — counts as 1, where plain Levenshtein would count it as 2 and let it through. Short-circuits when the length gap exceeds 2.
 
-## Exemple d'utilisation
+## Usage example
 
 ```ts
-import { TvaUtils } from 'billy-layout';
+import { VatUtils } from 'billy-layout';
 
-// Pipeline type d'un champ TVA (cf. billy-input-tva) :
-const canon = TvaUtils.sanitize(userInput);        // « be 0690.614.660 » → « BE0690614660 »
-const masque = TvaUtils.formatText(canon);          // « BE 0690.614.660 » (affiché dans l'input)
-const info = TvaUtils.describe(canon);              // { status: 'valid', message: 'Numéro valide', … }
-const final = TvaUtils.normalize('0690614660');     // « BE0690614660 » au blur
+// Typical pipeline of a VAT field (see billy-input-vat):
+const canon = VatUtils.sanitize(userInput);        // "be 0690.614.660" → "BE0690614660"
+const mask = VatUtils.formatText(canon);           // "BE 0690.614.660" (shown in the input)
+const info = VatUtils.describe(canon);             // { status: 'valid', message: 'Valid number', … }
+const final = VatUtils.normalize('0690614660');    // "BE0690614660" on blur
 ```
 
 ## Styles & theming
 
-Modules TypeScript purs, sans style. Le rendu visuel des segments `muted` et des statuts `CodeInfo` est porté par la coque SCSS `billy-code-field` (voir `docs/styles/styles.md`) et les composants `code-field`.
+Pure TypeScript modules, no styling. The visual rendering of `muted` segments and `CodeInfo` statuses is handled by the `billy-code-field` SCSS shell (see `docs/styles/styles.md`) and the `code-field` components.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Aucune dépendance Angular : utilisables dans un `computed()`, un validateur de formulaire ou du code serveur.
-- `TvaUtils` et consorts sont des **classes abstraites à méthodes statiques** — ne pas instancier.
-- Toutes les entrées acceptent `string | null | undefined` : jamais besoin de garde en amont.
-- `normalize` (TVA) est pensé pour le **blur / fin de saisie**, pas pour la frappe : appliqué à chaque frappe, il préfixerait `BE` trop tôt.
-- La philosophie « on n'invente pas une erreur » est structurante : un pays inconnu ne fait jamais échouer le rendu ni passer le statut à `invalid` — il plafonne à `unverified`.
-- `EmailUtils.suggest` ne corrige rien tout seul : il **propose** ; c'est au composant d'afficher la suggestion et de laisser l'utilisateur l'accepter.
-- Les validations « structure connue » ont leurs limites assumées : la TVA non belge n'est vérifiée qu'en longueur ; l'email n'est pas validé au sens complet de la RFC (pas de quoted-string, pas d'IDN).
+- No Angular dependency: usable in a `computed()`, a form validator or server-side code.
+- `describe()` takes an optional `locale?: 'en' | 'fr'` (default `'en'`); the library's code fields pass `BillyI18nService.locale()` automatically, so field messages follow the configured language. Built-in strings are localizable — see [i18n](i18n.md).
+- `VatUtils` and friends are **abstract classes with static methods** — do not instantiate.
+- All entry points accept `string | null | undefined`: no upstream guard ever needed.
+- `normalize` (VAT) is designed for **blur / end of input**, not for typing: applied on every keystroke, it would prefix `BE` too early.
+- The "we don't invent an error" philosophy is structural: an unknown country never breaks rendering nor flips the status to `invalid` — it caps at `unverified`.
+- `EmailUtils.suggest` never fixes anything on its own: it **proposes**; it's up to the component to display the suggestion and let the user accept it.
+- The "known structure" validations have deliberate limits: non-Belgian VAT is only length-checked; email is not validated in the full RFC sense (no quoted-string, no IDN).

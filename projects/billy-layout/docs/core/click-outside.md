@@ -1,38 +1,38 @@
 # [clickOutside] — ClickOutsideDirective & ClickOutsideService
 
-> Catégorie `core` · source `projects/billy-layout/src/lib/core/click-outside/` · directive + service
+> Category `core` · source `projects/billy-layout/src/lib/core/click-outside/` · directive + service
 
-## Rôle
+## Purpose
 
-Détection du « clic en dehors » pour fermer les surfaces flottantes, sans Bootstrap JS et compatible zoneless. Le service centralise **un seul** écouteur `click` sur `document` et publie la cible du clic dans un signal ; chaque directive posée sur un élément réagit à ce signal et émet `clickOutside` si le clic n'a pas eu lieu dans son sous-arbre. C'est la brique de fermeture des dropdowns maison : utilisée dans la librairie par `billy-dropdown` et `billy-attachment-button`, et dans l'app par le menu compte (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`) et le champ TVA (`src/app/shared/components/tva-field/tva-field.component.html`).
+"Click outside" detection to close floating surfaces, without Bootstrap JS and zoneless-compatible. The service centralizes **a single** `click` listener on `document` and publishes the click target in a signal; each directive placed on an element reacts to that signal and emits `clickOutside` when the click did not happen inside its subtree. It is the closing mechanism of the in-house dropdowns: used inside the library by `billy-dropdown` and `billy-attachment-button`, and in the app by the account menu (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`) and the VAT field (`src/app/shared/components/tva-field/tva-field.component.html`).
 
 ---
 
 ## ClickOutsideDirective
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { ClickOutsideDirective } from 'billy-layout';
 ```
 
-Sélecteur : `[clickOutside]` · directive standalone (`standalone: true`).
+Selector: `[clickOutside]` · standalone directive.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `listenClickOutside` | `boolean` | `true` | Interrupteur d'écoute. À `false`, les clics extérieurs sont ignorés. En pratique on y lie le signal d'ouverture (`[listenClickOutside]="isOpen()"`) pour ne réagir que quand la surface est visible. |
+| `listenClickOutside` | `boolean` | `true` | Listening switch. When `false`, outside clicks are ignored. In practice, bind it to the open-state signal (`[listenClickOutside]="isOpen()"`) so the directive only reacts while the surface is visible. |
 
 ### Outputs
 
 | Output | Payload | Description |
 |---|---|---|
-| `clickOutside` | `void` | Émis à chaque clic document dont la cible n'est pas contenue dans l'élément hôte (`elementRef.nativeElement.contains(target)` faux). |
+| `clickOutside` | `void` | Emitted on every document click whose target is not contained in the host element (`elementRef.nativeElement.contains(target)` is false). |
 
-### Fonctionnement interne
+### How it works internally
 
-Un `effect()` dans le constructeur lit `clickOutsideService.clickEmitted()` ; le corps est enveloppé dans `untracked()` pour que seule la publication d'un clic (et pas `listenClickOutside`) déclenche l'effet. Si la cible est non nulle, hors écoute désactivée, et hors du sous-arbre de l'hôte → `clickOutside.emit()`.
+An `effect()` in the constructor reads `clickOutsideService.clickEmitted()`; the body is wrapped in `untracked()` so that only the publication of a click (and not `listenClickOutside`) triggers the effect. If the target is non-null, listening is not disabled, and the target is outside the host's subtree → `clickOutside.emit()`.
 
 ---
 
@@ -44,25 +44,25 @@ Un `effect()` dans le constructeur lit `clickOutsideService.clickEmitted()` ; le
 import { ClickOutsideService } from 'billy-layout';
 ```
 
-Service `@Injectable({ providedIn: 'root' })` — ne s'instancie qu'à sa première injection (en pratique, la première `ClickOutsideDirective` construite).
+Service `@Injectable({ providedIn: 'root' })` — only instantiated on its first injection (in practice, the first `ClickOutsideDirective` constructed).
 
 ### API
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `clickEmitted` | `signal<null \| EventTarget>` | Cible du dernier clic document, `null` au repos. Le service fait `set(null)` puis `set(event.target)` à chaque clic : le passage par `null` casse l'égalité référentielle et garantit que l'effet des directives se rejoue même si on clique deux fois de suite sur le même élément. |
+| `clickEmitted` | `signal<null \| EventTarget>` | Target of the last document click, `null` at rest. The service does `set(null)` then `set(event.target)` on each click: passing through `null` breaks referential equality and guarantees the directives' effect replays even when clicking the same element twice in a row. |
 
-L'écouteur `document.addEventListener('click', …)` est posé dans le constructeur et jamais retiré (durée de vie = application).
+The `document.addEventListener('click', …)` listener is set in the constructor and never removed (lifetime = the application).
 
 ---
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel — `src/app/shared/components/icon-top-compte/billy-account-menu.component.html` :
+Real usage — `src/app/shared/components/icon-top-compte/billy-account-menu.component.html`:
 
 ```html
 <div class="account-menu" (clickOutside)="close()" [listenClickOutside]="open()">
-  <!-- déclencheur + panneau -->
+  <!-- trigger + panel -->
 </div>
 ```
 
@@ -81,13 +81,13 @@ export class BillyAccountMenuComponent {
 
 ## Styles & theming
 
-Aucun style : directive purement comportementale.
+No styles: purely behavioral directive.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **Le clic d'ouverture compte comme un clic** : sans garde, ouvrir un menu par un bouton situé hors de l'élément décoré le refermerait aussitôt. Deux parades : inclure le déclencheur dans le sous-arbre décoré (pattern du menu compte ci-dessus), ou piloter `listenClickOutside`.
-- **`stopPropagation()` rend le clic invisible** : le service écoute sur `document`, un clic stoppé en chemin ne publie rien (ni fermeture, donc).
-- Seul l'événement `click` est couvert — pas `mousedown`, ni la touche Échap, ni le focus clavier sortant.
-- Conçu pour le zoneless : tout passe par signals/effect, aucun `NgZone`. C'est le remplaçant officiel des dropdowns Bootstrap dans l'app (cf. mémoire « Billy zoneless » : pattern `isOpen` + `ClickOutsideDirective`).
-- Le service référence `document` directement dans son constructeur : non compatible SSR/plateforme serveur en l'état.
-- Deux instances de la directive imbriquées réagissent chacune pour leur compte : un clic dans l'enfant est aussi « dedans » pour le parent (contains), donc pas de double fermeture parasite.
+- **The opening click counts as a click**: without a guard, opening a menu from a button outside the decorated element would immediately close it again. Two workarounds: include the trigger inside the decorated subtree (the account-menu pattern above), or drive `listenClickOutside`.
+- **`stopPropagation()` makes the click invisible**: the service listens on `document`; a click stopped along the way publishes nothing (so no closing either).
+- Only the `click` event is covered — not `mousedown`, nor the Escape key, nor keyboard focus leaving.
+- Designed for zoneless: everything goes through signals/effect, no `NgZone`. It is the official replacement for the app's Bootstrap dropdowns (the `isOpen` + `ClickOutsideDirective` pattern).
+- The service references `document` directly in its constructor: not SSR/server-platform compatible as is.
+- Two nested instances of the directive each react on their own: a click in the child is also "inside" for the parent (contains), so no spurious double closing.

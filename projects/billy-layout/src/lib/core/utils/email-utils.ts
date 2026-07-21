@@ -1,32 +1,33 @@
 import { CodeInfo } from './code-format';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Adresses email.
+// Email addresses.
 //
-// Pas de masque ici — une adresse ne se découpe pas en groupes — mais le même
-// contrat que TvaUtils / IbanUtils : une valeur canonique (sans espace ni
-// caractère interdit), un diagnostic, et de quoi l'afficher sous le champ.
+// No mask here — an address does not split into groups — but the same
+// contract as VatUtils / IbanUtils: a canonical value (no spaces or
+// forbidden characters), a diagnostic, and what it takes to display it
+// under the field.
 //
-// La casse n'est PAS touchée : le domaine est insensible à la casse, mais la
-// partie locale ne l'est pas formellement (RFC 5321), et réécrire l'adresse
-// d'un client déjà enregistré n'apporterait rien.
+// Case is NOT touched: the domain is case-insensitive, but the local part
+// formally is not (RFC 5321), and rewriting the address of an already
+// registered client would gain nothing.
 //
-// La vraie valeur ajoutée est la détection de faute de frappe sur le domaine :
-// « gmial.com » est une adresse structurellement valide — aucun validateur ne
-// la refusera — mais c'est presque sûrement une erreur, et c'est le genre de
-// détail qui envoie une facture dans le vide.
+// The real added value is typo detection on the domain: "gmial.com" is a
+// structurally valid address — no validator will reject it — but it is
+// almost certainly a mistake, and it is the kind of detail that sends an
+// invoice into the void.
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Limite de la norme (RFC 5321) : 254 caractères pour l'adresse complète. */
+/** Standard limit (RFC 5321): 254 characters for the full address. */
 const MAX_LENGTH = 254;
 
-/** Caractères autorisés : `atext` de la RFC 5322, plus « @ » et le point. */
+/** Allowed characters: `atext` from RFC 5322, plus "@" and the dot. */
 const ALLOWED = /[A-Za-z0-9!#$%&'*+/=?^_`{|}~.@-]/;
 
-/** Structure acceptée : une partie locale, un domaine, au moins un point. */
+/** Accepted structure: a local part, a domain, at least one dot. */
 const STRUCTURE = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@([A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
 
-/** Domaines courants chez les clients belges — la cible des corrections. */
+/** Domains common among Belgian clients — the target of the corrections. */
 const COMMON_DOMAINS = [
   'gmail.com', 'hotmail.com', 'hotmail.be', 'hotmail.fr', 'outlook.com',
   'outlook.be', 'live.be', 'live.com', 'yahoo.com', 'yahoo.fr', 'icloud.com',
@@ -35,13 +36,43 @@ const COMMON_DOMAINS = [
   'orange.fr', 'wanadoo.fr', 'laposte.net', 'sfr.fr',
 ];
 
+/** User-visible diagnostics of `describe`, per locale. */
+const MESSAGES: Record<'en' | 'fr', {
+  addAtAndDomain: string;
+  missingLocalPart: string;
+  singleAtOnly: string;
+  completeDomain: string;
+  invalid: string;
+  didYouMean: (suggestion: string) => string;
+  valid: string;
+}> = {
+  en: {
+    addAtAndDomain: 'Add "@" then the domain',
+    missingLocalPart: 'The name before "@" is missing',
+    singleAtOnly: 'An address contains only one "@"',
+    completeDomain: 'Complete the domain (example.be)',
+    invalid: 'This address is not valid',
+    didYouMean: suggestion => `Did you mean ${suggestion}?`,
+    valid: 'Valid address',
+  },
+  fr: {
+    addAtAndDomain: 'Ajoutez « @ » puis le domaine',
+    missingLocalPart: 'Il manque le nom avant « @ »',
+    singleAtOnly: "Une adresse ne contient qu'un seul « @ »",
+    completeDomain: 'Complétez le domaine (exemple.be)',
+    invalid: "Cette adresse n'est pas valide",
+    didYouMean: suggestion => `Vouliez-vous dire ${suggestion} ?`,
+    valid: 'Adresse valide',
+  },
+};
+
 export abstract class EmailUtils {
 
   static isAllowed(char: string): boolean {
     return !!char && ALLOWED.test(char);
   }
 
-  /** Forme canonique : espaces et caractères interdits retirés, longueur bornée. */
+  /** Canonical form: spaces and forbidden characters removed, length capped. */
   static sanitize(raw: string | null | undefined): string {
     return (raw ?? '')
       .split('')
@@ -54,7 +85,7 @@ export abstract class EmailUtils {
     return STRUCTURE.test(EmailUtils.sanitize(raw));
   }
 
-  /** Domaine saisi (ce qui suit le dernier « @ »), ou null. */
+  /** Domain typed so far (what follows the last "@"), or null. */
   static domain(raw: string | null | undefined): string | null {
     const value = EmailUtils.sanitize(raw);
     const at = value.lastIndexOf('@');
@@ -62,9 +93,9 @@ export abstract class EmailUtils {
   }
 
   /**
-   * Adresse corrigée si le domaine ressemble de très près à un domaine courant
-   * sans en être un — « jean@gmial.com » → « jean@gmail.com ». Null s'il n'y a
-   * rien à redire, ou si le doute est trop grand pour proposer quoi que ce soit.
+   * Corrected address when the domain very closely resembles a common one
+   * without being one — "jean@gmial.com" → "jean@gmail.com". Null when there
+   * is nothing to flag, or when the doubt is too great to suggest anything.
    */
   static suggest(raw: string | null | undefined): string | null {
     const value = EmailUtils.sanitize(raw);
@@ -76,7 +107,7 @@ export abstract class EmailUtils {
     const known = domain.toLowerCase();
     if (COMMON_DOMAINS.includes(known)) { return null; }
 
-    // Une faute de frappe, c'est une lettre — deux au plus sur un domaine long.
+    // A typo is one letter — two at most on a long domain.
     const budget = known.length > 10 ? 2 : 1;
     const closest = COMMON_DOMAINS.find(
       candidate => EmailUtils.distance(known, candidate) <= budget,
@@ -87,8 +118,9 @@ export abstract class EmailUtils {
     return `${local}@${closest}`;
   }
 
-  /** Diagnostic affiché sous le champ (état, domaine, message, progression). */
-  static describe(raw: string | null | undefined): CodeInfo {
+  /** Diagnostic shown under the field (status, domain, message, progress). */
+  static describe(raw: string | null | undefined, locale: 'en' | 'fr' = 'en'): CodeInfo {
+    const messages = MESSAGES[locale];
     const value = EmailUtils.sanitize(raw);
     const domain = EmailUtils.domain(value);
     const base: CodeInfo = {
@@ -99,48 +131,48 @@ export abstract class EmailUtils {
 
     const at = value.indexOf('@');
 
-    // Avancement : la partie locale, puis l'arobase, puis un domaine pointé.
+    // Progress: the local part, then the "@", then a dotted domain.
     let progress = 0.35;
     if (at >= 0) { progress = domain?.includes('.') ? 1 : 0.7; }
     const info = { ...base, progress };
 
     if (at < 0) {
-      return { ...info, status: 'partial', message: 'Ajoutez « @ » puis le domaine' };
+      return { ...info, status: 'partial', message: messages.addAtAndDomain };
     }
     if (at === 0) {
-      return { ...info, status: 'invalid', message: 'Il manque le nom avant « @ »' };
+      return { ...info, status: 'invalid', message: messages.missingLocalPart };
     }
     if (value.indexOf('@', at + 1) >= 0) {
-      return { ...info, status: 'invalid', message: "Une adresse ne contient qu'un seul « @ »" };
+      return { ...info, status: 'invalid', message: messages.singleAtOnly };
     }
     if (!domain || !domain.includes('.')) {
-      return { ...info, status: 'partial', message: 'Complétez le domaine (exemple.be)' };
+      return { ...info, status: 'partial', message: messages.completeDomain };
     }
     if (!EmailUtils.isValid(value)) {
-      return { ...info, status: 'invalid', message: "Cette adresse n'est pas valide" };
+      return { ...info, status: 'invalid', message: messages.invalid };
     }
 
     const suggestion = EmailUtils.suggest(value);
     if (suggestion) {
-      return { ...info, status: 'unverified', message: `Vouliez-vous dire ${suggestion} ?` };
+      return { ...info, status: 'unverified', message: messages.didYouMean(suggestion) };
     }
 
-    return { ...info, status: 'valid', message: 'Adresse valide' };
+    return { ...info, status: 'valid', message: messages.valid };
   }
 
   /**
-   * Distance de Damerau-Levenshtein : insertion, suppression, substitution et
-   * **transposition** — « gmial » pour « gmail », deux lettres interverties, est
-   * la faute de frappe la plus courante de toutes. Levenshtein seul la compte
-   * pour deux erreurs et la laisserait passer.
+   * Damerau-Levenshtein distance: insertion, deletion, substitution and
+   * **transposition** — "gmial" for "gmail", two letters swapped, is the most
+   * common typo of all. Plain Levenshtein counts it as two errors and would
+   * let it through.
    *
-   * On ne compare que des domaines : quelques dizaines de caractères au plus.
+   * We only compare domains: a few dozen characters at most.
    */
   private static distance(a: string, b: string): number {
     if (a === b) { return 0; }
     if (Math.abs(a.length - b.length) > 2) { return 99; }
 
-    // rows[i][j] : distance entre les i premières lettres de a et les j de b.
+    // rows[i][j]: distance between the first i letters of a and the first j of b.
     const rows: number[][] = [Array.from({ length: b.length + 1 }, (_, j) => j)];
 
     for (let i = 1; i <= a.length; i++) {
@@ -151,11 +183,11 @@ export abstract class EmailUtils {
 
         let best = Math.min(
           rows[i][j - 1] + 1,        // insertion
-          rows[i - 1][j] + 1,        // suppression
+          rows[i - 1][j] + 1,        // deletion
           rows[i - 1][j - 1] + cost, // substitution
         );
 
-        // Transposition : les deux dernières lettres sont interverties.
+        // Transposition: the last two letters are swapped.
         if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
           best = Math.min(best, rows[i - 2][j - 2] + 1);
         }

@@ -1,7 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { Toastr, ToastrInstance, ToastrType } from './toastr';
 
-/** Nombre maximum de toasts empilés : au-delà, le plus ancien est évincé. */
+/** Maximum number of stacked toasts: beyond it, the oldest one is evicted. */
 const MAX_STACK = 5;
 
 @Injectable({
@@ -9,48 +10,50 @@ const MAX_STACK = 5;
 })
 export class ToastrService {
 
-  /** Durée d'affichage de base en secondes (warnings et erreurs restent plus longtemps). */
+  private readonly i18n = inject(BillyI18nService);
+
+  /** Base display duration in seconds (warnings and errors stay longer). */
   public hideDelay = 5;
 
   public readonly messages = signal<ToastrInstance[]>([]);
 
   private nextId = 0;
 
-  success(message: string, titre = 'Succès'): void {
-    this.push('success', titre, message);
+  success(message: string, title?: string): void {
+    this.push('success', title ?? this.i18n.strings().toastr.success, message);
   }
 
-  error(message: string, titre = 'Erreur'): void {
-    this.push('error', titre, message);
+  error(message: string, title?: string): void {
+    this.push('error', title ?? this.i18n.strings().toastr.error, message);
   }
 
-  warning(message: string, titre = 'Attention'): void {
-    this.push('warning', titre, message);
+  warning(message: string, title?: string): void {
+    this.push('warning', title ?? this.i18n.strings().toastr.warning, message);
   }
 
-  info(message: string, titre = 'Information'): void {
-    this.push('info', titre, message);
+  info(message: string, title?: string): void {
+    this.push('info', title ?? this.i18n.strings().toastr.info, message);
   }
 
-  pushSaveSuccess(message = 'Sauvegarde effectuée avec succès'): void {
-    this.success(message);
+  pushSaveSuccess(message?: string): void {
+    this.success(message ?? this.i18n.strings().toastr.saveSuccess);
   }
 
-  pushSaveError(message = 'Erreur durant la sauvegarde'): void {
-    this.error(message);
+  pushSaveError(message?: string): void {
+    this.error(message ?? this.i18n.strings().toastr.saveError);
   }
 
   pushMessage(toastr: Toastr): void {
     const type = toastr.type ?? (toastr.error ? 'error' : 'success');
-    this.push(type, toastr.titre, toastr.message, toastr.icone ?? null);
+    this.push(type, toastr.title, toastr.message, toastr.icon ?? null);
   }
 
-  /** Retire immédiatement un toast de la pile (appelé après l'animation de sortie). */
+  /** Removes a toast from the stack immediately (called after the exit animation). */
   remove(id: number): void {
     this.messages.update(messages => messages.filter(message => message.id !== id));
   }
 
-  private push(type: ToastrType, titre: string, message: string, icone: string | null = null): void {
+  private push(type: ToastrType, title: string, message: string, icon: string | null = null): void {
     const durations: Record<ToastrType, number> = {
       success: this.hideDelay * 1000,
       info: this.hideDelay * 1000,
@@ -60,9 +63,9 @@ export class ToastrService {
     const toast: ToastrInstance = {
       id: this.nextId++,
       type,
-      titre,
+      title,
       message,
-      icone,
+      icon,
       duration: durations[type],
     };
     this.messages.update(messages => [...messages, toast].slice(-MAX_STACK));

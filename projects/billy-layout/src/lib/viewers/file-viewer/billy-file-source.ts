@@ -2,8 +2,8 @@ import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 
 /**
- * Fichier affichable par les viewers (pdf/image/xml). Interface structurelle
- * minimale : le modèle `Fichier` de l'application la satisfait tel quel.
+ * File displayable by the viewers (pdf/image/xml). Minimal structural
+ * interface: the application's `Fichier` model satisfies it as-is.
  */
 export interface BillyViewerFile {
   id?: number;
@@ -11,24 +11,24 @@ export interface BillyViewerFile {
 }
 
 /**
- * Source de contenu des viewers de fichiers.
+ * Content source for the file viewers.
  *
- * Les viewers ne connaissent ni le serveur, ni l'authentification : c'est
- * l'application qui fournit ce token (obligatoire pour utiliser
- * billy-file-viewer-pdf / -image / -xml ; la toolbar seule s'en passe).
+ * The viewers know nothing about the server or authentication: the
+ * application provides this token (required to use
+ * billy-file-viewer-pdf / -image / -xml; the toolbar alone does without it).
  *
- * Côté billy-client : FichierSourceService (HTTP relatif `fichiers/:id/download`
- * pour blob/texte — l'intercepteur pose base URL et Authorization — et URL
- * absolue + Bearer pour le PDF, car ng2-pdf-viewer télécharge lui-même).
+ * On the billy-client side: FichierSourceService (relative HTTP `fichiers/:id/download`
+ * for blob/text — the interceptor sets the base URL and Authorization — and an
+ * absolute URL + Bearer for the PDF, since ng2-pdf-viewer downloads it itself).
  */
 export interface BillyFileSource {
-  /** URL absolue de téléchargement (viewer PDF : fetch interne à ng2-pdf-viewer). */
+  /** Absolute download URL (PDF viewer: fetch is internal to ng2-pdf-viewer). */
   downloadUrl(fileId: number): string;
-  /** Jeton porté en `Authorization: Bearer …` par le viewer PDF. */
+  /** Token sent as `Authorization: Bearer …` by the PDF viewer. */
   authToken(): string | null;
-  /** Contenu binaire (viewer image). */
+  /** Binary content (image viewer). */
   downloadBlob(fileId: number): Observable<Blob>;
-  /** Contenu texte (viewer XML). */
+  /** Text content (XML viewer). */
   downloadText(fileId: number): Observable<string>;
 }
 

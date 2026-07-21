@@ -1,10 +1,10 @@
 # billy-shell — BillyShellComponent
 
-> Catégorie `layout` · source `projects/billy-layout/src/lib/layout/shell` · standalone component (+ service `BillyShellService` + token `BILLY_SHELL_CONFIG`)
+> Category `layout` · source `projects/billy-layout/src/lib/layout/shell` · standalone component (+ `BillyShellService` service + `BILLY_SHELL_CONFIG` token)
 
-## Rôle
+## Role
 
-Coque applicative de BILLy : assemble la topbar (`billy-topbar`), la sidebar repliable (`billy-sidebar`) et la zone de contenu scrollable dans une colonne flex plein écran (`100dvh`, pas de footer). C'est le point d'entrée de la catégorie `layout` : billy-client l'instancie une seule fois dans `src/app/auth/pages/auth-page.component.html`, avec un `<router-outlet>` projeté comme contenu. La librairie ne connaît ni les routes ni les services métier : tout ce qui en dépend passe par le token `BILLY_SHELL_CONFIG` (fourni dans `src/app/app.config.ts`) et par trois slots de projection re-projetés vers la topbar.
+BILLy's application shell: assembles the topbar (`billy-topbar`), the collapsible sidebar (`billy-sidebar`) and the scrollable content area in a full-screen flex column (`100dvh`, no footer). It is the entry point of the `layout` category: billy-client instantiates it once in `src/app/auth/pages/auth-page.component.html`, with a `<router-outlet>` projected as content. The library knows neither the routes nor the business services: everything that depends on them goes through the `BILLY_SHELL_CONFIG` token (provided in `src/app/app.config.ts`) and through three projection slots re-projected to the topbar.
 
 ## API
 
@@ -14,24 +14,24 @@ Coque applicative de BILLy : assemble la topbar (`billy-topbar`), la sidebar rep
 import { BillyShellComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-shell`.
+Selector: `billy-shell`.
 
-Aucun input ni output. Le composant expose publiquement :
+No input or output. The component publicly exposes:
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `shell` | `BillyShellService` | Injecté et lu par le template (backdrop mobile). |
+| `shell` | `BillyShellService` | Injected and read by the template (mobile backdrop). |
 
 ### BillyShellService (`billy-shell.service.ts`)
 
-Service `providedIn: 'root'` : état partagé topbar ↔ sidebar.
+`providedIn: 'root'` service: shared topbar ↔ sidebar state.
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `sidebarCollapsed` | `signal<boolean>` | Sidebar repliée (mode icônes, 80px). Persisté dans le localStorage sous la clé `billy-shell.sidebar-collapsed` via un `effect`. |
-| `mobileSidebarOpen` | `signal<boolean>` | Sur mobile, la sidebar devient un tiroir superposé au contenu. |
-| `toggleSidebar()` | `void` | Si `window.innerWidth < 768` bascule `mobileSidebarOpen`, sinon bascule `sidebarCollapsed`. Appelé par le burger de la topbar. |
-| `closeMobileSidebar()` | `void` | Ferme le tiroir mobile (clic sur le backdrop ou sur un lien du menu). |
+| `sidebarCollapsed` | `signal<boolean>` | Sidebar collapsed (icon mode, 80px). Persisted in localStorage under the key `billy-shell.sidebar-collapsed` via an `effect`. |
+| `mobileSidebarOpen` | `signal<boolean>` | On mobile, the sidebar becomes a drawer overlaid on the content. |
+| `toggleSidebar()` | `void` | If `window.innerWidth < 768` toggles `mobileSidebarOpen`, otherwise toggles `sidebarCollapsed`. Called by the topbar burger. |
+| `closeMobileSidebar()` | `void` | Closes the mobile drawer (click on the backdrop or on a menu link). |
 
 ### BILLY_SHELL_CONFIG (`billy-shell-config.ts`)
 
@@ -39,47 +39,47 @@ Service `providedIn: 'root'` : état partagé topbar ↔ sidebar.
 import { BILLY_SHELL_CONFIG, BillyShellConfig, BillyMenuLink } from 'billy-layout';
 ```
 
-Token `InjectionToken<BillyShellConfig>` consommé (en `{ optional: true }`) par la topbar, la sidebar et le panneau de notifications. Tous les champs sauf `menuLinks` sont optionnels — sans eux, la fonctionnalité correspondante est simplement inerte.
+`InjectionToken<BillyShellConfig>` token consumed (as `{ optional: true }`) by the topbar, the sidebar and the notifications panel. All fields except `menuLinks` are optional — without them, the corresponding feature is simply inert.
 
 ```ts
 interface BillyMenuLink {
-  text: string;          // libellé (sert aussi de clé pour menuBadges)
-  heading?: boolean;     // true = heading de section (pas de lien)
+  text: string;          // label (also used as the key for menuBadges)
+  heading?: boolean;     // true = section heading (not a link)
   link?: string;         // route (routerLink)
-  icon?: BillyIconName;  // icône billy-icon
+  icon?: BillyIconName;  // billy-icon icon
 }
 
 interface BillyShellConfig {
-  menuLinks: BillyMenuLink[];                          // liens de la sidebar
-  version?: string;                                    // pied de sidebar
-  homeLink?: string;                                   // cible du logo (défaut '/')
-  logout?: () => void;                                 // bouton « Me déconnecter »
-  menuBadges?: Signal<Record<string, string | null>>;  // badges par libellé d'entrée
-  syncNotifications?: () => Promise<unknown>;          // synchro globale (cloche)
+  menuLinks: BillyMenuLink[];                          // sidebar links
+  version?: string;                                    // sidebar footer
+  homeLink?: string;                                   // logo target (default '/')
+  logout?: () => void;                                 // "Log out" button
+  menuBadges?: Signal<Record<string, string | null>>;  // badges per entry label
+  syncNotifications?: () => Promise<unknown>;          // global sync (bell)
 }
 ```
 
 ## Slots / projection
 
-Le shell projette quatre contenus :
+The shell projects four contents:
 
-| Slot | Destination | Contenu côté billy-client |
+| Slot | Destination | billy-client content |
 |---|---|---|
-| `[shell-search]` | topbar (zone recherche, après le logo) | `<app-billy-search shell-search />` |
-| `[shell-notifications]` | topbar (actions à droite) | `<billy-notifications shell-notifications>…</billy-notifications>` |
-| `[shell-account]` | topbar (après le divider) | `<app-billy-account-menu shell-account />` |
-| défaut (`<ng-content />`) | `<main class="billy-shell-content">` | la page (`<router-outlet>`) |
+| `[shell-search]` | topbar (search zone, after the logo) | `<app-billy-search shell-search />` |
+| `[shell-notifications]` | topbar (right-hand actions) | `<billy-notifications shell-notifications>…</billy-notifications>` |
+| `[shell-account]` | topbar (after the divider) | `<app-billy-account-menu shell-account />` |
+| default (`<ng-content />`) | `<main class="billy-shell-content">` | the page (`<router-outlet>`) |
 
-Les trois slots métier sont **re-projetés** vers `billy-topbar` via `<ng-container ngProjectAs="[shell-search]">…` : un `<ng-content select>` re-projeté tel quel ne matcherait pas le sélecteur du niveau suivant sans `ngProjectAs`.
+The three business slots are **re-projected** to `billy-topbar` via `<ng-container ngProjectAs="[shell-search]">…`: a re-projected `<ng-content select>` as-is would not match the next level's selector without `ngProjectAs`.
 
-## Exemple d'utilisation
+## Usage example
 
-Assemblage réel, `src/app/auth/pages/auth-page.component.html` :
+Real-world assembly, `src/app/auth/pages/auth-page.component.html`:
 
 ```html
 <billy-shell [class.has-action-bar]="billyConfig.showActionBar">
 
-  <!-- Zones métier de la topbar, projetées dans le shell (billy-layout). -->
+  <!-- Business zones of the topbar, projected into the shell (billy-layout). -->
   <app-billy-search shell-search />
 
   <billy-notifications shell-notifications>
@@ -94,7 +94,7 @@ Assemblage réel, `src/app/auth/pages/auth-page.component.html` :
 </billy-shell>
 ```
 
-Provider de configuration, `src/app/app.config.ts` :
+Configuration provider, `src/app/app.config.ts`:
 
 ```ts
 {
@@ -110,7 +110,7 @@ Provider de configuration, `src/app/app.config.ts` :
       logout: () => routeurUtilsService.toLogoutPage(),
       menuBadges: computed(() => {
         const count = peppolLogFactureService.inProgressLogs().length;
-        return { Ventes: count > 0 ? String(count) : null };
+        return { Sales: count > 0 ? String(count) : null };
       }),
       syncNotifications: () => lastValueFrom(peppolInboxService.syncPeppolInbox()),
     };
@@ -120,15 +120,15 @@ Provider de configuration, `src/app/app.config.ts` :
 
 ## Styles & theming
 
-- `.billy-shell` : colonne flex `height: 100dvh`, fond `#F4F6F8`, `overflow: hidden` — seul `.billy-shell-content` scrolle (`overflow-y: auto`, padding `0 24px 24px 8px`, réduit à `0 12px 16px` sous 768px).
-- Dark mode via `:host-context(body.dark-mode)` : fond `#1e292b`. La classe `dark-mode` est posée sur le `<body>` par `BillyDarkModeService` (voir billy-topbar.md).
-- `.billy-shell-backdrop` : voile `rgba(15, 23, 42, .35)` fixé sous la topbar (`top: 66px`, `z-index: 30`) quand `mobileSidebarOpen()` est vrai ; un clic ferme le tiroir.
-- Breakpoint unique : `767.98px` (aligné avec le test `window.innerWidth < 768` du service).
+- `.billy-shell`: flex column `height: 100dvh`, `#F4F6F8` background, `overflow: hidden` — only `.billy-shell-content` scrolls (`overflow-y: auto`, padding `0 24px 24px 8px`, reduced to `0 12px 16px` below 768px).
+- Dark mode via `:host-context(body.dark-mode)`: `#1e292b` background. The `dark-mode` class is set on the `<body>` by `BillyDarkModeService` (see billy-topbar.md).
+- `.billy-shell-backdrop`: `rgba(15, 23, 42, .35)` veil fixed below the topbar (`top: 66px`, `z-index: 30`) when `mobileSidebarOpen()` is true; a click closes the drawer.
+- Single breakpoint: `767.98px` (aligned with the service's `window.innerWidth < 768` test).
 
-## Pièges & notes
+## Pitfalls & notes
 
-- `BILLY_SHELL_CONFIG` est injecté partout en optionnel : oublier le provider ne casse rien mais donne une sidebar vide, un logo pointant sur `/` et des boutons inertes.
-- L'état replié survit au rechargement (localStorage `billy-shell.sidebar-collapsed`), l'état mobile non.
-- Le contenu du shell n'a pas de padding-bottom pour la barre mobile : billy-client l'ajoute lui-même via la classe `.has-action-bar` posée sur `<billy-shell>` et une règle `::ng-deep .has-action-bar .billy-shell-content` dans `auth-page.component.scss` (voir action-bar.md).
-- `menuBadges` est un `Signal` (typiquement un `computed`) : les badges se mettent à jour tout seuls, pas besoin de re-provider.
-- Le shell ne rend pas de footer ; la version d'app s'affiche en pied de sidebar.
+- `BILLY_SHELL_CONFIG` is injected everywhere as optional: forgetting the provider breaks nothing but yields an empty sidebar, a logo pointing to `/` and inert buttons.
+- The collapsed state survives reloads (localStorage `billy-shell.sidebar-collapsed`), the mobile state does not.
+- The shell content has no padding-bottom for the mobile bar: billy-client adds it itself via the `.has-action-bar` class set on `<billy-shell>` and a `::ng-deep .has-action-bar .billy-shell-content` rule in `auth-page.component.scss` (see action-bar.md).
+- `menuBadges` is a `Signal` (typically a `computed`): badges update on their own, no need to re-provide.
+- The shell renders no footer; the app version is displayed in the sidebar footer.

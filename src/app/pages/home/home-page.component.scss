@@ -140,7 +140,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-// ── Visuel SVG (maquette qui s'assemble) ────────────────────────────────────
+// ── SVG visual (self-assembling mockup) ─────────────────────────────────────
 .hero-visual {
   min-width: 0;
 }
@@ -187,7 +187,7 @@
 .hv-success-fill { fill: #16a34a; }
 .hv-warn-fill { fill: #fdf1ea; stroke: #f9731633; }
 
-// Assemblage : chaque pièce arrive en léger décalé, puis la scène respire.
+// Assembly: each piece arrives slightly staggered, then the scene breathes.
 .hv-piece {
   opacity: 0;
   animation: hvPiece .55s cubic-bezier(.2, .9, .3, 1.2) both;
@@ -243,7 +243,7 @@
 
 .hv-cta { transition: opacity .2s ease; }
 
-// ── Catégories ──────────────────────────────────────────────────────────────
+// ── Categories ──────────────────────────────────────────────────────────────
 .cats {
   padding: 30px 8px 0;
 }
@@ -275,7 +275,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 14px;
-  // Les billy-nav-card apparaissent après le hero.
+  // The billy-nav-cards appear after the hero.
   --billy-nav-card-base-delay: 200ms;
 }
 

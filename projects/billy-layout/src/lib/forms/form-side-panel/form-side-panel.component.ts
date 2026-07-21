@@ -5,7 +5,6 @@ import { DOCUMENT } from '@angular/common';
   selector: 'billy-form-side-panel',
   templateUrl: './form-side-panel.component.html',
   styleUrls: ['./form-side-panel.component.scss'],
-  standalone: true
 })
 export class FormSidePanelComponent implements OnInit, OnDestroy {
   readonly wide = input(false);

@@ -1,4 +1,4 @@
-// Rendu en lecture d'un n° TVA / IBAN : chiffres en avant, séparateurs en gris.
+// Read-only rendering of a VAT number / IBAN: digits up front, separators in gray.
 
 :host {
   display: inline-flex;
@@ -13,8 +13,8 @@
   opacity: 0.9;
 }
 
-// Chaque segment est un élément flex : le retour à la ligne d'un IBAN long
-// tombe alors entre deux groupes, jamais au milieu de l'un d'eux.
+// Each segment is a flex item: the line break of a long IBAN then falls
+// between two groups, never in the middle of one.
 .cv-code {
   display: inline-flex;
   flex-wrap: wrap;
@@ -26,10 +26,10 @@
 }
 
 .cv-seg {
-  white-space: pre;                        // les segments d'espacement comptent
+  white-space: pre;                        // the spacing segments matter
 }
 
-// Le liant (« BE », les points, les espaces) : présent, mais en retrait.
+// The connective parts ("BE", dots, spaces): present, but understated.
 .cv-seg--muted {
   color: var(--billy-text-muted, #9ca3af);
   font-weight: 500;
@@ -41,9 +41,9 @@
   color: var(--billy-text-muted, #9ca3af);
 }
 
-// ── Copie ───────────────────────────────────────────────────────────────────
-// Discrète au repos, elle se révèle au survol de la ligne (et reste visible au
-// clavier, sinon elle serait inatteignable).
+// ── Copy ────────────────────────────────────────────────────────────────────
+// Discreet at rest, it reveals itself on row hover (and stays visible for
+// keyboard users, otherwise it would be unreachable).
 .cv-copy {
   display: inline-flex;
   align-items: center;
@@ -72,8 +72,8 @@
   color: var(--billy-accent-strong, #0e97bb);
 }
 
-// Après la copie, la coche reste verte même sous le curseur : la règle doit
-// donc être plus spécifique que le survol ci-dessus.
+// After copying, the check mark stays green even under the cursor: the rule
+// must therefore be more specific than the hover above.
 .cv-copy.cv-copy--done {
   color: #16a34a;
 

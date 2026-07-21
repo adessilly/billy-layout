@@ -1,62 +1,62 @@
 # billy-label-clipboard — LabelClipboardComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/form-creation/label-clipboard/` · standalone component
+> Category `forms` · source `projects/billy-layout/src/lib/forms/form-creation/label-clipboard/` · standalone component
 
-## Rôle
+## Purpose
 
-Libellé « copiable » : affiche un texte précédé d'une icône presse-papier ; au clic, copie une valeur dans le presse-papier (`navigator.clipboard`) et affiche pendant 2 secondes une confirmation (icône cochée + mention « (copié dans le presse papier) »). Par défaut c'est le libellé lui-même qui est copié, mais `value` permet de copier une valeur différente de ce qui est affiché. À ce jour, **aucun usage direct dans `src/app`** (vérifié par grep sur `billy-label-clipboard`) : le composant est exporté par la librairie et fait partie du bundle `FormCreationModule` importé par `src/app/shared/components/tache-list-signalform/` (import vestigial, sélecteur absent du template).
+"Copyable" label: displays a text preceded by a clipboard icon; on click, copies a value to the clipboard (`navigator.clipboard`) and shows a confirmation for 2 seconds (checked icon + "(copied to clipboard)" mention). By default the label itself is copied, but `value` allows copying a value different from what is displayed. As of today, **no direct usage in `src/app`** (verified by grepping for `billy-label-clipboard`): the component is exported by the library and is part of the `FormCreationModule` bundle imported by `src/app/shared/components/tache-list-signalform/` (vestigial import, the selector is absent from the template).
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { LabelClipboardComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-label-clipboard>`. Également exporté via le tableau legacy `FormCreationModule` (barrel `lib/forms/form-creation/index.ts`).
+Selector: `<billy-label-clipboard>`. Also exported via the legacy `FormCreationModule` array (barrel `lib/forms/form-creation/index.ts`).
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string` | — (`input.required`) | Texte affiché ; c'est aussi la valeur copiée si `value` est absent. |
-| `value` | `string \| null` | `null` | Valeur copiée dans le presse-papier à la place du libellé (ex. afficher « IBAN » et copier le numéro). |
+| `label` | `string` | — (`input.required`) | Displayed text; it is also the copied value if `value` is absent. |
+| `value` | `string \| null` | `null` | Value copied to the clipboard instead of the label (e.g. display "IBAN" and copy the number). |
 
-Pas d'output.
+No outputs.
 
-### Méthodes publiques
+### Public methods
 
-| Méthode | Description |
+| Method | Description |
 |---|---|
-| `askCopy(event: MouseEvent)` | Handler de clic : `stopPropagation()`, copie `value ?? label` via `navigator.clipboard.writeText`, passe le signal interne `copied` à `true` puis le réarme après 2 s. Public mais destiné au template. |
+| `askCopy(event: MouseEvent)` | Click handler: `stopPropagation()`, copies `value ?? label` via `navigator.clipboard.writeText`, sets the internal `copied` signal to `true` then resets it after 2 s. Public but intended for the template. |
 
 ## Slots / projection
 
-Aucun — tout passe par les inputs.
+None — everything goes through the inputs.
 
-## Exemple d'utilisation
+## Usage example
 
-Pas d'usage actuel dans `src/app` ; usage type :
+No current usage in `src/app`; typical usage:
 
 ```html
-<!-- copie le libellé lui-même -->
+<!-- copies the label itself -->
 <billy-label-clipboard [label]="client.email" />
 
-<!-- affiche un texte court, copie la valeur complète -->
-<billy-label-clipboard label="IBAN" [value]="compte.iban" />
+<!-- displays a short text, copies the full value -->
+<billy-label-clipboard label="IBAN" [value]="account.iban" />
 ```
 
 ## Styles & theming
 
-- `:host { cursor: pointer }` ; icône `fa-clipboard` estompée (`opacity: 0.3`) au repos, `fa-clipboard-check` après copie.
-- Survol : le texte passe à `#5d9cec` (bleu codé en dur, pas de token `--billy-*` — pas d'adaptation dark mode spécifique, mais le bleu reste lisible sur fond sombre).
-- La mention « (copié…) » est en `position: absolute` (largeur 200px, italique) à droite du libellé : elle ne pousse pas la mise en page mais peut déborder d'un conteneur étroit ou `overflow: hidden`.
+- `:host { cursor: pointer }`; `fa-clipboard` icon dimmed (`opacity: 0.3`) at rest, `fa-clipboard-check` after copying.
+- Hover: the text switches to `#5d9cec` (hard-coded blue, no `--billy-*` token — no specific dark mode adaptation, but the blue stays readable on a dark background).
+- The "(copied…)" mention is `position: absolute` (200px wide, italic) to the right of the label: it doesn't push the layout but can overflow a narrow or `overflow: hidden` container.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- `event.stopPropagation()` dans `askCopy` : le clic ne remonte pas — attendu quand le libellé vit dans une ligne cliquable (row de tableau), à connaître si on veut aussi réagir au clic parent.
-- `navigator.clipboard.writeText` exige un contexte sécurisé (HTTPS ou localhost) ; la promesse n'est pas attendue ni son échec géré — la confirmation s'affiche même si la copie a échoué.
-- Le `setTimeout` de 2 s n'est pas annulé si le composant est détruit entre-temps (écriture d'un signal sur composant détruit : sans effet, mais timer orphelin).
-- Le survol cible `i.copy-label` alors que l'icône porte la classe `copy-icon` : l'effet d'opacité au survol de l'icône est inopérant (seule la couleur du texte change).
-- Composant orphelin côté app au 2026-07-17 (exporté, mais aucun sélecteur dans `src/app`).
+- `event.stopPropagation()` in `askCopy`: the click does not bubble up — expected when the label lives in a clickable row (table row), worth knowing if you also want to react to the parent click.
+- `navigator.clipboard.writeText` requires a secure context (HTTPS or localhost); the promise is neither awaited nor its failure handled — the confirmation shows even if the copy failed.
+- The 2 s `setTimeout` is not cancelled if the component is destroyed in the meantime (writing a signal on a destroyed component: no effect, but an orphan timer).
+- The hover targets `i.copy-label` while the icon carries the `copy-icon` class: the icon opacity hover effect is inoperative (only the text color changes).
+- Orphaned component on the app side as of 2026-07-17 (exported, but no selector in `src/app`).

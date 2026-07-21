@@ -1,66 +1,66 @@
 import { Directive, LOCALE_ID, Provider, Signal, Type, computed, forwardRef, inject, output, signal } from '@angular/core';
 import { BillyIconName } from '../../../core/icon/billy-icon.component';
 
-export type BillyNotifCategoryId = 'entrantes' | 'sortantes' | 'impayes';
+export type BillyNotifCategoryId = 'incoming' | 'outgoing' | 'unpaid';
 
 /**
- * Base commune des catégories de notifications de la cloche.
+ * Common base for the notification bell categories.
  *
- * Chaque catégorie est un composant autonome : il charge ses données, expose
- * son compteur et affiche sa propre liste (niveau 2 du panneau). Le composant
- * parent ne connaît que cette abstraction : il dessine les lignes de
- * catégories à partir des métadonnées et retrouve les instances via
- * `contentChildren(BillyNotifCategory)`. Ajouter une catégorie = créer un
- * composant qui étend cette classe et le projeter dans
- * <billy-notifications> (côté application).
+ * Each category is a self-contained component: it loads its data, exposes
+ * its counter and renders its own list (level 2 of the panel). The parent
+ * component only knows this abstraction: it draws the category rows from
+ * the metadata and retrieves the instances via
+ * `contentChildren(BillyNotifCategory)`. Adding a category = creating a
+ * component that extends this class and projecting it into
+ * <billy-notifications> (application side).
  */
 @Directive()
 export abstract class BillyNotifCategory {
 
-  /** Identifiant unique, utilisé pour la navigation entre les deux niveaux. */
+  /** Unique identifier, used for navigating between the two levels. */
   abstract readonly id: BillyNotifCategoryId;
 
-  // Métadonnées de la ligne de catégorie (niveau 1) et de l'entête.
+  // Metadata for the category row (level 1) and the header.
   abstract readonly label: string;
   abstract readonly sub: string;
   abstract readonly icon: BillyIconName;
   abstract readonly iconBg: string;
   abstract readonly iconColor: string;
 
-  /** Nombre d'éléments à traiter (badge de la cloche et compteurs). */
+  /** Number of items to handle (bell badge and counters). */
   abstract readonly count: Signal<number>;
 
-  // État poussé par le panneau parent (billy-notifications) : les catégories
-  // sont du contenu projeté par l'application, le parent ne peut pas les
-  // template-binder — il écrit ces signals depuis un effect.
-  /** Catégorie ouverte dans le panneau (null = niveau catégories). */
+  // State pushed by the parent panel (billy-notifications): categories are
+  // content projected by the application, so the parent cannot template-bind
+  // them — it writes these signals from an effect.
+  /** Category open in the panel (null = categories level). */
   readonly activeCategory = signal<BillyNotifCategoryId | null>(null);
-  /** Une synchronisation globale est en cours (anime les icônes sync). */
+  /** A global synchronization is in progress (animates the sync icons). */
   readonly syncing = signal(false);
 
-  /** Demande de synchronisation globale émise depuis le pied de la liste. */
+  /** Global synchronization request emitted from the list footer. */
   readonly syncRequested = output<void>();
-  /** Un élément a ouvert son écran métier : le panneau doit se fermer. */
+  /** An item opened its business screen: the panel must close. */
   readonly navigated = output<void>();
 
-  /** La liste de cette catégorie est-elle celle affichée ? */
+  /** Is this category's list the one being displayed? */
   readonly active = computed(() => this.activeCategory() === this.id);
 
   protected readonly locale = inject(LOCALE_ID);
 
-  /** Recharge les données de la catégorie (après une synchro globale). */
+  /** Reloads the category data (after a global sync). */
   abstract refresh(): Promise<void>;
 
-  protected clientName(holder: { client?: { nom?: string; prenom?: string } | null }): string {
+  protected clientName(holder: { client?: { lastName?: string; firstName?: string } | null }): string {
     const client = holder.client;
-    return client ? `${client.nom ?? ''} ${client.prenom ?? ''}`.trim() : '';
+    return client ? `${client.lastName ?? ''} ${client.firstName ?? ''}`.trim() : '';
   }
 
 }
 
 /**
- * À déclarer dans les `providers` de chaque composant de catégorie pour que
- * le parent le retrouve via `viewChildren(BillyNotifCategory)`.
+ * Declare this in the `providers` of each category component so the parent
+ * can retrieve it via `viewChildren(BillyNotifCategory)`.
  */
 export function provideBillyNotifCategory(component: () => Type<BillyNotifCategory>): Provider {
   return { provide: BillyNotifCategory, useExisting: forwardRef(component) };

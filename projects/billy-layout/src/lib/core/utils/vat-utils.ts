@@ -3,31 +3,31 @@ import {
 } from './code-format';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Numéros de TVA intracommunautaires.
+// Intra-community VAT numbers.
 //
-// Valeur canonique : « BE0690614660 » — code pays + corps, sans séparateur.
-// Affichage        : « BE 0690.614.660 » — préfixe et points grisés.
+// Canonical value: "BE0690614660" — country code + body, no separator.
+// Display:         "BE 0690.614.660" — prefix and dots greyed out.
 //
-// Seule la Belgique a une clé de contrôle implémentée (modulo 97). Pour les
-// autres pays, on vérifie la longueur quand on la connaît, et on s'arrête là :
-// un numéro luxembourgeois ou français conforme est déclaré `unverified`, pas
-// invalide. Un pays inconnu au bataillon ne fait jamais échouer le rendu.
+// Only Belgium has an implemented check digit (modulo 97). For other
+// countries we check the length when we know it, and stop there: a
+// well-formed Luxembourgish or French number is reported as `unverified`,
+// not invalid. A country we have never heard of never breaks rendering.
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** 2 lettres + 12 caractères : le maximum d'un numéro de TVA de l'UE. */
+/** 2 letters + 12 characters: the maximum for an EU VAT number. */
 const MAX_LENGTH = 14;
 
-/** Structure minimale d'un numéro international, tous pays confondus. */
+/** Minimal structure of an international number, across all countries. */
 const STRUCTURE = /^[A-Z]{2}[A-Z0-9]{8,12}$/;
 
-/** Découpage d'affichage + longueur attendue du corps, par pays. */
-interface TvaRule {
+/** Display grouping + expected body length, per country. */
+interface VatRule {
   sizes: number[];
   separator: string;
   length: number;
 }
 
-const RULES: Record<string, TvaRule> = {
+const RULES: Record<string, VatRule> = {
   BE: { sizes: [4, 3, 3],    separator: '.', length: 10 },
   FR: { sizes: [2, 3, 3, 3], separator: ' ', length: 11 },
   LU: { sizes: [8],          separator: ' ', length: 8  },
@@ -39,51 +39,101 @@ const RULES: Record<string, TvaRule> = {
 };
 
 const COUNTRIES: Record<string, string> = {
-  AT: 'Autriche',   BE: 'Belgique',  BG: 'Bulgarie',   CH: 'Suisse',
-  CY: 'Chypre',     CZ: 'Tchéquie',  DE: 'Allemagne',  DK: 'Danemark',
-  EE: 'Estonie',    EL: 'Grèce',     ES: 'Espagne',    FI: 'Finlande',
-  FR: 'France',     GB: 'Royaume-Uni', GR: 'Grèce',    HR: 'Croatie',
-  HU: 'Hongrie',    IE: 'Irlande',   IT: 'Italie',     LT: 'Lituanie',
-  LU: 'Luxembourg', LV: 'Lettonie',  MT: 'Malte',      NL: 'Pays-Bas',
-  NO: 'Norvège',    PL: 'Pologne',   PT: 'Portugal',   RO: 'Roumanie',
-  SE: 'Suède',      SI: 'Slovénie',  SK: 'Slovaquie',  XI: 'Irlande du Nord',
+  AT: 'Austria',    BE: 'Belgium',  BG: 'Bulgaria',   CH: 'Switzerland',
+  CY: 'Cyprus',     CZ: 'Czechia',  DE: 'Germany',    DK: 'Denmark',
+  EE: 'Estonia',    EL: 'Greece',   ES: 'Spain',      FI: 'Finland',
+  FR: 'France',     GB: 'United Kingdom', GR: 'Greece', HR: 'Croatia',
+  HU: 'Hungary',    IE: 'Ireland',  IT: 'Italy',      LT: 'Lithuania',
+  LU: 'Luxembourg', LV: 'Latvia',   MT: 'Malta',      NL: 'Netherlands',
+  NO: 'Norway',     PL: 'Poland',   PT: 'Portugal',   RO: 'Romania',
+  SE: 'Sweden',     SI: 'Slovenia', SK: 'Slovakia',   XI: 'Northern Ireland',
 };
 
-export abstract class TvaUtils {
+/** User-visible diagnostics of `describe`, per locale. */
+const MESSAGES: Record<'en' | 'fr', {
+  belgianPrefix: string;
+  startCountry: string;
+  belgianDigits: string;
+  valid: string;
+  belgianInvalid: string;
+  charsExpected: (country: string, length: number) => string;
+  wellFormed: (country: string) => string;
+  stillTyping: (country: string) => string;
+}> = {
+  en: {
+    belgianPrefix: 'Belgian number — the BE prefix will be added',
+    startCountry: 'Start with the country code (BE, LU, FR…)',
+    belgianDigits: 'Belgian number: 10 digits expected',
+    valid: 'Valid number',
+    belgianInvalid: 'This Belgian number does not look valid',
+    charsExpected: (country, length) => `${country}: ${length} characters expected`,
+    wellFormed: country => `${country} — well-formed`,
+    stillTyping: country => `${country} — still typing`,
+  },
+  fr: {
+    belgianPrefix: 'Numéro belge — le préfixe BE sera ajouté',
+    startCountry: 'Commencez par le code pays (BE, LU, FR…)',
+    belgianDigits: 'Numéro belge : 10 chiffres attendus',
+    valid: 'Numéro valide',
+    belgianInvalid: 'Ce numéro belge ne semble pas valide',
+    charsExpected: (country, length) => `${country} : ${length} caractères attendus`,
+    wellFormed: country => `${country} — format conforme`,
+    stillTyping: country => `${country} — saisie en cours`,
+  },
+};
 
-  /** Forme canonique : « BE 0690.614.660 » → « BE0690614660 ». */
+export abstract class VatUtils {
+
+  /** Canonical form: "BE 0690.614.660" → "BE0690614660". */
   static sanitize(raw: string | null | undefined): string {
     return keepAlnum(raw, MAX_LENGTH);
   }
 
-  /** Code pays saisi, ou null tant que les deux lettres ne sont pas là. */
+  /** Country code typed so far, or null until both letters are in. */
   static country(raw: string | null | undefined): string | null {
-    const value = TvaUtils.sanitize(raw);
+    const value = VatUtils.sanitize(raw);
     return /^[A-Z]{2}/.test(value) ? value.slice(0, 2) : null;
   }
 
-  /** Nom du pays en français, ou null s'il n'est pas répertorié. */
-  static countryLabel(raw: string | null | undefined): string | null {
-    const country = TvaUtils.country(raw);
-    return country ? COUNTRIES[country] ?? null : null;
+  /**
+   * Country name, or null if the country is not listed. Without a locale the
+   * built-in English map is used; with one, `Intl.DisplayNames` translates
+   * when it can, and the English map covers the rest (`XI`, `EL`, unknown
+   * locales).
+   */
+  static countryLabel(raw: string | null | undefined, locale?: string): string | null {
+    const country = VatUtils.country(raw);
+    if (!country) { return null; }
+
+    if (locale) {
+      try {
+        const label = new Intl.DisplayNames([locale], { type: 'region' }).of(country);
+        // `of` may echo the code back (e.g. "XI"): treat that as a miss.
+        if (label && label !== country) { return label; }
+      } catch {
+        // Unknown locale or code Intl cannot handle: fall back to the map.
+      }
+    }
+
+    return COUNTRIES[country] ?? null;
   }
 
   /**
-   * Complète ce qui peut l'être une fois la saisie terminée : un numéro tapé
-   * en chiffres seuls est belge (préfixe ajouté), et l'ancien format à 9
-   * chiffres retrouve son zéro de tête.
+   * Completes what can be completed once typing is done: a number typed as
+   * digits only is Belgian (prefix added), and the old 9-digit format gets
+   * its leading zero back.
    */
   static normalize(raw: string | null | undefined, defaultCountry = 'BE'): string {
-    const value = TvaUtils.sanitize(raw);
+    const value = VatUtils.sanitize(raw);
     if (!value) { return ''; }
 
-    // Le préfixe ajoute deux caractères : on repasse par `sanitize` pour que le
-    // résultat reste borné à MAX_LENGTH, sinon le modèle contiendrait un numéro
-    // plus long que ce que le champ sait afficher.
+    // The prefix adds two characters: run through `sanitize` again so the
+    // result stays capped at MAX_LENGTH, otherwise the model would hold a
+    // number longer than what the field can display.
     if (/^\d+$/.test(value)) {
       return defaultCountry === 'BE' && value.length >= 9 && value.length <= 10
         ? 'BE' + value.padStart(10, '0')
-        : TvaUtils.sanitize(defaultCountry + value);
+        : VatUtils.sanitize(defaultCountry + value);
     }
 
     if (/^BE\d{9}$/.test(value)) {
@@ -93,12 +143,12 @@ export abstract class TvaUtils {
     return value;
   }
 
-  /** Segments d'affichage : préfixe pays et séparateurs marqués `muted`. */
+  /** Display segments: country prefix and separators marked `muted`. */
   static format(raw: string | null | undefined): CodeSegment[] {
-    const value = TvaUtils.sanitize(raw);
+    const value = VatUtils.sanitize(raw);
     if (!value) { return []; }
 
-    const country = TvaUtils.country(value);
+    const country = VatUtils.country(value);
     const body = country ? value.slice(2) : value;
     const segments: CodeSegment[] = [];
 
@@ -106,7 +156,7 @@ export abstract class TvaUtils {
       segments.push({ text: country, muted: true }, { text: ' ', muted: true });
     }
 
-    const rule = TvaUtils.rule(country, body);
+    const rule = VatUtils.rule(country, body);
     if (rule) {
       segments.push(...groupBySizes(body, rule.sizes, rule.separator));
     } else if (body) {
@@ -116,17 +166,17 @@ export abstract class TvaUtils {
     return segments;
   }
 
-  /** Le même rendu, à plat : c'est le masque appliqué au champ de saisie. */
+  /** The same rendering, flattened: the mask applied to the input field. */
   static formatText(raw: string | null | undefined): string {
-    return segmentsToText(TvaUtils.format(raw));
+    return segmentsToText(VatUtils.format(raw));
   }
 
   /**
-   * Clé de contrôle. `null` = pays sans contrôle connu → on ne se prononce pas.
-   * Belgique : 97 − (8 premiers chiffres modulo 97) = les 2 derniers.
+   * Check digit. `null` = country without a known check → we stay silent.
+   * Belgium: 97 − (first 8 digits modulo 97) = the last 2.
    */
   static checksum(raw: string | null | undefined): boolean | null {
-    const value = TvaUtils.sanitize(raw);
+    const value = VatUtils.sanitize(raw);
     if (!value.startsWith('BE')) { return null; }
 
     const body = value.slice(2);
@@ -135,21 +185,24 @@ export abstract class TvaUtils {
     return 97 - (Number(body.slice(0, 8)) % 97) === Number(body.slice(8));
   }
 
-  /** Structure internationale plausible (sans juger la clé de contrôle). */
+  /** Plausible international structure (without judging the check digit). */
   static isStructureValid(raw: string | null | undefined): boolean {
-    return STRUCTURE.test(TvaUtils.sanitize(raw));
+    return STRUCTURE.test(VatUtils.sanitize(raw));
   }
 
-  /** Chiffres seuls — ce qu'attend le formulaire de recherche de la BCE/KBO. */
+  /** Digits only — what the BCE/KBO lookup form expects. */
   static digits(raw: string | null | undefined): string {
     return (raw ?? '').replace(/\D/g, '');
   }
 
-  /** Diagnostic affiché sous le champ (état, pays, message, progression). */
-  static describe(raw: string | null | undefined): CodeInfo {
-    const value = TvaUtils.sanitize(raw);
-    const country = TvaUtils.country(value);
-    const countryLabel = country ? COUNTRIES[country] ?? null : null;
+  /** Diagnostic shown under the field (status, country, message, progress). */
+  static describe(raw: string | null | undefined, locale: 'en' | 'fr' = 'en'): CodeInfo {
+    const messages = MESSAGES[locale];
+    const value = VatUtils.sanitize(raw);
+    const country = VatUtils.country(value);
+    const countryLabel = locale === 'fr'
+      ? VatUtils.countryLabel(value, 'fr')
+      : country ? COUNTRIES[country] ?? null : null;
     const base: CodeInfo = { status: 'empty', country, countryLabel, message: '', progress: 0 };
 
     if (!value) { return base; }
@@ -159,46 +212,46 @@ export abstract class TvaUtils {
     const progress = Math.min(1, value.length / expected);
     const info = { ...base, progress };
 
-    // Pas encore de code pays : chiffres seuls → numéro belge en devenir.
+    // No country code yet: digits only → a Belgian number in the making.
     if (!country) {
       return /^\d+$/.test(value)
-        ? { ...info, status: 'partial', message: 'Numéro belge — le préfixe BE sera ajouté' }
-        : { ...info, status: 'partial', message: 'Commencez par le code pays (BE, LU, FR…)' };
+        ? { ...info, status: 'partial', message: messages.belgianPrefix }
+        : { ...info, status: 'partial', message: messages.startCountry };
     }
 
     const body = value.slice(2);
-    const checksum = TvaUtils.checksum(value);
+    const checksum = VatUtils.checksum(value);
 
     if (checksum !== null) {
       if (body.length < 10) {
-        return { ...info, status: 'partial', message: 'Numéro belge : 10 chiffres attendus' };
+        return { ...info, status: 'partial', message: messages.belgianDigits };
       }
       return checksum
-        ? { ...info, status: 'valid',   message: 'Numéro valide' }
-        : { ...info, status: 'invalid', message: 'Ce numéro belge ne semble pas valide' };
+        ? { ...info, status: 'valid',   message: messages.valid }
+        : { ...info, status: 'invalid', message: messages.belgianInvalid };
     }
 
-    const pays = countryLabel ?? country;
+    const countryName = countryLabel ?? country;
 
     if (rule) {
       if (body.length < rule.length) {
-        return { ...info, status: 'partial', message: `${pays} : ${rule.length} caractères attendus` };
+        return { ...info, status: 'partial', message: messages.charsExpected(countryName, rule.length) };
       }
       if (body.length > rule.length) {
-        return { ...info, status: 'invalid', message: `${pays} : ${rule.length} caractères attendus` };
+        return { ...info, status: 'invalid', message: messages.charsExpected(countryName, rule.length) };
       }
-      return { ...info, status: 'unverified', message: `${pays} — format conforme` };
+      return { ...info, status: 'unverified', message: messages.wellFormed(countryName) };
     }
 
-    // Pays sans règle connue : on se contente de la structure internationale.
-    if (TvaUtils.isStructureValid(value)) {
-      return { ...info, status: 'unverified', message: `${pays} — format conforme`, progress: 1 };
+    // Country without a known rule: settle for the international structure.
+    if (VatUtils.isStructureValid(value)) {
+      return { ...info, status: 'unverified', message: messages.wellFormed(countryName), progress: 1 };
     }
-    return { ...info, status: 'partial', message: `${pays} — saisie en cours` };
+    return { ...info, status: 'partial', message: messages.stillTyping(countryName) };
   }
 
-  /** Règle de découpage : celle du pays, ou celle de la Belgique si on n'a que des chiffres. */
-  private static rule(country: string | null, body: string): TvaRule | undefined {
+  /** Grouping rule: the country's, or Belgium's when all we have is digits. */
+  private static rule(country: string | null, body: string): VatRule | undefined {
     if (country) { return RULES[country]; }
     return /^\d{1,10}$/.test(body) ? RULES['BE'] : undefined;
   }

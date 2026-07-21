@@ -1,57 +1,57 @@
 # app-loading — AppLoadingComponent
 
-> Catégorie `feedback` · source `projects/billy-layout/src/lib/feedback/app-loading/app-loading.component.ts` · standalone component
+> Category `feedback` · source `projects/billy-layout/src/lib/feedback/app-loading/app-loading.component.ts` · standalone component
 
-## Rôle
+## Role
 
-Overlay de chargement qui recouvre toute la zone de son parent (lequel doit être en `position: relative`) et affiche une animation SVG « facture qui se rédige » tant que `loading` est vrai. C'est le remplaçant maison de l'ancien `ad-loading`. Largement utilisé dans `src/app` : formulaires et consultations devis/vente/achat/client (`devis-form`, `vente-consult-dialog`, `achat-consult`…), paiements de vente, page compte, `compte-password`, `upload-manager` — une quinzaine de composants.
+Loading overlay that covers its parent's entire area (the parent must be `position: relative`) and shows an animated "invoice being written" SVG while `loading` is true. It is the in-house replacement for the legacy `ad-loading`. Widely used in `src/app`: quote/sale/purchase/client forms and consult screens (`devis-form`, `vente-consult-dialog`, `achat-consult`…), sale payments, account page, `compte-password`, `upload-manager` — about fifteen components.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { AppLoadingComponent } from 'billy-layout';
 ```
 
-Sélecteur : `billy-loading` (le dossier/fichier garde le nom historique `app-loading`).
+Selector: `billy-loading` (the folder/file keeps the historical name `app-loading`).
 
 ### Inputs
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `loading` | `input<boolean>` | `false` | Affiche l'overlay quand vrai. Le composant reste dans le DOM et bascule en fondu (opacité/visibilité). |
+| `loading` | `input<boolean>` | `false` | Shows the overlay when true. The component stays in the DOM and fades in/out (opacity/visibility). |
 
-Pas d'output, pas de méthode publique.
+No output, no public method.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel (`src/app/auth/pages/devis/devis-form/devis-form.component.html`) :
+Real-world usage (`src/app/auth/pages/devis/devis-form/devis-form.component.html`):
 
 ```html
 <billy-loading [loading]="devisState.loading()"></billy-loading>
 ```
 
-Ou en dur pendant un chargement de page (`devis-consult.component.html`) :
+Or hard-coded during a page load (`devis-consult.component.html`):
 
 ```html
 <billy-loading [loading]="true"></billy-loading>
 ```
 
-Le parent doit créer un contexte de positionnement (`position: relative`) : l'overlay est en `position: absolute; inset: 0`.
+The parent must establish a positioning context (`position: relative`): the overlay uses `position: absolute; inset: 0`.
 
 ## Styles & theming
 
-- Overlay `absolute inset: 0; z-index: 50`, voile `rgba(255,255,255,.72)` + `backdrop-filter: blur(2px)`, `cursor: wait` ; transition d'opacité 0,25 s à l'activation, `pointer-events` bloqués uniquement quand actif.
-- Illustration SVG animée : un document-facture dont les lignes « s'écrivent » de gauche à droite en cascade (`billy-line-write`, délai `calc(var(--i) * 0.18s)` par ligne), une pastille € qui « pop » une fois le total écrit (`billy-euro-pop`), le tout flottant doucement (`billy-doc-float`).
-- Tokens DS avec fallback : `--billy-accent` / `--billy-accent-strong` (dégradé du contour et lignes), `--billy-accent-border` (lignes atténuées), `--billy-surface` (corps du document).
-- **Dark mode** (`:host-context(body.dark-mode)`) : voile sombre `rgba(20, 28, 31, .72)`.
-- **`prefers-reduced-motion: reduce`** : les animations d'écriture et le pop € sont coupés ; seul reste le flottement lent du document (« pouls léger ») pour signaler l'activité.
-- Accessibilité : `aria-live="polite"`, `[attr.aria-busy]="loading()"`, `role="status"` + `aria-label="Chargement en cours"` sur le spinner.
+- Overlay `absolute inset: 0; z-index: 50`, veil `rgba(255,255,255,.72)` + `backdrop-filter: blur(2px)`, `cursor: wait`; 0.25 s opacity transition on activation, `pointer-events` blocked only while active.
+- Animated SVG illustration: an invoice document whose lines "write themselves" left to right in cascade (`billy-line-write`, per-line delay `calc(var(--i) * 0.18s)`), a € badge that "pops" once the total is written (`billy-euro-pop`), the whole thing floating gently (`billy-doc-float`).
+- DS tokens with fallback: `--billy-accent` / `--billy-accent-strong` (outline gradient and lines), `--billy-accent-border` (dimmed lines), `--billy-surface` (document body).
+- **Dark mode** (`:host-context(body.dark-mode)`): dark veil `rgba(20, 28, 31, .72)`.
+- **`prefers-reduced-motion: reduce`**: the writing animations and the € pop are disabled; only the slow document float remains (a "gentle pulse") to signal activity.
+- Accessibility: `aria-live="polite"`, `[attr.aria-busy]="loading()"`, `role="status"` on the spinner; its `aria-label` comes from the i18n dictionary (`appLoading.loading`, EN "Loading"). Built-in strings are localizable — see [i18n](../core/i18n.md).
 
-## Pièges & notes
+## Pitfalls & notes
 
-- **Parent en `position: relative` obligatoire**, sinon l'overlay recouvre l'ancêtre positionné le plus proche (voire la page).
-- `z-index: 50` seulement : conçu pour recouvrir le contenu d'un panneau, pas les topbar/dialogues/toasts.
-- Le composant est toujours rendu (pas de `@if` interne) : il n'y a pas de coût de création/destruction à chaque bascule, mais penser à le placer dans le bon conteneur.
-- Le dégradé SVG utilise un id fixe `billyLoadingGrad` : plusieurs instances simultanées partagent le même id — sans conséquence en pratique puisque toutes les définitions sont identiques.
+- **A `position: relative` parent is mandatory**, otherwise the overlay covers the nearest positioned ancestor (or even the page).
+- `z-index: 50` only: designed to cover a panel's content, not the topbar/dialogs/toasts.
+- The component is always rendered (no internal `@if`): there is no creation/destruction cost on each toggle, but remember to place it in the right container.
+- The SVG gradient uses a fixed id `billyLoadingGrad`: multiple simultaneous instances share the same id — harmless in practice since all definitions are identical.

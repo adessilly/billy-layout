@@ -1,54 +1,56 @@
 # billy-save-bar — SaveBarComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/save-bar/` · standalone component
+> Category `forms` · source `projects/billy-layout/src/lib/forms/save-bar/` · standalone component
 
-## Rôle
+## Purpose
 
-Barre d'actions de formulaire, collante en bas d'écran (`position: sticky`) : bouton « Sauvegarder » (avec état chargement) à droite, bouton « Retour »/annuler fantôme, et une zone libre à gauche pour des actions supplémentaires. Les deux boutons sont des [`billy-button`](../buttons/button.md) — variante `plain` teintée par `colorSave` pour sauvegarder, variante `ghost` pour annuler. C'est la conclusion standard de tous les formulaires de l'app : `src/app/auth/pages/achat/achat-form/achat-form.component.html`, `src/app/auth/pages/vente/vente-form/vente-form.component.html`, `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/compte/compte.component.html`… Elle sert aussi de footer de dialogue via la classe `no-theme` (vente-paiements, compte-password, fichiers-email).
+Form action bar, sticky at the bottom of the screen (`position: sticky`): a "Save" button (with loading state) on the right, a ghost "Back"/cancel button, and a free zone on the left for extra actions. Both buttons are [`billy-button`](../buttons/button.md) — `plain` variant tinted by `colorSave` for save, `ghost` variant for cancel. It is the standard conclusion of every form in the app: `src/app/auth/pages/achat/achat-form/achat-form.component.html`, `src/app/auth/pages/vente/vente-form/vente-form.component.html`, `src/app/auth/pages/devis/devis-form/devis-form.component.html`, `src/app/auth/pages/compte/compte.component.html`… It also serves as a dialog footer via the `no-theme` class (vente-paiements, compte-password, fichiers-email).
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { SaveBarComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-save-bar>`.
+Selector: `<billy-save-bar>`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `disabled` | `boolean` | `false` | Désactive le bouton sauvegarder (typiquement `!formGroup.valid`). |
-| `loading` | `boolean` | `false` | Remplace icône + libellé du bouton sauvegarder par un spinner et `labelSaveLoading`, et **neutralise le clic** (billy-button ignore les clics en chargement) — protège du double envoi. |
-| `labelSave` | `string` | `'Sauvegarder'` | Libellé du bouton principal. |
-| `iconSave` | `string` | `'fa-solid fa-floppy-disk'` | Icône du bouton principal ; chaîne vide pour ne pas en afficher. |
-| `colorSave` | `BillyButtonColor` | `'primary'` | Teinte du bouton principal, passée au `color` de `billy-button`. Valeurs : `neutral` \| `info` \| `primary` \| `warning` \| `error`. |
-| `labelSaveLoading` | `string` | `'Sauvegarde...'` | Libellé affiché pendant `loading`. |
-| `labelCancel` | `string` | `'Retour'` | Libellé du bouton annuler. |
-| `iconCancel` | `string` | `'fa-solid fa-chevron-left'` | Icône du bouton annuler ; chaîne vide pour ne pas en afficher. |
-| `cancelVisible` | `boolean` | `true` | Affiche/masque le bouton annuler. |
-| `saveVisible` | `boolean` | `true` | Affiche/masque le bouton sauvegarder. |
+| `disabled` | `boolean` | `false` | Disables the save button (typically `!formGroup.valid`). |
+| `loading` | `boolean` | `false` | Replaces the save button's icon + label with a spinner and `labelSaveLoading`, and **neutralizes the click** (billy-button ignores clicks while loading) — protects against double submission. |
+| `labelSave` | `string` | i18n `saveBar.save` (EN `'Save'`) | Label of the main button. When the input is not set, the default comes from the i18n dictionary. |
+| `iconSave` | `string` | `'fa-solid fa-floppy-disk'` | Icon of the main button; empty string to display none. |
+| `colorSave` | `BillyButtonColor` | `'primary'` | Tint of the main button, passed to `billy-button`'s `color`. Values: `neutral` \| `info` \| `primary` \| `warning` \| `error`. |
+| `labelSaveLoading` | `string` | i18n `saveBar.saving` (EN `'Saving…'`) | Label displayed while `loading`. |
+| `labelCancel` | `string` | i18n `saveBar.back` (EN `'Back'`) | Label of the cancel button. |
+| `iconCancel` | `string` | `'fa-solid fa-chevron-left'` | Icon of the cancel button; empty string to display none. |
+| `cancelVisible` | `boolean` | `true` | Shows/hides the cancel button. |
+| `saveVisible` | `boolean` | `true` | Shows/hides the save button. |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
 | Output | Payload | Description |
 |---|---|---|
-| `save` | `void` | Clic sur le bouton sauvegarder. |
-| `cancel` | `void` | Clic sur le bouton annuler/retour. |
+| `save` | `void` | Click on the save button. |
+| `cancel` | `void` | Click on the cancel/back button. |
 
-### Méthodes publiques
+### Public methods
 
-`askSave()` / `askCancel()` : relais d'émission des outputs (destinés au template).
+`askSave()` / `askCancel()`: output emission relays (intended for the template).
 
 ## Slots / projection
 
-`<ng-content>` unique, rendu dans `.left-zone` (flex, gap 10px) : actions secondaires à gauche des boutons (ex. bouton « Envoyer la facture », suppression…). Les boutons annuler/sauvegarder occupent `.right-zone`, poussée à droite par `margin-left: auto`.
+Single `<ng-content>`, rendered in `.left-zone` (flex, 10px gap): secondary actions to the left of the buttons (e.g. "Send invoice" button, deletion…). The cancel/save buttons occupy `.right-zone`, pushed to the right by `margin-left: auto`.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/achat/achat-form/achat-form.component.html` :
+Real usage in `src/app/auth/pages/achat/achat-form/achat-form.component.html`:
 
 ```html
 <billy-save-bar
@@ -58,7 +60,7 @@ Usage réel dans `src/app/auth/pages/achat/achat-form/achat-form.component.html`
 </billy-save-bar>
 ```
 
-En footer de dialogue, sans chrome de carte, dans `src/app/auth/pages/vente/vente-paiements/vente-paiements.component.html` :
+As a dialog footer, without card chrome, in `src/app/auth/pages/vente/vente-paiements/vente-paiements.component.html`:
 
 ```html
 <billy-dialog-form-footer>
@@ -68,16 +70,16 @@ En footer de dialogue, sans chrome de carte, dans `src/app/auth/pages/vente/vent
 
 ## Styles & theming
 
-- Hôte sticky `bottom: 0`, `z-index: 1001`, habillé comme les cartes du DS (mixin `billy-card` en langage) : `--billy-surface`, bord `--billy-surface-border`, coins 16px, `--billy-card-shadow` + halo vers le haut pour « flotter » au-dessus du contenu qui défile — dark mode automatique via les tokens.
-- Boutons : délégués à [`billy-button`](../buttons/button.md) — sauvegarder en variante `plain` teintée par `colorSave`, annuler en variante `ghost` (fantôme neutre sur les tokens d'input, insensible à la couleur). Couleurs, survol, focus (`--billy-focus-ring`), état `disabled` et spinner de chargement viennent tous du bouton ; la save-bar ne gère plus que la mise en page.
-- `min-width: 128px` posé sur le sélecteur d'élément `billy-button` (spécificité faible, volontaire) pour que les overrides consommateurs puissent élargir un bouton.
-- **Classe `no-theme` sur l'hôte** : retire bord, fond, ombre, padding et rayon — la barre devient un simple rang de boutons pour vivre dans un footer de dialogue.
-- Mobile (≤767px) : barre givrée pleine largeur (fond `color-mix` translucide + `backdrop-filter: blur`), `safe-area-inset-bottom`, boutons en `flex: 1`.
+- Sticky host `bottom: 0`, `z-index: 1001`, dressed like the DS cards (`billy-card` mixin in spirit): `--billy-surface`, `--billy-surface-border` edge, 16px corners, `--billy-card-shadow` + upward halo to "float" above the scrolling content — automatic dark mode via the tokens.
+- Buttons: delegated to [`billy-button`](../buttons/button.md) — save as the `plain` variant tinted by `colorSave`, cancel as the `ghost` variant (neutral ghost on the input tokens, insensitive to color). Colors, hover, focus (`--billy-focus-ring`), `disabled` state and loading spinner all come from the button; the save-bar now only handles layout.
+- `min-width: 128px` set on the `billy-button` element selector (deliberately low specificity) so consumer overrides can widen a button.
+- **`no-theme` class on the host**: removes edge, background, shadow, padding and radius — the bar becomes a plain row of buttons, fit for a dialog footer.
+- Mobile (≤767px): frosted full-width bar (translucent `color-mix` background + `backdrop-filter: blur`), `safe-area-inset-bottom`, buttons at `flex: 1`.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Le bouton sauvegarder est `type="submit"` : placé dans un `<form>`, un clic déclenche **à la fois** l'output `save` et le `(ngSubmit)` du formulaire — brancher l'un ou l'autre, pas les deux.
-- `loading` neutralise désormais le clic (billy-button bloque les clics en chargement) : plus besoin de doubler avec `[disabled]` juste pour éviter le double envoi, même si `[disabled]` reste utile pour l'invalidité du formulaire.
-- `z-index: 1001` : sous les side-panels (1050/1051) et les dialogues — c'est voulu, l'overlay de `billy-form-side-panel` couvre la barre.
-- Pour un footer de panneau latéral étroit, la save-bar ne rentre pas (chrome de carte + `min-width` 128px/bouton) : utiliser les mixins « boutons de footer de panneau » de `_billy-forms.scss` (cf. agenda, prestations).
-- `iconSave`/`iconCancel` sont injectés via `[class]` : toute liste de classes Font Awesome est acceptée.
+- The save button is `type="submit"`: placed inside a `<form>`, a click triggers **both** the `save` output and the form's `(ngSubmit)` — wire one or the other, not both.
+- `loading` now neutralizes the click (billy-button blocks clicks while loading): no need to double up with `[disabled]` just to prevent double submission, though `[disabled]` remains useful for form invalidity.
+- `z-index: 1001`: below the side-panels (1050/1051) and the dialogs — intentional, the `billy-form-side-panel` overlay covers the bar.
+- For a narrow side-panel footer, the save-bar does not fit (card chrome + 128px `min-width` per button): use the "panel footer buttons" mixins from `_billy-forms.scss` (see agenda, prestations).
+- `iconSave`/`iconCancel` are injected via `[class]`: any Font Awesome class list is accepted.

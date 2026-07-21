@@ -3,7 +3,6 @@ import { ClickOutsideService } from './click-outside.service';
 
 @Directive({
   selector: '[clickOutside]',
-  standalone: true
 })
 export class ClickOutsideDirective {
 

@@ -16,49 +16,48 @@ import {
 } from '@angular/core';
 import { TabComponent } from './tab.component';
 
-/** Définition d'un onglet en mode piloté (sans <billy-tab> projetés). */
+/** Tab definition for controlled mode (without projected <billy-tab>). */
 export interface TabItem<T extends string = string> {
   id: T;
   label: string;
-  /** Classe d'icône FontAwesome optionnelle (ex. "fa-solid fa-user"). */
+  /** Optional FontAwesome icon class (e.g. "fa-solid fa-user"). */
   icon?: string;
 }
 
 /**
- * Barre d'onglets « maison » BILLy (indépendante de ad-tabs).
- * Segmented control arrondi aligné sur la charte (accent cyan --billy-*).
+ * BILLy in-house tab bar (independent from ad-tabs).
+ * Rounded segmented control aligned with the brand (cyan accent --billy-*).
  *
- * Deux modes :
- *  - Projeté : des <billy-tab> dans le contenu ; les panneaux restent montés,
- *    seul l'affichage bascule.
+ * Two modes:
+ *  - Projected: <billy-tab> elements in the content; the panels stay mounted,
+ *    only their visibility toggles.
  *      <billy-tabs>
- *        <billy-tab label="Encodage" icon="fa-solid fa-user"> … </billy-tab>
+ *        <billy-tab label="Entry" icon="fa-solid fa-user"> … </billy-tab>
  *      </billy-tabs>
- *  - Piloté (headless) : la barre seule, sélection gérée par le parent.
- *    Pratique dans un en-tête de page où le contenu vit ailleurs.
+ *  - Controlled (headless): the bar alone, selection managed by the parent.
+ *    Handy in a page header where the content lives elsewhere.
  *      <billy-tabs [items]="tabItems" [selected]="tab()" (selectedChange)="tab.set($event)" />
  *
- * Responsive : quand la place manque (viewport étroit ou débordement du
- * conteneur) et que tous les onglets ont une icône, les libellés des onglets
- * inactifs se replient en douceur — seul l'onglet actif garde le sien. En
- * dernier recours la barre défile horizontalement avec des fondus latéraux.
- * La pastille active glisse d'un onglet à l'autre (indicateur animé).
+ * Responsive: when space runs out (narrow viewport or container overflow)
+ * and all tabs have an icon, the labels of inactive tabs collapse
+ * smoothly — only the active tab keeps its own. As a last resort the bar
+ * scrolls horizontally with side fades.
+ * The active pill slides from one tab to another (animated indicator).
  */
 @Component({
   selector: 'billy-tabs',
-  standalone: true,
   imports: [],
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
 })
 export class TabsComponent<T extends string = string> {
 
-  /** Mode piloté : onglets décrits par input au lieu de <billy-tab> projetés. */
+  /** Controlled mode: tabs described by input instead of projected <billy-tab>. */
   readonly items = input<TabItem<T>[] | null>(null);
-  /** Mode piloté : id de l'onglet sélectionné (contrôlé par le parent). */
+  /** Controlled mode: id of the selected tab (controlled by the parent). */
   readonly selected = input<T | null>(null);
   readonly selectedChange = output<T>();
-  /** 'sm' : variante dense pour les barres d'en-tête. */
+  /** 'sm': dense variant for header bars. */
   readonly size = input<'md' | 'sm'>('md');
 
   readonly tabs = contentChildren(TabComponent);
@@ -67,7 +66,7 @@ export class TabsComponent<T extends string = string> {
 
   readonly headless = computed(() => this.items() !== null);
 
-  /** Libellés/icônes affichés dans la barre, quel que soit le mode. */
+  /** Labels/icons shown in the bar, whatever the mode. */
   readonly defs = computed<{ label: string; icon: string }[]>(() => {
     const items = this.items();
     if (items) return items.map(t => ({ label: t.label, icon: t.icon ?? '' }));
@@ -83,28 +82,28 @@ export class TabsComponent<T extends string = string> {
     return this.internalIndex();
   });
 
-  // ── Responsive : repli des libellés inactifs ──────────────────────────────
-  // Le repli n'a de sens que si chaque onglet garde une icône visible.
+  // ── Responsive: collapsing of inactive labels ─────────────────────────────
+  // Collapsing only makes sense if every tab keeps a visible icon.
   private readonly collapsible = computed(() =>
     this.defs().length > 1 && this.defs().every(d => d.icon));
 
   private readonly mediaNarrow = signal(false);
-  // « Cliquet » anti-débordement : posé quand la barre déborde de son
-  // conteneur, relâché quand le viewport regagne de la place (proxy fiable —
-  // la place disponible n'est pas mesurable depuis un conteneur fit-content).
+  // Anti-overflow "ratchet": engaged when the bar overflows its container,
+  // released when the viewport gains room again (reliable proxy — available
+  // space cannot be measured from a fit-content container).
   private readonly overflowCompact = signal(false);
   private ratchetWidth = 0;
 
   readonly compact = computed(() =>
     this.collapsible() && (this.mediaNarrow() || this.overflowCompact()));
 
-  // ── Indicateur coulissant & fondus de défilement ──────────────────────────
+  // ── Sliding indicator & scroll fades ──────────────────────────────────────
   private readonly destroyRef = inject(DestroyRef);
   private readonly barRef = viewChild.required<ElementRef<HTMLElement>>('bar');
   private readonly btnRefs = viewChildren<ElementRef<HTMLButtonElement>>('btn');
 
   readonly indicator = signal({ x: 0, y: 0, w: 0, h: 0 });
-  /** Faux tant que la première mesure n'a pas eu lieu (évite un glissement au chargement). */
+  /** False until the first measurement has happened (avoids a slide on load). */
   readonly indicatorReady = signal(false);
   readonly indicatorTransform = computed(() =>
     `translate3d(${this.indicator().x}px, ${this.indicator().y}px, 0)`);
@@ -116,7 +115,7 @@ export class TabsComponent<T extends string = string> {
   private lastScrolledIndex = -1;
 
   constructor() {
-    // Synchronise l'état actif sur chaque panneau projeté.
+    // Syncs the active state onto each projected panel.
     effect(() => {
       const active = this.activeIndex();
       this.tabs().forEach((tab, i) => tab.active.set(i === active));
@@ -124,7 +123,7 @@ export class TabsComponent<T extends string = string> {
 
     afterNextRender(() => this.setupObservers());
 
-    // Re-mesure après chaque rendu impacté par ces états.
+    // Re-measures after each render affected by these states.
     afterRenderEffect(() => {
       this.defs();
       this.activeIndex();
@@ -181,8 +180,8 @@ export class TabsComponent<T extends string = string> {
     mq.addEventListener('change', onMedia);
 
     const onWindowResize = () => {
-      // Le viewport s'est élargi depuis le cliquet : on retente le mode étendu
-      // (measure() re-serre le cliquet si ça déborde toujours).
+      // The viewport has widened since the ratchet engaged: retry the expanded
+      // mode (measure() re-engages the ratchet if it still overflows).
       if (this.overflowCompact() && window.innerWidth > this.ratchetWidth + 16) {
         this.overflowCompact.set(false);
       }
@@ -216,7 +215,7 @@ export class TabsComponent<T extends string = string> {
         this.indicator.set(next);
       }
       if (!this.indicatorReady() && next.w > 0) {
-        // Un cadre de délai pour que la première position se peigne sans transition.
+        // One frame of delay so the first position paints without a transition.
         requestAnimationFrame(() => this.indicatorReady.set(true));
       }
       if (this.lastScrolledIndex !== active) {

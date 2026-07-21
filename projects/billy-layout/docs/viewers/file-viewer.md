@@ -1,60 +1,62 @@
-# Viewers de fichiers — file-viewer (pdf / image / xml / toolbar)
+# File viewers — file-viewer (pdf / image / xml / toolbar)
 
-> Catégorie `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/` · standalone components
+> Category `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/` · standalone components
 
-## 1. Vue d'ensemble & architecture
+## 1. Overview & architecture
 
-La famille `file-viewer` regroupe les visionneuses de fichiers de la librairie :
+The `file-viewer` family groups the library's file viewers:
 
-| Composant | Sélecteur | Rôle |
+| Component | Selector | Role |
 |---|---|---|
-| `FileViewerPdfComponent` | `<billy-file-viewer-pdf>` | Affichage PDF paginé/zoomable (via `ng2-pdf-viewer`) |
-| `FileViewerImageComponent` | `<billy-file-viewer-image>` | Affichage d'une image (blob → object URL) |
-| `FileViewerXmlComponent` | `<billy-file-viewer-xml>` | Affichage XML ré-indenté et coloré, avec copie presse-papiers |
-| `FileViewerToolbarComponent` | `<billy-file-viewer-toolbar>` | Barre d'en-tête commune (icône, nom de fichier, spinner, bouton fermer, slot d'actions) |
+| `FileViewerPdfComponent` | `<billy-file-viewer-pdf>` | Paginated/zoomable PDF display (via `ng2-pdf-viewer`) |
+| `FileViewerImageComponent` | `<billy-file-viewer-image>` | Image display (blob → object URL) |
+| `FileViewerXmlComponent` | `<billy-file-viewer-xml>` | Re-indented, syntax-highlighted XML display, with clipboard copy |
+| `FileViewerToolbarComponent` | `<billy-file-viewer-toolbar>` | Shared header bar (icon, file name, spinner, close button, actions slot) |
 
-Tous sont exportés par le `public-api.ts` de la librairie (section `viewers`), ainsi que le contrat `billy-file-source` (`BillyFileSource`, `BillyViewerFile`, `BILLY_FILE_SOURCE`).
+All are exported by the library's `public-api.ts` (`viewers` section), along with the `billy-file-source` contract (`BillyFileSource`, `BillyViewerFile`, `BILLY_FILE_SOURCE`).
 
-**Principe d'architecture** : les viewers ne connaissent **ni le serveur, ni l'authentification**. Ils reçoivent un `BillyViewerFile` (id + nom) et obtiennent le contenu exclusivement via le token d'injection `BILLY_FILE_SOURCE`, que l'application **doit fournir** pour utiliser `billy-file-viewer-pdf` / `-image` / `-xml` (la toolbar seule s'en passe : elle est purement présentationnelle). Sans provider, l'`inject(BILLY_FILE_SOURCE)` échoue à la création du composant.
+The viewers' control strings come from the i18n dictionary (`viewer.*`): toolbar close button `viewer.close` (EN "Close"), PDF navigation `viewer.prevPage` / `.nextPage` and zoom `viewer.zoomIn` / `.zoomOut`, XML copy button `viewer.copy` / `.copied` and the failure message `viewer.cannotDisplay` (EN "Unable to display this file."). Built-in strings are localizable — see [i18n](../core/i18n.md).
 
-Les trois viewers partagent le même patron :
+**Architecture principle**: the viewers know **neither the server nor the authentication**. They receive a `BillyViewerFile` (id + name) and obtain the content exclusively through the `BILLY_FILE_SOURCE` injection token, which the application **must provide** to use `billy-file-viewer-pdf` / `-image` / `-xml` (only the toolbar does without it: it is purely presentational). Without the provider, the `inject(BILLY_FILE_SOURCE)` fails at component creation.
 
-- un input `fichier` (le fichier à afficher) ;
-- un signal `visible` piloté par les méthodes impératives `show()` / `hide()` (le parent les appelle via `viewChild`) ;
-- un `effect()` dans le constructeur qui (re)charge le contenu quand `fichier()` change ;
-- un rendu conditionnel `@if (visible() && …)` : composant toujours présent dans le DOM du parent, panneau affiché à la demande ;
-- la toolbar commune en tête, avec projection de boutons d'action spécifiques.
+The three viewers share the same pattern:
 
-## 2. Le contrat `BILLY_FILE_SOURCE`
+- a `file` input (the file to display);
+- a `visible` signal driven by the imperative `show()` / `hide()` methods (the parent calls them via `viewChild`);
+- an `effect()` in the constructor that (re)loads the content when `file()` changes;
+- conditional rendering `@if (visible() && …)`: the component is always present in the parent's DOM, the panel is shown on demand;
+- the shared toolbar at the top, with projection of viewer-specific action buttons.
 
-Source : `projects/billy-layout/src/lib/viewers/file-viewer/billy-file-source.ts`.
+## 2. The `BILLY_FILE_SOURCE` contract
 
-### Interface `BillyFileSource`
+Source: `projects/billy-layout/src/lib/viewers/file-viewer/billy-file-source.ts`.
+
+### `BillyFileSource` interface
 
 ```ts
 export interface BillyFileSource {
-  /** URL absolue de téléchargement (viewer PDF : fetch interne à ng2-pdf-viewer). */
+  /** Absolute download URL (PDF viewer: fetch done internally by ng2-pdf-viewer). */
   downloadUrl(fileId: number): string;
-  /** Jeton porté en `Authorization: Bearer …` par le viewer PDF. */
+  /** Token carried as `Authorization: Bearer …` by the PDF viewer. */
   authToken(): string | null;
-  /** Contenu binaire (viewer image). */
+  /** Binary content (image viewer). */
   downloadBlob(fileId: number): Observable<Blob>;
-  /** Contenu texte (viewer XML). */
+  /** Text content (XML viewer). */
   downloadText(fileId: number): Observable<string>;
 }
 
 export const BILLY_FILE_SOURCE = new InjectionToken<BillyFileSource>('BILLY_FILE_SOURCE');
 ```
 
-Qui utilise quoi — et pourquoi deux styles d'accès coexistent :
+Who uses what — and why two access styles coexist:
 
-| Méthode | Consommateur | Raison |
+| Method | Consumer | Reason |
 |---|---|---|
-| `downloadUrl(fileId)` + `authToken()` | `FileViewerPdfComponent` | `ng2-pdf-viewer` (pdf.js) **télécharge lui-même** le document : il faut donc une **URL absolue** et le jeton passé explicitement en header `Authorization: Bearer …` — l'intercepteur HTTP Angular de l'app ne voit jamais passer cette requête. |
-| `downloadBlob(fileId)` | `FileViewerImageComponent` | Requête `HttpClient` classique : l'implémentation app peut utiliser une URL relative, l'intercepteur pose base URL et Authorization. |
-| `downloadText(fileId)` | `FileViewerXmlComponent` | Idem, en `responseType: 'text'`. |
+| `downloadUrl(fileId)` + `authToken()` | `FileViewerPdfComponent` | `ng2-pdf-viewer` (pdf.js) **downloads the document itself**: it therefore needs an **absolute URL** and the token passed explicitly in the `Authorization: Bearer …` header — the app's Angular HTTP interceptor never sees this request. |
+| `downloadBlob(fileId)` | `FileViewerImageComponent` | Classic `HttpClient` request: the app implementation can use a relative URL, the interceptor sets the base URL and Authorization. |
+| `downloadText(fileId)` | `FileViewerXmlComponent` | Same, with `responseType: 'text'`. |
 
-### Interface `BillyViewerFile`
+### `BillyViewerFile` interface
 
 ```ts
 export interface BillyViewerFile {
@@ -63,18 +65,18 @@ export interface BillyViewerFile {
 }
 ```
 
-Interface **structurelle** minimale : le modèle `Fichier` de l'application (`src/app/shared/components/uploadmanager/fichier.ts`) la satisfait tel quel, sans adaptateur. `id` sert au téléchargement, `fileName` à l'affichage dans la toolbar. Les deux champs sont optionnels dans le type, mais un fichier sans `id` ne peut pas être affiché (le PDF ne construit pas d'URL, image/xml lèvent une erreur loguée).
+Minimal **structural** interface: the application's `Fichier` model (`src/app/shared/components/uploadmanager/fichier.ts`) satisfies it as-is, without an adapter. `id` is used for downloading, `fileName` for display in the toolbar. Both fields are optional in the type, but a file without an `id` cannot be displayed (the PDF builds no URL, image/xml raise a logged error).
 
-### Implémentation applicative : `FichierSourceService`
+### Application implementation: `FichierSourceService`
 
-Le provider est déclaré dans `src/app/app.config.ts` :
+The provider is declared in `src/app/app.config.ts`:
 
 ```ts
-// Les viewers de fichiers de billy-layout obtiennent leur contenu ici.
+// The billy-layout file viewers get their content here.
 { provide: BILLY_FILE_SOURCE, useExisting: FichierSourceService },
 ```
 
-Et l'implémentation complète, `src/app/shared/service/fichier-source.service.ts` :
+And the full implementation, `src/app/shared/service/fichier-source.service.ts`:
 
 ```ts
 @Injectable({ providedIn: 'root' })
@@ -100,17 +102,17 @@ export class FichierSourceService implements BillyFileSource {
 }
 ```
 
-À noter : ce service sert aussi **hors viewers** — l'app le réutilise directement pour tout accès au contenu d'un fichier, par exemple l'avatar du compte (`src/app/auth/pages/compte/compte-document/compte-document.component.ts` et `src/app/shared/components/icon-top-compte/icon-top-compte.component.ts` appellent `downloadBlob()`).
+Worth noting: this service is also used **outside the viewers** — the app reuses it directly for any access to a file's content, e.g. the account avatar (`src/app/auth/pages/compte/compte-document/compte-document.component.ts` and `src/app/shared/components/icon-top-compte/icon-top-compte.component.ts` call `downloadBlob()`).
 
 ---
 
 ## 3. `billy-file-viewer-toolbar` — FileViewerToolbarComponent
 
-> Catégorie `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-toolbar/file-viewer-toolbar.component.ts` · standalone component
+> Category `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-toolbar/file-viewer-toolbar.component.ts` · standalone component
 
-### Rôle
+### Role
 
-Barre d'en-tête commune aux trois viewers : icône du type de fichier (remplacée par un spinner `fa-sync fa-spin` pendant le chargement), nom du fichier (ellipsé, `title` complet au survol), zone d'actions projetée (`<ng-content>`) et bouton « Fermer ». Langage visuel aligné sur les lignes du file upload (`upload-manager-list-row`). Purement présentationnelle : c'est le seul composant de la famille qui n'a pas besoin de `BILLY_FILE_SOURCE`.
+Header bar shared by the three viewers: file-type icon (replaced by a `fa-sync fa-spin` spinner while loading), file name (ellipsized, full `title` on hover), projected actions zone (`<ng-content>`) and "Close" button. Visual language aligned with the file upload rows (`upload-manager-list-row`). Purely presentational: it is the only component of the family that does not need `BILLY_FILE_SOURCE`.
 
 ### API
 
@@ -118,24 +120,24 @@ Barre d'en-tête commune aux trois viewers : icône du type de fichier (remplac�
 import { FileViewerToolbarComponent } from 'billy-layout';
 ```
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `icon` | `string` | `''` | Classes de l'icône Font Awesome (ex. `fa-solid fa-file-pdf`). |
-| `filename` | `string \| undefined` | — (`input.required`) | Nom affiché. `undefined` accepté : les viewers passent le `fileName` optionnel de `BillyViewerFile`. |
-| `loading` | `boolean` | `false` | Remplace l'icône par un spinner. |
+| `icon` | `string` | `''` | Font Awesome icon classes (e.g. `fa-solid fa-file-pdf`). |
+| `filename` | `string \| undefined` | — (`input.required`) | Displayed name. `undefined` accepted: the viewers pass the optional `fileName` of `BillyViewerFile`. |
+| `loading` | `boolean` | `false` | Replaces the icon with a spinner. |
 
 | Output | Payload | Description |
 |---|---|---|
-| `closeViewer` | `void` | Émis au clic sur le bouton « Fermer » (méthode interne `hide()`). |
+| `closeViewer` | `void` | Emitted on "Close" button click (internal `hide()` method). |
 
-Contenu projeté : tout élément placé entre les balises est rendu dans la zone d'actions, avant le bouton fermer. Convention : des boutons `.viewer-btn` (28×28 px) — la classe est stylée par la toolbar pour ses propres boutons, mais **les boutons projetés doivent porter leurs styles dans le composant hôte** (encapsulation Angular) ; c'est pour ça que `file-viewer-pdf` et `file-viewer-xml` dupliquent la règle `.viewer-btn` dans leur propre SCSS.
+Projected content: any element placed between the tags is rendered in the actions zone, before the close button. Convention: `.viewer-btn` buttons (28×28 px) — the class is styled by the toolbar for its own buttons, but **projected buttons must carry their styles in the host component** (Angular encapsulation); this is why `file-viewer-pdf` and `file-viewer-xml` duplicate the `.viewer-btn` rule in their own SCSS.
 
-### Exemple d'utilisation réel
+### Real-world usage example
 
-Extrait de `file-viewer-xml.component.html` :
+Excerpt from `file-viewer-xml.component.html`:
 
 ```html
-<billy-file-viewer-toolbar [loading]="loading()" [filename]="fichierTpl.fileName"
+<billy-file-viewer-toolbar [loading]="loading()" [filename]="fileTpl.fileName"
                          icon="fa-solid fa-file-code" (closeViewer)="hide()">
   <button type="button" class="viewer-btn" (click)="copyToClipboard()">…</button>
 </billy-file-viewer-toolbar>
@@ -143,24 +145,24 @@ Extrait de `file-viewer-xml.component.html` :
 
 ### Styles & theming
 
-- `position: sticky; top: 0; z-index: 10` : la toolbar reste visible quand le corps du viewer scrolle (utile pour l'XML à `max-height: 600px`).
-- Couleurs codées en dur (pas de tokens `--billy-*`) : fond `#f9fafb`, bordure `#e5e7eb`, hover boutons `#2563eb`, hover du bouton fermer `#dc2626`.
-- Dark mode via `:host-context(.dark-mode)` (fonds `#1a2528` / `#212e31`, bordures `#49545a`).
+- `position: sticky; top: 0; z-index: 10`: the toolbar stays visible while the viewer body scrolls (useful for XML with `max-height: 600px`).
+- Hard-coded colors (no `--billy-*` tokens): `#f9fafb` background, `#e5e7eb` border, button hover `#2563eb`, close button hover `#dc2626`.
+- Dark mode via `:host-context(.dark-mode)` (backgrounds `#1a2528` / `#212e31`, borders `#49545a`).
 
-### Pièges & notes
+### Pitfalls & notes
 
-- `filename` est `input.required` : l'oublier est une erreur à l'exécution, même si sa valeur peut être `undefined`.
-- Les icônes sont des classes Font Awesome : la police FA doit être chargée par l'application hôte (la lib ne l'embarque pas).
+- `filename` is `input.required`: forgetting it is a runtime error, even though its value may be `undefined`.
+- Icons are Font Awesome classes: the FA font must be loaded by the host application (the lib does not bundle it).
 
 ---
 
 ## 4. `billy-file-viewer-pdf` — FileViewerPdfComponent
 
-> Catégorie `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-pdf/file-viewer-pdf.component.ts` · standalone component
+> Category `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-pdf/file-viewer-pdf.component.ts` · standalone component
 
-### Rôle
+### Role
 
-Visionneuse PDF basée sur `ng2-pdf-viewer` (pdf.js) : affichage page par page (`[show-all]="false"`), navigation précédent/suivant avec indicateur `n / total` (masquée si une seule page), zoom 0.1 → 2 par pas de 0.1. Le composant construit lui-même la requête de téléchargement à partir de `BILLY_FILE_SOURCE`.
+PDF viewer based on `ng2-pdf-viewer` (pdf.js): page-by-page display (`[show-all]="false"`), previous/next navigation with an `n / total` indicator (hidden for single-page documents), zoom 0.1 → 2 in 0.1 steps. The component builds the download request itself from `BILLY_FILE_SOURCE`.
 
 ### API
 
@@ -168,40 +170,40 @@ Visionneuse PDF basée sur `ng2-pdf-viewer` (pdf.js) : affichage page par page (
 import { FileViewerPdfComponent } from 'billy-layout';
 ```
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `fichier` | `BillyViewerFile \| null` | `null` | Fichier à afficher. Tout changement relance `initPdf()` (reset page/zoom, reconstruction de la source). |
+| `file` | `BillyViewerFile \| null` | `null` | File to display. Any change re-runs `initPdf()` (page/zoom reset, source rebuild). |
 
-Pas d'output. État et méthodes publics :
+No output. Public state and methods:
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `visible` | `signal<boolean>` | Panneau affiché ou non (`@if (visible() && urlObject && fichier)`) . |
-| `loading` | `signal<boolean>` | Vrai pendant le téléchargement (branché sur `(on-progress)` de pdf.js). |
-| `show()` | `void` | Affiche le viewer. |
-| `hide()` | `void` | Masque le viewer et remet `currentPage` à 0. |
-| `pdfComponent` | `viewChild<PdfViewerComponent>` | Accès au composant `ng2-pdf-viewer` sous-jacent. |
+| `visible` | `signal<boolean>` | Panel shown or not (`@if (visible() && urlObject && file)`). |
+| `loading` | `signal<boolean>` | True while downloading (wired to pdf.js `(on-progress)`). |
+| `show()` | `void` | Shows the viewer. |
+| `hide()` | `void` | Hides the viewer and resets `currentPage` to 0. |
+| `pdfComponent` | `viewChild<PdfViewerComponent>` | Access to the underlying `ng2-pdf-viewer` component. |
 
-La source passée à `<pdf-viewer [src]>` est un objet pdf.js :
+The source passed to `<pdf-viewer [src]>` is a pdf.js object:
 
 ```ts
 this.urlObject = {
-  url : this.fileSource.downloadUrl(fichier.id),   // URL absolue
+  url : this.fileSource.downloadUrl(file.id),      // absolute URL
   withCredentials: true,
   httpHeaders: { Authorization: 'Bearer ' + this.fileSource.authToken() },
 };
 ```
 
-C'est la raison d'être de `downloadUrl()`/`authToken()` dans le contrat : le fetch est fait **par pdf.js**, pas par `HttpClient`, donc aucun intercepteur applicatif ne s'applique.
+This is the raison d'être of `downloadUrl()`/`authToken()` in the contract: the fetch is done **by pdf.js**, not by `HttpClient`, so no application interceptor applies.
 
-### Exemple d'utilisation réel
+### Real-world usage example
 
-`src/app/shared/components/uploadmanager/upload-manager-list-with-viewer/upload-manager-list-with-viewer.component.html` — les trois viewers partagent un même `fichierToView`, le parent les rend mutuellement exclusifs :
+`src/app/shared/components/uploadmanager/upload-manager-list-with-viewer/upload-manager-list-with-viewer.component.html` — the three viewers share the same `fichierToView`, the parent makes them mutually exclusive:
 
 ```html
-<billy-file-viewer-pdf   [fichier]="fichierToView" #viewerPdf></billy-file-viewer-pdf>
-<billy-file-viewer-image [fichier]="fichierToView" #viewerImage></billy-file-viewer-image>
-<billy-file-viewer-xml   [fichier]="fichierToView" #viewerXml></billy-file-viewer-xml>
+<billy-file-viewer-pdf   [file]="fichierToView" #viewerPdf></billy-file-viewer-pdf>
+<billy-file-viewer-image [file]="fichierToView" #viewerImage></billy-file-viewer-image>
+<billy-file-viewer-xml   [file]="fichierToView" #viewerXml></billy-file-viewer-xml>
 ```
 
 ```ts
@@ -215,29 +217,29 @@ askViewFilePdf(fichier: Fichier) {
 
 ### Styles & theming
 
-Carte bordée arrondie (10 px), corps `#f9fafb` avec `overflow-x: auto` ; boutons compacts `.viewer-btn` regroupés en `.viewer-group` (nav + zoom) projetés dans la toolbar ; dark mode via `:host-context(.dark-mode)`.
+Rounded bordered card (10 px), `#f9fafb` body with `overflow-x: auto`; compact `.viewer-btn` buttons grouped in `.viewer-group` (nav + zoom) projected into the toolbar; dark mode via `:host-context(.dark-mode)`.
 
-### Pièges & notes
+### Pitfalls & notes
 
-- **Worker pdf.js local** : le constructeur force `(window as any).pdfWorkerSrc = '/assets/js/pdf.worker.min.js'` pour éviter le CDN Cloudflare. L'application hôte doit donc copier le worker dans ses assets — cf. `angular.json` :
+- **Local pdf.js worker**: the constructor forces `(window as any).pdfWorkerSrc = '/assets/js/pdf.worker.min.js'` to avoid the Cloudflare CDN. The host application must therefore copy the worker into its assets — cf. `angular.json`:
   ```json
   { "glob": "pdf.worker.min.js", "input": "node_modules/pdfjs-dist/build/", "output": "/assets/js/" }
   ```
-- **Dépendance npm** : `ng2-pdf-viewer` (`^9.0.0`) est une dépendance de l'**application** (`package.json` racine), pas de la lib — elle n'apparaît pas dans les `peerDependencies` de `projects/billy-layout/package.json` (qui ne liste qu'Angular + rxjs). Toute app consommatrice doit l'installer elle-même, et déclarer `ng2-pdf-viewer`, `pdfjs-dist/build/pdf` et `pdfjs-dist/web/pdf_viewer` dans `allowedCommonJsDependencies` (`angular.json`) pour éviter les warnings CommonJS au build.
-- **Hauteur recalculée à `pageRendered`** : `<pdf-viewer>` reçoit `style="height: {{pdfViewerHeight}}px"`, et cette hauteur est recalculée à chaque événement `(page-rendered)` : `clientHeight` du viewer interne + 30 px. La hauteur s'adapte donc à la page courante (et au zoom) *après* son rendu — un `console.log('Page rendered: …')` de debug est encore présent dans ce handler.
-- Pagination interne 0-based (`currentPage`), affichage 1-based (`[page]="currentPage + 1"`).
-- L'état pagination/zoom (`currentPage`, `zoom`, `btn*Disabled`…) est en champs mutables classiques, pas en signals : le rendu est rafraîchi par les événements DOM (app zoneless — voir la note mémoire « Billy zoneless » si ce composant doit évoluer).
-- `hide()` remet la page à 0 mais conserve le zoom.
+- **npm dependency**: `ng2-pdf-viewer` (`^9.0.0`) is a dependency of the **application** (root `package.json`), not of the lib — it does not appear in the `peerDependencies` of `projects/billy-layout/package.json` (which only lists Angular + rxjs). Any consuming app must install it itself, and declare `ng2-pdf-viewer`, `pdfjs-dist/build/pdf` and `pdfjs-dist/web/pdf_viewer` in `allowedCommonJsDependencies` (`angular.json`) to avoid CommonJS warnings at build time.
+- **Height recomputed on `pageRendered`**: `<pdf-viewer>` receives `style="height: {{pdfViewerHeight}}px"`, and that height is recomputed on every `(page-rendered)` event: the inner viewer's `clientHeight` + 30 px. The height therefore adapts to the current page (and zoom) *after* it renders — a debug `console.log('Page rendered: …')` is still present in this handler.
+- Internal pagination is 0-based (`currentPage`), display is 1-based (`[page]="currentPage + 1"`).
+- The pagination/zoom state (`currentPage`, `zoom`, `btn*Disabled`…) uses classic mutable fields, not signals: the rendering is refreshed by DOM events (zoneless app — see the "Billy zoneless" memory note if this component has to evolve).
+- `hide()` resets the page to 0 but keeps the zoom.
 
 ---
 
 ## 5. `billy-file-viewer-image` — FileViewerImageComponent
 
-> Catégorie `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-image/file-viewer-image.component.ts` · standalone component
+> Category `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-image/file-viewer-image.component.ts` · standalone component
 
-### Rôle
+### Role
 
-Visionneuse d'image : télécharge le binaire via `fileSource.downloadBlob(id)`, crée un object URL (`window.URL.createObjectURL`) marqué de confiance (`DomSanitizer.bypassSecurityTrustUrl`) et l'affiche dans un `<img>` centré. Spinner pendant le chargement.
+Image viewer: downloads the binary via `fileSource.downloadBlob(id)`, creates an object URL (`window.URL.createObjectURL`) marked as trusted (`DomSanitizer.bypassSecurityTrustUrl`) and displays it in a centered `<img>`. Spinner while loading.
 
 ### API
 
@@ -245,42 +247,42 @@ Visionneuse d'image : télécharge le binaire via `fileSource.downloadBlob(id)`,
 import { FileViewerImageComponent } from 'billy-layout';
 ```
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `fichier` | `BillyViewerFile \| null` | `null` | Image à afficher. Tout changement déclenche `refreshImage()` (re-téléchargement). |
+| `file` | `BillyViewerFile \| null` | `null` | Image to display. Any change triggers `refreshImage()` (re-download). |
 
-Pas d'output. État et méthodes publics :
+No output. Public state and methods:
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `visible` | `signal<boolean>` | Panneau affiché ou non. |
-| `loading` | `signal<boolean>` | Vrai pendant le téléchargement du blob. |
-| `imageUrlTrusted` | `signal<SafeUrl \| null>` | Object URL sécurisé consommé par le template. |
-| `show()` / `hide()` | `void` | Affichent / masquent le viewer. |
+| `visible` | `signal<boolean>` | Panel shown or not. |
+| `loading` | `signal<boolean>` | True while the blob is downloading. |
+| `imageUrlTrusted` | `signal<SafeUrl \| null>` | Trusted object URL consumed by the template. |
+| `show()` / `hide()` | `void` | Show / hide the viewer. |
 
-### Exemple d'utilisation réel
+### Real-world usage example
 
-Même hôte que le PDF : `upload-manager-list-with-viewer` (`askViewFileImage()` → `viewerPdf.hide()`, `viewerXml.hide()`, `viewerImage.show()`), déclenché par l'output `(viewImage)` de `app-upload-manager-list`.
+Same host as the PDF: `upload-manager-list-with-viewer` (`askViewFileImage()` → `viewerPdf.hide()`, `viewerXml.hide()`, `viewerImage.show()`), triggered by the `(viewImage)` output of `app-upload-manager-list`.
 
 ### Styles & theming
 
-Corps flex centré, `img { max-width: 100%; border-radius: 6px; box-shadow: … }` ; dark mode via `:host-context(.dark-mode)` (ombre renforcée). Toolbar avec icône `fa-solid fa-image`, sans boutons projetés.
+Centered flex body, `img { max-width: 100%; border-radius: 6px; box-shadow: … }`; dark mode via `:host-context(.dark-mode)` (stronger shadow). Toolbar with the `fa-solid fa-image` icon, no projected buttons.
 
-### Pièges & notes
+### Pitfalls & notes
 
-- **Téléchargement même masqué** : l'`effect()` réagit au changement de `fichier()` indépendamment de `visible` — assigner un fichier télécharge le blob même si le viewer n'est jamais montré. `show()` ne re-télécharge pas (contrairement au viewer XML).
-- **Object URLs jamais révoqués** : pas de `URL.revokeObjectURL` ; chaque changement de fichier laisse l'ancien blob en mémoire jusqu'au déchargement de la page.
-- Erreur de téléchargement : simplement loguée en console ; l'ancienne image (si présente) reste affichée.
+- **Downloads even while hidden**: the `effect()` reacts to `file()` changes regardless of `visible` — assigning a file downloads the blob even if the viewer is never shown. `show()` does not re-download (unlike the XML viewer).
+- **Object URLs never revoked**: no `URL.revokeObjectURL`; each file change leaves the previous blob in memory until the page unloads.
+- Download error: simply logged to the console; the previous image (if any) stays displayed.
 
 ---
 
 ## 6. `billy-file-viewer-xml` — FileViewerXmlComponent
 
-> Catégorie `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-xml/file-viewer-xml.component.ts` · standalone component
+> Category `viewers` · source `projects/billy-layout/src/lib/viewers/file-viewer/file-viewer-xml/file-viewer-xml.component.ts` · standalone component
 
-### Rôle
+### Role
 
-Visionneuse XML (typiquement les UBL Peppol) : télécharge le texte via `fileSource.downloadText(id)`, le **ré-indente** (une balise par ligne, indentation par profondeur — `formatXml`) puis le **colore** (balises, attributs, valeurs, prologue `<?xml …?>`, commentaires — `highlightXml`, sortie HTML échappée passée par `bypassSecurityTrustHtml`). Bouton « Copier le contenu » dans la toolbar qui copie le **XML brut** (non reformaté) et affiche un check pendant 1,5 s.
+XML viewer (typically Peppol UBL files): downloads the text via `fileSource.downloadText(id)`, **re-indents** it (one tag per line, depth-based indentation — `formatXml`) then **highlights** it (tags, attributes, values, `<?xml …?>` prolog, comments — `highlightXml`, escaped HTML output passed through `bypassSecurityTrustHtml`). "Copy content" button in the toolbar that copies the **raw XML** (not reformatted) and shows a check for 1.5 s.
 
 ### API
 
@@ -288,34 +290,34 @@ Visionneuse XML (typiquement les UBL Peppol) : télécharge le texte via `fileSo
 import { FileViewerXmlComponent } from 'billy-layout';
 ```
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `fichier` | `BillyViewerFile \| null` | `null` | Fichier XML à afficher. Tout changement déclenche `refreshXml()`. |
+| `file` | `BillyViewerFile \| null` | `null` | XML file to display. Any change triggers `refreshXml()`. |
 
-Pas d'output. État et méthodes publics :
+No output. Public state and methods:
 
-| Membre | Type | Description |
+| Member | Type | Description |
 |---|---|---|
-| `visible` | `signal<boolean>` | Panneau affiché ou non. |
-| `loading` | `signal<boolean>` | Vrai pendant le téléchargement. |
-| `xmlHtml` | `signal<SafeHtml \| null>` | XML formaté/coloré ; `null` en cas d'échec → message « Impossible d'afficher ce fichier. ». |
-| `copied` | `signal<boolean>` | Feedback du bouton copier (retombe après 1,5 s). |
-| `show()` | `void` | **Relance `refreshXml()`** puis affiche le viewer. |
-| `hide()` | `void` | Masque le viewer. |
-| `copyToClipboard()` | `Promise<void>` | Copie le XML brut via `navigator.clipboard`. |
+| `visible` | `signal<boolean>` | Panel shown or not. |
+| `loading` | `signal<boolean>` | True while downloading. |
+| `xmlHtml` | `signal<SafeHtml \| null>` | Formatted/highlighted XML; `null` on failure → "Unable to display this file." message. |
+| `copied` | `signal<boolean>` | Copy button feedback (falls back after 1.5 s). |
+| `show()` | `void` | **Re-runs `refreshXml()`** then shows the viewer. |
+| `hide()` | `void` | Hides the viewer. |
+| `copyToClipboard()` | `Promise<void>` | Copies the raw XML via `navigator.clipboard`. |
 
-### Exemple d'utilisation réel
+### Real-world usage example
 
-Même hôte que les autres : `upload-manager-list-with-viewer` (`askViewFileXml()`), déclenché par l'output `(viewXml)` de la liste d'uploads.
+Same host as the others: `upload-manager-list-with-viewer` (`askViewFileXml()`), triggered by the `(viewXml)` output of the upload list.
 
 ### Styles & theming
 
-- Corps `max-height: 600px; overflow: auto` (la toolbar sticky reste visible au scroll), `<pre class="xml-content">` en police mono 12,5 px.
-- Coloration par classes CSS `.xml-tag` (bleu), `.xml-attr` (violet), `.xml-value` (vert), `.xml-prolog` / `.xml-comment` (gris) — chacune avec sa variante dark via `:host-context(.dark-mode)`.
+- Body `max-height: 600px; overflow: auto` (the sticky toolbar stays visible while scrolling), `<pre class="xml-content">` in 12.5 px mono font.
+- Highlighting via CSS classes `.xml-tag` (blue), `.xml-attr` (violet), `.xml-value` (green), `.xml-prolog` / `.xml-comment` (gray) — each with its dark variant via `:host-context(.dark-mode)`.
 
-### Pièges & notes
+### Pitfalls & notes
 
-- **Double fetch possible** : l'`effect()` télécharge au changement de `fichier()` (même masqué), et `show()` relance un `refreshXml()` — afficher un fichier fraîchement assigné le télécharge donc deux fois.
-- `highlightXml` échappe l'intégralité du contenu avant coloration : le `bypassSecurityTrustHtml` ne fait passer que les `<span>` générés par le composant, pas de HTML issu du fichier.
-- Le reformatage est heuristique (regex, pas de parseur XML) : suffisant pour de l'UBL machine-généré, sans garantie sur du XML exotique (CDATA multiligne, etc.).
-- `navigator.clipboard` exige un contexte sécurisé (HTTPS/localhost) ; en cas d'échec, l'erreur est seulement loguée.
+- **Possible double fetch**: the `effect()` downloads on `file()` change (even hidden), and `show()` re-runs `refreshXml()` — displaying a freshly assigned file therefore downloads it twice.
+- `highlightXml` escapes the entire content before highlighting: `bypassSecurityTrustHtml` only lets through the `<span>`s generated by the component, no HTML coming from the file.
+- The reformatting is heuristic (regex, no XML parser): sufficient for machine-generated UBL, no guarantee on exotic XML (multi-line CDATA, etc.).
+- `navigator.clipboard` requires a secure context (HTTPS/localhost); on failure, the error is only logged.

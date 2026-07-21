@@ -1,6 +1,7 @@
 import { Component, effect, inject, input, signal, viewChild } from '@angular/core';
 import { PDFDocumentProxy, PDFProgressData, PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
 import { BILLY_FILE_SOURCE, BillyViewerFile } from '../billy-file-source';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { FileViewerToolbarComponent } from '../file-viewer-toolbar/file-viewer-toolbar.component';
 import { NgTemplateOutlet } from '@angular/common';
 
@@ -13,8 +14,9 @@ import { NgTemplateOutlet } from '@angular/common';
 export class FileViewerPdfComponent {
 
   private readonly fileSource = inject(BILLY_FILE_SOURCE);
+  protected readonly i18n = inject(BillyI18nService);
 
-  readonly fichier = input<BillyViewerFile | null>(null);
+  readonly file = input<BillyViewerFile | null>(null);
   readonly pdfComponent = viewChild<PdfViewerComponent>(PdfViewerComponent);
 
   readonly visible = signal<boolean>(false);
@@ -32,30 +34,30 @@ export class FileViewerPdfComponent {
   btnZoomOutDisabled = false;
 
   constructor() {
-    // Chargement local du webworker (pour éviter le cdn cloudflare)
+    // Load the webworker locally (to avoid the Cloudflare CDN)
     const localAsset = '/assets/js/pdf.worker.min.js';
     if((window as any).pdfWorkerSrc !== localAsset) {
       (window as any).pdfWorkerSrc = localAsset;
     }
     effect(() => {
-      if(this.fichier()) {
+      if(this.file()) {
         this.initPdf();
       }
     });
    }
 
   initPdf(): void {
-    const fichier = this.fichier();
-    if(!fichier) {
+    const file = this.file();
+    if(!file) {
       return;
     }
     this.currentPage = 0;
     this.totalPages = 0;
     this.zoom = 1;
     this.urlObject = null;
-    if (fichier?.id) {
+    if (file?.id) {
       this.urlObject = {
-        url : this.fileSource.downloadUrl(fichier.id),
+        url : this.fileSource.downloadUrl(file.id),
         withCredentials: true,
         httpHeaders: { Authorization: 'Bearer ' + this.fileSource.authToken() },
       };

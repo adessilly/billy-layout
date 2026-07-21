@@ -4,25 +4,25 @@ import { BillyIconComponent, PageHeaderComponent } from 'billy-layout';
 import { DOC_CATEGORIES, DOC_ENTRY_COUNT } from '../../site/doc-registry';
 import { EntryCardComponent } from '../../site/entry-card.component';
 
-/** Vue d'ensemble : toutes les fiches, groupées par catégorie. */
+/** Overview: every doc page, grouped by category. */
 @Component({
-  selector: 'site-composants-page',
+  selector: 'site-components-page',
   imports: [RouterLink, BillyIconComponent, PageHeaderComponent, EntryCardComponent],
   template: `
-    <billy-page-header titre="Composants" [sousTitre]="entryCount + ' fiches, miroir de src/lib/ et docs/'" />
+    <billy-page-header title="Components" [subtitle]="entryCount + ' doc pages, mirroring src/lib/ and docs/'" />
 
     <div class="site-page site-motion">
       @for (category of categories; track category.slug) {
-        <section class="composants-section">
-          <a class="composants-head" [routerLink]="['/c', category.slug]">
-            <span class="composants-icon">
+        <section class="components-section">
+          <a class="components-head" [routerLink]="['/c', category.slug]">
+            <span class="components-icon">
               <billy-icon [name]="category.icon" [size]="19" [strokeWidth]="1.8" />
             </span>
-            <h2 class="composants-title">{{ category.label }}</h2>
-            <span class="composants-count">{{ category.entries.length }}</span>
-            <billy-icon class="composants-chevron" name="chevron-right" [size]="16" [strokeWidth]="2" />
+            <h2 class="components-title">{{ category.label }}</h2>
+            <span class="components-count">{{ category.entries.length }}</span>
+            <billy-icon class="components-chevron" name="chevron-right" [size]="16" [strokeWidth]="2" />
           </a>
-          <div class="composants-grid">
+          <div class="components-grid">
             @for (entry of category.entries; track entry.slug; let i = $index) {
               <site-entry-card [category]="category" [entry]="entry" [index]="i" />
             }
@@ -34,9 +34,9 @@ import { EntryCardComponent } from '../../site/entry-card.component';
   styles: `
     :host { display: block; }
 
-    .composants-section { margin-bottom: 34px; }
+    .components-section { margin-bottom: 34px; }
 
-    .composants-head {
+    .components-head {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -44,10 +44,10 @@ import { EntryCardComponent } from '../../site/entry-card.component';
       margin-bottom: 14px;
       width: fit-content;
 
-      &:hover .composants-chevron { opacity: 1; transform: translateX(0); }
+      &:hover .components-chevron { opacity: 1; transform: translateX(0); }
     }
 
-    .composants-icon {
+    .components-icon {
       width: 34px;
       height: 34px;
       border-radius: 10px;
@@ -59,7 +59,7 @@ import { EntryCardComponent } from '../../site/entry-card.component';
       border: 1px solid var(--billy-accent-border);
     }
 
-    .composants-title {
+    .components-title {
       font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.01em;
@@ -67,7 +67,7 @@ import { EntryCardComponent } from '../../site/entry-card.component';
       margin: 0;
     }
 
-    .composants-count {
+    .components-count {
       font-size: 11px;
       font-weight: 700;
       color: var(--billy-accent-strong);
@@ -76,21 +76,21 @@ import { EntryCardComponent } from '../../site/entry-card.component';
       padding: 1px 8px;
     }
 
-    .composants-chevron {
+    .components-chevron {
       color: var(--billy-accent);
       opacity: 0;
       transform: translateX(-5px);
       transition: opacity .18s ease, transform .18s ease;
     }
 
-    .composants-grid {
+    .components-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 12px;
     }
   `,
 })
-export class ComposantsPageComponent {
+export class ComponentsPageComponent {
 
   readonly categories = DOC_CATEGORIES;
   readonly entryCount = DOC_ENTRY_COUNT;

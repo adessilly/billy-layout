@@ -6,8 +6,8 @@ import { ClaudeSectionComponent } from './claude-section.component';
 import { InstallSectionComponent } from './install-section.component';
 
 /**
- * Accueil du site vitrine : hero animé (maquette d'écran BILLy qui s'assemble
- * en SVG), chiffres clés et grille des catégories de composants.
+ * Showcase site home: animated hero (SVG mockup of a BILLy screen assembling
+ * itself), key figures and the component category grid.
  */
 @Component({
   selector: 'site-home-page',

@@ -1,7 +1,7 @@
-@let fichierTpl = fichier();
-@if (visible() && urlObject && fichierTpl) {
+@let fileTpl = file();
+@if (visible() && urlObject && fileTpl) {
   <div class="viewer">
-    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fichierTpl.fileName" icon="fa-solid fa-file-pdf" (closeViewer)="hide()">
+    <billy-file-viewer-toolbar [loading]="loading()" [filename]="fileTpl.fileName" icon="fa-solid fa-file-pdf" (closeViewer)="hide()">
       <ng-container *ngTemplateOutlet="toolbarButtonsNav"></ng-container>
       <ng-container *ngTemplateOutlet="toolbarButtonsZoom"></ng-container>
     </billy-file-viewer-toolbar>
@@ -21,11 +21,11 @@
     <ng-template #toolbarButtonsNav>
       @if (totalPages > 1) {
         <div class="viewer-group">
-          <button [disabled]="btnPrevDisabled" type="button" class="viewer-btn" title="Page précédente" (click)="prevPage()">
+          <button [disabled]="btnPrevDisabled" type="button" class="viewer-btn" [title]="i18n.strings().viewer.prevPage" (click)="prevPage()">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
           <span class="viewer-page-indicator">{{ currentPage+1 }} / {{ totalPages }}</span>
-          <button [disabled]="btnNextDisabled" type="button" class="viewer-btn" title="Page suivante" (click)="nextPage()">
+          <button [disabled]="btnNextDisabled" type="button" class="viewer-btn" [title]="i18n.strings().viewer.nextPage" (click)="nextPage()">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
@@ -33,10 +33,10 @@
     </ng-template>
     <ng-template #toolbarButtonsZoom>
       <div class="viewer-group">
-        <button [disabled]="btnZoomOutDisabled" type="button" class="viewer-btn" title="Dézoomer" (click)="zoomOut()">
+        <button [disabled]="btnZoomOutDisabled" type="button" class="viewer-btn" [title]="i18n.strings().viewer.zoomOut" (click)="zoomOut()">
           <i class="fa-solid fa-magnifying-glass-minus"></i>
         </button>
-        <button [disabled]="btnZoomInDisabled" type="button" class="viewer-btn" title="Zoomer" (click)="zoomIn()">
+        <button [disabled]="btnZoomInDisabled" type="button" class="viewer-btn" [title]="i18n.strings().viewer.zoomIn" (click)="zoomIn()">
           <i class="fa-solid fa-magnifying-glass-plus"></i>
         </button>
       </div>

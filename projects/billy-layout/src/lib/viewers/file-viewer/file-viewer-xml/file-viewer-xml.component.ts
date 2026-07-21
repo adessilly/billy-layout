@@ -1,5 +1,6 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { BILLY_FILE_SOURCE, BillyViewerFile } from '../billy-file-source';
 import { lastValueFrom } from 'rxjs';
 import { FileViewerToolbarComponent } from '../file-viewer-toolbar/file-viewer-toolbar.component';
@@ -13,8 +14,9 @@ import { FileViewerToolbarComponent } from '../file-viewer-toolbar/file-viewer-t
 export class FileViewerXmlComponent {
 
   private readonly fileSource = inject(BILLY_FILE_SOURCE);
+  protected readonly i18n = inject(BillyI18nService);
 
-  readonly fichier = input<BillyViewerFile | null>(null);
+  readonly file = input<BillyViewerFile | null>(null);
   readonly visible = signal<boolean>(false);
   readonly loading = signal<boolean>(false);
   readonly xmlHtml = signal<SafeHtml | null>(null);
@@ -24,20 +26,20 @@ export class FileViewerXmlComponent {
 
   constructor(private readonly sanitizer: DomSanitizer) {
     effect(() => {
-      this.fichier();
+      this.file();
       this.refreshXml();
     });
   }
 
   async refreshXml(): Promise<void> {
-    const fichier = this.fichier();
-    if (!fichier) {
+    const file = this.file();
+    if (!file) {
       return;
     }
     try {
       this.loading.set(true);
-      if (!fichier.id) { throw new Error('Fichier id is null'); }
-      const text = await lastValueFrom(this.fileSource.downloadText(fichier.id));
+      if (!file.id) { throw new Error('File id is null'); }
+      const text = await lastValueFrom(this.fileSource.downloadText(file.id));
       this.rawXml = text;
       const formatted = FileViewerXmlComponent.formatXml(text);
       const highlighted = FileViewerXmlComponent.highlightXml(formatted);
@@ -70,7 +72,7 @@ export class FileViewerXmlComponent {
   }
 
   /**
-   * Ré-indente une chaîne XML (une balise par ligne, indentation par profondeur).
+   * Re-indents an XML string (one tag per line, indentation by depth).
    */
   private static formatXml(xml: string): string {
     const PADDING = '  ';
@@ -88,10 +90,10 @@ export class FileViewerXmlComponent {
 
       let indent = 0;
       if (node.match(/^<\/\w/)) {
-        // Balise fermante : on désindente d'abord.
+        // Closing tag: dedent first.
         pad = Math.max(pad - 1, 0);
       } else if (node.match(/^<[^!?][^>]*[^/]>.*$/) && !node.match(/^<\w[^>]*>.*<\/\w[^>]*>$/)) {
-        // Balise ouvrante sans fermeture sur la même ligne.
+        // Opening tag without a closing tag on the same line.
         indent = 1;
       }
 
@@ -103,8 +105,8 @@ export class FileViewerXmlComponent {
   }
 
   /**
-   * Colore l'XML (échappé) pour affichage HTML : balises, attributs, valeurs,
-   * prologue et commentaires.
+   * Highlights the (escaped) XML for HTML display: tags, attributes, values,
+   * prolog and comments.
    */
   private static highlightXml(xml: string): string {
     const escaped = xml
@@ -113,11 +115,11 @@ export class FileViewerXmlComponent {
       .replace(/>/g, '&gt;');
 
     return escaped
-      // Commentaires
+      // Comments
       .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="xml-comment">$1</span>')
-      // Prologue / instructions de traitement <?xml ... ?>
+      // Prolog / processing instructions <?xml ... ?>
       .replace(/(&lt;\?[\s\S]*?\?&gt;)/g, '<span class="xml-prolog">$1</span>')
-      // Balises + attributs
+      // Tags + attributes
       .replace(
         /(&lt;\/?)([\w:.\-]+)((?:\s+[\w:.\-]+(?:=(?:&quot;[^&]*&quot;|"[^"]*"|'[^']*'))?)*)(\s*\/?&gt;)/g,
         (_match, open: string, tag: string, attrs: string, close: string) => {

@@ -1,12 +1,12 @@
 # dialog-form — `DialogFormComponent`
 
-> Catégorie `dialogs` · source `projects/billy-layout/src/lib/dialogs/dialog-form/` · standalone components (`billy-dialog-form` + slots `billy-dialog-form-header` / `-body` / `-footer`)
+> Category `dialogs` · source `projects/billy-layout/src/lib/dialogs/dialog-form/` · standalone components (`billy-dialog-form` + slots `billy-dialog-form-header` / `-body` / `-footer`)
 
-## Rôle
+## Purpose
 
-`billy-dialog-form` est le dialogue « formulaire / consultation » générique de la lib : il fournit la coque `.billy-modal` complète, l'ouvre **automatiquement** dès l'affichage du composant (`ngAfterViewInit`), la déplace sous `<body>`, et articule la fermeture avec le routeur de l'application quand le dialogue est porté par une route « overlay » (token optionnel `BILLY_DIALOG_ROUTER`). Le contenu est fourni par trois composants-slots à base de `TemplateRef` : header (avec croix de fermeture intégrée), body, footer.
+`billy-dialog-form` is the library's generic "form / consultation" dialog: it provides the full `.billy-modal` shell, opens it **automatically** as soon as the component is displayed (`ngAfterViewInit`), moves it under `<body>`, and coordinates closing with the application's router when the dialog is carried by an "overlay" route (optional `BILLY_DIALOG_ROUTER` token). The content is provided through three `TemplateRef`-based slot components: header (with a built-in close cross), body, footer.
 
-Exports (`lib/dialogs/dialog-form/index.ts`) : `DialogFormComponent`, `DialogFormHeaderComponent`, `DialogFormBodyComponent`, `DialogFormFooterComponent`, plus le tableau de commodité `DialogFormModule` regroupant les quatre.
+Exports (`lib/dialogs/dialog-form/index.ts`): `DialogFormComponent`, `DialogFormHeaderComponent`, `DialogFormBodyComponent`, `DialogFormFooterComponent`, plus the convenience array `DialogFormModule` bundling all four.
 
 ## API
 
@@ -14,60 +14,62 @@ Exports (`lib/dialogs/dialog-form/index.ts`) : `DialogFormComponent`, `DialogFor
 
 **Inputs**
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `large` | `boolean` | `false` | Pose `billy-modal-dialog--large` (équivalent `modal-xl` : 800px ≥ 992px, 1140px ≥ 1200px). |
-| `maxWidth` | `number \| null` | `null` | `max-width` en px appliqué à `.billy-modal-dialog` (prioritaire visuellement sur la largeur par défaut de 500px). |
+| `large` | `boolean` | `false` | Applies `billy-modal-dialog--large` (equivalent to `modal-xl`: 800px ≥ 992px, 1140px ≥ 1200px). |
+| `maxWidth` | `number \| null` | `null` | `max-width` in px applied to `.billy-modal-dialog` (visually takes precedence over the default 500px width). |
 
 **Outputs**
 
-| Output | Type | Émis quand |
+| Output | Type | Emitted when |
 |---|---|---|
-| `closed` | `void` | Le dialogue est entièrement fermé, **si** la fermeture vient d'un bouton (`askCloseDialog`/`closeThen`) **ou** d'un geste standard (Échap, clic-fond, `data-billy-dismiss`, croix du header) alors que le composant est encore vivant. **Pas émis** quand la fermeture vient du routeur (composant déjà détruit : overlay remplacé ou effacé). |
+| `closed` | `void` | The dialog is fully closed, **if** the closing came from a button (`askCloseDialog`/`closeThen`) **or** from a standard gesture (Escape, backdrop click, `data-billy-dismiss`, header cross) while the component is still alive. **Not emitted** when the closing comes from the router (component already destroyed: overlay replaced or cleared). |
 
 **Slots (contentChild)**
 
-| Sélecteur | Rend | Note |
+| Selector | Renders | Note |
 |---|---|---|
-| `billy-dialog-form-header` | `.billy-modal-header` + contenu projeté + **croix de fermeture** `data-billy-dismiss` intégrée | Optionnel |
-| `billy-dialog-form-body` | `.billy-modal-body` + contenu projeté | Optionnel |
-| `billy-dialog-form-footer` | `.billy-modal-footer` + contenu projeté | Optionnel |
+| `billy-dialog-form-header` | `.billy-modal-header` + projected content + built-in **close cross** with `data-billy-dismiss` (its `aria-label` comes from the i18n dictionary, key `deleteDialog.close`, EN `'Close'`) | Optional |
+| `billy-dialog-form-body` | `.billy-modal-body` + projected content | Optional |
+| `billy-dialog-form-footer` | `.billy-modal-footer` + projected content | Optional |
 
-Chaque slot est un composant standalone dont le template est un simple `<ng-template>` capturé par `viewChild.required<TemplateRef<any>>(TemplateRef)` (propriété `template`) et stampé par `*ngTemplateOutlet` dans la coque de `billy-dialog-form`. Le contenu ne s'affiche donc **jamais** à l'endroit où le slot est déclaré.
+Each slot is a standalone component whose template is a plain `<ng-template>` captured by `viewChild.required<TemplateRef<any>>(TemplateRef)` (property `template`) and stamped by `*ngTemplateOutlet` inside the `billy-dialog-form` shell. The content therefore **never** renders where the slot is declared.
 
-**Méthodes publiques**
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
-| Méthode | Signature | Description |
+**Public methods**
+
+| Method | Signature | Description |
 |---|---|---|
-| `askCloseDialog` | `askCloseDialog(): void` | Fermeture programmatique « bouton » : pose `closeFromButtonAction`, joue l'animation, puis (via `listenClose`) délègue la navigation à `BILLY_DIALOG_ROUTER.closeOverlay()` et émet `closed`. |
-| `closeThen` | `closeThen(action: () => void): void` | Ferme le dialogue (**animation comprise**) puis exécute `action`, à qui revient toute la navigation (autre overlay ou page). Naviguer sans attendre la fin de l'animation laisserait le verrou de scroll du `<body>` être levé après coup, cassant le scroll du dialogue suivant. |
-| `closeDialog` | `closeDialog(): void` | Appelle `dialogRouter?.closeOverlay()` (no-op si le token n'est pas fourni). Normalement appelé en interne. |
-| `detectChanges` | `detectChanges(): void` | Force une détection de changements locale. |
+| `askCloseDialog` | `askCloseDialog(): void` | Programmatic "button" close: sets `closeFromButtonAction`, plays the animation, then (via `listenClose`) delegates navigation to `BILLY_DIALOG_ROUTER.closeOverlay()` and emits `closed`. |
+| `closeThen` | `closeThen(action: () => void): void` | Closes the dialog (**animation included**), then runs `action`, which owns all subsequent navigation (another overlay or a page). Navigating before the animation ends would let the `<body>` scroll lock be released afterwards, breaking scrolling in the next dialog. |
+| `closeDialog` | `closeDialog(): void` | Calls `dialogRouter?.closeOverlay()` (no-op when the token is not provided). Normally called internally. |
+| `detectChanges` | `detectChanges(): void` | Forces a local change detection pass. |
 
-**Cycle de vie**
+**Lifecycle**
 
-1. `ngAfterViewInit` : `detectChanges()` puis `openDialog()` — `document.body.appendChild(...)` de la racine `#dialogRoot`, `new Dialog(...)`, `show()`.
-2. `listenClose().pipe(first())` : à la fermeture complète —
-   - si un `afterClose` a été posé par `closeThen`, il est exécuté (c'est l'action qui pilote la navigation) ;
-   - sinon, si le composant **n'est pas détruit** (fermeture par geste utilisateur), `dialogRouter?.closeOverlay()` referme la route overlay ;
-   - sinon (composant détruit = fermeture pilotée par le routeur), **rien** : re-naviguer écraserait un overlay fraîchement ouvert ;
-   - `closed` est émis selon la règle du tableau ci-dessus ; enfin `document.body.removeChild(...)`.
-3. `ngOnDestroy` : si la fermeture ne vient pas d'un bouton, `modal.hide()` (cas : le routeur retire l'overlay pendant que le dialogue est encore affiché).
+1. `ngAfterViewInit`: `detectChanges()` then `openDialog()` — `document.body.appendChild(...)` of the `#dialogRoot` root, `new Dialog(...)`, `show()`.
+2. `listenClose().pipe(first())`: on full close —
+   - if an `afterClose` was set by `closeThen`, it runs (that action drives navigation);
+   - otherwise, if the component **is not destroyed** (user-gesture close), `dialogRouter?.closeOverlay()` closes the overlay route;
+   - otherwise (component destroyed = router-driven close), **nothing**: re-navigating would clobber a freshly opened overlay;
+   - `closed` is emitted according to the rule in the table above; finally `document.body.removeChild(...)`.
+3. `ngOnDestroy`: if the closing did not come from a button, `modal.hide()` (case: the router removes the overlay while the dialog is still displayed).
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel : les dialogues de consultation routés en overlay — `src/app/auth/pages/devis/devis-consult-dialog/` (idem `vente-consult-dialog`, `achat-consult-dialog`, `client-consult-dialog`, `email-dialog`, `peppol-facture-dialog`…).
+Real-world usage: overlay-routed consultation dialogs — `src/app/auth/pages/devis/devis-consult-dialog/` (same for `vente-consult-dialog`, `achat-consult-dialog`, `client-consult-dialog`, `email-dialog`, `peppol-facture-dialog`…).
 
-Template (`devis-consult-dialog.component.html`) :
+Template (`devis-consult-dialog.component.html`):
 
 ```html
 <billy-dialog-form [large]="true">
 
   <billy-dialog-form-header>
     <div class="dcd-header">
-      <h4 class="dcd-title">{{ d?.libelle || 'Devis' }}</h4>
-      <button type="button" class="dcd-btn" (click)="askExpand()">Agrandir</button>
-      <button type="button" class="dcd-btn dcd-btn--primary" (click)="askEdit()">Modifier</button>
+      <h4 class="dcd-title">{{ d?.libelle || 'Quote' }}</h4>
+      <button type="button" class="dcd-btn" (click)="askExpand()">Expand</button>
+      <button type="button" class="dcd-btn dcd-btn--primary" (click)="askEdit()">Edit</button>
     </div>
   </billy-dialog-form-header>
 
@@ -81,7 +83,7 @@ Template (`devis-consult-dialog.component.html`) :
 </billy-dialog-form>
 ```
 
-Composant : `closeThen` pour basculer proprement vers une autre page (fermeture animée, verrou de scroll relâché, **puis** navigation) :
+Component: `closeThen` to switch cleanly to another page (animated close, scroll lock released, **then** navigation):
 
 ```ts
 private readonly dialogForm = viewChild.required(DialogFormComponent);
@@ -94,7 +96,7 @@ askEdit(): void {
 }
 ```
 
-Côté app, le pont routeur est fourni dans `src/app/app.config.ts` :
+On the app side, the router bridge is provided in `src/app/app.config.ts`:
 
 ```ts
 { provide: BILLY_DIALOG_ROUTER, useExisting: RouteurUtilsService },
@@ -102,17 +104,17 @@ Côté app, le pont routeur est fourni dans `src/app/app.config.ts` :
 
 ## Styles & theming
 
-- La coque visuelle `.billy-modal*` est **globale** (`lib/styles/_billy-dialog.scss`, chargée par le `styles.scss` de l'app) — tokens `--billy-*`, dark mode automatique.
-- Les CSS des slots (`dialog-form-header.component.css`, etc.) restent effectifs malgré le déplacement sous `<body>` : les nœuds stampés portent les attributs `_ngcontent` de leur composant d'origine. Le header stylise notamment la croix `.close` (32×32, hover `--billy-divider`, focus visible `--billy-focus-border`).
-- La racine du template ne porte **pas** `tabindex="-1"` — volontaire : cela désactivait le focus des champs de recherche des select2.
+- The visual `.billy-modal*` shell is **global** (`lib/styles/_billy-dialog.scss`, loaded by the app's `styles.scss`) — `--billy-*` tokens, automatic dark mode.
+- The slot component CSS (`dialog-form-header.component.css`, etc.) remains effective despite the move under `<body>`: the stamped nodes carry the `_ngcontent` attributes of their originating component. The header notably styles the `.close` cross (32×32, hover `--billy-divider`, visible focus `--billy-focus-border`).
+- The template root does **not** carry `tabindex="-1"` — deliberate: it broke focus on select2 search fields.
 
-## Pièges & notes
+## Gotchas & notes
 
-- **La modale vit sous `<body>`**, hors du host du composant hôte. Conséquences :
-  - les styles `:host` / `:host-context(...)` du composant qui utilise `billy-dialog-form` **ne matchent pas** le contenu du dialogue ;
-  - pour le dark mode, le pattern maison est `::ng-deep body.dark-mode { .mes-classes-prefixees { … } }` (voir `devis-consult-dialog.component.scss`, section « Dark mode ») — sans risque de collision si les classes sont préfixées (ex. `dcd-`) ;
-  - côté Playwright/tests E2E, cibler le dialogue par des sélecteurs **globaux** (`.billy-modal …`), pas relatifs au composant hôte.
-- **Ouverture automatique** : afficher le composant (route overlay, `@if`) suffit à ouvrir le dialogue ; il n'existe pas de méthode `open()`.
-- **Ne jamais naviguer directement depuis un bouton du dialogue** : passer par `closeThen(...)` pour laisser l'animation finir et le verrou `body.billy-dialog-open` se lever au bon moment.
-- Sans provider `BILLY_DIALOG_ROUTER`, Échap/clic-fond ferment visuellement mais la route overlay reste active (le composant est toujours monté) — fournir le token dès que le dialogue est routé.
-- `closed` ne fait pas la différence entre validation et abandon : c'est un signal de fermeture, la sémantique métier (sauvegarde effectuée, etc.) est à porter par l'appelant.
+- **The modal lives under `<body>`**, outside the host component's element. Consequences:
+  - `:host` / `:host-context(...)` styles of the component using `billy-dialog-form` **do not match** the dialog content;
+  - for dark mode, the house pattern is `::ng-deep body.dark-mode { .my-prefixed-classes { … } }` (see `devis-consult-dialog.component.scss`, "Dark mode" section) — collision-free as long as classes are prefixed (e.g. `dcd-`);
+  - in Playwright/E2E tests, target the dialog with **global** selectors (`.billy-modal …`), not selectors relative to the host component.
+- **Automatic opening**: displaying the component (overlay route, `@if`) is enough to open the dialog; there is no `open()` method.
+- **Never navigate directly from a dialog button**: go through `closeThen(...)` so the animation finishes and the `body.billy-dialog-open` lock is released at the right time.
+- Without a `BILLY_DIALOG_ROUTER` provider, Escape/backdrop click close visually but the overlay route stays active (the component is still mounted) — provide the token as soon as the dialog is routed.
+- `closed` does not distinguish validation from abandonment: it is a closing signal; the business semantics (save performed, etc.) are the caller's responsibility.

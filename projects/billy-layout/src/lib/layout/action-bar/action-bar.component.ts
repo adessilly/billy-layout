@@ -1,10 +1,11 @@
-import { Component, OnInit, computed, input, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { BillyIconComponent, BillyIconName } from '../../core/icon/billy-icon.component';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 
 /**
- * Onglet de la barre de navigation mobile. La librairie ne connaît pas les
- * routes : activation et navigation sont fournies par l'application.
+ * Tab of the mobile navigation bar. The library does not know the routes:
+ * activation and navigation are provided by the application.
  */
 export interface BillyActionBarTab {
   icon: BillyIconName;
@@ -21,11 +22,13 @@ export interface BillyActionBarTab {
 })
 export class ActionBarComponent implements OnInit {
 
+  protected readonly i18n = inject(BillyI18nService);
+
   readonly tabs = input.required<BillyActionBarTab[]>();
 
   readonly activeIndex = signal(-1);
-  // Dernier onglet actif : le halo s'estompe sur place (au lieu de sauter en
-  // position 0) quand on navigue vers une page hors de la barre.
+  // Last active tab: the halo fades out in place (instead of jumping to
+  // position 0) when navigating to a page outside the bar.
   private readonly lastIndex = signal(0);
 
   readonly pillTransform = computed(() =>

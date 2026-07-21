@@ -12,22 +12,22 @@ export class InputEmailsPopupSuggestionComponent {
   // Input: valeur actuelle de l'input
   inputValue = input.required<string>();
 
-  // Input: tous les emails disponibles
+  // Input: all available emails
   availableEmails = input.required<string[]>();
 
-  // Input: emails déjà sélectionnés à exclure des suggestions
+  // Input: already-selected emails to exclude from the suggestions
   excludedEmails = input<string[]>([]);
 
-  // Input: afficher ou masquer la popup
+  // Input: show or hide the popup
   show = input<boolean>(false);
 
-  // Output: email sélectionné
+  // Output: selected email
   suggestionSelected = output<string>();
 
-  // Index de la suggestion actuellement sélectionnée
+  // Index of the currently selected suggestion
   selectedIndex = signal<number>(-1);
 
-  // Emails filtrés basés sur l'input
+  // Emails filtered based on the input
   filteredEmails = computed(() => {
     const input = this.inputValue().toLowerCase().trim();
     const excluded = this.excludedEmails();
@@ -41,11 +41,11 @@ export class InputEmailsPopupSuggestionComponent {
         email.toLowerCase().includes(input) &&
         !excluded.includes(email)
       )
-      .slice(0, 10); // Limiter à 10 suggestions
+      .slice(0, 10); // Limit to 10 suggestions
   });
 
   constructor() {
-    // Réinitialiser l'index sélectionné quand les suggestions changent
+    // Reset the selected index when the suggestions change
     effect(() => {
       this.filteredEmails();
       this.selectedIndex.set(-1);
@@ -54,7 +54,7 @@ export class InputEmailsPopupSuggestionComponent {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    // Ne gérer les événements que si la popup est visible et a des suggestions
+    // Only handle events when the popup is visible and has suggestions
     if (!this.show() || this.filteredEmails().length === 0) {
       return;
     }
@@ -71,7 +71,7 @@ export class InputEmailsPopupSuggestionComponent {
         break;
 
       case 'Enter':
-        // Si une suggestion est sélectionnée, l'utiliser
+        // If a suggestion is selected, use it
         if (this.selectedIndex() >= 0) {
           event.preventDefault();
           this.selectCurrent();
@@ -89,7 +89,7 @@ export class InputEmailsPopupSuggestionComponent {
     this.suggestionSelected.emit(email);
   }
 
-  // Déplace la sélection vers le haut
+  // Moves the selection up
   moveUp() {
     const emails = this.filteredEmails();
     if (emails.length === 0) return;
@@ -102,7 +102,7 @@ export class InputEmailsPopupSuggestionComponent {
     }
   }
 
-  // Déplace la sélection vers le bas
+  // Moves the selection down
   moveDown() {
     const emails = this.filteredEmails();
     if (emails.length === 0) return;
@@ -115,7 +115,7 @@ export class InputEmailsPopupSuggestionComponent {
     }
   }
 
-  // Sélectionne l'email actuellement en surbrillance
+  // Selects the currently highlighted email
   selectCurrent() {
     const emails = this.filteredEmails();
     const index = this.selectedIndex();
@@ -125,7 +125,7 @@ export class InputEmailsPopupSuggestionComponent {
     }
   }
 
-  // Réinitialise la sélection
+  // Resets the selection
   resetSelection() {
     this.selectedIndex.set(-1);
   }

@@ -5,18 +5,18 @@ import { PageHeaderComponent } from 'billy-layout';
 import { findCategory } from '../../site/doc-registry';
 import { EntryCardComponent } from '../../site/entry-card.component';
 
-/** Une catégorie : sa présentation et la grille de ses fiches. */
+/** A category: its presentation and the grid of its doc pages. */
 @Component({
   selector: 'site-category-page',
   imports: [PageHeaderComponent, EntryCardComponent],
   template: `
     @if (cat(); as category) {
       <billy-page-header
-        [titre]="category.label"
-        [sousTitre]="category.intro"
-        [retourVisible]="true"
-        retourTitre="Tous les composants"
-        (retour)="back()" />
+        [title]="category.label"
+        [subtitle]="category.intro"
+        [backVisible]="true"
+        backLabel="All components"
+        (back)="back()" />
 
       <div class="site-page site-motion">
         <div class="category-grid">
@@ -39,7 +39,7 @@ import { EntryCardComponent } from '../../site/entry-card.component';
 })
 export class CategoryPageComponent {
 
-  /** Slug de catégorie, lié depuis la route (withComponentInputBinding). */
+  /** Category slug, bound from the route (withComponentInputBinding). */
   readonly category = input.required<string>();
 
   private readonly router = inject(Router);
@@ -51,7 +51,7 @@ export class CategoryPageComponent {
     effect(() => {
       const found = this.cat();
       if (!found) {
-        void this.router.navigateByUrl('/composants');
+        void this.router.navigateByUrl('/components');
       } else {
         this.title.setTitle(`${found.label} — billy-layout`);
       }
@@ -59,7 +59,7 @@ export class CategoryPageComponent {
   }
 
   back(): void {
-    void this.router.navigateByUrl('/composants');
+    void this.router.navigateByUrl('/components');
   }
 
 }

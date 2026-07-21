@@ -1,17 +1,16 @@
 import { Component, input, signal } from '@angular/core';
 
 /**
- * Panneau d'un onglet. À projeter dans <billy-tabs>.
- * Le contenu reste dans le DOM (masqué via [hidden]) pour préserver l'état
- * des composants enfants et éviter de relancer leurs appels réseau au switch.
+ * Tab panel. To be projected into <billy-tabs>.
+ * The content stays in the DOM (hidden via [hidden]) to preserve the state
+ * of child components and avoid re-triggering their network calls on switch.
  *
  *   <billy-tabs>
- *     <billy-tab label="Encodage" icon="fa-solid fa-user"> … </billy-tab>
+ *     <billy-tab label="Entry" icon="fa-solid fa-user"> … </billy-tab>
  *   </billy-tabs>
  */
 @Component({
   selector: 'billy-tab',
-  standalone: true,
   template: `
     <div class="app-tab-panel" role="tabpanel" [hidden]="!active()">
       <ng-content></ng-content>
@@ -23,11 +22,11 @@ import { Component, input, signal } from '@angular/core';
   `],
 })
 export class TabComponent {
-  /** Libellé affiché dans la barre d'onglets. */
+  /** Label shown in the tab bar. */
   readonly label = input('');
-  /** Classe d'icône FontAwesome optionnelle (ex. "fa-solid fa-user"). */
+  /** Optional FontAwesome icon class (e.g. "fa-solid fa-user"). */
   readonly icon = input('');
 
-  /** Piloté par <billy-tabs> : true quand cet onglet est sélectionné. */
+  /** Driven by <billy-tabs>: true when this tab is selected. */
   readonly active = signal(false);
 }

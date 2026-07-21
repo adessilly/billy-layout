@@ -1,10 +1,10 @@
 import { Type } from '@angular/core';
 
 /**
- * Registre des démos live, par fiche (`categorie/slug`).
- * Chaque démo est un petit composant autonome, chargé à la demande sur la
- * page du composant (onglet « Démo »). Les fiches sans entrée ici n'affichent
- * que la documentation (classes de base, contrats lourds type file-viewer…).
+ * Registry of live demos, keyed by page (`category/slug`).
+ * Each demo is a small standalone component, lazy-loaded on the component's
+ * page ("Demo" tab). Pages without an entry here only show the
+ * documentation (base classes, heavy contracts like file-viewer…).
  */
 export const DEMO_LOADERS: Record<string, () => Promise<Type<unknown>>> = {
   'core/billy-icon': () => import('./core-demos').then(m => m.IconDemoComponent),
@@ -28,14 +28,14 @@ export const DEMO_LOADERS: Record<string, () => Promise<Type<unknown>>> = {
 
   'forms/input-line': () => import('./forms-demos').then(m => m.InputLineDemoComponent),
   'forms/consult-line': () => import('./forms-demos').then(m => m.ConsultLineDemoComponent),
-  'forms/input-prefixe-suffixe': () => import('./forms-demos').then(m => m.InputPrefixeSuffixeDemoComponent),
+  'forms/input-prefix-suffix': () => import('./forms-demos').then(m => m.InputPrefixSuffixDemoComponent),
   'forms/label-clipboard': () => import('./forms-demos').then(m => m.LabelClipboardDemoComponent),
   'forms/save-bar': () => import('./forms-demos').then(m => m.SaveBarDemoComponent),
   'forms/form-side-panel': () => import('./forms-demos').then(m => m.FormSidePanelDemoComponent),
 
   'buttons/button': () => import('./buttons-demos').then(m => m.ButtonDemoComponent),
-  'buttons/button-ajout': () => import('./buttons-demos').then(m => m.ButtonAjoutDemoComponent),
-  'buttons/button-upload': () => import('./buttons-demos').then(m => m.ButtonUploadDemoComponent),
+  'buttons/add-button': () => import('./buttons-demos').then(m => m.AddButtonDemoComponent),
+  'buttons/upload-button': () => import('./buttons-demos').then(m => m.UploadButtonDemoComponent),
 
   'dialogs/delete-dialog': () => import('./dialogs-demos').then(m => m.DeleteDialogDemoComponent),
   'dialogs/dialog-form': () => import('./dialogs-demos').then(m => m.DialogFormDemoComponent),

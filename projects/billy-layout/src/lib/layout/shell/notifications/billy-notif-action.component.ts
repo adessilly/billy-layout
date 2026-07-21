@@ -2,9 +2,9 @@ import { Component, input } from '@angular/core';
 import { BillyIconComponent, BillyIconName } from '../../../core/icon/billy-icon.component';
 
 /**
- * Action de pied de panneau (« Synchroniser », « Tout marquer comme lu »…) :
- * icône + libellé projeté, avec rotation de l'icône pendant le chargement.
- * Le clic se gère sur l'élément hôte, côté composant appelant.
+ * Panel footer action ("Sync", "Mark all as read"…): icon + projected label,
+ * with the icon spinning while loading. The click is handled on the host
+ * element, by the calling component.
  */
 @Component({
   selector: 'billy-notif-action',

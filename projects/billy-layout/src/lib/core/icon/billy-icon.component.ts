@@ -1,15 +1,15 @@
 import { Component, input } from '@angular/core';
 
 export type BillyIconName =
-  | 'accueil' | 'achats' | 'devis' | 'ventes' | 'prestations' | 'agenda'
-  | 'clients' | 'compte' | 'peppol'
+  | 'home' | 'purchases' | 'quotes' | 'sales' | 'services' | 'calendar'
+  | 'clients' | 'account' | 'peppol'
   | 'bell' | 'chevron-left' | 'chevron-right' | 'chevron-down' | 'sync' | 'check' | 'clock'
   | 'search' | 'dark-mode' | 'logout' | 'open' | 'upload' | 'plus'
   | 'close' | 'refresh' | 'bolt' | 'lock' | 'eye' | 'eye-off';
 
 /**
- * Icônes SVG du design « Billy - Coque applicative » (trait arrondi, viewBox 24).
- * Réutilisable partout : <billy-icon name="achats" [size]="21" />
+ * SVG icons from the "Billy - App shell" design (rounded stroke, viewBox 24).
+ * Reusable anywhere: <billy-icon name="purchases" [size]="21" />
  */
 @Component({
   selector: 'billy-icon',

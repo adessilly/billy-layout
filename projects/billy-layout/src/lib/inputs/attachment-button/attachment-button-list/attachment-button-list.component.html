@@ -1,7 +1,7 @@
 <div class="attachment-list-panel">
   <div class="attachment-list-header">
-    <span class="title">Pièces jointes ({{ files().length }}/{{ maxFiles() }})</span>
-    <button type="button" class="abl-close" (click)="onClose()" title="Fermer">
+    <span class="title">{{ i18n.strings().attachments.header }} ({{ files().length }}/{{ maxFiles() }})</span>
+    <button type="button" class="abl-close" (click)="onClose()" [title]="i18n.strings().attachments.close">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
@@ -15,7 +15,7 @@
           type="button"
           class="btn-delete"
           (click)="onDeleteFile(i)"
-          title="Supprimer ce fichier">
+          [title]="i18n.strings().attachments.deleteFile">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
@@ -26,7 +26,7 @@
     <div class="attachment-list-footer">
       <button type="button" class="abl-add" (click)="onAddFiles()">
         <i class="fa-solid fa-plus"></i>
-        Ajouter un fichier
+        {{ i18n.strings().attachments.addFile }}
       </button>
     </div>
   }

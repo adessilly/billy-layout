@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { ActionBarComponent, BillyActionBarTab, BillyDarkModeService, BillyShellService, ToastrService } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
 
-/** billy-shell : le site entier est la démo — schéma des zones + interactions. */
+/** billy-shell : the whole site is the demo — zone diagram + interactions. */
 @Component({
   selector: 'demo-shell',
   imports: [DemoStageComponent],
   template: `
-    <demo-stage titre="Vous êtes dedans" description="Ce site est rendu par <billy-shell> : la topbar, la sidebar et cette zone de contenu sont les trois zones de la coque." [center]="true">
+    <demo-stage title="You are inside it" description="This site is rendered by <billy-shell>: the topbar, the sidebar and this content area are the shell's three zones." [center]="true">
       <svg viewBox="0 0 360 220" class="shell-map" aria-hidden="true">
         <rect x="8" y="8" width="344" height="204" rx="12" class="sm-frame" />
         <rect x="8" y="8" width="344" height="34" rx="12" class="sm-topbar" />
@@ -16,12 +16,12 @@ import { DemoStageComponent } from './demo-stage.component';
         <rect x="16" y="50" width="70" height="154" rx="8" class="sm-sidebar" />
         <text x="51" y="132" class="sm-label" transform="rotate(-90 51 132)">billy-sidebar</text>
         <rect x="94" y="50" width="250" height="154" rx="8" class="sm-content" />
-        <text x="219" y="122" class="sm-label">ng-content · vos pages</text>
-        <text x="219" y="140" class="sm-label sm-label--muted">(cette page-ci)</text>
+        <text x="219" y="122" class="sm-label">ng-content · your pages</text>
+        <text x="219" y="140" class="sm-label sm-label--muted">(this very page)</text>
       </svg>
       <div class="shell-actions">
-        <button type="button" class="demo-btn" (click)="shell.toggleSidebar()">Replier / déplier la sidebar</button>
-        <div class="demo-note">L'état replié est persisté (localStorage <code>billy-shell.sidebar-collapsed</code>).</div>
+        <button type="button" class="demo-btn" (click)="shell.toggleSidebar()">Collapse / expand the sidebar</button>
+        <div class="demo-note">The collapsed state is persisted (localStorage <code>billy-shell.sidebar-collapsed</code>).</div>
       </div>
     </demo-stage>
   `,
@@ -57,16 +57,16 @@ export class ShellDemoComponent {
   readonly shell = inject(BillyShellService);
 }
 
-/** billy-topbar : pilotage du mode sombre via BillyDarkModeService. */
+/** billy-topbar : driving dark mode via BillyDarkModeService. */
 @Component({
   selector: 'demo-topbar',
   imports: [DemoStageComponent],
   template: `
-    <demo-stage titre="La topbar est au-dessus de vous" description="Burger, logo, recherche projetée, dark mode, cloche et compte : tout vient de la lib. Le bouton ci-dessous appelle le même BillyDarkModeService que l'icône lune de la topbar.">
+    <demo-stage title="The topbar is above you" description="Burger, logo, projected search, dark mode, bell and account: all from the lib. The button below calls the same BillyDarkModeService as the topbar's moon icon.">
       <button type="button" class="demo-btn--submit" (click)="darkMode.toggle()">
-        Basculer le mode {{ darkMode.darkMode() ? 'clair' : 'sombre' }}
+        Switch to {{ darkMode.darkMode() ? 'light' : 'dark' }} mode
       </button>
-      <div class="demo-note">Préférence persistée (localStorage <code>billy_dark_mode</code>), portée par <code>body.dark-mode</code>.</div>
+      <div class="demo-note">Preference persisted (localStorage <code>billy_dark_mode</code>), carried by <code>body.dark-mode</code>.</div>
     </demo-stage>
   `,
 })
@@ -74,16 +74,16 @@ export class TopbarDemoComponent {
   readonly darkMode = inject(BillyDarkModeService);
 }
 
-/** billy-sidebar : liens, badges et repli — configurés par BILLY_SHELL_CONFIG. */
+/** billy-sidebar : links, badges and collapsing — configured via BILLY_SHELL_CONFIG. */
 @Component({
   selector: 'demo-sidebar',
   imports: [DemoStageComponent],
   template: `
-    <demo-stage titre="La sidebar est à votre gauche" description="Ses sections, liens, icônes et badges viennent du token BILLY_SHELL_CONFIG (menuLinks + menuBadges) : ici, chaque catégorie porte en badge son nombre de fiches (variante 'info' discrète par défaut ; 'notification' en rouge pour les éléments à traiter).">
+    <demo-stage title="The sidebar is on your left" description="Its sections, links, icons and badges come from the BILLY_SHELL_CONFIG token (menuLinks + menuBadges): here, each category carries its page count as a badge (discreet 'info' variant by default; 'notification' in red for items needing attention).">
       <button type="button" class="demo-btn" (click)="shell.toggleSidebar()">
-        {{ shell.sidebarCollapsed() ? 'Déplier' : 'Replier' }} la sidebar
+        {{ shell.sidebarCollapsed() ? 'Expand' : 'Collapse' }} the sidebar
       </button>
-      <div class="demo-note">Sur mobile, elle devient un tiroir avec backdrop (même bouton burger).</div>
+      <div class="demo-note">On mobile, it becomes a drawer with a backdrop (same burger button).</div>
     </demo-stage>
   `,
 })
@@ -91,22 +91,22 @@ export class SidebarDemoComponent {
   readonly shell = inject(BillyShellService);
 }
 
-/** billy-notifications : la cloche de la topbar est la démo vivante. */
+/** billy-notifications : the topbar bell is the living demo. */
 @Component({
   selector: 'demo-notifications',
   imports: [DemoStageComponent],
   template: `
-    <demo-stage titre="La cloche, en haut à droite" description="La cloche de ce site projette une catégorie de démonstration (« À découvrir ») qui étend BillyNotifCategory : compteur, navigation à deux niveaux et synchro globale simulée.">
+    <demo-stage title="The bell, top right" description="This site's bell projects a demo category ('Discover') that extends BillyNotifCategory: counter, two-level navigation and simulated global sync.">
       <div class="notif-cue" aria-hidden="true">
-        <span class="notif-cue__label">La cloche 🔔<br />est ici, en haut</span>
+        <span class="notif-cue__label">The bell 🔔<br />is here, at the top</span>
         <svg class="notif-cue__arrow" viewBox="0 0 84 64" width="72" height="55">
           <path d="M6 54 C 30 52, 62 40, 74 12" fill="none" stroke="var(--billy-accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.5 8" class="na-path" />
           <path d="M64 12 L75 7 L74 20" fill="none" stroke="var(--billy-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </div>
       <div class="demo-note">
-        Ouvrez la cloche 🔔 dans la topbar : niveau catégories → liste, bouton retour,
-        et « Synchroniser maintenant » (délégué à <code>BILLY_SHELL_CONFIG.syncNotifications</code>).
+        Open the bell 🔔 in the topbar: categories level → list, back button,
+        and "Sync now" (delegated to <code>BILLY_SHELL_CONFIG.syncNotifications</code>).
       </div>
     </demo-stage>
   `,
@@ -145,19 +145,19 @@ export class SidebarDemoComponent {
 })
 export class NotificationsDemoComponent {}
 
-/** billy-action-bar : la navigation mobile, présentée dans un cadre téléphone. */
+/** billy-action-bar : the mobile navigation, staged in a phone frame. */
 @Component({
   selector: 'demo-action-bar',
   imports: [ActionBarComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Navigation mobile" description="Sur billy-client, cette barre est fixée en bas d'écran sur mobile. Ici, elle est mise en scène dans un cadre : les onglets sont de vrais BillyActionBarTab.">
+    <demo-stage title="Mobile navigation" description="On billy-client, this bar is pinned to the bottom of the screen on mobile. Here, it is staged inside a frame: the tabs are real BillyActionBarTab.">
       <div class="phone">
         <div class="phone-screen">
           <div class="phone-page">
             <div class="phone-line w60"></div>
             <div class="phone-line w90"></div>
             <div class="phone-line w75"></div>
-            <div class="phone-hint">Onglet actif : <strong>{{ active() }}</strong></div>
+            <div class="phone-hint">Active tab: <strong>{{ active() }}</strong></div>
           </div>
           <billy-action-bar class="phone-bar" [tabs]="tabs" />
         </div>
@@ -206,7 +206,7 @@ export class NotificationsDemoComponent {}
       text-align: center;
     }
 
-    // La barre est fixed dans la lib : on la re-scope au cadre du téléphone.
+    // The bar is fixed in the lib: re-scope it to the phone frame.
     .phone-bar ::ng-deep .action-bar {
       position: absolute;
       left: 50%;
@@ -221,20 +221,20 @@ export class ActionBarDemoComponent {
   private readonly router = inject(Router);
   private readonly bar = viewChild(ActionBarComponent);
 
-  readonly active = signal('Accueil');
+  readonly active = signal('Home');
 
   readonly tabs: BillyActionBarTab[] = [
-    { icon: 'accueil', label: 'Accueil', isActive: () => this.active() === 'Accueil', go: () => this.pick('Accueil') },
-    { icon: 'achats', label: 'Achats', isActive: () => this.active() === 'Achats', go: () => this.pick('Achats') },
-    { icon: 'ventes', label: 'Ventes', isActive: () => this.active() === 'Ventes', go: () => this.pick('Ventes') },
+    { icon: 'home', label: 'Home', isActive: () => this.active() === 'Home', go: () => this.pick('Home') },
+    { icon: 'purchases', label: 'Purchases', isActive: () => this.active() === 'Purchases', go: () => this.pick('Purchases') },
+    { icon: 'sales', label: 'Sales', isActive: () => this.active() === 'Sales', go: () => this.pick('Sales') },
     { icon: 'clients', label: 'Clients', isActive: () => this.active() === 'Clients', go: () => this.pick('Clients') },
   ];
 
   private pick(label: string): void {
     this.active.set(label);
-    // Pas de navigation réelle : on redemande à la barre de recalculer le halo.
+    // No real navigation: just ask the bar to recompute the halo.
     this.bar()?.refreshNav(this.router.url);
-    this.toastr.info(`Navigation vers « ${label} » (simulée).`, 'Action-bar');
+    this.toastr.info(`Navigating to "${label}" (simulated).`, 'Action-bar');
   }
 
 }

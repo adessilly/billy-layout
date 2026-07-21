@@ -5,7 +5,6 @@ import { ClickOutsideDirective } from '../../core/click-outside/click-outside.di
 
 @Component({
   selector: 'billy-attachment-button',
-  standalone: true,
   imports: [CommonModule, AttachmentButtonListComponent, ClickOutsideDirective],
   templateUrl: './attachment-button.component.html',
   styleUrls: ['./attachment-button.component.scss']
@@ -35,7 +34,7 @@ export class AttachmentButtonComponent {
         }
       }
 
-      // Reset input pour permettre de sélectionner le même fichier à nouveau
+      // Reset the input so the same file can be selected again
       input.value = '';
     }
   }
@@ -69,12 +68,12 @@ export class AttachmentButtonComponent {
     const count = this.fileCount;
     if (count >= this.MAX_FILES) {
       const fileNames = this.files().map(f => f.name).join('\n');
-      return `Maximum de ${this.MAX_FILES} fichiers atteint\n\nFichiers joints :\n${fileNames}`;
+      return `Maximum of ${this.MAX_FILES} files reached\n\nAttached files:\n${fileNames}`;
     } else if (count > 0) {
       const fileNames = this.files().map(f => f.name).join('\n');
-      return `Joindre des fichiers PDF (max ${this.MAX_FILES})\n\nFichiers joints :\n${fileNames}`;
+      return `Attach PDF files (max ${this.MAX_FILES})\n\nAttached files:\n${fileNames}`;
     } else {
-      return `Joindre des fichiers PDF (max ${this.MAX_FILES})`;
+      return `Attach PDF files (max ${this.MAX_FILES})`;
     }
   }
 

@@ -1,11 +1,11 @@
-// Composant autonome : mêmes règles visuelles que la mixin billy-input,
-// inlinées ici (avec fallbacks) pour rester indépendant de l'application.
+// Standalone component: same visual rules as the billy-input mixin,
+// inlined here (with fallbacks) to stay independent of the application.
 
 :host {
   display: block;
 }
 
-// ── Champ ────────────────────────────────────────────────────────────────────
+// ── Field ────────────────────────────────────────────────────────────────────
 
 .dp {
   position: relative;
@@ -85,11 +85,11 @@
 
 .dp--open .dp-toggle { color: var(--billy-accent-strong, #0e97bb); }
 
-// ── Popover desktop (position fixed : échappe aux overflow parents) ──────────
+// ── Desktop popover (position: fixed — escapes overflow parents) ─────────────
 
 .dp-panel {
   position: fixed;
-  z-index: 2000; // au-dessus des side-panels (1051), sous les toasts (9000+)
+  z-index: 2000; // above the side-panels (1051), below the toasts (9000+)
   background: var(--billy-surface, #fff);
   border: 1px solid var(--billy-surface-border, #e5e7eb);
   border-radius: 14px;
@@ -129,7 +129,7 @@
   box-shadow: 0 -10px 40px rgba(17, 24, 39, 0.25);
   animation: dp-sheet-in 0.25s cubic-bezier(0.32, 0.72, 0.33, 1);
 
-  // poignée visuelle de bottom-sheet
+  // bottom-sheet visual handle
   &::before {
     content: '';
     display: block;

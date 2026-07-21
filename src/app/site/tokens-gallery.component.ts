@@ -6,17 +6,17 @@ interface TokenGroup {
 }
 
 /**
- * Nuancier vivant des tokens --billy-* : chaque pastille est peinte avec la
- * variable CSS elle-même — basculer le mode sombre depuis la topbar met le
- * nuancier à jour en direct.
+ * Living swatch book of the --billy-* tokens: each swatch is painted with the
+ * CSS variable itself — toggling dark mode from the topbar updates the
+ * swatches live.
  */
 @Component({
   selector: 'site-tokens-gallery',
   template: `
     <div class="tokens site-card">
       <div class="tokens-hint">
-        Nuancier vivant — activez le mode sombre depuis la topbar
-        <span class="tokens-hint-accent">pour voir les valeurs basculer</span>.
+        Living swatch book — enable dark mode from the topbar
+        <span class="tokens-hint-accent">to watch the values switch</span>.
       </div>
       <div class="tokens-groups">
         @for (group of groups; track group.title) {
@@ -98,9 +98,9 @@ export class TokensGalleryComponent {
     { title: 'Success', tokens: ['--billy-success', '--billy-success-strong', '--billy-success-soft', '--billy-success-soft-strong', '--billy-success-ring'] },
     { title: 'Warning', tokens: ['--billy-warning', '--billy-warning-strong', '--billy-warning-soft', '--billy-warning-soft-strong', '--billy-warning-ring'] },
     { title: 'Error', tokens: ['--billy-error', '--billy-error-strong', '--billy-error-soft', '--billy-error-soft-strong', '--billy-error-ring'] },
-    { title: 'Champs', tokens: ['--billy-input-bg', '--billy-input-border', '--billy-input-color', '--billy-input-disabled-bg'] },
+    { title: 'Fields', tokens: ['--billy-input-bg', '--billy-input-border', '--billy-input-color', '--billy-input-disabled-bg'] },
     { title: 'Surfaces', tokens: ['--billy-surface', '--billy-surface-border', '--billy-divider', '--billy-section-bg'] },
-    { title: 'Textes & états', tokens: ['--billy-text-soft', '--billy-text-muted', '--billy-danger', '--billy-focus-border'] },
+    { title: 'Text & states', tokens: ['--billy-text-soft', '--billy-text-muted', '--billy-danger', '--billy-focus-border'] },
   ];
 
 }

@@ -1,7 +1,7 @@
 <li class="billy-notifications">
 
   <button type="button" class="billy-notif-bell" [class.open]="open()" [class.ringing]="totalCount() > 0 && !open()"
-    (click)="toggle()" title="Notifications">
+    (click)="toggle()" [title]="i18n.strings().topbar.notifications">
     <billy-icon name="bell" [size]="20" [strokeWidth]="1.8" />
     @if (totalCount() > 0) {
       <span class="billy-notif-badge">{{ totalCount() }}</span>
@@ -10,10 +10,10 @@
 
   <div class="billy-notif-panel" [class.open]="open()">
 
-    <!-- Entête adaptatif -->
+    <!-- Adaptive header -->
     <div class="billy-notif-header">
       @if (activeCategory(); as active) {
-        <button type="button" class="billy-notif-back" (click)="back()" title="Retour">
+        <button type="button" class="billy-notif-back" (click)="back()" [title]="i18n.strings().notifications.back">
           <billy-icon name="chevron-left" [size]="18" [strokeWidth]="2" />
         </button>
         <span class="billy-notif-header-title">{{ active.label }}</span>
@@ -21,11 +21,11 @@
           <span class="billy-notif-header-badge">{{ active.count() }}</span>
         }
       } @else {
-        <span class="billy-notif-header-title">Notifications</span>
+        <span class="billy-notif-header-title">{{ i18n.strings().topbar.notifications }}</span>
       }
     </div>
 
-    <!-- Niveau 1 · catégories -->
+    <!-- Level 1 · categories -->
     @if (!activeCategory()) {
       <div class="billy-notif-level">
         @for (category of categories(); track category.id) {
@@ -43,17 +43,17 @@
         }
         <div class="billy-notif-footer">
           <billy-notif-action icon="sync" [spinning]="syncLoading()" (click)="syncAll()">
-            Synchroniser maintenant
+            {{ i18n.strings().notifications.syncNow }}
           </billy-notif-action>
         </div>
       </div>
     }
 
-    <!-- Niveau 2 · chaque catégorie (projetée par l'application) affiche sa
-         liste quand elle est ouverte. Les composants restent instanciés en
-         permanence : ils chargent leurs données et alimentent les compteurs
-         même panneau fermé. L'état (catégorie active, sync) leur est poussé
-         par l'effect du composant ; leurs sorties y sont abonnées. -->
+    <!-- Level 2 · each category (projected by the application) displays its
+         list when it is open. The components stay instantiated at all times:
+         they load their data and feed the counters even when the panel is
+         closed. The state (active category, sync) is pushed to them by the
+         component's effect; their outputs are subscribed there. -->
     <ng-content />
 
   </div>

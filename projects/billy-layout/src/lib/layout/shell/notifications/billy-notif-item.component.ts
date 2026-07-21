@@ -1,9 +1,9 @@
 import { Component, computed, input } from '@angular/core';
 
 /**
- * Ligne générique d'une liste de notifications : avatar à initiale, titre,
- * sous-titre, et colonne de droite (montant + statut). Le clic se gère sur
- * l'élément hôte, côté composant appelant.
+ * Generic row of a notification list: initial avatar, title, subtitle, and
+ * right-hand column (amount + status). The click is handled on the host
+ * element, by the calling component.
  */
 @Component({
   selector: 'billy-notif-item',
@@ -14,13 +14,13 @@ export class BillyNotifItemComponent {
 
   readonly accentBg = input.required<string>();
   readonly accentColor = input.required<string>();
-  /** Texte dont la première lettre sert d'initiale à l'avatar. */
+  /** Text whose first letter is used as the avatar's initial. */
   readonly initialSource = input<string | number | null | undefined>(null);
   readonly title = input.required<string>();
   readonly sub = input('');
   readonly amount = input<string | null>(null);
   readonly status = input('');
-  /** Couleur du statut ; par défaut la couleur d'accent de la catégorie. */
+  /** Status color; defaults to the category's accent color. */
   readonly statusColor = input<string | null>(null);
 
   readonly initial = computed(() =>

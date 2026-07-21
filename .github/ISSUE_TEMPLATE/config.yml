@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/adessilly/billy-layout/tree/main/projects/billy-layout/docs
+    about: One markdown page per component (API, examples, theming, pitfalls).

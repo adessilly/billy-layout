@@ -1,48 +1,48 @@
 import { Observable, Subject } from 'rxjs';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// BILLy — dialogue modal du design system (sans Bootstrap)
-// Coque de présentation : src/styles-dialog.scss (classes .billy-modal*).
+// BILLy — design system modal dialog (no Bootstrap)
+// Presentation shell: src/styles-dialog.scss (.billy-modal* classes).
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Posée sur la racine .billy-modal à l'ouverture : pilote opacité + transforms. */
+/** Set on the .billy-modal root when opening: drives opacity + transforms. */
 const OPEN_CLASS = 'is-open';
 
-/** Posée sur <body> tant qu'au moins un dialogue est ouvert (verrou de scroll). */
+/** Set on <body> while at least one dialog is open (scroll lock). */
 const BODY_OPEN_CLASS = 'billy-dialog-open';
 
-/** Ferme le dialogue au clic, où qu'il soit dans l'arbre (ex-`data-bs-dismiss`). */
+/** Closes the dialog on click, wherever it sits in the tree (ex-`data-bs-dismiss`). */
 const DISMISS_SELECTOR = '[data-billy-dismiss]';
 
 /**
- * Filet de sécurité : `transitionend` n'arrive jamais si la transition ne part
- * pas (onglet en arrière-plan, prefers-reduced-motion, transition surchargée à
- * `none`). Sans ce délai le dialogue resterait affiché et `listenClose()` muet.
+ * Safety net: `transitionend` never fires if the transition does not start
+ * (background tab, prefers-reduced-motion, transition overridden to `none`).
+ * Without this delay the dialog would stay visible and `listenClose()` silent.
  */
 const TRANSITION_FALLBACK_MS = 400;
 
-/** Dialogues ouverts, du plus ancien au plus récent : seul le dernier capte Échap. */
+/** Open dialogs, oldest to newest: only the last one captures Escape. */
 const openStack: Dialog[] = [];
 
 type DialogState = 'idle' | 'opening' | 'open' | 'closing' | 'closed';
 
 /**
- * Dialogue modal, sans dépendance à Bootstrap.
+ * Modal dialog, with no dependency on Bootstrap.
  *
- * Reprend à l'identique le contrat de l'ancienne coque `bootstrap.Modal` :
- * `show()` / `hide()`, et deux évènements *terminaux* — `listenShow()` et
- * `listenClose()` — émis une fois la transition finie. Ce différé est essentiel :
- * les appelants retirent l'élément du <body> et enchaînent la navigation dans
- * `listenClose()`, ce qui casserait l'animation s'ils étaient notifiés plus tôt.
+ * Reproduces the contract of the old `bootstrap.Modal` shell as-is:
+ * `show()` / `hide()`, and two *terminal* events — `listenShow()` and
+ * `listenClose()` — emitted once the transition has finished. This deferral is
+ * essential: callers remove the element from the <body> and chain navigation in
+ * `listenClose()`, which would break the animation if they were notified earlier.
  *
- * Structure attendue côté template (voir src/styles-dialog.scss) :
+ * Expected template structure (see src/styles-dialog.scss):
  *
- *   <div class="billy-modal" #ref>          ← l'élément passé au constructeur
+ *   <div class="billy-modal" #ref>          ← the element passed to the constructor
  *     <div class="billy-modal-dialog">
  *       <div class="billy-modal-content"> … </div>
  *
- * Ferment le dialogue : la touche Échap, un clic sur le fond, et tout élément
- * portant l'attribut `data-billy-dismiss`.
+ * The dialog is closed by: the Escape key, a click on the backdrop, and any
+ * element carrying the `data-billy-dismiss` attribute.
  */
 export class Dialog {
 
@@ -51,10 +51,10 @@ export class Dialog {
 
   private state: DialogState = 'idle';
 
-  /** Annule l'attente de transition en cours (une fermeture peut couper l'ouverture). */
+  /** Cancels the pending transition wait (a close can cut an opening short). */
   private cancelPending: (() => void) | null = null;
 
-  /** Un glisser démarré dans le dialogue et relâché sur le fond ne doit pas fermer. */
+  /** A drag started inside the dialog and released on the backdrop must not close it. */
   private pressedOnBackdrop = false;
 
   constructor(private readonly host: HTMLElement) {}
@@ -62,10 +62,10 @@ export class Dialog {
   show(): void {
     if (this.state !== 'idle') { return; }
 
-    // Réouverture sur le même élément (app-ai-extract-dialog en enchaîne) :
-    // l'instance précédente resterait dans la pile avec ses écouteurs. On la
-    // démonte en silence — la notifier ferait retirer du <body> l'élément que
-    // l'on s'apprête justement à réafficher.
+    // Reopening on the same element (app-ai-extract-dialog chains several):
+    // the previous instance would linger in the stack with its listeners. Tear
+    // it down silently — notifying it would remove from the <body> the very
+    // element we are about to show again.
     openStack.filter(dialog => dialog.host === this.host)
              .forEach(dialog => dialog.teardown());
 
@@ -79,7 +79,7 @@ export class Dialog {
 
     this.host.setAttribute('aria-modal', 'true');
     this.host.style.display = 'block';
-    void this.host.offsetHeight; // reflow : fige l'état initial, sinon pas de transition
+    void this.host.offsetHeight; // reflow: pins the initial state, otherwise no transition
     this.host.classList.add(OPEN_CLASS);
 
     this.afterTransition(() => {
@@ -102,26 +102,26 @@ export class Dialog {
     });
   }
 
-  /** Émet une fois, quand le dialogue est entièrement ouvert. */
+  /** Emits once, when the dialog is fully open. */
   listenShow(): Observable<void> {
     return this.shown.asObservable();
   }
 
-  /** Émet une fois, quand le dialogue est entièrement fermé (transition comprise). */
+  /** Emits once, when the dialog is fully closed (transition included). */
   listenClose(): Observable<void> {
     return this.hidden.asObservable();
   }
 
   /**
-   * Exécute `done` à la fin de la transition d'opacité de la racine, avec un
-   * délai de repli si elle ne se déclenche pas.
+   * Runs `done` at the end of the root's opacity transition, with a fallback
+   * delay in case it never fires.
    */
   private afterTransition(done: () => void): void {
     this.cancelPending?.();
 
     const onTransitionEnd = (event: TransitionEvent): void => {
-      // Les transitions des enfants (transform du dialogue, animations SVG)
-      // remontent jusqu'ici : ne réagir qu'à l'opacité de la racine.
+      // Children's transitions (dialog transform, SVG animations) bubble up
+      // here: only react to the root's opacity.
       if (event.target === this.host && event.propertyName === 'opacity') {
         finish();
       }
@@ -144,7 +144,7 @@ export class Dialog {
     this.host.addEventListener('transitionend', onTransitionEnd);
   }
 
-  /** Remet l'élément et le <body> dans leur état de repos. N'émet rien. */
+  /** Returns the element and the <body> to their resting state. Emits nothing. */
   private teardown(): void {
     this.cancelPending?.();
 
@@ -159,8 +159,8 @@ export class Dialog {
     const index = openStack.indexOf(this);
     if (index !== -1) { openStack.splice(index, 1); }
 
-    // Un dialogue peut en ouvrir un autre (suppression demandée depuis un
-    // formulaire) : ne rendre le scroll qu'une fois le dernier fermé.
+    // A dialog can open another one (deletion requested from a form):
+    // only restore scrolling once the last one has closed.
     if (openStack.length === 0) {
       document.body.classList.remove(BODY_OPEN_CLASS);
     }
@@ -170,7 +170,7 @@ export class Dialog {
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
     if (event.key !== 'Escape') { return; }
-    // Dialogues empilés : seul celui du dessus répond.
+    // Stacked dialogs: only the topmost one responds.
     if (openStack[openStack.length - 1] !== this) { return; }
 
     event.preventDefault();
@@ -189,8 +189,8 @@ export class Dialog {
       return;
     }
 
-    // Le fond, c'est la racine elle-même : un clic qui l'atteint a traversé
-    // .billy-modal-dialog (pointer-events: none) sans toucher le contenu.
+    // The backdrop is the root itself: a click that reaches it went through
+    // .billy-modal-dialog (pointer-events: none) without hitting the content.
     if (event.target === this.host && this.pressedOnBackdrop) {
       this.hide();
     }

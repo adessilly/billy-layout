@@ -1,53 +1,95 @@
-# billy-layout-project
+# billy-layout
 
-Workspace de la librairie **billy-layout** (design system + layout BILLy) et de
-son **site vitrine** : un site Angular qui documente et démontre chaque
-composant — en étant lui-même construit avec la librairie (shell, tokens,
-cartes, toasts…).
+[![npm version](https://img.shields.io/npm/v/billy-layout)](https://www.npmjs.com/package/billy-layout)
+[![CI](https://github.com/adessilly/billy-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/adessilly/billy-layout/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
 
-## Arborescence
+**An Angular design system and application shell, extracted from a real-world
+production app** (BILLy, an invoicing application). Standalone components,
+signals everywhere, SCSS design tokens with first-class dark mode, built-in
+i18n (English/French, runtime-switchable) — and documentation that ships
+*inside* the npm package, ready to be consumed by AI coding assistants.
 
-| Dossier | Contenu |
+> 🤖 **AI-ready in one line.** The published package embeds its full docs and a
+> curated LLM context. Add this to your app's `CLAUDE.md` and your assistant
+> knows the whole design system:
+>
+> ```markdown
+> @node_modules/billy-layout/docs/claude.md
+> ```
+
+## What's inside
+
+| Category | Components |
 |---|---|
-| `projects/billy-layout/` | la librairie (source `src/lib/`, docs markdown `docs/`, buildée par ng-packagr) |
-| `src/` | le site vitrine (`ng serve`) : pages, démos live, viewer markdown |
-| `dist/billy-layout/` | le paquet publiable après `npm run build:lib` |
+| `layout/` | application shell: topbar, sidebar, notification center, mobile action bar |
+| `inputs/` | CVA form fields: datepicker, dropdown, VAT/IBAN/email code fields, emails input, password with strength meter, button switch, attachment button |
+| `forms/` | form structure: input lines, consult lines, save bar, side panel |
+| `buttons/` | button, add tile, upload tile |
+| `dialogs/` | dependency-free `Dialog` engine, dialog form, delete confirmation |
+| `feedback/` | toastr, snackbar, loaders, animated checkmarks, empty states |
+| `display/` | panels, consult cards, page header, header action bar, tabs, filter toggles |
+| `viewers/` | PDF / image / XML file viewers |
+| `styles/` | SCSS design tokens (`--billy-*`, light + dark), mixins, reboot |
 
-## Démarrer
+Design-system rules for assembling screens (page-level actions, list structure,
+save bars, empty states…) are documented in
+[`docs/ux-guidelines.md`](projects/billy-layout/docs/ux-guidelines.md), and each
+component has its own markdown page under
+[`projects/billy-layout/docs/`](projects/billy-layout/docs/README.md) — API,
+examples, theming, pitfalls.
+
+## Quick start
+
+```bash
+npm install billy-layout
+```
+
+```html
+<billy-shell>
+  <billy-notifications shell-notifications />
+  <router-outlet />
+</billy-shell>
+```
+
+See the [library README](projects/billy-layout/README.md) for integration
+prerequisites (fonts, tokens, `BILLY_*` providers) and the SCSS setup.
+
+## Showcase site
+
+This repository is an Angular workspace containing the library **and** its
+showcase site — a documentation app built with the library itself (shell,
+tokens, cards, toasts…): one page per component with a **live demo** tab and a
+**docs** tab, a UX guidelines page, and a live design-token gallery with dark
+mode.
 
 ```bash
 npm install
-npm start          # site vitrine sur http://localhost:4200
+npm start          # showcase site on http://localhost:4201
 ```
 
-Le site compile la librairie **par les sources** (`tsconfig.json` mappe
-`billy-layout` sur `projects/billy-layout/src/public-api.ts`) : pas besoin de
-builder la lib pour développer.
+The site compiles the library from sources, so it is also the development
+environment: change a component, see it live.
 
-## Le site vitrine
+| Folder | Content |
+|---|---|
+| `projects/billy-layout/` | the library (source `src/lib/`, markdown docs `docs/`, built by ng-packagr) |
+| `src/` | the showcase site: pages, live demos, markdown viewer |
+| `dist/billy-layout/` | the publishable package after `npm run build:lib` |
 
-- **Accueil** : hero animé + les 9 catégories de composants.
-- **Une page par fiche** (`/c/<catégorie>/<slug>`) : onglets **Démo** (composant
-  vivant, interactif) et **Documentation** (la fiche `docs/*.md` rendue).
-- **Guidelines UX** (`/guidelines`) et **Styles & tokens** (`/styles`, avec
-  nuancier vivant des variables `--billy-*` — testez le dark mode de la topbar).
-- La topbar embarque une **recherche de fiches**, la **cloche de notifications**
-  (catégorie de démo) et le menu compte — tous composants de la lib.
-
-Les fiches markdown de `projects/billy-layout/docs/` sont servies en assets
-(`/docs/**`) et les liens relatifs entre fiches sont réécrits vers les routes
-du site (voir `src/app/site/markdown/markdown-viewer.component.ts`).
-
-Ajouter une démo : créer le composant dans `src/app/demos/<catégorie>-demos.ts`
-et l'enregistrer dans `src/app/demos/demo-registry.ts` (la pastille « démo
-live » et l'onglet apparaissent automatiquement).
-
-## Builder & publier la librairie
+## Development
 
 ```bash
-npm run build:lib             # ng-packagr → dist/billy-layout (FESM + DTS + styles/ + docs/)
-cd dist/billy-layout && npm publish
+npm start              # showcase site (compiles the lib from sources)
+npm run test:lib       # unit tests (vitest)
+npm run build:lib      # ng-packagr → dist/billy-layout (FESM + DTS + styles/ + docs/)
 ```
 
-Voir `projects/billy-layout/README.md` pour les prérequis d'intégration côté
-application (fonts, tokens, providers `BILLY_*`).
+## Contributing & license
+
+Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). A component
+change is only *done* when its docs page and live demo are in sync.
+
+MIT © [Adrien Dessilly](LICENSE). Migrating from the pre-1.0 French API? See
+[breaking-changes.md](breaking-changes.md).

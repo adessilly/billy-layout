@@ -1,5 +1,6 @@
 import { Component, DestroyRef, ElementRef, computed, forwardRef, inject, input, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { DatepickerCalendarComponent } from './datepicker-calendar.component';
 
 interface PanelPosition {
@@ -10,17 +11,16 @@ interface PanelPosition {
 }
 
 /**
- * Champ date autonome (sans bootstrap ni dépendance applicative) :
- * - ControlValueAccessor → [ngModel] / formControlName ; le modèle est une
- *   chaîne 'yyyy-MM-dd' (ou null si vide/invalide), comme l'ancien
- *   app-input-datepicker basé sur bsDatepicker.
- * - saisie manuelle jj/mm/aaaa + calendrier (billy-datepicker-calendar).
- * - desktop : popover ancré en position fixed (échappe aux overflow parents) ;
- *   mobile ≤640px : feuille plein écran en bas avec fond assombri.
+ * Standalone date field (no bootstrap, no application dependency):
+ * - ControlValueAccessor → [ngModel] / formControlName; the model is a
+ *   'yyyy-MM-dd' string (or null when empty/invalid), like the legacy
+ *   app-input-datepicker based on bsDatepicker.
+ * - manual dd/mm/yyyy input + calendar (billy-datepicker-calendar).
+ * - desktop: popover anchored in position: fixed (escapes overflow parents);
+ *   mobile ≤640px: full-width bottom sheet with a dimmed backdrop.
  */
 @Component({
   selector: 'billy-datepicker',
-  standalone: true,
   imports: [DatepickerCalendarComponent],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -32,14 +32,20 @@ interface PanelPosition {
 })
 export class DatepickerComponent implements ControlValueAccessor {
 
-  readonly invalid = input(false);
-  readonly placeholder = input('jj/mm/aaaa');
-  readonly ariaLabel = input('Date');
-  readonly locale = input('fr-FR');
+  protected readonly i18n = inject(BillyI18nService);
 
-  /** Date sélectionnée (modèle interne, à minuit locale). */
+  readonly invalid = input(false);
+  readonly placeholder = input('dd/mm/yyyy');
+  readonly ariaLabel = input<string>();
+  readonly locale = input<string>();
+
+  /** The input always wins; otherwise the dictionary of the active locale. */
+  protected readonly ariaLabelText = computed(() => this.ariaLabel() ?? this.i18n.strings().datepicker.ariaLabel);
+  protected readonly localeText = computed(() => this.locale() ?? this.i18n.strings().datepicker.dateLocale);
+
+  /** Selected date (internal model, at local midnight). */
   readonly value = signal<Date | null>(null);
-  /** Texte affiché dans le champ (peut être une saisie partielle). */
+  /** Text shown in the field (may be a partial entry). */
   readonly text = signal('');
   readonly isOpen = signal(false);
   readonly isMobile = signal(false);
@@ -58,7 +64,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     inject(DestroyRef).onDestroy(() => this.removeGlobalListeners());
   }
 
-  // ── Saisie manuelle ─────────────────────────────────────────────────────────
+  // ── Manual entry ────────────────────────────────────────────────────────────
 
   onInput(raw: string): void {
     this.text.set(raw);
@@ -83,7 +89,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
   }
 
-  // ── Ouverture / fermeture du calendrier ─────────────────────────────────────
+  // ── Opening / closing the calendar ──────────────────────────────────────────
 
   toggle(): void {
     this.isOpen() ? this.close(true) : this.open();
@@ -125,7 +131,7 @@ export class DatepickerComponent implements ControlValueAccessor {
       if (this.isMobile()) {
         this.trapFocus(event);
       } else {
-        // popover desktop : Tab rend le focus au champ et referme
+        // desktop popover: Tab returns focus to the field and closes
         event.preventDefault();
         this.close(true);
       }
@@ -144,9 +150,9 @@ export class DatepickerComponent implements ControlValueAccessor {
     window.removeEventListener('resize', this.onViewportChange);
   }
 
-  // ── Positionnement du popover (desktop) ─────────────────────────────────────
+  // ── Popover positioning (desktop) ───────────────────────────────────────────
 
-  /** Le panneau est en position fixed : on suit le champ au scroll/resize. */
+  /** The panel is position: fixed — we follow the field on scroll/resize. */
   private readonly onViewportChange = () => this.updatePanelPosition();
 
   private updatePanelPosition(): void {
@@ -164,7 +170,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     });
   }
 
-  // ── Feuille mobile : piège à focus ──────────────────────────────────────────
+  // ── Mobile sheet: focus trap ────────────────────────────────────────────────
 
   private trapFocus(event: KeyboardEvent): void {
     const panel = this.panelEl()?.nativeElement;
@@ -184,9 +190,9 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
   }
 
-  // ── Conversion texte ↔ date ─────────────────────────────────────────────────
+  // ── Text ↔ date conversion ──────────────────────────────────────────────────
 
-  /** Accepte jj/mm/aaaa (séparateurs / - .), l'année sur 2 chiffres = 20xx. */
+  /** Accepts dd/mm/yyyy (separators / - .), a 2-digit year meaning 20xx. */
   private parseText(raw: string): Date | null {
     const match = raw.trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/);
     if (!match) { return null; }
@@ -194,7 +200,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     return this.buildDate(year, +match[2], +match[1]);
   }
 
-  /** Construit une date locale en refusant les débordements (31/02…). */
+  /** Builds a local date, rejecting overflows (31/02…). */
   private buildDate(year: number, month: number, day: number): Date | null {
     const date = new Date(year, month - 1, day);
     const valid = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
@@ -221,7 +227,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.text.set(parsed ? this.formatDate(parsed) : '');
   }
 
-  /** Le parent fournit 'yyyy-MM-dd' (éventuellement suivi d'une heure) ou une Date. */
+  /** The parent provides 'yyyy-MM-dd' (possibly followed by a time) or a Date. */
   private parseModel(v: string | Date | null): Date | null {
     if (v instanceof Date && !isNaN(v.getTime())) {
       return new Date(v.getFullYear(), v.getMonth(), v.getDate());

@@ -12,7 +12,7 @@
 
   <div class="viewer-actions">
     <ng-content></ng-content>
-    <button type="button" class="viewer-btn viewer-btn--close" title="Fermer" (click)="hide()">
+    <button type="button" class="viewer-btn viewer-btn--close" [title]="i18n.strings().viewer.close" (click)="hide()">
       <i class="fa-solid fa-times"></i>
     </button>
   </div>

@@ -6,13 +6,13 @@
 
   <billy-code-glyph class="cfd-glyph" kind="email"></billy-code-glyph>
 
-  <!-- type="text" et non "email" : le socle place le curseur avec
-       setSelectionRange(), que la norme n'autorise pas sur un champ email
-       (il lève InvalidStateError, et la saisie serait perdue). `inputmode`
-       ramène le clavier « @ » sur mobile, qui est ce qu'on cherchait. -->
+  <!-- type="text" and not "email": the base places the caret with
+       setSelectionRange(), which the spec does not allow on an email field
+       (it throws InvalidStateError, and the input would be lost). `inputmode`
+       brings back the "@" keyboard on mobile, which is what we were after. -->
   <input #codeInput class="cfd-input cfd-input--text" type="text" inputmode="email"
     [id]="inputId() || uid"
-    [placeholder]="placeholder() || 'nom@exemple.be'"
+    [placeholder]="placeholder() || 'name@example.com'"
     [disabled]="isDisabled()"
     [attr.aria-invalid]="showError()"
     [attr.aria-describedby]="uid + '-msg'"
@@ -27,17 +27,17 @@
 </div>
 
 <p class="cfd-meta" [id]="uid + '-msg'" role="status">
-  <!-- Pas de pastille de domaine sur une adresse en erreur : « gmail.com »
-       affiché à côté de « il y a deux @ » brouille le message. -->
+  <!-- No domain badge on an address in error: "gmail.com" displayed next to
+       "there are two @s" muddles the message. -->
   @if (status() !== 'invalid' && domain(); as host) {
     <span class="cfd-country">{{ host }}</span>
   }
 
   @if (suggestion(); as corrected) {
-    <!-- La correction est cliquable : la lire sans pouvoir l'appliquer serait
-         une invitation à retaper l'adresse à la main. -->
+    <!-- The correction is clickable: reading it without being able to apply it
+         would be an invitation to retype the address by hand. -->
     <button type="button" class="cfd-suggest" (click)="applySuggestion()">
-      Vouliez-vous dire <strong>{{ corrected }}</strong> ?
+      Did you mean <strong>{{ corrected }}</strong>?
     </button>
   } @else {
     <span class="cfd-msg"

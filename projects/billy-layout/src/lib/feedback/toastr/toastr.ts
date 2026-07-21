@@ -1,23 +1,23 @@
 export type ToastrType = 'success' | 'error' | 'warning' | 'info';
 
-/** Message applicatif poussé par les appelants (API historique de pushMessage). */
+/** Application message pushed by callers (historical pushMessage API). */
 export interface Toastr {
-  titre: string;
+  title: string;
   message: string;
-  /** Icône font-awesome optionnelle ; à défaut, l'icône du type est utilisée. */
-  icone?: string;
+  /** Optional font-awesome icon; defaults to the type's icon. */
+  icon?: string;
   type?: ToastrType;
-  /** @deprecated utiliser `type: 'error'` */
+  /** @deprecated use `type: 'error'` */
   error?: boolean;
 }
 
-/** Toast concret dans la pile affichée. */
+/** Concrete toast in the displayed stack. */
 export interface ToastrInstance {
   id: number;
   type: ToastrType;
-  titre: string;
+  title: string;
   message: string;
-  icone: string | null;
-  /** Durée avant fermeture automatique, en millisecondes. */
+  icon: string | null;
+  /** Delay before automatic dismissal, in milliseconds. */
   duration: number;
 }

@@ -5,42 +5,42 @@ import { ControlValueAccessor } from '@angular/forms';
 import { CodeInfo, isAlnum } from '../../core/utils/code-format';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Socle des champs « code » (n° TVA, IBAN) : un champ masqué.
+// Base of the "code" fields (VAT number, IBAN): a masked field.
 //
-// Le modèle ne voit que la valeur canonique (« BE0690614660 »), le DOM ne
-// montre que la valeur formatée (« BE 0690.614.660 »). Entre les deux, à chaque
-// frappe : on nettoie (les caractères non autorisés n'entrent jamais), on
-// reformate, et on replace le curseur là où il était — en le comptant en
-// caractères significatifs, pas en position, sinon les séparateurs le
-// décaleraient.
+// The model only sees the canonical value ("BE0690614660"), the DOM only shows
+// the formatted value ("BE 0690.614.660"). Between the two, on every
+// keystroke: we sanitize (disallowed characters never get in), reformat, and
+// put the caret back where it was — counting it in significant characters, not
+// in position, otherwise the separators would shift it.
 //
-// La valeur du DOM est pilotée à la main plutôt que par un binding [value] :
-// réécrire l'input à chaque frappe renverrait le curseur à la fin.
+// The DOM value is driven by hand rather than through a [value] binding:
+// rewriting the input on every keystroke would send the caret to the end.
 //
-// ControlValueAccessor → compatible [ngModel], formControlName et la directive
-// signal-forms [formField].
+// ControlValueAccessor → compatible with [ngModel], formControlName and the
+// signal-forms [formField] directive.
 // ═══════════════════════════════════════════════════════════════════════════
 
 @Directive()
 export abstract class CodeFieldBase implements ControlValueAccessor {
 
-  /** id posé sur l'`<input>` interne, pour qu'un `<label for>` externe le vise. */
+  /** id set on the inner `<input>`, so an external `<label for>` can target it. */
   readonly inputId = input('');
   readonly placeholder = input('');
-  /** Texte affiché sous le champ tant que rien n'est saisi. */
+  /** Text shown below the field as long as nothing is typed. */
   readonly hint = input('');
   /**
-   * Désactivation statique, en plus de celle portée par le formulaire.
+   * Static disabling, on top of the one carried by the form.
    *
-   * Volontairement pas nommée `disabled` : signal-forms réserve ce nom et écrit
-   * l'état du champ dans l'input `disabled` de l'hôte *après* les bindings du
-   * template — un `disabled` statique serait donc écrasé par le formulaire.
+   * Deliberately not named `disabled`: signal-forms reserves that name and
+   * writes the field's state into the host's `disabled` input *after* the
+   * template bindings — a static `disabled` would thus be overwritten by the
+   * form.
    */
   readonly forceDisabled = input(false, { transform: booleanAttribute });
 
-  /** Valeur canonique, celle qui part au backend. */
+  /** Canonical value, the one sent to the backend. */
   readonly value = signal('');
-  /** Valeur affichée, avec ses séparateurs. */
+  /** Displayed value, with its separators. */
   readonly display = signal('');
 
   readonly focused = signal(false);
@@ -51,16 +51,16 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
 
   protected readonly inputRef = viewChild<ElementRef<HTMLInputElement>>('codeInput');
 
-  /** Diagnostic du code (état, pays, message, progression) — fourni par le champ concret. */
+  /** Diagnosis of the code (status, country, message, progress) — provided by the concrete field. */
   abstract readonly info: () => CodeInfo;
 
   readonly status = computed(() => this.info().status);
   readonly progress = computed(() => this.info().progress);
 
   /**
-   * La bordure ne rougit qu'une fois le champ quitté : pendant la frappe, un
-   * numéro incomplet n'est pas une erreur. La pastille d'état, elle, suit la
-   * saisie en direct.
+   * The border only turns red once the field has been left: while typing, an
+   * incomplete number is not an error. The status badge, however, follows the
+   * input live.
    */
   readonly showError = computed(() => this.touched() && this.status() === 'invalid');
 
@@ -76,9 +76,9 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
   private onTouchedCallback: () => void = () => {};
 
   constructor() {
-    // Le champ n'est réécrit que lorsque le DOM diverge du modèle (chargement,
-    // reset). Pendant la frappe, il est déjà à jour : on n'y touche pas, donc
-    // le curseur ne bouge pas.
+    // The field is only rewritten when the DOM diverges from the model (load,
+    // reset). While typing, it is already up to date: we leave it alone, so
+    // the caret does not move.
     effect(() => {
       const element = this.inputRef()?.nativeElement;
       const text = this.display();
@@ -88,22 +88,22 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
     });
   }
 
-  /** Forme canonique d'une saisie : tout caractère non autorisé disparaît. */
+  /** Canonical form of an input: every disallowed character disappears. */
   protected abstract sanitize(raw: string): string;
-  /** Rendu à plat d'une valeur canonique — le masque du champ. */
+  /** Flat rendering of a canonical value — the field's mask. */
   protected abstract formatText(value: string): string;
-  /** Dernières retouches à la sortie du champ (préfixe pays, zéro de tête…). */
+  /** Final touches when leaving the field (country prefix, leading zero…). */
   protected abstract normalize(value: string): string;
 
   /**
-   * Caractère porteur d'information, par opposition au liant que le masque pose
-   * lui-même (points, espaces). C'est cette frontière qui fait le curseur : on
-   * le repère au nombre de caractères significatifs qui le précèdent, jamais à
-   * sa position, que les séparateurs décalent.
+   * Character that carries information, as opposed to the glue the mask itself
+   * lays down (dots, spaces). That boundary is what drives the caret: we track
+   * it by the number of significant characters before it, never by its
+   * position, which the separators shift.
    *
-   * Par défaut : alphanumérique — le cas des codes (TVA, IBAN). Un champ sans
-   * masque (email) élargit la définition, et les branches « effacer par-dessus
-   * un séparateur » ci-dessous ne se déclenchent alors jamais.
+   * Default: alphanumeric — the case of codes (VAT, IBAN). A field without a
+   * mask (email) widens the definition, and the "delete across a separator"
+   * branches below then never trigger.
    */
   protected isSignificant(char: string): boolean {
     return isAlnum(char);
@@ -135,13 +135,13 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
   }
 
   /**
-   * Effacement au contact d'un séparateur. Sans ça, la touche supprimerait un
-   * point que le masque remettrait aussitôt : rien ne disparaîtrait, et le
-   * curseur sauterait. On efface donc le caractère significatif que l'utilisateur
-   * visait, de l'autre côté du séparateur.
+   * Deletion against a separator. Without this, the key would delete a dot
+   * that the mask would immediately put back: nothing would disappear, and the
+   * caret would jump. So we delete the significant character the user was
+   * aiming at, on the other side of the separator.
    *
-   * Ne concerne que le curseur seul : une sélection s'efface d'elle-même, et
-   * `onInput` reformatera le reste.
+   * Only applies to a lone caret: a selection deletes itself, and `onInput`
+   * will reformat the rest.
    */
   onKeydown(event: KeyboardEvent): void {
     const element = this.inputRef()?.nativeElement;
@@ -151,8 +151,8 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
     const del = event.key === 'Delete';
     if (!backspace && !del) { return; }
 
-    // Suppression de mot / de ligne (Ctrl, Alt, Cmd) : au navigateur de jouer,
-    // `onInput` reformatera ce qu'il en reste.
+    // Word / line deletion (Ctrl, Alt, Cmd): let the browser play,
+    // `onInput` will reformat what remains.
     if (event.ctrlKey || event.altKey || event.metaKey) { return; }
 
     const caret = element.selectionStart ?? 0;
@@ -193,8 +193,8 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
     this.focused.set(false);
     this.touched.set(true);
 
-    // `normalize` peut allonger la valeur (préfixe pays) : on repasse par
-    // `sanitize` pour que le modèle ne sorte jamais des bornes du champ.
+    // `normalize` may lengthen the value (country prefix): we run it through
+    // `sanitize` again so the model never leaves the field's bounds.
     const value = this.sanitize(this.normalize(this.value()));
     this.display.set(this.formatText(value));
     this.setValue(value);
@@ -202,7 +202,7 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
     this.onTouchedCallback();
   }
 
-  /** Position du curseur juste après le `count`-ième caractère significatif. */
+  /** Caret position right after the `count`-th significant character. */
   private caretAfter(text: string, count: number): [number, number] {
     let position = 0;
     let seen = 0;
@@ -216,9 +216,9 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
   }
 
   /**
-   * Écrit une valeur dans le champ comme si elle avait été saisie — le DOM suit
-   * par l'effet ci-dessus. Sert aux corrections proposées par le champ lui-même
-   * (ex. la faute de frappe d'un domaine email).
+   * Writes a value into the field as if it had been typed — the DOM follows
+   * through the effect above. Used for corrections offered by the field itself
+   * (e.g. the typo in an email domain).
    */
   protected setFieldValue(raw: string): void {
     const value = this.sanitize(raw);
@@ -240,9 +240,9 @@ export abstract class CodeFieldBase implements ControlValueAccessor {
     this.value.set(clean);
     this.display.set(this.formatText(clean));
 
-    // Valeur « sale » venue du backend : on la renvoie nettoyée au modèle, en
-    // différé — écrire pendant que le formulaire écrit lui-même le ferait
-    // boucler. Au tour suivant, clean === raw : le cycle s'arrête là.
+    // "Dirty" value coming from the backend: we hand it back cleaned to the
+    // model, deferred — writing while the form is itself writing would loop.
+    // On the next round, clean === raw: the cycle stops there.
     if (clean !== raw) {
       queueMicrotask(() => this.onChangeCallback(clean));
     }

@@ -1,67 +1,69 @@
-# billy-button-ajout — ButtonAjoutComponent
+# billy-add-button — AddButtonComponent
 
-> Catégorie `buttons` · source `projects/billy-layout/src/lib/buttons/button-ajout/` · standalone component
+> Category `buttons` · source `projects/billy-layout/src/lib/buttons/add-button/` · standalone component
 
-## Rôle
+## Purpose
 
-Tuile d'action « ajouter » : pastille d'icône ronde + titre + sous-titre optionnel, en style contour bleu accent (#23b7e5). C'est le bouton d'entrée des créations rapides, pensé pour vivre dans une grille d'actions aux côtés d'`billy-button-upload` (même anatomie de tuile). Utilisé dans `src/app/auth/pages/home/home-actions/home-actions.component.html` (« Nouvel achat », « Nouvelle vente »), `src/app/auth/pages/dashboard/dashboard-list-achat/dashboard-list-achat.component.html` et `src/app/auth/pages/dashboard/dashboard-list-vente/dashboard-list-vente.component.html`.
+"Add" action tile: round icon badge + title + optional subtitle, styled as an accent-blue outline (#23b7e5). It is the entry-point button for quick creations, designed to live in an action grid next to `billy-upload-button` (same tile anatomy). Used in `src/app/auth/pages/home/home-actions/home-actions.component.html` ("New purchase", "New sale"), `src/app/auth/pages/dashboard/dashboard-list-achat/dashboard-list-achat.component.html` and `src/app/auth/pages/dashboard/dashboard-list-vente/dashboard-list-vente.component.html`.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
-import { ButtonAjoutComponent } from 'billy-layout';
+import { AddButtonComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-button-ajout>`.
+Selector: `<billy-add-button>`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string` | `'Ajouter'` | Titre de la tuile. |
-| `subtitle` | `string` | `''` | Sous-titre discret sous le titre ; omis si vide. |
-| `icon` | `string` | `'fa-solid fa-pen-to-square'` | Classes Font Awesome de l'icône dans la pastille ronde. |
+| `label` | `string` | i18n `addButton.label` (EN `'Add'`) | Tile title. When the input is not set, the default comes from the i18n dictionary. |
+| `subtitle` | `string` | `''` | Discreet subtitle under the title; omitted when empty. |
+| `icon` | `string` | `'fa-solid fa-pen-to-square'` | Font Awesome classes for the icon in the round badge. |
+
+Built-in strings are localizable — see [i18n](../core/i18n.md).
 
 ### Outputs
 
 | Output | Payload | Description |
 |---|---|---|
-| `clicked` | `MouseEvent` | Clic sur la tuile. L'événement d'origine a reçu `stopPropagation()` avant émission. |
+| `clicked` | `MouseEvent` | Click on the tile. The original event has received `stopPropagation()` before emission. |
 
-### Méthodes publiques
+### Public methods
 
-`onClick(event: MouseEvent)` : handler du template (`stopPropagation` puis émission de `clicked`).
+`onClick(event: MouseEvent)`: template handler (`stopPropagation` then emission of `clicked`).
 
 ## Slots / projection
 
-Aucun — tout passe par les inputs.
+None — everything goes through the inputs.
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/auth/pages/home/home-actions/home-actions.component.html` :
+Real usage in `src/app/auth/pages/home/home-actions/home-actions.component.html`:
 
 ```html
-<billy-button-ajout
+<billy-add-button
   class="action-item"
-  label="Nouvel achat"
-  subtitle="Saisie manuelle"
+  label="New purchase"
+  subtitle="Manual entry"
   icon="fa-solid fa-download"
-  (clicked)="addAchat($event)">
-</billy-button-ajout>
+  (clicked)="addPurchase($event)">
+</billy-add-button>
 ```
 
 ## Styles & theming
 
-- `:host { display: block; flex: 1; min-width: 0 }` : la tuile se partage équitablement la largeur d'un conteneur flex (grille d'actions).
-- Style contour : transparent, bord 2px et texte `#23b7e5` (accent codé en dur, pas de token `--billy-*`) ; pastille d'icône ronde 34px sur fond accent à 10%.
-- Survol : fond `#e8f8fd`, légère élévation (`translateY(-1px)`) + ombre teintée accent.
-- Dark mode via `:host-context(.dark-mode)` : garde le contour accent, survol sur accent translucide (`rgba(35,183,229,0.12)`) au lieu du bleu pâle.
+- `:host { display: block; flex: 1; min-width: 0 }`: the tile shares the width of a flex container evenly (action grid).
+- Outline style: transparent, 2px border and `#23b7e5` text (hard-coded accent, no `--billy-*` token); round 34px icon badge on a 10% accent background.
+- Hover: `#e8f8fd` background, slight elevation (`translateY(-1px)`) + accent-tinted shadow.
+- Dark mode via `:host-context(.dark-mode)`: keeps the accent outline, hover on translucent accent (`rgba(35,183,229,0.12)`) instead of the pale blue.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Ce n'est **pas un `<button>`** mais un `<div>` cliquable : pas de focus clavier, pas de rôle ARIA, pas d'activation Entrée/Espace — à réserver aux actions dupliquées ailleurs ou à compléter côté consommateur si l'accessibilité est requise.
-- `stopPropagation()` systématique : un conteneur cliquable parent ne verra jamais le clic.
-- Pas d'état `disabled`/`loading` (contrairement à `billy-button-upload`).
-- Les couleurs accent sont codées en dur (#23b7e5 et dérivés), alignées sur l'ex-`.btn-info` du thème — un changement d'accent du DS ne se propagera pas automatiquement.
+- This is **not a `<button>`** but a clickable `<div>`: no keyboard focus, no ARIA role, no Enter/Space activation — reserve it for actions duplicated elsewhere, or complete it on the consumer side when accessibility is required.
+- Systematic `stopPropagation()`: a clickable parent container will never see the click.
+- No `disabled`/`loading` state (unlike `billy-upload-button`).
+- The accent colors are hard-coded (#23b7e5 and derivatives), aligned with the theme's former `.btn-info` — a change of the DS accent will not propagate automatically.

@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// billy-tabs — segmented control BILLy (charte : accent cyan --billy-*)
+// billy-tabs — BILLy segmented control (brand: cyan accent --billy-*)
 //
-// Responsive : quand la place manque (classe .is-compact posée par le TS),
-// les libellés des onglets inactifs se replient — seul l'actif garde le sien.
-// La pastille active est un indicateur absolu qui glisse entre les onglets.
+// Responsive: when space runs out (.is-compact class set by the TS),
+// the labels of inactive tabs collapse — only the active one keeps its own.
+// The active pill is an absolute indicator that slides between tabs.
 // ═══════════════════════════════════════════════════════════════════════════
 
 :host {
@@ -11,7 +11,7 @@
   min-width: 0;
 }
 
-// ── Barre d'onglets ──────────────────────────────────────────────────────────
+// ── Tab bar ──────────────────────────────────────────────────────────────────
 .app-tabs-bar {
   position: relative;
   display: flex;
@@ -28,7 +28,7 @@
 
   &::-webkit-scrollbar { display: none; }
 
-  // Fondus latéraux quand la barre défile (dernier recours en très étroit).
+  // Side fades when the bar scrolls (last resort at very narrow widths).
   &.has-fade-right {
     mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
@@ -43,7 +43,7 @@
   }
 }
 
-// ── Indicateur coulissant (pastille active) ──────────────────────────────────
+// ── Sliding indicator (active pill) ──────────────────────────────────────────
 .app-tabs-indicator {
   position: absolute;
   top: 0;
@@ -64,7 +64,7 @@
   }
 }
 
-// ── Boutons ──────────────────────────────────────────────────────────────────
+// ── Buttons ──────────────────────────────────────────────────────────────────
 .app-tab-btn {
   position: relative;
   z-index: 1;
@@ -99,8 +99,8 @@
 
   &.is-active {
     color: var(--billy-accent-strong, #0e97bb);
-    // Fond porté par l'indicateur coulissant dès qu'il est mesuré ;
-    // fond statique en secours avant la première mesure.
+    // Background carried by the sliding indicator once it is measured;
+    // static background as a fallback before the first measurement.
     background: var(--billy-accent-soft, #e6f7fc);
     box-shadow: 0 1px 2px rgba(14, 151, 187, 0.12);
   }
@@ -116,9 +116,9 @@
   opacity: 0.9;
 }
 
-// Repli animé du libellé : la colonne 1fr → 0fr s'anime, l'intérieur est
-// masqué par overflow. La marge remplace le gap icône/libellé pour pouvoir
-// s'animer elle aussi.
+// Animated label collapse: the 1fr → 0fr column animates, the inside is
+// hidden by overflow. A margin replaces the icon/label gap so that it can
+// animate as well.
 .app-tab-btn__label {
   display: grid;
   grid-template-columns: 1fr;
@@ -138,7 +138,7 @@
   white-space: nowrap;
 }
 
-// ── Mode compact : icônes seules, sauf l'onglet actif ────────────────────────
+// ── Compact mode: icons only, except the active tab ──────────────────────────
 .app-tabs-bar.is-compact .app-tab-btn:not(.is-active) {
   padding-inline: 12px;
 
@@ -149,7 +149,7 @@
   }
 }
 
-// ── Variante dense (barres d'en-tête) ────────────────────────────────────────
+// ── Dense variant (header bars) ──────────────────────────────────────────────
 .app-tabs-bar--sm {
   gap: 3px;
   padding: 4px;
@@ -174,7 +174,7 @@
   }
 }
 
-// ── Corps ────────────────────────────────────────────────────────────────────
+// ── Body ─────────────────────────────────────────────────────────────────────
 .app-tabs-body {
   padding-top: 22px;
 }
@@ -183,7 +183,7 @@
   display: none;
 }
 
-// ── Accessibilité : animations coupées si demandé ────────────────────────────
+// ── Accessibility: animations disabled when requested ────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .app-tabs-indicator.is-ready,
   .app-tab-btn,
@@ -193,8 +193,8 @@
 }
 
 // ── Dark mode ────────────────────────────────────────────────────────────────
-// La plupart des couleurs viennent des tokens --billy-* (déjà thémés). Il ne
-// reste que les ombres à neutraliser.
+// Most colors come from the --billy-* tokens (already themed). Only the
+// shadows are left to neutralize.
 :host-context(.dark-mode) {
   .app-tabs-bar {
     box-shadow: none;

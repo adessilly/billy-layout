@@ -1,50 +1,50 @@
 # billy-consult-line — ConsultLineComponent
 
-> Catégorie `forms` · source `projects/billy-layout/src/lib/forms/form-creation/consult-line/` · standalone component
+> Category `forms` · source `projects/billy-layout/src/lib/forms/form-creation/consult-line/` · standalone component
 
-## Rôle
+## Purpose
 
-Pendant lecture seule d'`billy-input-line` : un libellé en petites capitales grises, puis la valeur projetée en dessous, empilés en colonne. Sert à afficher une donnée dans les écrans de consultation avec le même langage visuel que les libellés de formulaire. À ce jour, **aucun usage direct dans `src/app`** (vérifié par grep sur `billy-consult-line`) : les écrans de consultation récents (achat-consult, vente-consult) utilisent leurs propres mises en page ; le composant reste exporté par la librairie et fait partie du bundle `FormCreationModule` importé par `src/app/shared/components/tache-list-signalform/` (import aujourd'hui vestigial, le template n'utilise pas le sélecteur).
+Read-only counterpart of `billy-input-line`: a label in small gray capitals, then the projected value below it, stacked in a column. Used to display a piece of data in consultation screens with the same visual language as form labels. As of today, **no direct usage in `src/app`** (verified by grepping for `billy-consult-line`): recent consultation screens (achat-consult, vente-consult) use their own layouts; the component remains exported by the library and is part of the `FormCreationModule` bundle imported by `src/app/shared/components/tache-list-signalform/` (a vestigial import today — the template does not use the selector).
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { ConsultLineComponent } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-consult-line>`. Également exporté via le tableau legacy `FormCreationModule` (barrel `lib/forms/form-creation/index.ts`) qui regroupe les cinq composants form-creation.
+Selector: `<billy-consult-line>`. Also exported via the legacy `FormCreationModule` array (barrel `lib/forms/form-creation/index.ts`) which groups the five form-creation components.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `label` | `string \| null` | `null` | Libellé affiché au-dessus du contenu. Si `null`/vide, aucun `<label>` n'est rendu. |
+| `label` | `string \| null` | `null` | Label displayed above the content. If `null`/empty, no `<label>` is rendered. |
 
-Pas d'output ni de méthode publique.
+No outputs or public methods.
 
 ## Slots / projection
 
-`<ng-content>` unique : la valeur à afficher (texte, badge, lien…) est projetée sous le libellé.
+Single `<ng-content>`: the value to display (text, badge, link…) is projected under the label.
 
-## Exemple d'utilisation
+## Usage example
 
-Pas d'usage actuel dans `src/app` ; usage type :
+No current usage in `src/app`; typical usage:
 
 ```html
-<billy-consult-line label="Numéro de facture">
-  {{ vente.no }}
+<billy-consult-line label="Invoice number">
+  {{ sale.no }}
 </billy-consult-line>
 ```
 
 ## Styles & theming
 
-- `:host { display: flex; flex-direction: column }` : libellé et contenu empilés ; l'hôte peut recevoir des classes de grille.
-- Libellé : couleur fixe `#A6A6A6`, `text-transform: uppercase`, `font-size: 0.8em`, `margin: 0` — même style que le libellé d'`billy-input-line`, sans token `--billy-*` (rendu identique en dark mode).
+- `:host { display: flex; flex-direction: column }`: label and content stacked; the host can receive grid classes.
+- Label: fixed color `#A6A6A6`, `text-transform: uppercase`, `font-size: 0.8em`, `margin: 0` — same style as the `billy-input-line` label, without a `--billy-*` token (identical rendering in dark mode).
 
-## Pièges & notes
+## Pitfalls & notes
 
-- Contrairement à `billy-input-line`, pas de classe `.form-group` ni de marge basse : l'espacement vertical est entièrement à la charge du consommateur.
-- Pas d'inputs `mandatory` ni `info` : c'est un composant de consultation, pas de saisie.
-- Composant candidat au nettoyage ou à la réutilisation : exporté et maintenu, mais orphelin côté app au 2026-07-17.
+- Unlike `billy-input-line`, no `.form-group` class and no bottom margin: vertical spacing is entirely up to the consumer.
+- No `mandatory` or `info` inputs: this is a consultation component, not an input one.
+- Candidate for cleanup or reuse: exported and maintained, but orphaned on the app side as of 2026-07-17.

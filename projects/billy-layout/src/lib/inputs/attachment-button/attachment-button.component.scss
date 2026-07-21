@@ -3,7 +3,7 @@
   display: inline-block;
 }
 
-// Ex-.btn de Bootstrap : le bouton porte désormais sa propre boîte.
+// Formerly Bootstrap's .btn: the button now carries its own box.
 .attachment-button {
   position: relative;
   display: inline-block;
@@ -32,7 +32,7 @@
     box-shadow: 0 0 0 3px var(--billy-focus-ring, rgba(102, 175, 233, 0.15));
   }
 
-  // Accent du design system (l'ancien var(--primary) venait du :root d'Angle).
+  // Design-system accent (the old var(--primary) came from Angle's :root).
   &.list-open {
     color: var(--billy-accent, #12b4dd);
   }

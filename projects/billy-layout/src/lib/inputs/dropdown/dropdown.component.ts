@@ -1,9 +1,10 @@
-import { Component, ElementRef, computed, forwardRef, input, output, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, forwardRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ClickOutsideDirective } from '../../core/click-outside/click-outside.directive';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { BillyIconComponent } from '../../core/icon/billy-icon.component';
 
-/** Option du dropdown — structurellement compatible avec l'ancien AdSelectElement (ad-library). */
+/** Dropdown option — structurally compatible with the legacy AdSelectElement (ad-library). */
 export interface DropdownOption {
   text: string;
   id: string;
@@ -12,7 +13,7 @@ export interface DropdownOption {
 
 interface DropdownViewItem {
   option: DropdownOption;
-  /** Segments de mise en évidence de la recherche (null si pas de recherche active). */
+  /** Search-highlight segments (null when no search is active). */
   seg: { before: string, match: string, after: string } | null;
 }
 
@@ -25,13 +26,13 @@ interface PanelPosition {
 }
 
 /**
- * Remplaçant maison de <ad-select> (select2/jquery), rétro-compatible :
- * - ControlValueAccessor → utilisable avec [ngModel] et formControlName
- * - [values] : mêmes options {id, text, value}
- * - le modèle reçoit option.value si défini, sinon l'option elle-même
- * - sans valeur, la première option est affichée (comportement select2)
- * - mode multi (tags supprimables) si le modèle est un tableau (parité select2)
- *   ou si [multiple]="true" ; le modèle est alors un tableau de valeurs
+ * In-house replacement for <ad-select> (select2/jquery), backward compatible:
+ * - ControlValueAccessor → usable with [ngModel] and formControlName
+ * - [values]: same options {id, text, value}
+ * - the model receives option.value when defined, otherwise the option itself
+ * - without a value, the first option is displayed (select2 behavior)
+ * - multi mode (removable tags) when the model is an array (select2 parity)
+ *   or when [multiple]="true"; the model is then an array of values
  */
 @Component({
   selector: 'billy-dropdown',
@@ -45,6 +46,8 @@ interface PanelPosition {
   styleUrls: ['./dropdown.component.scss']
 })
 export class DropdownComponent implements ControlValueAccessor {
+
+  protected readonly i18n = inject(BillyI18nService);
 
   readonly values = input<DropdownOption[]>([]);
   readonly id = input<string>('');
@@ -73,10 +76,10 @@ export class DropdownComponent implements ControlValueAccessor {
 
   readonly isDisabled = computed(() => this.readonly() || this.disabledFromForm());
 
-  /** Multi si demandé explicitement, ou si le modèle est un tableau (parité ad-select). */
+  /** Multi when explicitly requested, or when the model is an array (ad-select parity). */
   readonly isMulti = computed(() => this.multiple() || Array.isArray(this.innerValue()));
 
-  /** Option correspondant au modèle, sinon la première option (parité select2), sinon null. */
+  /** Option matching the model, else the first option (select2 parity), else null. */
   readonly selectedOption = computed<DropdownOption | null>(() => {
     if (this.isMulti()) { return null; }
     const options = this.values() ?? [];
@@ -89,7 +92,7 @@ export class DropdownComponent implements ControlValueAccessor {
     return options.length ? options[0] : null;
   });
 
-  /** Options correspondant aux valeurs du modèle en mode multi (tags). */
+  /** Options matching the model values in multi mode (tags). */
   readonly selectedOptions = computed<DropdownOption[]>(() => {
     const val = this.innerValue();
     if (!Array.isArray(val)) { return []; }
@@ -99,7 +102,7 @@ export class DropdownComponent implements ControlValueAccessor {
       .filter((o): o is DropdownOption => !!o);
   });
 
-  /** Ids sélectionnés (mono ou multi), pour marquer les options de la liste. */
+  /** Selected ids (single or multi), used to mark the options in the list. */
   readonly selectedIds = computed<Set<string>>(() => {
     if (this.isMulti()) {
       return new Set(this.selectedOptions().map(o => '' + o.id));
@@ -108,7 +111,7 @@ export class DropdownComponent implements ControlValueAccessor {
     return new Set(selected ? ['' + selected.id] : []);
   });
 
-  /** Options filtrées par la recherche, avec segments de surlignage. */
+  /** Options filtered by the search, with highlight segments. */
   readonly filteredView = computed<DropdownViewItem[]>(() => {
     const options = this.values() ?? [];
     const needle = this.normalize(this.searchText().trim());
@@ -133,7 +136,7 @@ export class DropdownComponent implements ControlValueAccessor {
     return items;
   });
 
-  // ── Ouverture / fermeture ──────────────────────────────────────────────────
+  // ── Opening / closing ──────────────────────────────────────────────────────
 
   toggle(): void {
     this.isOpen() ? this.close() : this.open();
@@ -170,7 +173,7 @@ export class DropdownComponent implements ControlValueAccessor {
     }
   }
 
-  /** Le panneau est en position fixed : on suit le déclencheur au scroll/resize. */
+  /** The panel is position: fixed — we follow the trigger on scroll/resize. */
   private readonly onViewportChange = () => this.updatePanelPosition();
 
   private updatePanelPosition(): void {
@@ -189,7 +192,7 @@ export class DropdownComponent implements ControlValueAccessor {
     });
   }
 
-  // ── Sélection ──────────────────────────────────────────────────────────────
+  // ── Selection ──────────────────────────────────────────────────────────────
 
   pick(option: DropdownOption): void {
     if (this.isMulti()) {
@@ -201,7 +204,7 @@ export class DropdownComponent implements ControlValueAccessor {
     this.close(true);
   }
 
-  /** Multi : ajoute/retire la valeur ; le panneau reste ouvert pour enchaîner les sélections. */
+  /** Multi: adds/removes the value; the panel stays open to chain selections. */
   private toggleMultiValue(option: DropdownOption): void {
     const current: any[] = Array.isArray(this.innerValue()) ? this.innerValue() : [];
     const id = '' + option.id;
@@ -213,7 +216,7 @@ export class DropdownComponent implements ControlValueAccessor {
     (this.searchEl() ?? this.listEl())?.nativeElement.focus();
   }
 
-  /** Suppression d'un tag depuis le déclencheur, sans ouvrir le panneau. */
+  /** Removes a tag from the trigger, without opening the panel. */
   removeValue(option: DropdownOption, event: Event): void {
     event.stopPropagation();
     if (this.isDisabled()) { return; }
@@ -233,7 +236,7 @@ export class DropdownComponent implements ControlValueAccessor {
     this.activeIndex.set(0);
   }
 
-  /** Backspace dans une recherche vide : retire le dernier tag (parité select2). */
+  /** Backspace in an empty search: removes the last tag (select2 parity). */
   onSearchKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Backspace' || this.searchText().length || !this.isMulti()) { return; }
     const last = this.selectedOptions().at(-1);
@@ -243,7 +246,7 @@ export class DropdownComponent implements ControlValueAccessor {
     }
   }
 
-  // ── Clavier ────────────────────────────────────────────────────────────────
+  // ── Keyboard ───────────────────────────────────────────────────────────────
 
   onTriggerKeydown(event: KeyboardEvent): void {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -305,9 +308,9 @@ export class DropdownComponent implements ControlValueAccessor {
     });
   }
 
-  // ── Correspondance modèle ↔ option (parité ad-select) ─────────────────────
+  // ── Model ↔ option matching (ad-select parity) ─────────────────────────────
 
-  /** Le modèle peut être un id (number/string) ou un objet possédant un id. */
+  /** The model can be an id (number/string) or an object carrying an id. */
   private modelToId(v: any): string {
     if (typeof v === 'object' && v !== null && v.id !== undefined && v.id !== null) {
       return '' + v.id;
@@ -315,7 +318,7 @@ export class DropdownComponent implements ControlValueAccessor {
     return '' + v;
   }
 
-  /** Découpe accent-insensible : un caractère normalisé par caractère d'origine. */
+  /** Accent-insensitive split: one normalized character per original character. */
   private stripAccent(char: string): string {
     const stripped = char.normalize('NFD').replace(/[̀-ͯ]/g, '');
     return stripped.length === 1 ? stripped : char;

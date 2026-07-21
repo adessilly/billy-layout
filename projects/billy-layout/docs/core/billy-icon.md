@@ -1,52 +1,52 @@
 # billy-icon — BillyIconComponent
 
-> Catégorie `core` · source `projects/billy-layout/src/lib/core/icon/billy-icon.component.ts` · standalone component
+> Category `core` · source `projects/billy-layout/src/lib/core/icon/billy-icon.component.ts` · standalone component
 
-## Rôle
+## Purpose
 
-Jeu d'icônes SVG maison du design « Billy — Coque applicative » : trait arrondi (`stroke-linecap/linejoin: round`), viewBox 24, dessinées en `stroke: currentColor` — l'icône prend donc la couleur du texte environnant. C'est l'unique source d'icônes du shell de la librairie (topbar, items de navigation, notifications, action-bar) et des composants qui en embarquent (`billy-input-password` : cadenas et œil ; `billy-dropdown` : chevron, croix, loupe, coche ; `billy-snackbar` : rafraîchir, éclair, croix). Elle est aussi consommée directement par l'application : recherche globale (`src/app/layout/billy-search/billy-search.component.html`) et menu compte (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`). Certaines icônes embarquent une micro-animation déclenchée au survol d'une zone ancêtre.
+In-house SVG icon set of the "Billy — application shell" design: rounded strokes (`stroke-linecap/linejoin: round`), viewBox 24, drawn in `stroke: currentColor` — the icon therefore takes the color of the surrounding text. It is the single icon source of the library's shell (topbar, navigation items, notifications, action-bar) and of the components that embed it (`billy-input-password`: padlock and eye; `billy-dropdown`: chevron, cross, magnifier, checkmark; `billy-snackbar`: refresh, bolt, cross). It is also consumed directly by the application: global search (`src/app/layout/billy-search/billy-search.component.html`) and account menu (`src/app/shared/components/icon-top-compte/billy-account-menu.component.html`). Some icons embed a micro-animation triggered when hovering an ancestor zone.
 
 ## API
 
-### Sélecteur & import
+### Selector & import
 
 ```ts
 import { BillyIconComponent, BillyIconName } from 'billy-layout';
 ```
 
-Sélecteur : `<billy-icon />`.
+Selector: `<billy-icon />`.
 
-### Inputs (API signals)
+### Inputs (signals API)
 
-| Input | Type | Défaut | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `name` | `BillyIconName \| string` | — (`input.required`) | Nom de l'icône à dessiner. Un nom inconnu rend un SVG vide (le `@switch` ne matche rien) — pas d'erreur, pas de fallback. |
-| `size` | `number` | `21` | Largeur et hauteur du SVG en pixels (attributs `width`/`height`). |
-| `strokeWidth` | `number` | `1.9` | Épaisseur du trait (`stroke-width`). |
+| `name` | `BillyIconName \| string` | — (`input.required`) | Name of the icon to draw. An unknown name renders an empty SVG (the `@switch` matches nothing) — no error, no fallback. |
+| `size` | `number` | `21` | SVG width and height in pixels (`width`/`height` attributes). |
+| `strokeWidth` | `number` | `1.9` | Stroke thickness (`stroke-width`). |
 
-Pas d'output ni de méthode publique.
+No output or public method.
 
-### Type `BillyIconName`
+### `BillyIconName` type
 
-Union de littéraux exportée à côté du composant — pratique pour typer des configurations de menus (cf. `billy-account-menu.component.ts` qui déclare `icon: BillyIconName`).
+A union of literals exported next to the component — handy for typing menu configurations (see `billy-account-menu.component.ts`, which declares `icon: BillyIconName`).
 
-Icônes de navigation métier : `accueil`, `achats`, `devis`, `ventes`, `prestations`, `agenda`, `clients`, `compte`, `peppol`.
+Business navigation icons: `home`, `purchases`, `quotes`, `sales`, `services`, `calendar`, `clients`, `account`, `peppol`.
 
-Icônes utilitaires : `bell`, `chevron-left`, `chevron-right`, `chevron-down`, `sync`, `check`, `clock`, `search`, `dark-mode`, `logout`, `open`, `upload`, `plus`, `close`, `refresh`, `bolt`, `lock`, `eye`, `eye-off`.
+Utility icons: `bell`, `chevron-left`, `chevron-right`, `chevron-down`, `sync`, `check`, `clock`, `search`, `dark-mode`, `logout`, `open`, `upload`, `plus`, `close`, `refresh`, `bolt`, `lock`, `eye`, `eye-off`.
 
-Le type accepte aussi `string` en entrée du composant pour laisser passer des noms dynamiques, mais seuls les 28 noms ci-dessus produisent un dessin.
+The type also accepts `string` as component input to let dynamic names through, but only the 28 names above produce a drawing.
 
-Repères d'usage des utilitaires récents : `chevron-down` (dropdown, rotation à l'ouverture pilotée en CSS par le parent), `close` (croix de fermeture/suppression — tags du dropdown, snackbar), `refresh` (flèche circulaire « mise à jour », snackbar), `bolt` (éclair du bouton d'action de la snackbar), `lock`/`eye`/`eye-off` (champ mot de passe).
+Usage landmarks for the recent utilities: `chevron-down` (dropdown, open-state rotation driven in CSS by the parent), `close` (close/delete cross — dropdown tags, snackbar), `refresh` (circular "update" arrow, snackbar), `bolt` (lightning bolt on the snackbar's action button), `lock`/`eye`/`eye-off` (password field).
 
-## Exemple d'utilisation
+## Usage example
 
-Usage réel dans `src/app/layout/billy-search/billy-search.component.html` :
+Real usage in `src/app/layout/billy-search/billy-search.component.html`:
 
 ```html
 <billy-icon name="search" [size]="18" [strokeWidth]="1.9" />
 ```
 
-Nom dynamique typé, dans `src/app/shared/components/icon-top-compte/billy-account-menu.component.html` :
+Typed dynamic name, in `src/app/shared/components/icon-top-compte/billy-account-menu.component.html`:
 
 ```html
 <billy-icon [name]="item.icon" [size]="18" [strokeWidth]="1.8" />
@@ -65,14 +65,14 @@ interface MenuItem { icon: BillyIconName; label: string; }
 
 ## Styles & theming
 
-- **Couleur** : `stroke="currentColor"` — se pilote entièrement en CSS via `color` sur l'hôte ou un ancêtre. Aucun token `--billy-*` consommé directement ; le dark mode est donc automatique dès que le texte environnant l'est.
-- **Boîte** : `:host { display: inline-flex; line-height: 0 }` et `svg { overflow: visible }` (les animations peuvent déborder légèrement du viewBox).
-- **Micro-animations au survol** : les fragments tagués (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) s'animent quand un **ancêtre portant la classe `.billy-icon-hover-zone`** est survolé (via `:host-context(.billy-icon-hover-zone:hover)`). Exemples : `achats` (flèche qui plonge), `ventes` (flèche qui monte), `clients` (l'arc « salue »), `devis`/`prestations` (trait qui se dessine, `stroke-dasharray`).
-- **Accessibilité** : le SVG porte `aria-hidden="true"` (icône décorative — prévoir un libellé texte à côté) et toutes les animations sont désactivées sous `prefers-reduced-motion`.
+- **Color**: `stroke="currentColor"` — driven entirely in CSS via `color` on the host or an ancestor. No `--billy-*` token consumed directly; dark mode is therefore automatic whenever the surrounding text follows it.
+- **Box**: `:host { display: inline-flex; line-height: 0 }` and `svg { overflow: visible }` (animations may slightly overflow the viewBox).
+- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales` (arrow rising), `clients` (the arc "waves"), `quotes`/`services` (stroke drawing itself, `stroke-dasharray`).
+- **Accessibility**: the SVG carries `aria-hidden="true"` (decorative icon — provide a text label next to it) and all animations are disabled under `prefers-reduced-motion`.
 
-## Pièges & notes
+## Pitfalls & notes
 
-- `name` inconnu = icône invisible mais SVG rendu (l'espace `size × size` est réservé). Vérifier l'orthographe, il n'y a pas d'avertissement.
-- Les animations ne se déclenchent **pas** au survol de l'icône elle-même : il faut poser `.billy-icon-hover-zone` sur le conteneur cliquable (bouton, lien de nav) — c'est ce que fait `billy-nav-item` dans le shell.
-- Composant purement présentationnel, sans état : aucune contrainte zoneless particulière, tous les inputs sont des signals.
-- Pour ajouter une icône : ajouter le littéral au type `BillyIconName` **et** un `@case` dans le template ; rester sur la grammaire du jeu (viewBox 24, trait ~1.9, coins arrondis).
+- Unknown `name` = invisible icon but rendered SVG (the `size × size` space is reserved). Check the spelling, there is no warning.
+- Animations do **not** trigger when hovering the icon itself: put `.billy-icon-hover-zone` on the clickable container (button, nav link) — this is what `billy-nav-item` does in the shell.
+- Purely presentational component, stateless: no particular zoneless constraint, all inputs are signals.
+- To add an icon: add the literal to the `BillyIconName` type **and** a `@case` in the template; stick to the set's grammar (viewBox 24, ~1.9 stroke, rounded corners).

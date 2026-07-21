@@ -2,18 +2,17 @@ import { Component, booleanAttribute, computed, forwardRef, input, output, signa
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 /**
- * Interrupteur « maison » BILLy — bascule gauche/droite façon iOS.
- * Remplace l'ancien `ad-button-switch` (thème « switch ») de ad-library.
+ * In-house BILLy switch — iOS-style left/right toggle.
+ * Replaces the legacy `ad-button-switch` ("switch" theme) from ad-library.
  *
- * - ControlValueAccessor → compatible [ngModel], [(ngModel)], formControlName
- *   et le directive signal-forms [formField].
- * - Aligné sur la charte des formulaires (tokens --billy-*), animé,
- *   accessible (role=switch, clavier espace/entrée).
- * - `labelOn`/`labelOff` : libellé optionnel affiché à droite reflétant l'état.
+ * - ControlValueAccessor → compatible with [ngModel], [(ngModel)], formControlName
+ *   and the signal-forms [formField] directive.
+ * - Aligned with the form guidelines (--billy-* tokens), animated,
+ *   accessible (role=switch, space/enter keys).
+ * - `labelOn`/`labelOff`: optional label shown on the right reflecting the state.
  */
 @Component({
   selector: 'billy-button-switch',
-  standalone: true,
   imports: [],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -25,18 +24,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class ButtonSwitchComponent implements ControlValueAccessor {
 
-  /** Libellé affiché quand l'état est actif (optionnel). */
+  /** Label shown when the state is active (optional). */
   readonly labelOn = input('');
-  /** Libellé affiché quand l'état est inactif (optionnel). */
+  /** Label shown when the state is inactive (optional). */
   readonly labelOff = input('');
-  /** Icône (classe font) affichée dans le curseur à l'état actif (optionnel). */
+  /** Icon (font class) shown inside the knob in the active state (optional). */
   readonly iconOn = input('');
-  /** Icône (classe font) affichée dans le curseur à l'état inactif (optionnel). */
+  /** Icon (font class) shown inside the knob in the inactive state (optional). */
   readonly iconOff = input('');
-  /** Désactivation statique (en plus de l'état porté par le formulaire). */
+  /** Static disabling (in addition to the state carried by the form). */
   readonly disabled = input(false, { transform: booleanAttribute });
 
-  /** Émis à chaque changement de valeur (en plus du CVA). */
+  /** Emitted on each value change (in addition to the CVA). */
   readonly valueChange = output<boolean>();
 
   private readonly innerValue = signal(false);

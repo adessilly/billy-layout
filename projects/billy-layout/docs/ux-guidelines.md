@@ -1,50 +1,50 @@
-# Guidelines UX — assembler un écran BILLy
+# UX guidelines — assembling a BILLy screen
 
-Conventions d'assemblage des écrans avec les composants de billy-layout. Chaque règle
-reflète les patterns en vigueur dans billy-client (les exemples cités sont réels).
-Fiches API : voir [docs/README.md](README.md).
+Conventions for assembling screens with billy-layout components. Every rule
+reflects the patterns in use in billy-client (all cited examples are real).
+API pages: see [docs/README.md](README.md).
 
 ---
 
-## 1. Boutons d'action en tête de page
+## 1. Action buttons in the page header
 
-**Règle : toute action de niveau page vit dans le header, jamais dans le corps.**
-Le trio standard :
+**Rule: every page-level action lives in the header, never in the body.**
+The standard trio:
 
 ```html
-<billy-page-header titre="Ventes" sousTitre="Liste de vos ventes">
+<billy-page-header title="Sales" subtitle="A list of your sales">
   <billy-header-action-bar [actions]="headerActions"></billy-header-action-bar>
 </billy-page-header>
 ```
 
-- Le titre + sous-titre viennent de [page-header](display/page-header.md) ; les boutons
-  sont projetés dedans via [header-action-bar](display/header-action-bar.md)
+- The title + subtitle come from [page-header](display/page-header.md); the buttons
+  are projected into it via [header-action-bar](display/header-action-bar.md)
   (`HeaderAction[]`).
-- **Une seule action `variant: 'primary'` par page** — c'est l'action d'ajout ou l'action
-  principale (« Ajouter une vente », « Envoyer »). Icône `fa-solid fa-plus` pour l'ajout.
-- `variant: 'danger'` : uniquement pour une action destructive de niveau page
-  (« Supprimer » sur une consultation). Jamais deux actions danger.
-- Les actions **sans variant** (secondaires : « Dupliquer », « Télécharger »…) sont
-  regroupées automatiquement en groupe segmenté, avant les pilules primary/danger.
-- Mobile : la barre passe en icônes seules — chaque action doit donc avoir un `icon` et
-  un `title` explicites.
-- Pas de bouton d'ajout flottant (FAB) ni de bouton d'ajout en bas de liste. Deux
-  exceptions cadrées : le CTA de l'[empty-state](feedback/empty-state.md) (relais de
-  l'action primary quand la liste est vide) et les tuiles
-  [button-ajout](buttons/button-ajout.md)/[button-upload](buttons/button-upload.md)
-  réservées aux écrans d'accueil (home-actions).
-- Sur une page de **consultation**, les actions du header agissent sur l'objet consulté
-  (Modifier / Envoyer / Supprimer) ; le bouton retour est géré par `billy-page-header`
-  (`[retour]` + output `retour`), pas par un bouton dans la barre d'actions.
+- **Only one `variant: 'primary'` action per page** — the add action or the main
+  action ("Add a sale", "Send"). Icon `fa-solid fa-plus` for add actions.
+- `variant: 'danger'`: only for a destructive page-level action
+  ("Delete" on a consult page). Never two danger actions.
+- Actions **without a variant** (secondary: "Duplicate", "Download"…) are
+  automatically grouped into a segmented group, placed before the primary/danger pills.
+- Mobile: the bar collapses to icons only — every action therefore needs an explicit
+  `icon` and `title`.
+- No floating add button (FAB) and no add button at the bottom of a list. Two
+  sanctioned exceptions: the [empty-state](feedback/empty-state.md) CTA (a relay of
+  the primary action when the list is empty) and the
+  [add-button](buttons/add-button.md)/[upload-button](buttons/upload-button.md)
+  tiles reserved for home screens (home-actions).
+- On a **consult** page, the header actions act on the object being viewed
+  (Edit / Send / Delete); the back button is handled by `billy-page-header`
+  (`[backVisible]` + `back` output), not by a button in the action bar.
 
-Exemples réels : `vente-list` (primary seul), `devis-form`, `achat-consult`, `compte`.
+Real examples: `vente-list` (primary only), `devis-form`, `achat-consult`, `compte`.
 
-## 2. Ajouter une liste dans une page
+## 2. Adding a list to a page
 
-**Structure canonique** (cf. `vente-list`, `achat-list`, `devis-list`) :
+**Canonical structure** (see `vente-list`, `achat-list`, `devis-list`):
 
 ```html
-<billy-page-header titre="…" sousTitre="…">
+<billy-page-header title="…" subtitle="…">
   <billy-header-action-bar [actions]="headerActions"></billy-header-action-bar>
 </billy-page-header>
 
@@ -58,65 +58,65 @@ Exemples réels : `vente-list` (primary seul), `devis-form`, `achat-consult`, `c
     @if (state.loading()) {
       <!-- loader -->
     } @else if (filtered().length === 0) {
-      <billy-empty-state [type]="hasItems() ? 'recherche' : 'vente'" (createClicked)="askAdd()"/>
+      <billy-empty-state [type]="hasItems() ? 'search' : 'sale'" (createClicked)="askAdd()"/>
     } @else {
-      <!-- groupes + cartes -->
+      <!-- groups + cards -->
     }
   </div>
 
 </div>
 ```
 
-Les règles :
+The rules:
 
-1. **Wrapper `.data-list`** (feuille `src/styles-data-list.scss`, app-side) : largeur,
-   gouttières et fond communs à toutes les listes. Ne pas réinventer un conteneur.
-2. **La barre de filtres est le premier bloc de la liste**, pas un élément du header.
-   Elle est spécifique au métier (`*-filter-bar`, app-side) mais se construit avec les
-   briques de la lib : [filter-toggle-buttons](display/filter-toggle-buttons.md) pour les
-   segments (période, statut), [dropdown](inputs/dropdown.md), champ de recherche stylé
-   `billy-forms`.
-3. **Trois états, toujours dans cet ordre** : chargement → vide → contenu. L'état vide
-   utilise [empty-state](feedback/empty-state.md) avec la distinction **vide réel**
-   (type du concept : `'vente'`, `'achat'`… + CTA qui relaie l'action d'ajout du header)
-   vs **vide de filtrage** (`type="recherche"`, sans CTA). Tester
-   `filtered().length === 0` avec `hasItems()` pour choisir — jamais l'inverse.
-4. **Groupement chronologique** : les listes de documents se groupent par année
-   (`year-block`/`year-header`) puis trimestre, avec totaux dans l'en-tête de groupe.
-5. **Une carte par élément** : les documents (vente/achat/devis/client) utilisent la
-   peau `invoice-card` (`src/app/shared/styles/invoice-card.scss`, app-side, API par
-   variables `--ic-*`). Le clic sur la carte ouvre la **consultation**, les actions
-   contextuelles passent par le menu de la carte — pas de boutons inline répétés sur
-   chaque ligne.
+1. **`.data-list` wrapper** (`src/styles-data-list.scss` sheet, app-side): width,
+   gutters and background shared by all lists. Do not reinvent a container.
+2. **The filter bar is the first block of the list**, not part of the header.
+   It is domain-specific (`*-filter-bar`, app-side) but built from library
+   building blocks: [filter-toggle-buttons](display/filter-toggle-buttons.md) for
+   segments (period, status), [dropdown](inputs/dropdown.md), a search field styled
+   with `billy-forms`.
+3. **Three states, always in this order**: loading → empty → content. The empty state
+   uses [empty-state](feedback/empty-state.md) with the distinction between **truly
+   empty** (the concept's type: `'sale'`, `'purchase'`… + a CTA relaying the header's
+   add action) and **empty after filtering** (`type="search"`, no CTA). Test
+   `filtered().length === 0` together with `hasItems()` to choose — never the other
+   way around.
+4. **Chronological grouping**: document lists are grouped by year
+   (`year-block`/`year-header`) then quarter, with totals in the group header.
+5. **One card per item**: documents (sale/purchase/quote/client) use the
+   `invoice-card` skin (`src/app/shared/styles/invoice-card.scss`, app-side, API via
+   `--ic-*` variables). Clicking the card opens the **consult view**; contextual
+   actions go through the card's menu — no inline buttons repeated on every row.
 
-## 3. Quand utiliser `billy-consult-card`
+## 3. When to use `billy-consult-card`
 
-[consult-card](display/consult-card.md) = **la carte titrée des écrans de lecture** :
-pages et dialogues de consultation, onglets du compte, gestionnaires de fichiers.
+[consult-card](display/consult-card.md) = **the titled card of read-only screens**:
+consult pages and dialogs, account tabs, file managers.
 
-- **Oui** : regrouper l'information en consultation (`vente-consult`, `devis-form` pour
-  les pièces jointes, `compte`, upload-manager, peppol-inbox-list). Titre = `label` +
-  `icon` (pastille) ; badge de comptage optionnel.
-- **L'action contextuelle du bloc** (une seule, ex. « Gérer ») se projette dans le slot
-  `[card-actions]`, à droite du titre — pas de bouton dans le corps de la carte.
-- **Règle anti-imbrication** (préférence projet) : une carte à **contenu unique** =
-  carte blanche + titre à pastille, **sans** section grise interne. Les sections grises
-  (`billy-section` de `billy-cards`) sont réservées aux cartes **multi-blocs**
-  (compte-form, achat-document). Jamais de panneau dans un panneau sans nécessité.
-- **Non** :
-  - dans un **formulaire** → sections maison sur les mixins `billy-cards`
-    (pattern compte-form/client-form) ;
-  - pour un élément **répété dans une liste** → carte de liste (`invoice-card`) ;
-  - pour un panneau flottant ancré (menu compte) → [billy-panel](display/billy-panel.md) ;
-  - exception assumée : `invoice-document` garde son visuel de facture spécifique.
+- **Yes**: grouping information on a consult view (`vente-consult`, `devis-form` for
+  attachments, `compte`, upload-manager, peppol-inbox-list). Title = `label` +
+  `icon` (chip); optional count badge.
+- **The block's contextual action** (a single one, e.g. "Manage") is projected into the
+  `[card-actions]` slot, to the right of the title — no button in the card body.
+- **Anti-nesting rule** (project preference): a card with **a single block of content** =
+  white card + chip title, **without** an inner grey section. Grey sections
+  (`billy-section` from `billy-cards`) are reserved for **multi-block** cards
+  (compte-form, achat-document). Never a panel inside a panel without necessity.
+- **No**:
+  - in a **form** → hand-rolled sections on the `billy-cards` mixins
+    (compte-form/client-form pattern);
+  - for an item **repeated in a list** → list card (`invoice-card`);
+  - for an anchored floating panel (account menu) → [billy-panel](display/billy-panel.md);
+  - accepted exception: `invoice-document` keeps its dedicated invoice look.
 
-## 4. Quand utiliser `billy-save-bar`
+## 4. When to use `billy-save-bar`
 
-[save-bar](forms/save-bar.md) = **la conclusion de tout formulaire**. Deux contextes,
-deux habillages :
+[save-bar](forms/save-bar.md) = **the conclusion of every form**. Two contexts,
+two skins:
 
-1. **Formulaire pleine page** (add/edit : vente-form, devis-form, client-form…) :
-   la save-bar est le **dernier élément du `<form>`**, sticky en bas de page :
+1. **Full-page form** (add/edit: vente-form, devis-form, client-form…):
+   the save-bar is the **last element of the `<form>`**, sticky at the bottom of the page:
 
    ```html
    <form [formGroup]="formGroup" (ngSubmit)="askSave()">
@@ -129,39 +129,39 @@ deux habillages :
    </form>
    ```
 
-   - `disabled` = validité du formulaire ; `loading` = requête en cours (le libellé
-     passe sur `labelSaveLoading`). Ne pas confondre : `loading` n'implique pas
+   - `disabled` = form validity; `loading` = request in flight (the label switches
+     to `labelSaveLoading`). Do not conflate the two: `loading` does not imply
      `disabled`.
-   - Annuler est **toujours présent** et revient en arrière sans confirmation si le
-     formulaire est vierge.
+   - Cancel is **always present** and navigates back without confirmation when the
+     form is pristine.
 
-2. **Pied de dialogue ou de side-panel** (vente-paiements, compte-password,
-   fichiers-manager) : même composant avec `class="no-theme"` — il perd son fond
-   sticky/givré et se fond dans le footer du conteneur.
+2. **Dialog or side-panel footer** (vente-paiements, compte-password,
+   fichiers-manager): the same component with `class="no-theme"` — it drops its
+   sticky/frosted background and blends into the container's footer.
 
-Les règles de placement :
+Placement rules:
 
-- **Jamais de save-bar en consultation** : les actions d'un écran de lecture vont dans
-  la [header-action-bar](display/header-action-bar.md) (§1).
-- Un bouton « Enregistrer » isolé hors save-bar est interdit dans un formulaire — c'est
-  elle qui porte la sémantique submit (attention au double déclenchement : son bouton
-  est `type="submit"`, ne pas câbler `(save)` **et** `(ngSubmit)` sur la même action).
-- Variantes de couleur du bouton principal (`classSave` : `sb-btn--info`,
-  `sb-btn--warning`) : réservées aux actions d'envoi/à-risque (envoi Peppol), pas pour
-  varier le style d'un simple enregistrement.
-- Dans un **form-side-panel** ou un formulaire en overlay, même règle qu'en dialogue :
-  save-bar en pied, `no-theme` si le conteneur fournit déjà son propre footer.
+- **Never a save-bar on a consult view**: the actions of a read-only screen go in the
+  [header-action-bar](display/header-action-bar.md) (§1).
+- A lone "Save" button outside the save-bar is forbidden in a form — the save-bar
+  carries the submit semantics (beware of double triggering: its button is
+  `type="submit"`, so do not wire both `(save)` **and** `(ngSubmit)` to the same action).
+- Color variants of the main button (`classSave`: `sb-btn--info`,
+  `sb-btn--warning`): reserved for send/at-risk actions (Peppol sending), not for
+  restyling a plain save.
+- In a **form-side-panel** or an overlay form, the same rule as in dialogs applies:
+  save-bar in the footer, `no-theme` when the container already provides its own footer.
 
-## 5. Récapitulatif de décision
+## 5. Decision recap
 
-| Besoin | Composant | Où |
+| Need | Component | Where |
 |---|---|---|
-| Action de niveau page (ajout, envoi, suppression) | `HeaderAction` → header-action-bar | Dans `billy-page-header` |
-| Ajouter depuis une liste vide | CTA d'`billy-empty-state` | Corps de liste (relais du header) |
-| Tuile d'ajout/import sur l'accueil | `billy-button-ajout` / `billy-button-upload` | home-actions uniquement |
-| Bloc d'information en lecture | `billy-consult-card` (+ slot `[card-actions]`) | Pages/dialogues de consultation |
-| Sections d'un formulaire | mixins `billy-cards` | Formulaires |
-| Conclure un formulaire pleine page | `billy-save-bar` sticky | Dernier enfant du `<form>` |
-| Conclure un dialogue/panneau | `billy-save-bar.no-theme` | Footer du conteneur |
-| Filtres d'une liste | `*-filter-bar` (briques : filter-toggle-buttons, dropdown) | Premier bloc de `.data-list` |
-| Liste vide vs recherche vide | `billy-empty-state` type concept vs `recherche` | `.data-list-content` |
+| Page-level action (add, send, delete) | `HeaderAction` → header-action-bar | Inside `billy-page-header` |
+| Add from an empty list | `billy-empty-state` CTA | List body (relay of the header) |
+| Add/import tile on the home screen | `billy-add-button` / `billy-upload-button` | home-actions only |
+| Read-only information block | `billy-consult-card` (+ `[card-actions]` slot) | Consult pages/dialogs |
+| Form sections | `billy-cards` mixins | Forms |
+| Concluding a full-page form | sticky `billy-save-bar` | Last child of the `<form>` |
+| Concluding a dialog/panel | `billy-save-bar.no-theme` | Container footer |
+| List filters | `*-filter-bar` (building blocks: filter-toggle-buttons, dropdown) | First block of `.data-list` |
+| Empty list vs empty search | `billy-empty-state` concept type vs `search` | `.data-list-content` |

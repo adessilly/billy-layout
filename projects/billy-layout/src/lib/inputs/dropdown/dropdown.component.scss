@@ -1,7 +1,7 @@
 @use 'billy-forms' as forms;
 
-// Tout le thème (couleurs, dark mode) vient des tokens --billy-* (src/styles-tokens.scss).
-// Personnalisable par instance via CSS custom properties :
+// The whole theme (colors, dark mode) comes from the --billy-* tokens (src/styles-tokens.scss).
+// Customizable per instance via CSS custom properties:
 //   billy-dropdown { --dropdown-height: 30px; --dropdown-radius: 100px; --dropdown-font-size: 13px; }
 
 :host {
@@ -13,7 +13,7 @@
   width: 100%;
 }
 
-// ── Déclencheur ───────────────────────────────────────────────────────────────
+// ── Trigger ───────────────────────────────────────────────────────────────────
 
 .dropdown-trigger {
   display: flex;
@@ -41,7 +41,7 @@
     cursor: not-allowed;
   }
 
-  // En multi, les tags occupent l'espace à gauche et peuvent passer à la ligne
+  // In multi mode, the tags fill the space on the left and may wrap
   &--multi {
     padding-left: 5px;
   }
@@ -59,7 +59,7 @@
     &--placeholder { color: var(--billy-text-muted, #9ca3af); }
   }
 
-  // billy-icon : taille via [size], ici couleur et rotation à l'ouverture
+  // billy-icon: size via [size]; here color and rotation on opening
   &__chevron {
     flex-shrink: 0;
     color: var(--billy-text-muted, #9ca3af);
@@ -69,7 +69,7 @@
   }
 }
 
-// ── Tags (mode multi) ─────────────────────────────────────────────────────────
+// ── Tags (multi mode) ─────────────────────────────────────────────────────────
 
 .dropdown-tags {
   flex: 1;
@@ -113,11 +113,11 @@
   }
 }
 
-// ── Panneau (position: fixed pour échapper aux overflow:hidden parents) ──────
+// ── Panel (position: fixed to escape overflow:hidden parents) ────────────────
 
 .dropdown-panel {
   position: fixed;
-  z-index: 2000; // au-dessus des side-panels (1051), sous les toasts (9000+)
+  z-index: 2000; // above the side-panels (1051), below the toasts (9000+)
   min-width: 180px;
   display: flex;
   flex-direction: column;
@@ -141,7 +141,7 @@
   to   { opacity: 1; transform: none; }
 }
 
-// ── Recherche ─────────────────────────────────────────────────────────────────
+// ── Search ────────────────────────────────────────────────────────────────────
 
 .dropdown-search {
   position: relative;
@@ -186,7 +186,7 @@
   }
 }
 
-// ── Liste d'options ───────────────────────────────────────────────────────────
+// ── Options list ──────────────────────────────────────────────────────────────
 
 .dropdown-list {
   margin: 0;

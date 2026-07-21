@@ -4,7 +4,7 @@ import { BillyIconComponent } from 'billy-layout';
 import { DocCategory, DocEntry } from './doc-registry';
 import { hasDemo } from '../demos/demo-registry';
 
-/** Carte d'une fiche composant (grilles des pages catégorie / composants). */
+/** Card for a component doc page (category / components page grids). */
 @Component({
   selector: 'site-entry-card',
   imports: [RouterLink, BillyIconComponent],
@@ -15,7 +15,7 @@ import { hasDemo } from '../demos/demo-registry';
         @if (demo()) {
           <span class="entry-demo-pill">
             <span class="entry-demo-dot"></span>
-            démo live
+            live demo
           </span>
         }
       </span>

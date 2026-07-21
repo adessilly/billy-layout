@@ -1,7 +1,7 @@
-// Pastille d'état d'un champ « code ».
-// Les couleurs de succès n'existent pas dans les tokens (le design system ne
-// connaît que l'accent et le danger) : elles sont posées ici, en variables, et
-// réajustées en dark mode.
+// Status badge of a "code" field.
+// Success colors do not exist in the tokens (the design system only knows
+// the accent and the danger colors): they are set here, as variables, and
+// readjusted in dark mode.
 
 :host {
   display: inline-flex;
@@ -26,7 +26,7 @@
   height: 100%;
 }
 
-// ── Saisie en cours : anneau de progression ─────────────────────────────────
+// ── Typing in progress: progress ring ───────────────────────────────────────
 .cs-track,
 .cs-ring {
   fill: none;
@@ -40,13 +40,13 @@
 .cs-ring {
   stroke: var(--billy-accent, #12b4dd);
   stroke-linecap: round;
-  stroke-dasharray: 1;                       // pathLength="1" → 1 tour = 1
-  transform: rotate(-90deg);                 // départ à midi
+  stroke-dasharray: 1;                       // pathLength="1" → 1 turn = 1
+  transform: rotate(-90deg);                 // starts at 12 o'clock
   transform-origin: center;
   transition: stroke-dashoffset 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
-// ── Disque des états stables ────────────────────────────────────────────────
+// ── Disc of the stable states ───────────────────────────────────────────────
 .cs-disc {
   animation: cs-pop 0.32s cubic-bezier(0.34, 1.5, 0.64, 1);
   transform-origin: center;
@@ -63,7 +63,7 @@
   stroke-linecap: round;
 }
 
-// ── Vérifié : la coche se dessine ───────────────────────────────────────────
+// ── Verified: the check mark draws itself ───────────────────────────────────
 :host(.cs--valid) {
   .cs-disc { fill: var(--cs-ok); }
 
@@ -79,14 +79,14 @@
   }
 }
 
-// ── Format conforme, clé non vérifiable : information, pas alerte ───────────
+// ── Valid format, key not verifiable: information, not an alert ─────────────
 :host(.cs--unverified) {
   .cs-disc { fill: var(--billy-accent, #12b4dd); }
   .cs-mark { stroke: #fff; }
   .cs-dot  { fill: #fff; }
 }
 
-// ── Invalide ────────────────────────────────────────────────────────────────
+// ── Invalid ─────────────────────────────────────────────────────────────────
 :host(.cs--invalid) {
   .cs-disc { fill: var(--billy-danger, #dc2626); }
   .cs-mark { stroke: #fff; }

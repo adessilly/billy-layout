@@ -8,24 +8,25 @@ import {
   DropdownOption,
   FormSidePanelComponent,
   InputLineComponent,
-  InputPrefixeSuffixeComponent,
+  InputPrefixSuffixComponent,
   LabelClipboardComponent,
   SaveBarComponent,
   ToastrService,
 } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
+import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
 
-/** billy-input-line : la ligne label + champ projeté. */
+/** billy-input-line : the label + projected field row. */
 @Component({
   selector: 'demo-input-line',
   imports: [FormsModule, InputLineComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="La ligne de formulaire canonique" description="Label, astérisque d'obligation, infobulle : le champ est projeté dedans." [center]="false">
+    <demo-stage title="The canonical form row" description="Label, mandatory asterisk, tooltip: the field is projected inside." [center]="false">
       <div class="demo-form-block il-center">
-        <billy-input-line label="Libellé de la facture" [mandatory]="true">
-          <input class="demo-field" [(ngModel)]="libelle" placeholder="Prestation de juillet" />
+        <billy-input-line label="Invoice label" [mandatory]="true">
+          <input class="demo-field" [(ngModel)]="label" placeholder="July services" />
         </billy-input-line>
-        <billy-input-line label="Référence interne" info="Visible uniquement par vous, jamais sur la facture.">
+        <billy-input-line label="Internal reference" info="Visible only to you, never on the invoice.">
           <input class="demo-field" [(ngModel)]="reference" placeholder="2026-042" />
         </billy-input-line>
       </div>
@@ -34,20 +35,20 @@ import { DemoStageComponent } from './demo-stage.component';
   styles: `.il-center { margin: 0 auto; }`,
 })
 export class InputLineDemoComponent {
-  readonly libelle = signal('');
+  readonly label = signal('');
   readonly reference = signal('');
 }
 
-/** billy-consult-line : le pendant lecture seule. */
+/** billy-consult-line : the read-only counterpart. */
 @Component({
   selector: 'demo-consult-line',
   imports: [ConsultLineComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Relire sans éditer" description="Même gabarit qu'input-line, mais pour les écrans de consultation." [center]="false">
+    <demo-stage title="Read without editing" description="Same template as input-line, but for consult screens." [center]="false">
       <div class="demo-form-block cl-center">
         <billy-consult-line label="Client">Billy SPRL</billy-consult-line>
-        <billy-consult-line label="Montant TVAC">1 210,00 €</billy-consult-line>
-        <billy-consult-line label="Échéance">31/07/2026</billy-consult-line>
+        <billy-consult-line label="Amount incl. VAT">€1,210.00</billy-consult-line>
+        <billy-consult-line label="Due date">31/07/2026</billy-consult-line>
       </div>
     </demo-stage>
   `,
@@ -55,42 +56,42 @@ export class InputLineDemoComponent {
 })
 export class ConsultLineDemoComponent {}
 
-/** billy-input-prefixe-suffixe : groupe champ + addons cliquables. */
+/** billy-input-prefix-suffix : field group + clickable addons. */
 @Component({
-  selector: 'demo-input-prefixe-suffixe',
-  imports: [FormsModule, InputPrefixeSuffixeComponent, InputLineComponent, DemoStageComponent],
+  selector: 'demo-input-prefix-suffix',
+  imports: [FormsModule, InputPrefixSuffixComponent, InputLineComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Préfixes et suffixes accolés" description="Les addons cliquables émettent prefixeClick / suffixeClick — ici le suffixe vide le champ." [center]="false">
+    <demo-stage title="Attached prefixes and suffixes" description="Clickable addons emit prefixClick / suffixClick — here the suffix clears the field." [center]="false">
       <div class="demo-form-block ips-center">
-        <billy-input-line label="Montant hors TVA">
-          <billy-input-prefixe-suffixe suffixe="€ HTVA">
-            <input class="demo-field" type="number" [(ngModel)]="montant" placeholder="0.00" />
-          </billy-input-prefixe-suffixe>
+        <billy-input-line label="Amount excl. VAT">
+          <billy-input-prefix-suffix suffix="€ excl. VAT">
+            <input class="demo-field" type="number" [(ngModel)]="amount" placeholder="0.00" />
+          </billy-input-prefix-suffix>
         </billy-input-line>
-        <billy-input-line label="Site web">
-          <billy-input-prefixe-suffixe prefixe="https://" suffixeIcon="fa-solid fa-xmark" [suffixeClickable]="true" (suffixeClick)="site.set('')">
+        <billy-input-line label="Website">
+          <billy-input-prefix-suffix prefix="https://" suffixIcon="fa-solid fa-xmark" [suffixClickable]="true" (suffixClick)="site.set('')">
             <input class="demo-field" [(ngModel)]="site" placeholder="billy.be" />
-          </billy-input-prefixe-suffixe>
+          </billy-input-prefix-suffix>
         </billy-input-line>
       </div>
     </demo-stage>
   `,
   styles: `.ips-center { margin: 0 auto; }`,
 })
-export class InputPrefixeSuffixeDemoComponent {
-  readonly montant = signal<number | null>(null);
+export class InputPrefixSuffixDemoComponent {
+  readonly amount = signal<number | null>(null);
   readonly site = signal('');
 }
 
-/** billy-label-clipboard : libellé copiable. */
+/** billy-label-clipboard : copyable label. */
 @Component({
   selector: 'demo-label-clipboard',
   imports: [LabelClipboardComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Copier d'un clic" description="Cliquez sur la valeur : elle part dans le presse-papier avec retour visuel.">
+    <demo-stage title="Copy with one click" description="Click the value: it goes to the clipboard with visual feedback.">
       <div class="lc-col">
         <billy-label-clipboard label="BE71 0961 2345 6769" />
-        <billy-label-clipboard label="facture-2026-042" />
+        <billy-label-clipboard label="invoice-2026-042" />
       </div>
     </demo-stage>
   `,
@@ -100,12 +101,13 @@ export class InputPrefixeSuffixeDemoComponent {
 })
 export class LabelClipboardDemoComponent {}
 
-/** billy-save-bar : la conclusion de tout formulaire. */
+/** billy-save-bar : the conclusion of every form. */
 @Component({
   selector: 'demo-save-bar',
-  imports: [SaveBarComponent, DropdownComponent, ButtonSwitchComponent, DemoStageComponent],
+  imports: [SaveBarComponent, DropdownComponent, ButtonSwitchComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage titre="Enregistrer / Annuler" description="Boutons délégués à billy-button (plain teinté + ghost). disabled = validité du formulaire, loading = requête en cours (le libellé bascule et le clic est neutralisé). En pied de dialogue, ajoutez class='no-theme'." [center]="false">
+    <demo-stage title="Save / Cancel" description="Buttons delegated to billy-button (tinted plain + ghost). disabled = form validity, loading = request in flight (the label switches and clicks are neutralized). In a dialog footer, add class='no-theme'." [center]="false">
+      <demo-locale-toggle stage-controls />
       <div stage-controls class="sb-controls">
         <label>
           <billy-button-switch [disabled]="loading()" (valueChange)="disabled.set($event)" />
@@ -130,7 +132,7 @@ export class LabelClipboardDemoComponent {}
           [loading]="loading()"
           [colorSave]="colorSave()"
           (save)="fakeSave()"
-          (cancel)="toastr.info('Retour arrière (simulé).', 'Annuler')" />
+          (cancel)="toastr.info('Going back (simulated).', 'Cancel')" />
       </div>
     </demo-stage>
   `,
@@ -166,8 +168,8 @@ export class SaveBarDemoComponent {
   readonly noTheme = signal(false);
   readonly loading = signal(false);
   readonly colorSave = signal<BillyButtonColor>('primary');
-  // 'primary' en tête : le dropdown affiche la 1re option tant qu'aucune valeur
-  // n'est écrite, ce qui doit coïncider avec le défaut de colorSave.
+  // 'primary' first: the dropdown shows the 1st option as long as no value
+  // is written, which must match the colorSave default.
   readonly colorOptions: DropdownOption[] = (
     ['primary', 'neutral', 'info', 'warning', 'error'] as BillyButtonColor[]
   ).map(c => ({ id: c, text: c, value: c }));
@@ -176,32 +178,32 @@ export class SaveBarDemoComponent {
     this.loading.set(true);
     setTimeout(() => {
       this.loading.set(false);
-      this.toastr.success('Le formulaire fictif est sauvegardé.', 'Enregistré');
+      this.toastr.success('The sample form was saved.', 'Saved');
     }, 1400);
   }
 
 }
 
-/** billy-form-side-panel : panneau latéral avec overlay. */
+/** billy-form-side-panel : side panel with overlay. */
 @Component({
   selector: 'demo-form-side-panel',
   imports: [FormsModule, SaveBarComponent, FormSidePanelComponent, InputLineComponent, DemoStageComponent],
   template: `
-    <demo-stage titre="Le panneau latéral" description="Overlay + verrou de scroll, fermeture au clic sur le fond (overlayClick). Le pied utilise une save-bar en no-theme.">
-      <button type="button" class="demo-btn--submit" (click)="open.set(true)">Ouvrir le panneau</button>
+    <demo-stage title="The side panel" description="Overlay + scroll lock, closes on backdrop click (overlayClick). The footer uses a save-bar in no-theme.">
+      <button type="button" class="demo-btn--submit" (click)="open.set(true)">Open the panel</button>
 
       @if (open()) {
         <billy-form-side-panel (overlayClick)="open.set(false)">
           <div class="fsp-head">
-            <h3>Paiement rapide</h3>
-            <p>Un formulaire court, sans quitter la page.</p>
+            <h3>Quick payment</h3>
+            <p>A short form, without leaving the page.</p>
           </div>
           <div class="fsp-body">
-            <billy-input-line label="Montant reçu" [mandatory]="true">
-              <input class="demo-field" type="number" [(ngModel)]="montant" placeholder="0.00" />
+            <billy-input-line label="Amount received" [mandatory]="true">
+              <input class="demo-field" type="number" [(ngModel)]="amount" placeholder="0.00" />
             </billy-input-line>
-            <billy-input-line label="Communication">
-              <input class="demo-field" [(ngModel)]="communication" placeholder="+++123/4567/89012+++" />
+            <billy-input-line label="Payment reference">
+              <input class="demo-field" [(ngModel)]="reference" placeholder="+++123/4567/89012+++" />
             </billy-input-line>
           </div>
           <billy-save-bar class="no-theme" (save)="save()" (cancel)="open.set(false)" />
@@ -229,12 +231,12 @@ export class FormSidePanelDemoComponent {
   private readonly toastr = inject(ToastrService);
 
   readonly open = signal(false);
-  readonly montant = signal<number | null>(null);
-  readonly communication = signal('');
+  readonly amount = signal<number | null>(null);
+  readonly reference = signal('');
 
   save(): void {
     this.open.set(false);
-    this.toastr.success('Paiement fictif encodé.', 'Enregistré');
+    this.toastr.success('Sample payment recorded.', 'Saved');
   }
 
 }

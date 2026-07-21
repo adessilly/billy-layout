@@ -1,4 +1,4 @@
-<nav class="action-bar" aria-label="Navigation principale">
+<nav class="action-bar" [attr.aria-label]="i18n.strings().actionBar.mainNavigation">
   <div class="tab-row">
     <div class="tab-pill" [class.tab-pill-off]="activeIndex() < 0"
          [style.transform]="pillTransform()" aria-hidden="true"></div>

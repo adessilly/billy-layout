@@ -1,6 +1,7 @@
-import { Component, forwardRef, input, ElementRef, viewChild, signal } from '@angular/core';
+import { Component, computed, forwardRef, inject, input, ElementRef, viewChild, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, Validator, AbstractControl, ValidationErrors, NG_VALIDATORS } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BillyI18nService } from '../../core/i18n/billy-i18n';
 import { InputEmailsPopupSuggestionComponent } from './input-emails-popup-suggestion/input-emails-popup-suggestion.component';
 import { InputEmailTagComponent } from './input-email-tag/input-email-tag.component';
 
@@ -29,6 +30,8 @@ import { InputEmailTagComponent } from './input-email-tag/input-email-tag.compon
 })
 export class InputEmailsComponent implements ControlValueAccessor, Validator {
 
+  protected readonly i18n = inject(BillyI18nService);
+
   emails = signal<string[]>([]);
   inputValue = signal<string>('');
   showSuggestions = signal<boolean>(false);
@@ -37,14 +40,16 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
   onTouchedCallback: any;
 
   inputElement = viewChild<ElementRef>('emailInput');
-  placeholder = input<string>('Entrez des emails');
+  placeholder = input<string>();
+  /** The input always wins; otherwise the dictionary of the active locale. */
+  protected readonly placeholderText = computed(() => this.placeholder() ?? this.i18n.strings().inputEmails.placeholder);
   disabled = false;
 
-  // Regex pour valider les emails
+  // Regex to validate the emails
   private emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  // Liste de tous les emails disponibles pour l'autocomplétion, fournie par le
-  // consommateur (découplé de ClientService lors de l'extraction en librairie).
+  // List of all emails available for autocompletion, provided by the
+  // consumer (decoupled from ClientService when extracted into the library).
   availableEmails = input<string[]>([]);
 
   // @Override ControlValueAccessor
@@ -71,7 +76,7 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
     if (!value || value.trim() === '') {
       this.emails.set([]);
     } else {
-      // Séparer par virgule ou point-virgule et nettoyer
+      // Split on comma or semicolon and clean up
       this.emails.set(value
         .split(/[,;]/)
         .map(email => email.trim())
@@ -83,17 +88,17 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
     const input = event.target as HTMLInputElement;
     const value = input.value.trim();
 
-    // Les touches directionnelles et Escape sont gérées par la popup elle-même
+    // Arrow keys and Escape are handled by the popup itself
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Escape') {
       return;
     }
 
-    // Créer un tag sur Espace, Virgule, Point-virgule ou Entrée
+    // Create a tag on Space, Comma, Semicolon or Enter
     if (event.key === ' ' || event.key === ',' || event.key === ';' || event.key === 'Enter') {
-      // Si c'est Enter et que la popup est visible, elle gérera la sélection elle-même
-      // On vérifie si l'événement a été preventDefault par la popup
+      // If it's Enter and the popup is visible, the popup will handle the selection itself
+      // We check whether the event was preventDefault-ed by the popup
       if (event.key === 'Enter' && this.showSuggestions()) {
-        // Laisser la popup gérer d'abord, si elle ne le fait pas, on ajoute l'email
+        // Let the popup handle it first; if it doesn't, we add the email
         setTimeout(() => {
           if (!event.defaultPrevented && value) {
             this.addEmail(value);
@@ -113,7 +118,7 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
       this.inputValue.set('');
       this.showSuggestions.set(false);
     }
-    // Supprimer le dernier tag sur Backspace si l'input est vide
+    // Remove the last tag on Backspace when the input is empty
     else if (event.key === 'Backspace' && value === '' && this.emails().length > 0) {
       this.removeEmail(this.emails().length - 1);
     }
@@ -125,9 +130,9 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
   }
 
   onInputBlur() {
-    // Petite temporisation pour permettre le clic sur une suggestion
+    // Small delay to allow clicking on a suggestion
     setTimeout(() => {
-      // Ajouter l'email restant dans l'input au blur
+      // Add the email remaining in the input on blur
       const value = this.inputValue().trim();
       if (value) {
         this.addEmail(value);
@@ -142,7 +147,7 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
     event.preventDefault();
     const pastedText = event.clipboardData?.getData('text') || '';
 
-    // Extraire tous les emails du texte collé
+    // Extract all the emails from the pasted text
     const newEmails = pastedText
       .split(/[,;\s]+/)
       .map(email => email.trim())
@@ -187,13 +192,13 @@ export class InputEmailsComponent implements ControlValueAccessor, Validator {
 
   // @Override Validator
   validate(control: AbstractControl): ValidationErrors | null {
-    // Si pas d'emails, on considère que c'est valide (la validation "required" est gérée séparément)
+    // No emails is considered valid (the "required" validation is handled separately)
     const emails = this.emails();
     if (emails.length === 0) {
       return null;
     }
 
-    // Vérifier si au moins un email est invalide
+    // Check whether at least one email is invalid
     const invalidEmails = emails.filter(email => !this.isValidEmail(email));
 
     if (invalidEmails.length > 0) {

@@ -8,8 +8,8 @@ import { DEMO_LOADERS } from '../../demos/demo-registry';
 import { MarkdownViewerComponent } from '../../site/markdown/markdown-viewer.component';
 
 /**
- * Page d'une fiche composant : en-tête, puis la démo live et la documentation
- * markdown — présentées dans des billy-tabs (elles-mêmes composant de la lib).
+ * Component doc page: header, then the live demo and the markdown
+ * documentation — presented in billy-tabs (themselves a library component).
  */
 @Component({
   selector: 'site-component-page',
@@ -17,16 +17,16 @@ import { MarkdownViewerComponent } from '../../site/markdown/markdown-viewer.com
   template: `
     @if (found(); as data) {
       <billy-page-header
-        [titre]="data.entry.label"
-        [sousTitre]="data.entry.summary"
-        [retourVisible]="true"
-        [retourTitre]="data.category.label"
-        (retour)="back()" />
+        [title]="data.entry.label"
+        [subtitle]="data.entry.summary"
+        [backVisible]="true"
+        [backLabel]="data.category.label"
+        (back)="back()" />
 
       <div class="site-page">
         @if (demo.value(); as demoComponent) {
           <billy-tabs>
-            <billy-tab label="Démo" icon="fa-solid fa-wand-magic-sparkles">
+            <billy-tab label="Demo" icon="fa-solid fa-wand-magic-sparkles">
               <div class="component-demo">
                 <ng-container *ngComponentOutlet="demoComponent" />
               </div>
@@ -64,7 +64,7 @@ import { MarkdownViewerComponent } from '../../site/markdown/markdown-viewer.com
 })
 export class ComponentPageComponent {
 
-  /** Liés depuis la route /c/:category/:slug (withComponentInputBinding). */
+  /** Bound from the /c/:category/:slug route (withComponentInputBinding). */
   readonly category = input.required<string>();
   readonly slug = input.required<string>();
 
@@ -75,7 +75,7 @@ export class ComponentPageComponent {
 
   readonly docPath = computed(() => `${this.category()}/${this.slug()}.md`);
 
-  /** Démo live éventuelle, chargée à la demande depuis le registre. */
+  /** Optional live demo, lazy-loaded from the registry. */
   readonly demo = resource<Type<unknown> | null, string>({
     params: () => `${this.category()}/${this.slug()}`,
     loader: async ({ params }) => {
@@ -88,7 +88,7 @@ export class ComponentPageComponent {
     effect(() => {
       const data = this.found();
       if (!data) {
-        void this.router.navigateByUrl('/composants');
+        void this.router.navigateByUrl('/components');
       } else {
         this.title.setTitle(`${data.entry.label} — billy-layout`);
       }

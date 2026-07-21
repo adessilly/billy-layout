@@ -23,7 +23,7 @@
                 <span class="dropdown-tag__remove"
                   role="button"
                   tabindex="-1"
-                  [attr.aria-label]="'Retirer ' + opt.text"
+                  [attr.aria-label]="i18n.strings().dropdown.remove + ' ' + opt.text"
                   (click)="removeValue(opt, $event)">
                   <billy-icon name="close" [size]="12" [strokeWidth]="2.2" />
                 </span>
@@ -57,7 +57,7 @@
           <billy-icon name="search" class="dropdown-search__icon" [size]="13" [strokeWidth]="2.2" />
           <input #searchInput
             type="text"
-            placeholder="Rechercher…"
+            [placeholder]="i18n.strings().dropdown.searchPlaceholder"
             autocomplete="off"
             [value]="searchText()"
             (input)="onSearchInput($any($event.target).value)"
@@ -91,7 +91,7 @@
             }
           </li>
         } @empty {
-          <li class="dropdown-empty">Aucun résultat</li>
+          <li class="dropdown-empty">{{ i18n.strings().dropdown.noResults }}</li>
         }
       </ul>
 

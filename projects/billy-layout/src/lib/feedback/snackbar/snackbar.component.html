@@ -4,22 +4,22 @@
             <billy-icon name="refresh" [size]="22" [strokeWidth]="2" />
         </div>
 
-        <!-- Layout desktop : message + bouton séparés -->
+        <!-- Desktop layout: separate message + button -->
         <div class="pwa-snackbar__body">
-            <p class="pwa-snackbar__message">{{ message() }}</p>
-            <button class="pwa-snackbar__btn" (click)="askButtonClick()" [title]="buttonTitle()">
+            <p class="pwa-snackbar__message">{{ messageText() }}</p>
+            <button class="pwa-snackbar__btn" (click)="askButtonClick()" [title]="buttonTitleText()">
                 <billy-icon name="bolt" [size]="13" [strokeWidth]="2" />
-                {{ buttonLabel() }}
+                {{ buttonLabelText() }}
             </button>
         </div>
 
-        <!-- Layout mobile : bouton unique fusionné -->
-        <button class="pwa-snackbar__btn-compact" (click)="askButtonClick()" [title]="buttonTitle()">
+        <!-- Mobile layout: single merged button -->
+        <button class="pwa-snackbar__btn-compact" (click)="askButtonClick()" [title]="buttonTitleText()">
             <billy-icon name="refresh" [size]="14" [strokeWidth]="2.1" />
-            {{ message() }}
+            {{ messageText() }}
         </button>
 
-        <button class="pwa-snackbar__close" (click)="askClose()" [title]="closeTitle()" aria-label="Ignorer">
+        <button class="pwa-snackbar__close" (click)="askClose()" [title]="closeTitleText()" [attr.aria-label]="i18n.strings().snackbar.dismiss">
             <billy-icon name="close" [size]="14" [strokeWidth]="2.2" />
         </button>
     </div>

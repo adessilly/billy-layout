@@ -1,41 +1,41 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// Socle commun aux « codes » saisis puis relus (n° TVA, IBAN).
+// Common foundation for "codes" that are typed then read back (VAT numbers,
+// IBANs).
 //
-// Une valeur canonique : compacte, en majuscules, sans séparateur ni espace
-// (« BE0690614660 »). C'est elle — et elle seule — qui va au backend.
+// A canonical value: compact, uppercase, no separator or space
+// ("BE0690614660"). It — and it alone — is what goes to the backend.
 //
-// Un rendu en segments : la valeur découpée en fragments dont on sait s'ils
-// portent l'information (les chiffres) ou seulement la lisibilité (le préfixe
-// pays, les points, les espaces). Ces derniers sont marqués `muted`, ce qui
-// permet de les griser à l'affichage sans que chaque composant ne rejoue le
-// découpage.
+// A segmented rendering: the value split into fragments that either carry
+// the information (the digits) or only aid readability (the country prefix,
+// the dots, the spaces). The latter are marked `muted`, which lets them be
+// greyed out on display without every component replaying the split.
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Fragment de rendu. `muted` : préfixe pays ou séparateur → affiché en gris. */
+/** Rendering fragment. `muted`: country prefix or separator → shown in grey. */
 export interface CodeSegment {
   text: string;
   muted: boolean;
 }
 
 /**
- * État d'un code.
- * - `partial`    : saisie en cours, trop court pour être jugé
- * - `unverified` : structure conforme, mais aucune clé de contrôle connue
- *                  pour ce pays (on n'invente pas une erreur)
- * - `valid`      : clé de contrôle vérifiée
+ * Status of a code.
+ * - `partial`    : still being typed, too short to judge
+ * - `unverified` : well-formed structure, but no known check digit for this
+ *                  country (we do not make up an error)
+ * - `valid`      : check digit verified
  */
 export type CodeStatus = 'empty' | 'partial' | 'invalid' | 'unverified' | 'valid';
 
-/** Diagnostic complet d'un code, prêt à être affiché sous le champ. */
+/** Full diagnostic of a code, ready to be shown under the field. */
 export interface CodeInfo {
   status: CodeStatus;
-  /** Code pays ISO détecté (« BE »), ou null s'il n'est pas encore saisi. */
+  /** Detected ISO country code ("BE"), or null while not yet typed. */
   country: string | null;
-  /** Nom du pays en français, ou null si le pays n'est pas répertorié. */
+  /** Country name, or null if the country is not listed. */
   countryLabel: string | null;
-  /** Message court affiché sous le champ. */
+  /** Short message shown under the field. */
   message: string;
-  /** Avancement de la saisie (0 → 1), pour l'anneau de progression. */
+  /** Typing progress (0 → 1), for the progress ring. */
   progress: number;
 }
 
@@ -46,9 +46,9 @@ export function isAlnum(char: string): boolean {
 }
 
 /**
- * Réduit une saisie (ou une valeur venue du backend) à sa forme canonique :
- * majuscules, uniquement [A-Z0-9], tronquée à `maxLength`. Tout le reste —
- * points, espaces, tirets, lettres accentuées, symboles — est ignoré.
+ * Reduces an input (or a value coming from the backend) to its canonical
+ * form: uppercase, [A-Z0-9] only, truncated to `maxLength`. Everything else —
+ * dots, spaces, dashes, accented letters, symbols — is ignored.
  */
 export function keepAlnum(raw: string | null | undefined, maxLength: number): string {
   return (raw ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, maxLength);
@@ -63,9 +63,9 @@ export function countAlnum(text: string): number {
 }
 
 /**
- * Ajoute un segment en le fusionnant avec le précédent s'il a la même teinte :
- * « BE » + « 68 » restent deux segments (pays grisé, clé normale), mais deux
- * chiffres consécutifs n'en forment qu'un. Rend le DOM minimal.
+ * Appends a segment, merging it with the previous one when they share the
+ * same tint: "BE" + "68" stay two segments (greyed country, normal check),
+ * but two consecutive digits become one. Keeps the DOM minimal.
  */
 function push(segments: CodeSegment[], text: string, muted: boolean): void {
   const last = segments[segments.length - 1];
@@ -77,10 +77,10 @@ function push(segments: CodeSegment[], text: string, muted: boolean): void {
 }
 
 /**
- * Découpe selon des tailles de groupes variables (TVA : 4.3.3 en Belgique).
- * Tolérant par construction : une valeur trop courte est découpée jusqu'où
- * elle va (la saisie se formate donc au fil de la frappe), une valeur trop
- * longue voit son surplus collé à la fin plutôt que tronqué.
+ * Splits along variable group sizes (VAT: 4.3.3 in Belgium).
+ * Tolerant by construction: a value that is too short is split as far as it
+ * goes (so the input formats itself while typing), a value that is too long
+ * gets its surplus glued at the end rather than truncated.
  */
 export function groupBySizes(body: string, sizes: number[], separator: string): CodeSegment[] {
   const segments: CodeSegment[] = [];
@@ -101,9 +101,9 @@ export function groupBySizes(body: string, sizes: number[], separator: string): 
 }
 
 /**
- * Découpe en groupes de taille fixe (IBAN : par 4), en grisant les `mutedHead`
- * premiers caractères (le code pays). Les séparateurs tombent sur la grille du
- * code complet, pas sur celle du reste : « BE68 5390 0754 7034 ».
+ * Splits into fixed-size groups (IBAN: by 4), greying the first `mutedHead`
+ * characters (the country code). Separators fall on the grid of the full
+ * code, not on that of the remainder: "BE68 5390 0754 7034".
  */
 export function groupByChunks(
   value: string, size: number, separator: string, mutedHead = 0,
@@ -118,7 +118,7 @@ export function groupByChunks(
   return segments;
 }
 
-/** Le texte que ces segments affichent — c'est le masque du champ de saisie. */
+/** The text these segments display — the input field's mask. */
 export function segmentsToText(segments: CodeSegment[]): string {
   return segments.map(segment => segment.text).join('');
 }

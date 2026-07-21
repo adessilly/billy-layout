@@ -35,13 +35,13 @@
   }
 }
 
-/* Le document flotte doucement */
+/* The document floats gently */
 .app-loading__doc {
   transform-origin: 22px 26px;
   animation: billy-doc-float 2.4s ease-in-out infinite;
 }
 
-/* Chaque ligne « s'écrit » de la gauche vers la droite, en cascade */
+/* Each line “writes itself” left to right, staggered */
 .app-loading__line {
   fill: var(--billy-accent-strong, #0e97bb);
   transform-box: fill-box;
@@ -54,7 +54,7 @@
   fill: var(--billy-accent-border, #a5dff2);
 }
 
-/* La pastille € apparaît une fois le total « écrit » */
+/* The € badge pops in once the total is “written” */
 .app-loading__euro {
   transform-box: fill-box;
   transform-origin: center;
@@ -87,7 +87,7 @@
   85%, 100% { transform: scale(0); opacity: 0; }
 }
 
-/* Respecte les préférences d'accessibilité : on fige, on garde juste un pouls léger */
+/* Respect accessibility preferences: freeze everything, keep only a light pulse */
 @media (prefers-reduced-motion: reduce) {
   .app-loading__doc,
   .app-loading__line,
@@ -98,7 +98,7 @@
   .app-loading__doc { animation: billy-doc-float 3s ease-in-out infinite; }
 }
 
-/* Mode sombre (classe globale `body.dark-mode`) */
+/* Dark mode (global `body.dark-mode` class) */
 :host-context(body.dark-mode) .app-loading {
   background: rgba(20, 28, 31, 0.72);
 }
