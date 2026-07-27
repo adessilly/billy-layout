@@ -16,6 +16,7 @@ const ICON_NAMES: BillyIconName[] = [
   'clients', 'account', 'peppol', 'bell', 'chevron-left', 'chevron-right', 'chevron-down',
   'sync', 'check', 'clock', 'search', 'dark-mode', 'logout', 'open', 'upload', 'plus',
   'close', 'refresh', 'bolt', 'lock', 'eye', 'eye-off',
+  'stats', 'chart', 'pie-chart',
 ];
 
 /** Interactive gallery of the icon set: adjustable size and stroke width. */

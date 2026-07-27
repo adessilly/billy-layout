@@ -34,9 +34,21 @@ Business navigation icons: `home`, `purchases`, `quotes`, `sales`, `services`, `
 
 Utility icons: `bell`, `chevron-left`, `chevron-right`, `chevron-down`, `sync`, `check`, `clock`, `search`, `dark-mode`, `logout`, `open`, `upload`, `plus`, `close`, `refresh`, `bolt`, `lock`, `eye`, `eye-off`.
 
-The type also accepts `string` as component input to let dynamic names through, but only the 28 names above produce a drawing.
+Data-visualisation icons: `stats`, `chart`, `pie-chart`.
+
+The type also accepts `string` as component input to let dynamic names through, but only the 31 names above produce a drawing.
 
 Usage landmarks for the recent utilities: `chevron-down` (dropdown, open-state rotation driven in CSS by the parent), `close` (close/delete cross — dropdown tags, snackbar), `refresh` (circular "update" arrow, snackbar), `bolt` (lightning bolt on the snackbar's action button), `lock`/`eye`/`eye-off` (password field).
+
+Data-visualisation set — same grammar as the rest (axes and outlines in plain stroke, the data itself animated on hover):
+
+| Name | Drawing | Intended use |
+|---|---|---|
+| `stats` | Axis pair + three vertical bars of growing height | Statistics/reporting entry points, dashboard tiles, bar-chart blocks |
+| `chart` | Axis pair + rising polyline ending on an arrow head | Trends, evolution over time, line-chart blocks |
+| `pie-chart` | Circle + a quarter slice drawn by its two radii | Breakdowns, distribution/share blocks |
+
+Their hover micro-animations: `stats` lifts its bars (`anim-rise`), `chart` and `pie-chart` draw their data stroke (`anim-draw` + `anim-draw-19`).
 
 ## Usage example
 
@@ -67,7 +79,8 @@ interface MenuItem { icon: BillyIconName; label: string; }
 
 - **Color**: `stroke="currentColor"` — driven entirely in CSS via `color` on the host or an ancestor. No `--billy-*` token consumed directly; dark mode is therefore automatic whenever the surrounding text follows it.
 - **Box**: `:host { display: inline-flex; line-height: 0 }` and `svg { overflow: visible }` (animations may slightly overflow the viewBox).
-- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales` (arrow rising), `clients` (the arc "waves"), `quotes`/`services` (stroke drawing itself, `stroke-dasharray`).
+- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales`/`stats` (bars and arrow rising), `clients` (the arc "waves"), `quotes`/`services`/`chart`/`pie-chart` (stroke drawing itself, `stroke-dasharray`).
+- **`anim-draw` lengths**: a self-drawing stroke needs a companion class giving its approximate path length — `anim-draw-11`, `anim-draw-16`, `anim-draw-19` (`--draw-length`). Pick the one just above the real length, otherwise the stroke never fully disappears at the start of the animation.
 - **Accessibility**: the SVG carries `aria-hidden="true"` (decorative icon — provide a text label next to it) and all animations are disabled under `prefers-reduced-motion`.
 
 ## Pitfalls & notes

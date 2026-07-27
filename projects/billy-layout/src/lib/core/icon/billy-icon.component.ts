@@ -5,7 +5,8 @@ export type BillyIconName =
   | 'clients' | 'account' | 'peppol'
   | 'bell' | 'chevron-left' | 'chevron-right' | 'chevron-down' | 'sync' | 'check' | 'clock'
   | 'search' | 'dark-mode' | 'logout' | 'open' | 'upload' | 'plus'
-  | 'close' | 'refresh' | 'bolt' | 'lock' | 'eye' | 'eye-off';
+  | 'close' | 'refresh' | 'bolt' | 'lock' | 'eye' | 'eye-off'
+  | 'stats' | 'chart' | 'pie-chart';
 
 /**
  * SVG icons from the "Billy - App shell" design (rounded stroke, viewBox 24).
