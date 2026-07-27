@@ -63,3 +63,21 @@
   opacity: 0.75;
   margin-top: 2px;
 }
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+:host-context(.dark-mode) .add-tile-import {
+  background: var(--billy-section-bg);
+  color: var(--billy-input-color);
+  border-color: var(--billy-surface-border);
+}
+
+:host-context(.dark-mode) .add-tile-import:hover:not(.is-loading) {
+  background: rgba(35, 183, 229, 0.12);
+  border-color: #23b7e5;
+  color: #23b7e5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(.dark-mode) .add-tile-icon {
+  background: rgba(255, 255, 255, 0.08);
+}

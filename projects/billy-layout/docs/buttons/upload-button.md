@@ -63,7 +63,7 @@ Real usage in `src/app/auth/pages/home/home-actions/home-actions.component.html`
 - `:host { display: block; flex: 1; min-width: 0 }`: designed for a flex action grid, next to `billy-add-button`.
 - Import style: `#f4f6f7` background, `#555` text, 2px **dashed** `#ccc` border; on hover (unless loading), the tile switches to the accent (#23b7e5, `#e8f8fd` background, elevation + shadow).
 - `is-loading`: opacity 0.65, `cursor: not-allowed`, `pointer-events: none`.
-- Hard-coded colors, no `--billy-*` token; **no dark mode rules** (unlike `billy-add-button`): the light grey background stays as is under `body.dark-mode`.
+- Dark mode via `:host-context(.dark-mode)`, like `billy-add-button`: the import zone switches to the dark surface tokens (`--billy-section-bg` background, `--billy-input-color` text, dashed `--billy-surface-border`), the icon badge to a translucent white veil (`rgba(255,255,255,0.08)`), and hover keeps the accent outline over a translucent accent fill (`rgba(35,183,229,0.12)`).
 
 ## Pitfalls & notes
 
