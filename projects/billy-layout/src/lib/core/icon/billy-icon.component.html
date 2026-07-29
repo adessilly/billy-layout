@@ -95,5 +95,47 @@
     @case ('pie-chart') {
       <circle cx="12" cy="12" r="9"/><path class="anim-draw anim-draw-19" d="M21 12h-9V3"/>
     }
+    @case ('send') {
+      <rect x="3" y="5" width="18" height="14" rx="2"/><path class="anim-drop" d="m3.5 7.5 8.5 6 8.5-6"/>
+    }
+    @case ('trash') {
+      <g class="anim-lift"><path d="M4 7h16"/><path d="M10 4h4"/></g><path d="M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7"/><path d="M10.5 11v6M13.5 11v6"/>
+    }
+    @case ('download') {
+      <g class="anim-drop"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/></g><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>
+    }
+    @case ('magic') {
+      <path d="M3.5 20.5 13 11"/><path class="anim-greet" d="M17 3.5l1.2 3.3L21.5 8l-3.3 1.2L17 12.5l-1.2-3.3L12.5 8l3.3-1.2Z"/><path d="M6.3 4.8l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6Z"/>
+    }
+    @case ('file-text') {
+      <path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M13.5 3v5.5H19"/><path class="anim-draw anim-draw-11" d="M8.5 13h7M8.5 17h4.5"/>
+    }
+    @case ('file-binary') {
+      <path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M13.5 3v5.5H19"/><g class="anim-greet"><path d="M8 13.5h1.5v5"/><rect x="12.5" y="13.5" width="3.5" height="5" rx="1.75"/></g>
+    }
+    @case ('file-image') {
+      <path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M13.5 3v5.5H19"/><circle class="anim-greet" cx="9.2" cy="11.8" r="1.15"/><path d="m7 18 3-3 2 1.5 2-2 2.5 3.5"/>
+    }
+    @case ('file-archive') {
+      <path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M13.5 3v5.5H19"/><path class="anim-drop" d="M10.5 5.5V7M10.5 9V10.5M10.5 12.5V14"/><rect x="9" y="15.5" width="3" height="3.2" rx="1.1"/>
+    }
+    @case ('info') {
+      <circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle class="anim-greet" cx="12" cy="7.8" r="1.1" fill="currentColor" stroke="none"/>
+    }
+    @case ('warning') {
+      <path d="M12 4 21.5 19.5H2.5Z"/><g class="anim-greet"><path d="M12 10v4"/><circle cx="12" cy="16.9" r="1.1" fill="currentColor" stroke="none"/></g>
+    }
+    @case ('error') {
+      <circle cx="12" cy="12" r="9"/><path class="anim-greet" d="m9 9 6 6M15 9l-6 6"/>
+    }
+    @case ('bug') {
+      <rect x="8" y="7" width="8" height="12" rx="4"/><path class="anim-greet" d="M10 7.4 8.5 4.5M14 7.4 15.5 4.5"/><path d="M8 11H4.5M8 15H4.5M16 11h3.5M16 15h3.5"/>
+    }
+    @case ('clipboard') {
+      <path d="M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><rect class="anim-lift" x="9" y="2.5" width="6" height="3.5" rx="1.2"/>
+    }
+    @case ('link') {
+      <path class="anim-draw anim-draw-16" d="M10 13.5a4 4 0 0 0 5.7.3l3-3a4 4 0 0 0-5.7-5.7l-1.7 1.7"/><path class="anim-draw anim-draw-16" d="M14 10.5a4 4 0 0 0-5.7-.3l-3 3a4 4 0 0 0 5.7 5.7l1.7-1.7"/>
+    }
   }
 </svg>

@@ -36,7 +36,13 @@ Utility icons: `bell`, `chevron-left`, `chevron-right`, `chevron-down`, `sync`, 
 
 Data-visualisation icons: `stats`, `chart`, `pie-chart`.
 
-The type also accepts `string` as component input to let dynamic names through, but only the 31 names above produce a drawing.
+Action icons: `send`, `trash`, `download`, `magic`, `clipboard`, `link`.
+
+File-type icons: `file-text`, `file-binary`, `file-image`, `file-archive`.
+
+Status icons: `info`, `warning`, `error`, `bug`.
+
+The type also accepts `string` as component input to let dynamic names through, but only the 45 names above produce a drawing.
 
 Usage landmarks for the recent utilities: `chevron-down` (dropdown, open-state rotation driven in CSS by the parent), `close` (close/delete cross — dropdown tags, snackbar), `refresh` (circular "update" arrow, snackbar), `bolt` (lightning bolt on the snackbar's action button), `lock`/`eye`/`eye-off` (password field).
 
@@ -49,6 +55,35 @@ Data-visualisation set — same grammar as the rest (axes and outlines in plain 
 | `pie-chart` | Circle + a quarter slice drawn by its two radii | Breakdowns, distribution/share blocks |
 
 Their hover micro-animations: `stats` lifts its bars (`anim-rise`), `chart` and `pie-chart` draw their data stroke (`anim-draw` + `anim-draw-19`).
+
+Action set — verbs applied to a document or a selection, typically on a `billy-button` or a row action:
+
+| Name | Drawing | Intended use | Hover animation |
+|---|---|---|---|
+| `send` | Envelope (rectangle + fold) | Send by email, submit a document to a recipient | `anim-drop` on the fold (the letter slides in) |
+| `trash` | Bin with a lid and two grooves | Delete, delete-confirmation dialogs, destructive row action | `anim-lift` on the lid + handle |
+| `download` | Downward arrow above an open tray | Download, export (mirror of `upload`) | `anim-drop` on the arrow |
+| `magic` | Wand + four-point star + spark | AI/automatic generation, suggestion, auto-fill | `anim-greet` on the star (it twinkles) |
+| `clipboard` | Board + clip | Copy to clipboard, paste, "copy the reference" | `anim-lift` on the clip |
+| `link` | Two interlocked chain halves | Hyperlink, copy a share link, linked record | `anim-draw` + `anim-draw-16` on both halves |
+
+File-type set — same document outline (folded top-right corner), the content marks tell the format apart:
+
+| Name | Drawing | Intended use | Hover animation |
+|---|---|---|---|
+| `file-text` | Document + two text lines | Text/plain document, `.txt`, `.csv`, unknown text attachment | `anim-draw` + `anim-draw-11` on the lines |
+| `file-binary` | Document + the digits `1` and `0` | Binary/unreadable file, `.bin`, raw payload | `anim-greet` on the digits |
+| `file-image` | Document + sun and mountains | Image attachment (`.png`, `.jpg`, …), thumbnails | `anim-greet` on the sun |
+| `file-archive` | Document + zip slider and its pull tab | Archive (`.zip`, `.7z`), multi-file bundle | `anim-drop` on the zip teeth |
+
+Status set — severity markers. They carry **no colour of their own** (`currentColor`, like the rest of the set): set the tone on the container, e.g. `color: var(--billy-danger)` for `error`. Pair them with a text label, the SVG being `aria-hidden`:
+
+| Name | Drawing | Intended use | Hover animation |
+|---|---|---|---|
+| `info` | Circle + lowercase "i" (filled dot) | Informative message, help tooltip, neutral banner | `anim-greet` on the dot |
+| `warning` | Triangle + exclamation mark | Warning, non-blocking risk, "check this before saving" | `anim-greet` on the exclamation |
+| `error` | Circle + cross | Error, failure, blocking validation | `anim-greet` on the cross |
+| `bug` | Beetle (body, antennae, legs) | Bug report, debug/diagnostics panel, technical log | `anim-greet` on the antennae |
 
 ## Usage example
 
@@ -79,7 +114,7 @@ interface MenuItem { icon: BillyIconName; label: string; }
 
 - **Color**: `stroke="currentColor"` — driven entirely in CSS via `color` on the host or an ancestor. No `--billy-*` token consumed directly; dark mode is therefore automatic whenever the surrounding text follows it.
 - **Box**: `:host { display: inline-flex; line-height: 0 }` and `svg { overflow: visible }` (animations may slightly overflow the viewBox).
-- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales`/`stats` (bars and arrow rising), `clients` (the arc "waves"), `quotes`/`services`/`chart`/`pie-chart` (stroke drawing itself, `stroke-dasharray`).
+- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales`/`stats` (bars and arrow rising), `clients` (the arc "waves"), `quotes`/`services`/`chart`/`pie-chart`/`file-text`/`link` (stroke drawing itself, `stroke-dasharray`), `trash`/`clipboard` (the lid and the clip lift), `magic`/`file-binary`/`file-image`/`info`/`warning`/`error`/`bug` (the star, the digits, the sun, the severity marks pop).
 - **`anim-draw` lengths**: a self-drawing stroke needs a companion class giving its approximate path length — `anim-draw-11`, `anim-draw-16`, `anim-draw-19` (`--draw-length`). Pick the one just above the real length, otherwise the stroke never fully disappears at the start of the animation.
 - **Accessibility**: the SVG carries `aria-hidden="true"` (decorative icon — provide a text label next to it) and all animations are disabled under `prefers-reduced-motion`.
 

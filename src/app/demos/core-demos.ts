@@ -17,6 +17,9 @@ const ICON_NAMES: BillyIconName[] = [
   'sync', 'check', 'clock', 'search', 'dark-mode', 'logout', 'open', 'upload', 'plus',
   'close', 'refresh', 'bolt', 'lock', 'eye', 'eye-off',
   'stats', 'chart', 'pie-chart',
+  'send', 'trash', 'download', 'magic',
+  'file-text', 'file-binary', 'file-image', 'file-archive',
+  'info', 'warning', 'error', 'bug', 'clipboard', 'link',
 ];
 
 /** Interactive gallery of the icon set: adjustable size and stroke width. */
