@@ -42,7 +42,9 @@ File-type icons: `file-text`, `file-binary`, `file-image`, `file-archive`.
 
 Status icons: `info`, `warning`, `error`, `bug`.
 
-The type also accepts `string` as component input to let dynamic names through, but only the 45 names above produce a drawing.
+Banking icons: `bank`, `bank-account`, `bank-statement`, `statement-line`, `debit`, `credit`, `transfer`, `reconcile`, `euro`, `coins`, `banknote`, `credit-card`.
+
+The type also accepts `string` as component input to let dynamic names through, but only the 57 names above produce a drawing.
 
 Usage landmarks for the recent utilities: `chevron-down` (dropdown, open-state rotation driven in CSS by the parent), `close` (close/delete cross — dropdown tags, snackbar), `refresh` (circular "update" arrow, snackbar), `bolt` (lightning bolt on the snackbar's action button), `lock`/`eye`/`eye-off` (password field).
 
@@ -85,6 +87,25 @@ Status set — severity markers. They carry **no colour of their own** (`current
 | `error` | Circle + cross | Error, failure, blocking validation | `anim-greet` on the cross |
 | `bug` | Beetle (body, antennae, legs) | Bug report, debug/diagnostics panel, technical log | `anim-greet` on the antennae |
 
+Banking set — bank accounts, statements and their lines, cash flow direction. Same grammar as the rest: outlines in plain stroke, the meaningful part animated on hover. They carry no colour of their own: tint `debit`/`credit` on the container (e.g. `color: var(--billy-danger)` / `var(--billy-success)`) when the direction must read at a glance.
+
+| Name | Drawing | Intended use | Hover animation |
+|---|---|---|---|
+| `bank` | Bank building (pediment, three columns, base) | Bank/financial institution, "bank" section, bank selection | `anim-lift` on the roof |
+| `bank-account` | Passbook (spine + `€`) | A bank account, account list, account picker | `anim-greet` on the `€` |
+| `bank-statement` | Document with folded corner + three label/amount rows | A statement (CODA, CSV import, PDF statement), statement list | `anim-draw` + `anim-draw-19` on the rows |
+| `statement-line` | One highlighted row between two neighbouring rows | A single statement line, line detail, line-level action | `anim-draw` + `anim-draw-11` on the row content |
+| `debit` | Circle + downward arrow | Debit, money out, outgoing amount (mirror of `credit`) | `anim-drop` on the arrow |
+| `credit` | Circle + upward arrow | Credit, money in, incoming amount (mirror of `debit`) | `anim-rise` on the arrow |
+| `transfer` | Two opposite horizontal arrows | Transfer, account-to-account move, payment order | `anim-lift` / `anim-drop` on the two arrows |
+| `reconcile` | Two rows + checkmark | Bank reconciliation, matching a line with an invoice, "lettrage" | `anim-draw` + `anim-draw-16` on the checkmark |
+| `euro` | `€` symbol | Amount, currency, monetary field or column | `anim-greet` on the two bars |
+| `coins` | Stack of two coins | Cash, balance, funds, treasury | `anim-lift` on the top coin |
+| `banknote` | Banknote (frame + central medallion) | Cash payment, payment method, cash flow | `anim-greet` on the medallion |
+| `credit-card` | Card + magnetic stripe | Card payment, payment means, card management | `anim-draw` + `anim-draw-19` on the stripe |
+
+`debit`/`credit` reuse the arrow grammar of `purchases`/`sales`, but enclosed in a circle: use the pair on statement lines and amounts, and keep `purchases`/`sales` for the business navigation.
+
 ## Usage example
 
 Real usage in `src/app/layout/billy-search/billy-search.component.html`:
@@ -114,7 +135,7 @@ interface MenuItem { icon: BillyIconName; label: string; }
 
 - **Color**: `stroke="currentColor"` — driven entirely in CSS via `color` on the host or an ancestor. No `--billy-*` token consumed directly; dark mode is therefore automatic whenever the surrounding text follows it.
 - **Box**: `:host { display: inline-flex; line-height: 0 }` and `svg { overflow: visible }` (animations may slightly overflow the viewBox).
-- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales`/`stats` (bars and arrow rising), `clients` (the arc "waves"), `quotes`/`services`/`chart`/`pie-chart`/`file-text`/`link` (stroke drawing itself, `stroke-dasharray`), `trash`/`clipboard` (the lid and the clip lift), `magic`/`file-binary`/`file-image`/`info`/`warning`/`error`/`bug` (the star, the digits, the sun, the severity marks pop).
+- **Hover micro-animations**: tagged fragments (`anim-drop`, `anim-rise`, `anim-lift`, `anim-greet`, `anim-draw`) animate when an **ancestor carrying the `.billy-icon-hover-zone` class** is hovered (via `:host-context(.billy-icon-hover-zone:hover)`). Examples: `purchases` (arrow diving in), `sales`/`stats` (bars and arrow rising), `clients` (the arc "waves"), `quotes`/`services`/`chart`/`pie-chart`/`file-text`/`link` (stroke drawing itself, `stroke-dasharray`), `trash`/`clipboard`/`coins` (the lid, the clip and the top coin lift), `magic`/`file-binary`/`file-image`/`info`/`warning`/`error`/`bug`/`bank-account`/`banknote`/`euro` (the star, the digits, the sun, the severity marks and the monetary marks pop), `debit`/`credit`/`transfer` (the arrows shift in their direction).
 - **`anim-draw` lengths**: a self-drawing stroke needs a companion class giving its approximate path length — `anim-draw-11`, `anim-draw-16`, `anim-draw-19` (`--draw-length`). Pick the one just above the real length, otherwise the stroke never fully disappears at the start of the animation.
 - **Accessibility**: the SVG carries `aria-hidden="true"` (decorative icon — provide a text label next to it) and all animations are disabled under `prefers-reduced-motion`.
 

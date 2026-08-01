@@ -20,6 +20,9 @@ const ICON_NAMES: BillyIconName[] = [
   'send', 'trash', 'download', 'magic',
   'file-text', 'file-binary', 'file-image', 'file-archive',
   'info', 'warning', 'error', 'bug', 'clipboard', 'link',
+  'bank', 'bank-account', 'bank-statement', 'statement-line',
+  'debit', 'credit', 'transfer', 'reconcile',
+  'euro', 'coins', 'banknote', 'credit-card',
 ];
 
 /** Interactive gallery of the icon set: adjustable size and stroke width. */

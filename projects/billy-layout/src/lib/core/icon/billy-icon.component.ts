@@ -9,7 +9,10 @@ export type BillyIconName =
   | 'stats' | 'chart' | 'pie-chart'
   | 'send' | 'trash' | 'download' | 'magic'
   | 'file-text' | 'file-binary' | 'file-image' | 'file-archive'
-  | 'info' | 'warning' | 'error' | 'bug' | 'clipboard' | 'link';
+  | 'info' | 'warning' | 'error' | 'bug' | 'clipboard' | 'link'
+  | 'bank' | 'bank-account' | 'bank-statement' | 'statement-line'
+  | 'debit' | 'credit' | 'transfer' | 'reconcile'
+  | 'euro' | 'coins' | 'banknote' | 'credit-card';
 
 /**
  * SVG icons from the "Billy - App shell" design (rounded stroke, viewBox 24).
