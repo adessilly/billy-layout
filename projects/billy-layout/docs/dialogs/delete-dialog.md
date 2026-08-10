@@ -51,6 +51,10 @@ When these inputs are not set, the defaults come from the i18n dictionary. The w
 
 The `.del-close` cross, the "Cancel" button and the danger button all carry `data-billy-dismiss`; Escape and a backdrop click also close (standard `Dialog` behavior).
 
+### Focus & modality
+
+Handled by the `Dialog` engine — see [Modality](dialog.md#modality-focus--inert-background). On opening, focus goes to `.del-content` (the whole confirmation is announced, and neither Cancel nor the danger button is pre-armed by an Enter press), Tab cycles between the cross, Cancel and the danger button, the page behind is `inert`, and on closing focus returns to the button that opened the dialog (the one that called `openDialog()`).
+
 ## Usage example
 
 Real-world usage: `src/app/auth/pages/devis/devis-card/devis-card.component.*` (same pattern in vente-card, achat-card, devis-form, etc.).

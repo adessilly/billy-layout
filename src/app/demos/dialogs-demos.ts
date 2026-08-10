@@ -1,6 +1,7 @@
 import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  AutofocusDirective,
   DeleteDialogComponent,
   DialogFormBodyComponent,
   DialogFormComponent,
@@ -18,7 +19,7 @@ import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
   selector: 'demo-delete-dialog',
   imports: [DeleteDialogComponent, DemoStageComponent, DemoLocaleToggleComponent],
   template: `
-    <demo-stage title="Confirm a deletion" description="openDialogAndWait(title, subtitle, label) returns a promise resolved when Delete is clicked. Escape, backdrop click and the close cross dismiss without deleting.">
+    <demo-stage title="Confirm a deletion" description="openDialogAndWait(title, subtitle, label) returns a promise resolved when Delete is clicked. Escape, backdrop click and the close cross dismiss without deleting. Focus enters the dialog on opening and returns to this button on closing; the page behind is inert meanwhile.">
       <demo-locale-toggle stage-controls />
       <button type="button" class="demo-btn--destructive" (click)="ask()">
         <i class="fa-solid fa-trash-can"></i> Delete the sample invoice
@@ -47,9 +48,9 @@ export class DeleteDialogDemoComponent {
 /** billy-dialog-form : the generic header/body/footer dialog. */
 @Component({
   selector: 'demo-dialog-form',
-  imports: [FormsModule, DialogFormComponent, DialogFormHeaderComponent, DialogFormBodyComponent, DialogFormFooterComponent, InputLineComponent, SaveBarComponent, DemoStageComponent],
+  imports: [FormsModule, AutofocusDirective, DialogFormComponent, DialogFormHeaderComponent, DialogFormBodyComponent, DialogFormFooterComponent, InputLineComponent, SaveBarComponent, DemoStageComponent],
   template: `
-    <demo-stage title="A form dialog" description="The .billy-modal shell opens as soon as the component renders, moves itself under <body> and wires up Escape / backdrop click / the header cross.">
+    <demo-stage title="A form dialog" description="The .billy-modal shell opens as soon as the component renders, moves itself under <body> and wires up Escape / backdrop click / the header cross. It is modal: focus jumps into the dialog (here on the field, thanks to billyAutofocus), Tab cycles inside it, the page behind is inert, and focus comes back to this button on closing.">
       <button type="button" class="demo-btn--submit" (click)="open.set(true)">Open the dialog</button>
 
       @if (open()) {
@@ -59,7 +60,7 @@ export class DeleteDialogDemoComponent {
           </billy-dialog-form-header>
           <billy-dialog-form-body>
             <billy-input-line label="New label" [mandatory]="true">
-              <input class="demo-field" [(ngModel)]="label" placeholder="July services" />
+              <input billyAutofocus class="demo-field" [(ngModel)]="label" placeholder="July services" />
             </billy-input-line>
           </billy-dialog-form-body>
           <billy-dialog-form-footer>

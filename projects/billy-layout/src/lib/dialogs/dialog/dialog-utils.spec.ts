@@ -33,6 +33,21 @@ describe('Dialog', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
   };
 
+  const pressTab = (shiftKey = false): KeyboardEvent => {
+    const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey, cancelable: true });
+    document.dispatchEvent(event);
+    return event;
+  };
+
+  /** Stands in for the page behind the dialog (and for the button that opened it). */
+  const buildBackground = (): HTMLButtonElement => {
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'background-trigger';
+    document.body.appendChild(trigger);
+    return trigger;
+  };
+
   beforeEach(() => {
     vi.useFakeTimers();
     dialogs = [];
@@ -45,7 +60,7 @@ describe('Dialog', () => {
     dialogs.forEach(dialog => dialog.hide());
     vi.runAllTimers();
     vi.useRealTimers();
-    document.querySelectorAll('.billy-modal').forEach(el => el.remove());
+    document.querySelectorAll('.billy-modal, .background-trigger').forEach(el => el.remove());
   });
 
   it('show() opens: is-open on the root, scroll lock on the body', () => {
@@ -154,6 +169,95 @@ describe('Dialog', () => {
     vi.advanceTimersByTime(TRANSITION);
 
     expect(host.classList.contains('is-open')).toBe(false);
+  });
+
+  it('show() focuses the content and makes the rest of the page inert', () => {
+    const trigger = buildBackground();
+    trigger.focus();
+
+    const dialog = createDialog(host);
+    dialog.show();
+
+    const content = host.querySelector<HTMLElement>('.billy-modal-content')!;
+    expect(document.activeElement).toBe(content);
+    expect(content.getAttribute('tabindex')).toBe('-1');
+    expect(trigger.hasAttribute('inert')).toBe(true);
+    expect(host.hasAttribute('inert')).toBe(false);
+  });
+
+  it('closing releases the inert background and gives focus back to its origin', () => {
+    const trigger = buildBackground();
+    trigger.focus();
+
+    const dialog = createDialog(host);
+    dialog.show();
+    vi.advanceTimersByTime(TRANSITION);
+
+    dialog.hide();
+    vi.advanceTimersByTime(TRANSITION);
+
+    expect(trigger.hasAttribute('inert')).toBe(false);
+    expect(document.activeElement).toBe(trigger);
+    // The fallback tabindex was only there to take the initial focus.
+    expect(host.querySelector('.billy-modal-content')!.hasAttribute('tabindex')).toBe(false);
+  });
+
+  it('an explicit autofocus target wins over the content container', () => {
+    const input = document.createElement('input');
+    input.setAttribute('billyAutofocus', '');
+    host.querySelector('.billy-modal-content')!.appendChild(input);
+
+    createDialog(host).show();
+
+    expect(document.activeElement).toBe(input);
+    expect(host.querySelector('.billy-modal-content')!.hasAttribute('tabindex')).toBe(false);
+  });
+
+  it('Tab cycles inside the dialog', () => {
+    const input = document.createElement('input');
+    host.querySelector('.billy-modal-content')!.appendChild(input);
+    const close = host.querySelector<HTMLButtonElement>('[data-billy-dismiss]')!;
+
+    createDialog(host).show();
+
+    // From the content container, Shift+Tab lands on the last focusable.
+    expect(pressTab(true).defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(input);
+
+    // …and Tab from the last one wraps back to the first.
+    expect(pressTab().defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(close);
+
+    // In between, the browser's natural order is left alone.
+    expect(pressTab().defaultPrevented).toBe(false);
+  });
+
+  it('a stacked dialog inerts the one below, and gives it back on closing', () => {
+    const trigger = buildBackground();
+    trigger.focus();
+
+    const bottom = createDialog(host);
+    bottom.show();
+    vi.advanceTimersByTime(TRANSITION);
+
+    const bottomClose = host.querySelector<HTMLButtonElement>('[data-billy-dismiss]')!;
+    bottomClose.focus();
+
+    const topHost = buildModal();
+    const top = createDialog(topHost);
+    top.show();
+    vi.advanceTimersByTime(TRANSITION);
+
+    expect(host.hasAttribute('inert')).toBe(true);
+    expect(topHost.hasAttribute('inert')).toBe(false);
+
+    top.hide();
+    vi.advanceTimersByTime(TRANSITION);
+
+    expect(host.hasAttribute('inert')).toBe(false);
+    expect(document.activeElement).toBe(bottomClose);
+    // The page behind stays inert as long as the bottom dialog is open.
+    expect(trigger.hasAttribute('inert')).toBe(true);
   });
 
 });

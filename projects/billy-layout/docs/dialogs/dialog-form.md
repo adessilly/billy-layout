@@ -56,6 +56,15 @@ Built-in strings are localizable — see [i18n](../core/i18n.md).
    - `closed` is emitted according to the rule in the table above; finally `document.body.removeChild(...)`.
 3. `ngOnDestroy`: if the closing did not come from a button, `modal.hide()` (case: the router removes the overlay while the dialog is still displayed).
 
+## Focus & modality
+
+Everything comes from the `Dialog` engine — full description in [Modality: focus & inert background](dialog.md#modality-focus--inert-background). What it means for a `billy-dialog-form`:
+
+- **On opening**, focus leaves the page and enters the dialog: the first `[billyAutofocus]` / `[autofocus]` element of the projected content if there is one, otherwise `.billy-modal-content` (which gets a temporary `tabindex="-1"`). Put `billyAutofocus` on the first field of a form dialog; leave it out on a consultation dialog, where landing on the container reads the content rather than the close cross.
+- **The rest of the page is `inert`** while the dialog is open: neither clickable nor reachable by Tab, and invisible to screen readers. A `billy-delete-dialog` opened on top of the form makes the form inert in turn, and gives it back when it closes.
+- **Tab cycles inside the dialog** — no need to add a focus trap of your own.
+- **On closing**, focus returns to where it came from (typically the row or the button that navigated to the overlay), unless a `closeThen(...)` action moved it elsewhere in the meantime.
+
 ## Usage example
 
 Real-world usage: overlay-routed consultation dialogs — `src/app/auth/pages/devis/devis-consult-dialog/` (same for `vente-consult-dialog`, `achat-consult-dialog`, `client-consult-dialog`, `email-dialog`, `peppol-facture-dialog`…).
@@ -106,7 +115,7 @@ On the app side, the router bridge is provided in `src/app/app.config.ts`:
 
 - The visual `.billy-modal*` shell is **global** (`lib/styles/_billy-dialog.scss`, loaded by the app's `styles.scss`) — `--billy-*` tokens, automatic dark mode.
 - The slot component CSS (`dialog-form-header.component.css`, etc.) remains effective despite the move under `<body>`: the stamped nodes carry the `_ngcontent` attributes of their originating component. The header notably styles the `.close` cross (32×32, hover `--billy-divider`, visible focus `--billy-focus-border`).
-- The template root does **not** carry `tabindex="-1"` — deliberate: it broke focus on select2 search fields.
+- The template root does **not** carry `tabindex="-1"` — deliberate: it broke focus on select2 search fields. The initial focus uses a temporary `tabindex="-1"` placed on `.billy-modal-content` instead, removed as soon as the dialog closes.
 
 ## Gotchas & notes
 
