@@ -11,7 +11,13 @@
   </button>
 
   <a class="billy-topbar-logo" [routerLink]="homeLink" [title]="i18n.strings().topbar.home">
-    <img src="assets/images/icon-384.png" alt="BILLy" />
+    @if (logoTemplate(); as template) {
+      <ng-container [ngTemplateOutlet]="template" />
+    } @else {
+      <!-- Plain <img>: the URL comes from the application (data URI allowed),
+           which NgOptimizedImage does not support. -->
+      <img [src]="logoSrc()" [alt]="logoAlt()" [class.custom]="hasCustomLogo()" />
+    }
   </a>
 
   <div class="billy-topbar-search">

@@ -1,4 +1,7 @@
-<billy-shell>
+<!-- The logo is driven by SiteLogoService so the topbar demo can cycle through
+     the library default, the `logo` input and a fully custom `logoTemplate`. -->
+<billy-shell [logo]="siteLogo.logo()"
+             [logoTemplate]="siteLogo.mode() === 'template' ? brandLogo : undefined">
 
   <!-- Business slots of the topbar, projected into the shell (billy-layout). -->
   <site-doc-search shell-search />
@@ -13,3 +16,8 @@
 </billy-shell>
 
 <billy-toastr-list-panel />
+
+<!-- Custom logo markup: anything goes, styled by the application (app.scss). -->
+<ng-template #brandLogo>
+  <span class="site-brand-logo">billy<strong>layout</strong></span>
+</ng-template>

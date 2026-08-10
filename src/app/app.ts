@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BillyNotificationsComponent, BillyShellComponent, ToastrListPanelComponent } from 'billy-layout';
 import { DocSearchComponent } from './site/doc-search.component';
 import { NotifWhatsNewComponent } from './site/notif-whats-new.component';
 import { AccountMenuComponent } from './site/account-menu.component';
+import { SiteLogoService } from './site/site-logo.service';
 
 /**
  * Root of the showcase site: the site is itself dressed by the library's
@@ -23,4 +24,6 @@ import { AccountMenuComponent } from './site/account-menu.component';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  readonly siteLogo = inject(SiteLogoService);
+}

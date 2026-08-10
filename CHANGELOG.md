@@ -4,6 +4,16 @@ All notable changes to the `billy-layout` package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Customizable topbar logo** (non-breaking): `BILLY_SHELL_CONFIG.logo`
+  (`string | BillyShellLogo` — `src`, `alt`, `srcDark`), plus the `logo` and
+  `logoTemplate` inputs on `<billy-shell>` / `<billy-topbar>` for a per-instance
+  image or fully custom markup. Without any of them, the bar keeps rendering
+  `assets/images/icon-384.png` with `alt="BILLy"`.
+
 ## [1.0.0] — 2026-07-21
 
 First open-source release. 🎉

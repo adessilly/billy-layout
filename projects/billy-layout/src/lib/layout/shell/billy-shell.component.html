@@ -1,6 +1,6 @@
 <div class="billy-shell">
 
-  <billy-topbar>
+  <billy-topbar [logo]="logo()" [logoTemplate]="logoTemplate()">
     <!-- Re-projection of the business slots to the topbar (ng-container: a
          re-projected <ng-content select> does not match without ngProjectAs). -->
     <ng-container ngProjectAs="[shell-search]">

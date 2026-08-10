@@ -2,6 +2,7 @@ import { Component, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionBarComponent, BillyActionBarTab, BillyDarkModeService, BillyShellService, ToastrService } from 'billy-layout';
 import { DemoStageComponent } from './demo-stage.component';
+import { SiteLogoService } from '../site/site-logo.service';
 
 /** billy-shell : the whole site is the demo — zone diagram + interactions. */
 @Component({
@@ -68,10 +69,19 @@ export class ShellDemoComponent {
       </button>
       <div class="demo-note">Preference persisted (localStorage <code>billy_dark_mode</code>), carried by <code>body.dark-mode</code>.</div>
     </demo-stage>
+
+    <demo-stage title="The logo is yours" description="Nothing is hard-coded: the image and its alt text come from BILLY_SHELL_CONFIG.logo, from the [logo] input of <billy-shell> / <billy-topbar> ({ src, alt, srcDark }), or from [logoTemplate] for fully custom markup. Configure none of them and the BILLy logo stays in place.">
+      <button type="button" class="demo-btn--submit" (click)="siteLogo.next()">Change the logo (top left)</button>
+      <div class="demo-note">
+        Current: <code>{{ siteLogo.label() }}</code>.
+        The <code>image</code> mode also carries a <code>srcDark</code> variant — toggle dark mode to see it swap.
+      </div>
+    </demo-stage>
   `,
 })
 export class TopbarDemoComponent {
   readonly darkMode = inject(BillyDarkModeService);
+  readonly siteLogo = inject(SiteLogoService);
 }
 
 /** billy-sidebar : links, badges and collapsing — configured via BILLY_SHELL_CONFIG. */

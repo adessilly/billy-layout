@@ -16,7 +16,12 @@ import { BillyShellComponent } from 'billy-layout';
 
 Selector: `billy-shell`.
 
-No input or output. The component publicly exposes:
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `logo` | `string \| BillyShellLogo` | `BILLY_SHELL_CONFIG.logo`, then the BILLy logo | Topbar logo, forwarded to `billy-topbar` — see [billy-topbar](billy-topbar.md#logo). |
+| `logoTemplate` | `TemplateRef<unknown>` | — | Custom logo markup, forwarded to `billy-topbar`. Wins over `logo`. |
+
+No output. The component publicly exposes:
 
 | Member | Type | Description |
 |---|---|---|
@@ -36,7 +41,7 @@ No input or output. The component publicly exposes:
 ### BILLY_SHELL_CONFIG (`billy-shell-config.ts`)
 
 ```ts
-import { BILLY_SHELL_CONFIG, BillyShellConfig, BillyMenuLink } from 'billy-layout';
+import { BILLY_SHELL_CONFIG, BillyShellConfig, BillyMenuLink, BillyShellLogo } from 'billy-layout';
 ```
 
 `InjectionToken<BillyShellConfig>` token consumed (as `{ optional: true }`) by the topbar, the sidebar and the notifications panel. All fields except `menuLinks` are optional — without them, the corresponding feature is simply inert.
@@ -49,10 +54,17 @@ interface BillyMenuLink {
   icon?: BillyIconName;  // billy-icon icon
 }
 
+interface BillyShellLogo {
+  src: string;           // image URL (relative, absolute or data URI)
+  alt?: string;          // alternative text (default 'BILLy')
+  srcDark?: string;      // variant used in dark mode (default src)
+}
+
 interface BillyShellConfig {
   menuLinks: BillyMenuLink[];                          // sidebar links
   version?: string;                                    // sidebar footer
   homeLink?: string;                                   // logo target (default '/')
+  logo?: string | BillyShellLogo;                      // topbar logo (default: BILLy)
   logout?: () => void;                                 // "Log out" button
   menuBadges?: Signal<Record<string, string | null>>;  // badges per entry label
   syncNotifications?: () => Promise<unknown>;          // global sync (bell)
