@@ -67,7 +67,10 @@ export class InputLineComponent {
       this.releaseAttributes(this.wired);
       this.wired = control;
     }
-    if (!control) {
+    // A field carrying its own <label> (billy-input-password with a label) is
+    // already named: adding ours would give it two labels.
+    if (!control || this.hasForeignLabel(control)) {
+      this.releaseAttributes(control);
       this.controlId.set('');
       return;
     }
@@ -121,15 +124,25 @@ export class InputLineComponent {
     control.setAttribute('aria-labelledby', contentNamed ? `${this.labelId} ${control.id}` : this.labelId);
   }
 
-  /** Exposes the `info` tooltip — mouse-only as a native `title` — to assistive tech. */
+  /**
+   * Exposes the `info` tooltip — mouse-only as a native `title` — to assistive tech.
+   * Appended to any description the field already carries (the validation message
+   * of a code field) rather than replacing it.
+   */
   private applyDescription(control: HTMLElement): void {
-    if (!this.owns(control, 'aria-describedby')) return;
-    if (!this.info()) {
-      control.removeAttribute('aria-describedby');
-      return;
-    }
-    this.claim(control, 'aria-describedby');
-    control.setAttribute('aria-describedby', this.infoId);
+    const kept = (control.getAttribute('aria-describedby') ?? '')
+      .split(/\s+/)
+      .filter(id => id && id !== this.infoId);
+    const ids = this.info() ? [...kept, this.infoId] : kept;
+
+    if (ids.length) control.setAttribute('aria-describedby', ids.join(' '));
+    else control.removeAttribute('aria-describedby');
+  }
+
+  /** True when a `<label>` other than this row's already names the control. */
+  private hasForeignLabel(control: HTMLElement): boolean {
+    const labels = (control as HTMLInputElement).labels;
+    return !!labels && Array.from(labels).some(label => label.id !== this.labelId);
   }
 
   /** Conveys the asterisk, which is decorative, as a machine-readable state. */
@@ -159,11 +172,18 @@ export class InputLineComponent {
 
   private releaseAttributes(control: HTMLElement | null): void {
     if (!control) return;
-    for (const attribute of ['aria-labelledby', 'aria-describedby', 'aria-required']) {
+    for (const attribute of ['aria-labelledby', 'aria-required']) {
       if (control.dataset[this.ownerKey(attribute)] !== this.uid) continue;
       control.removeAttribute(attribute);
       delete control.dataset[this.ownerKey(attribute)];
     }
+    // Only our own id is pulled out of the description: the rest belongs to the field.
+    const kept = (control.getAttribute('aria-describedby') ?? '')
+      .split(/\s+/)
+      .filter(id => id && id !== this.infoId);
+    if (kept.length) control.setAttribute('aria-describedby', kept.join(' '));
+    else control.removeAttribute('aria-describedby');
+
     if (control.id === this.uid) control.removeAttribute('id');
   }
 

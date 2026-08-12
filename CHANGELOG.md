@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   label is associated with the projected control (`for` + `aria-labelledby`,
   auto-detected, or targeted with the new `fieldId` input). `mandatory` is exposed
   as `aria-required` with the asterisk turned decorative, and the `info` tooltip —
-  mouse-only until now — is read through `aria-describedby`. Any `aria-*` you set
-  yourself still wins. Details in [`docs/forms/input-line.md`](projects/billy-layout/docs/forms/input-line.md#accessibility).
+  mouse-only until now — is read through `aria-describedby`, appended to any
+  description the field already carries. A field that already has its own
+  `<label>` is left untouched. Details in [`docs/forms/input-line.md`](projects/billy-layout/docs/forms/input-line.md#accessibility).
 
 ### Added
 

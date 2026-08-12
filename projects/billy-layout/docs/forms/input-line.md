@@ -49,10 +49,19 @@ Nothing to do on the consumer side — projecting a field is enough.
 - **`mandatory`**: the asterisk is `aria-hidden` (decorative) and the required
   state is exposed as `aria-required="true"` on the control.
 - **`info`**: the text is repeated in a visually hidden span referenced by
-  `aria-describedby`, so it is no longer mouse-only.
-- **Consumer wins**: an `aria-labelledby`, `aria-describedby` or `aria-required`
-  you set yourself is never overwritten. An explicit `id` on your field is kept;
-  otherwise the row generates one.
+  `aria-describedby`, so it is no longer mouse-only. It is *appended* to the
+  description the field may already carry — a code field keeps announcing its
+  validation message.
+- **Already-labelled field**: a control that a `<label>` of your own already
+  points at (`billy-input-password` given a `label`) is left untouched, rather
+  than ending up with two labels.
+- **Consumer wins**: an `aria-labelledby` or `aria-required` you set yourself is
+  never overwritten. An explicit `id` on your field is kept; otherwise the row
+  generates one.
+
+Code fields (`billy-input-vat`, `billy-input-iban`, `billy-input-email`) render no
+label of their own and expose `inputId` for this purpose: wrapping them in a row
+is the intended usage, with or without that input.
 
 ```html
 <!-- Two controls in one row: name the one that matters -->
@@ -94,9 +103,9 @@ Real usage in `src/app/auth/pages/achat/achat-form/achat-form.component.html`:
 
 - **Global CSS dependency**: the `.form-group` bottom margin is defined on the app side (billy-legacy.scss, loaded by the layout-ui-loader). Outside billy-client, the component has no default vertical spacing.
 - The asterisk's `.mandatory` class is not styled in the component's SCSS: its color also comes from the app's global styles.
-- Do not wrap a field that already renders its own label (`billy-input-password`
-  with a `label`, a code field with `inputId` + label): the row would add a second
-  visible label.
+- Setting `label` both on the row and on a field that renders its own
+  (`billy-input-password`) displays two labels. The row detects it and stands
+  down on the accessibility side, but the duplicate stays visible: pick one.
 - With several projected controls and no `fieldId`, only the first one is named —
   the others need their own `aria-label`.
 - The `info` tooltip is still a native `title` visually: no rich tooltip, and it

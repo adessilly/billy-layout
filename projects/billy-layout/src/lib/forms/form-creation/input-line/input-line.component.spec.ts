@@ -14,6 +14,11 @@ import { InputLineComponent } from './input-line.component';
             @if (widgetOpen()) { <input type="text" class="search" /> }
           }
           @case ('aria-label') { <input type="text" aria-label="Choose a date" /> }
+          @case ('own-label') {
+            <label for="pwd-field">Password</label>
+            <input type="password" id="pwd-field" />
+          }
+          @case ('described') { <input type="text" aria-describedby="cf-msg" /> }
           @case ('two-inputs') {
             <input type="text" id="first" />
             <input type="text" id="second" />
@@ -28,7 +33,7 @@ class HostComponent {
   readonly mandatory = signal(false);
   readonly info = signal('');
   readonly fieldId = signal('');
-  readonly field = signal<'input' | 'dropdown' | 'aria-label' | 'two-inputs'>('input');
+  readonly field = signal<'input' | 'dropdown' | 'aria-label' | 'own-label' | 'described' | 'two-inputs'>('input');
   readonly showField = signal(true);
   readonly widgetOpen = signal(false);
 }
@@ -39,7 +44,7 @@ describe('InputLineComponent', () => {
   let host: HostComponent;
 
   const labelEl = (): HTMLLabelElement => fixture.nativeElement.querySelector('label');
-  const control = (selector = 'input, button'): HTMLElement =>
+  const control = (selector = 'input, button'): HTMLInputElement =>
     fixture.nativeElement.querySelector(selector);
 
   /** Renders, then lets the MutationObserver re-wire the freshly projected field. */
@@ -110,6 +115,30 @@ describe('InputLineComponent', () => {
     expect(described).toBeTruthy();
     expect(fixture.nativeElement.querySelector(`#${described}`).textContent.trim())
       .toBe('Visible only to you.');
+  });
+
+  it('stands down when the field already carries its own label', async () => {
+    host.field.set('own-label');
+    await settle();
+
+    const field = control('input');
+    expect(field.hasAttribute('aria-labelledby')).toBe(false);
+    expect(labelEl().hasAttribute('for')).toBe(false);
+    expect(Array.from(field.labels ?? []).length).toBe(1);
+  });
+
+  it('appends the info text to a description the field already carries', async () => {
+    host.field.set('described');
+    host.info.set('Visible only to you.');
+    await settle();
+
+    const described = control().getAttribute('aria-describedby')?.split(' ') ?? [];
+    expect(described[0]).toBe('cf-msg');
+    expect(described).toHaveLength(2);
+
+    host.info.set('');
+    await settle();
+    expect(control().getAttribute('aria-describedby')).toBe('cf-msg');
   });
 
   it('targets the requested control when fieldId is set', async () => {
