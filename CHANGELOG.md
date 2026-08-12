@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **`<billy-input-line>` now names the field it wraps** (WCAG 4.1.2): the visible
+  label is associated with the projected control (`for` + `aria-labelledby`,
+  auto-detected, or targeted with the new `fieldId` input). `mandatory` is exposed
+  as `aria-required` with the asterisk turned decorative, and the `info` tooltip —
+  mouse-only until now — is read through `aria-describedby`. Any `aria-*` you set
+  yourself still wins. Details in [`docs/forms/input-line.md`](projects/billy-layout/docs/forms/input-line.md#accessibility).
+
 ### Added
 
 - **Customizable topbar logo** (non-breaking): `BILLY_SHELL_CONFIG.logo`

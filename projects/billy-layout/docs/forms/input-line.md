@@ -24,8 +24,43 @@ Selector: `<billy-input-line>`. Also exported via the legacy `FormCreationModule
 | `mandatory` | `boolean` | `false` | Appends an asterisk `<span class="mandatory">*</span>` after the label. |
 | `info` | `string` | `''` | If non-empty, displays an `fa-circle-info` icon whose `title` (native tooltip) contains this text. |
 | `nomarginbottom` | `boolean` | `false` | Sets `.form-group-nomarginbottom` on the wrapper to cancel the bottom margin (useful at the end of a panel or in a grid that already manages spacing). |
+| `fieldId` | `string` | `''` | Id of the projected control the label must name. Left empty, the control is detected automatically — set it when the row projects several controls. |
 
 No outputs or public methods.
+
+## Accessibility
+
+The row names the field it wraps: the visible label is programmatically associated
+with the projected control, which is what WCAG 4.1.2 (Name, Role, Value) requires.
+Nothing to do on the consumer side — projecting a field is enough.
+
+- **Detection**: the first projected `input` / `select` / `textarea` is used;
+  failing that, the first widget trigger (`button`, `[role="combobox"]`,
+  `[role="listbox"]`, `[contenteditable]`) — which is how `billy-dropdown` gets
+  named. Controls appearing later (`@if`, `@for`) are picked up too. Once wired,
+  a control keeps the label as long as it stays projected, so the inner controls
+  a widget renders when it opens (the dropdown search box) never steal it.
+- **Association**: the label carries `for` (click-to-focus) and the control gets
+  `aria-labelledby` pointing at it. `aria-labelledby` rather than `for` alone so
+  the row label also wins over a generic `aria-label` carried by a library field
+  (`billy-datepicker` announces "Due date" and no longer "Choose a date").
+  Controls named from their own content (a dropdown trigger) get
+  `aria-labelledby="<label> <control>"`, keeping the selected value announced.
+- **`mandatory`**: the asterisk is `aria-hidden` (decorative) and the required
+  state is exposed as `aria-required="true"` on the control.
+- **`info`**: the text is repeated in a visually hidden span referenced by
+  `aria-describedby`, so it is no longer mouse-only.
+- **Consumer wins**: an `aria-labelledby`, `aria-describedby` or `aria-required`
+  you set yourself is never overwritten. An explicit `id` on your field is kept;
+  otherwise the row generates one.
+
+```html
+<!-- Two controls in one row: name the one that matters -->
+<billy-input-line label="Payment deadline" fieldId="deadline-days">
+  <input id="deadline-days" class="form-control" type="number" formControlName="days" />
+  <span>days</span>
+</billy-input-line>
+```
 
 ## Slots / projection
 
@@ -59,6 +94,12 @@ Real usage in `src/app/auth/pages/achat/achat-form/achat-form.component.html`:
 
 - **Global CSS dependency**: the `.form-group` bottom margin is defined on the app side (billy-legacy.scss, loaded by the layout-ui-loader). Outside billy-client, the component has no default vertical spacing.
 - The asterisk's `.mandatory` class is not styled in the component's SCSS: its color also comes from the app's global styles.
-- The projected field is not linked to the `<label>` (no `for`/`id`): no automatic accessibility association.
-- The `info` tooltip is a native `title`: no rich tooltip, invisible to keyboard/touch users.
+- Do not wrap a field that already renders its own label (`billy-input-password`
+  with a `label`, a code field with `inputId` + label): the row would add a second
+  visible label.
+- With several projected controls and no `fieldId`, only the first one is named —
+  the others need their own `aria-label`.
+- The `info` tooltip is still a native `title` visually: no rich tooltip, and it
+  does not open on keyboard focus (its text is read by screen readers through
+  `aria-describedby`).
 - For consultation (read-only), use `billy-consult-line` instead, which shares the same label style.

@@ -1,11 +1,12 @@
 <div [class.form-group-nomarginbottom]="nomarginbottom()" class="form-group">
   @if(label()) {
-    <label>{{ label() }} @if (mandatory()) {
-      <span class="mandatory">*</span>
+    <label [id]="labelId" [attr.for]="controlId() || null">{{ label() }} @if (mandatory()) {
+      <span class="mandatory" aria-hidden="true">*</span>
     }</label>
   }
   @if(info().length > 0) {
-    <span>&nbsp;&nbsp;<i class="fa-solid fa-circle-info" [title]="info()" style="font-size:11px"></i></span>
+    <span>&nbsp;&nbsp;<i class="fa-solid fa-circle-info" [title]="info()" aria-hidden="true" style="font-size:11px"></i></span>
+    <span [id]="infoId" class="input-line-sr-only">{{ info() }}</span>
   }
   <ng-content></ng-content>
 </div>

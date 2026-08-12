@@ -21,7 +21,7 @@ import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
   selector: 'demo-input-line',
   imports: [FormsModule, InputLineComponent, DemoStageComponent],
   template: `
-    <demo-stage title="The canonical form row" description="Label, mandatory asterisk, tooltip: the field is projected inside." [center]="false">
+    <demo-stage title="The canonical form row" description="Label, mandatory asterisk, tooltip: the field is projected inside. The label names it — click a label to focus its field." [center]="false">
       <div class="demo-form-block il-center">
         <billy-input-line label="Invoice label" [mandatory]="true">
           <input class="demo-field" [(ngModel)]="label" placeholder="July services" />
@@ -29,14 +29,25 @@ import { DemoLocaleToggleComponent } from './demo-locale-toggle.component';
         <billy-input-line label="Internal reference" info="Visible only to you, never on the invoice.">
           <input class="demo-field" [(ngModel)]="reference" placeholder="2026-042" />
         </billy-input-line>
+        <billy-input-line label="Payment deadline" fieldId="il-demo-days">
+          <span class="il-inline">
+            <input id="il-demo-days" class="demo-field il-days" type="number" [(ngModel)]="days" placeholder="30" />
+            <span>days after issue</span>
+          </span>
+        </billy-input-line>
       </div>
     </demo-stage>
   `,
-  styles: `.il-center { margin: 0 auto; }`,
+  styles: `
+    .il-center { margin: 0 auto; }
+    .il-inline { display: flex; align-items: center; gap: 8px; }
+    .il-days { width: 90px; }
+  `,
 })
 export class InputLineDemoComponent {
   readonly label = signal('');
   readonly reference = signal('');
+  readonly days = signal<number | null>(null);
 }
 
 /** billy-consult-line : the read-only counterpart. */

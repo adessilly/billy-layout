@@ -12,3 +12,15 @@ label {
 .form-group.form-group-nomarginbottom {
   margin-bottom: 0px;
 }
+
+// Carries the `info` text to assistive tech: the icon tooltip is mouse-only.
+.input-line-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
