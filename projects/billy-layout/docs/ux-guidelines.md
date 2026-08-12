@@ -139,6 +139,10 @@ two skins:
    fichiers-manager): the same component with `class="no-theme"` — it drops its
    sticky/frosted background and blends into the container's footer.
 
+3. **Inside an already-white panel** (form embedded in a card, a consult-card, a
+   panel section): the same component with `variant="embedded"` — transparent and
+   compact, no sticky, so no card stacked on a card.
+
 Placement rules:
 
 - **Never a save-bar on a consult view**: the actions of a read-only screen go in the
@@ -163,5 +167,6 @@ Placement rules:
 | Form sections | `billy-cards` mixins | Forms |
 | Concluding a full-page form | sticky `billy-save-bar` | Last child of the `<form>` |
 | Concluding a dialog/panel | `billy-save-bar.no-theme` | Container footer |
+| Concluding a form inside a white panel | `billy-save-bar variant="embedded"` | Last child of the panel |
 | List filters | `*-filter-bar` (building blocks: filter-toggle-buttons, dropdown) | First block of `.data-list` |
 | Empty list vs empty search | `billy-empty-state` concept type vs `search` | `.data-list-content` |

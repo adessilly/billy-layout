@@ -34,6 +34,22 @@
     box-shadow: none;
     border-radius: 0;
   }
+
+  // variant="embedded": the bar lives inside a container that already provides
+  // the white surface (panel, consult-card, dialog body…). No surface of its
+  // own — otherwise it reads as a card stacked on a card — no sticky either
+  // (it scrolls with the content of its container), and tighter spacing.
+  &.embedded {
+    position: static;
+    z-index: auto;
+
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 8px 0 0;
+    gap: 8px;
+  }
 }
 
 .left-zone {
@@ -59,9 +75,15 @@
   min-width: 128px;
 }
 
+// Compact variant: the actions are inside a panel, often narrow — the buttons
+// keep their own natural width instead of the 128px floor.
+:host.embedded .right-zone billy-button {
+  min-width: 0;
+}
+
 // ── Mobile: full-width frosted bar ───────────────────────────────────────────
 @media screen and (max-width: 767px) {
-  :host:not(.no-theme) {
+  :host:not(.no-theme):not(.embedded) {
     border: none;
     border-top: 1px solid var(--billy-divider, #f3f4f6);
     border-radius: 0;

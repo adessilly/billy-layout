@@ -146,6 +146,18 @@ export class LabelClipboardDemoComponent {}
           (cancel)="toastr.info('Going back (simulated).', 'Cancel')" />
       </div>
     </demo-stage>
+
+    <demo-stage title="Inside a panel (variant=&quot;embedded&quot;)" description="When the bar concludes a form already inside a white panel, variant='embedded' drops the surface, the border, the shadow and the sticky positioning, and tightens the spacing: no more card-on-a-card." [center]="false">
+      <div class="sb-panel">
+        <h3>Company details</h3>
+        <p>The panel already provides the white surface; the bar just adds its actions at the bottom.</p>
+        <billy-save-bar
+          variant="embedded"
+          [loading]="loading()"
+          (save)="fakeSave()"
+          (cancel)="toastr.info('Going back (simulated).', 'Cancel')" />
+      </div>
+    </demo-stage>
   `,
   styles: `
     .sb-controls {
@@ -169,6 +181,17 @@ export class LabelClipboardDemoComponent {}
       padding: 10px;
 
       &--flat { background: var(--billy-section-bg); }
+    }
+
+    .sb-panel {
+      background: var(--billy-surface);
+      border: 1px solid var(--billy-surface-border);
+      border-radius: 16px;
+      box-shadow: var(--billy-card-shadow);
+      padding: 18px;
+
+      h3 { margin: 0 0 6px; font-size: 15px; color: var(--billy-text); }
+      p { margin: 0; font-size: 13px; color: var(--billy-text-soft); }
     }
   `,
 })

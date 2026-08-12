@@ -20,6 +20,7 @@ Selector: `<billy-save-bar>`.
 
 | Input | Type | Default | Description |
 |---|---|---|---|
+| `variant` | `BillySaveBarVariant` | `'floating'` | Skin of the bar. `floating`: the sticky card that hovers above the scrolling page. `embedded`: compact transparent row for a bar placed inside a container that already provides its white surface (panel, consult-card…) — no surface, no border, no shadow, no sticky. |
 | `disabled` | `boolean` | `false` | Disables the save button (typically `!formGroup.valid`). |
 | `loading` | `boolean` | `false` | Replaces the save button's icon + label with a spinner and `labelSaveLoading`, and **neutralizes the click** (billy-button ignores clicks while loading) — protects against double submission. |
 | `labelSave` | `string` | i18n `saveBar.save` (EN `'Save'`) | Label of the main button. When the input is not set, the default comes from the i18n dictionary. |
@@ -68,13 +69,23 @@ As a dialog footer, without card chrome, in `src/app/auth/pages/vente/vente-paie
 </billy-dialog-form-footer>
 ```
 
+Inside a panel that is already white — the bar concludes the form without stacking a card on a card:
+
+```html
+<div class="my-panel">
+  <!-- … the form fields … -->
+  <billy-save-bar variant="embedded" [loading]="loading()" (save)="askSave()" (cancel)="askCancel()" />
+</div>
+```
+
 ## Styles & theming
 
 - Sticky host `bottom: 0`, `z-index: 1001`, dressed like the DS cards (`billy-card` mixin in spirit): `--billy-surface`, `--billy-surface-border` edge, 16px corners, `--billy-card-shadow` + upward halo to "float" above the scrolling content — automatic dark mode via the tokens.
 - Buttons: delegated to [`billy-button`](../buttons/button.md) — save as the `plain` variant tinted by `colorSave`, cancel as the `ghost` variant (neutral ghost on the input tokens, insensitive to color). Colors, hover, focus (`--billy-focus-ring`), `disabled` state and loading spinner all come from the button; the save-bar now only handles layout.
 - `min-width: 128px` set on the `billy-button` element selector (deliberately low specificity) so consumer overrides can widen a button.
 - **`no-theme` class on the host**: removes edge, background, shadow, padding and radius — the bar becomes a plain row of buttons, fit for a dialog footer.
-- Mobile (≤767px): frosted full-width bar (translucent `color-mix` background + `backdrop-filter: blur`), `safe-area-inset-bottom`, buttons at `flex: 1`.
+- **`variant="embedded"`**: same chrome reset (transparent, no border/shadow/radius) but the bar also drops `position: sticky` (it scrolls with its container), tightens the spacing (`8px` top padding, `8px` gap) and releases the `min-width: 128px` floor on the buttons so they fit a narrow panel. Use it whenever the parent surface is already white; `no-theme` remains the zero-padding flavour for a container that provides its own footer padding (dialogs).
+- Mobile (≤767px): frosted full-width bar (translucent `color-mix` background + `backdrop-filter: blur`), `safe-area-inset-bottom`, buttons at `flex: 1` — skipped for `no-theme` and `embedded`, which keep their flat rendering (the buttons still spread over the width).
 
 ## Pitfalls & notes
 

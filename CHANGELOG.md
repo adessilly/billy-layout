@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **`<billy-save-bar>` embedded variant** (non-breaking): the new `variant` input
+  (`'floating' | 'embedded'`, default `'floating'` — the current sticky card)
+  renders a compact transparent bar for a form that already lives inside a white
+  panel: no surface, border, shadow or sticky positioning, tighter spacing and no
+  128px floor on the buttons. Details in
+  [`docs/forms/save-bar.md`](projects/billy-layout/docs/forms/save-bar.md).
 - **Customizable topbar logo** (non-breaking): `BILLY_SHELL_CONFIG.logo`
   (`string | BillyShellLogo` — `src`, `alt`, `srcDark`), plus the `logo` and
   `logoTemplate` inputs on `<billy-shell>` / `<billy-topbar>` for a per-instance
