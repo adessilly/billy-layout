@@ -80,7 +80,7 @@ import it into the consuming application's `CLAUDE.md`
 
 ## viewers — file viewers
 
-- [file-viewer](viewers/file-viewer.md) — toolbar + pdf/image/xml viewers, `BILLY_FILE_SOURCE` / `BillyViewerFile` contract.
+- [file-viewer](viewers/file-viewer.md) — toolbar + pdf/image/xml viewers, `BILLY_FILE_SOURCE` / `BillyViewerFile` contract, `provideBillyPdfWorker()` for the pdf.js worker path.
 
 ## styles — shared SCSS
 

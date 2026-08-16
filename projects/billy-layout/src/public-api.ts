@@ -94,6 +94,7 @@ export * from './lib/display/filter-toggle-buttons/filter-toggle-buttons.compone
 
 // ── viewers ──────────────────────────────────────────────────────────────────
 export * from './lib/viewers/file-viewer/billy-file-source';
+export * from './lib/viewers/file-viewer/billy-pdf-worker';
 export * from './lib/viewers/file-viewer/file-viewer-toolbar/file-viewer-toolbar.component';
 export * from './lib/viewers/file-viewer/file-viewer-pdf/file-viewer-pdf.component';
 export * from './lib/viewers/file-viewer/file-viewer-image/file-viewer-image.component';

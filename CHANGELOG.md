@@ -32,6 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Configurable pdf.js worker path** (non-breaking): the new `BILLY_PDF_WORKER_SRC`
+  token — set with `provideBillyPdfWorker('/static/pdf/pdf.worker.min.mjs')` — tells
+  `<billy-file-viewer-pdf>` where the worker lives instead of the hard-coded
+  `/assets/js/pdf.worker.min.mjs` (still the default, exported as
+  `BILLY_DEFAULT_PDF_WORKER_SRC`). Providing `null` leaves `window.pdfWorkerSrc`
+  untouched, so an app can keep its own value or `ng2-pdf-viewer`'s CDN fallback.
+  Details in [`docs/viewers/file-viewer.md`](projects/billy-layout/docs/viewers/file-viewer.md).
 - **`<billy-save-bar>` embedded variant** (non-breaking): the new `variant` input
   (`'floating' | 'embedded'`, default `'floating'` — the current sticky card)
   renders a compact transparent bar for a form that already lives inside a white

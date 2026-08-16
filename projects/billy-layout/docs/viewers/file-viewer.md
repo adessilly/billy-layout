@@ -13,7 +13,7 @@ The `file-viewer` family groups the library's file viewers:
 | `FileViewerXmlComponent` | `<billy-file-viewer-xml>` | Re-indented, syntax-highlighted XML display, with clipboard copy |
 | `FileViewerToolbarComponent` | `<billy-file-viewer-toolbar>` | Shared header bar (icon, file name, spinner, close button, actions slot) |
 
-All are exported by the library's `public-api.ts` (`viewers` section), along with the `billy-file-source` contract (`BillyFileSource`, `BillyViewerFile`, `BILLY_FILE_SOURCE`).
+All are exported by the library's `public-api.ts` (`viewers` section), along with the `billy-file-source` contract (`BillyFileSource`, `BillyViewerFile`, `BILLY_FILE_SOURCE`) and the pdf.js worker configuration (`BILLY_PDF_WORKER_SRC`, `provideBillyPdfWorker`, `BILLY_DEFAULT_PDF_WORKER_SRC`).
 
 The viewers' control strings come from the i18n dictionary (`viewer.*`): toolbar close button `viewer.close` (EN "Close"), PDF navigation `viewer.prevPage` / `.nextPage` and zoom `viewer.zoomIn` / `.zoomOut`, XML copy button `viewer.copy` / `.copied` and the failure message `viewer.cannotDisplay` (EN "Unable to display this file."). Built-in strings are localizable — see [i18n](../core/i18n.md).
 
@@ -103,6 +103,39 @@ export class FichierSourceService implements BillyFileSource {
 ```
 
 Worth noting: this service is also used **outside the viewers** — the app reuses it directly for any access to a file's content, e.g. the account avatar (`src/app/auth/pages/compte/compte-document/compte-document.component.ts` and `src/app/shared/components/icon-top-compte/icon-top-compte.component.ts` call `downloadBlob()`).
+
+## 2 bis. `BILLY_PDF_WORKER_SRC` — location of the pdf.js worker
+
+Source: `projects/billy-layout/src/lib/viewers/file-viewer/billy-pdf-worker.ts`. Only concerns `billy-file-viewer-pdf`.
+
+```ts
+export const BILLY_DEFAULT_PDF_WORKER_SRC = '/assets/js/pdf.worker.min.mjs';
+
+export const BILLY_PDF_WORKER_SRC = new InjectionToken<string | null>('BILLY_PDF_WORKER_SRC', {
+  providedIn: 'root',
+  factory: () => BILLY_DEFAULT_PDF_WORKER_SRC,
+});
+
+export function provideBillyPdfWorker(src: string | null): Provider;
+```
+
+`pdf.js` loads its rendering engine in a web worker whose URL is read by `ng2-pdf-viewer` from the `window.pdfWorkerSrc` global. Rather than hard-coding it, `FileViewerPdfComponent` sets that global from this token at construction:
+
+| Provided value | Effect |
+|---|---|
+| *(nothing)* | Default `/assets/js/pdf.worker.min.mjs` — the file the app copies from `node_modules/pdfjs-dist/build/` (see `angular.json`). |
+| A path/URL | Used as-is. Useful for an app deployed under a sub-directory, an assets folder with a different layout, or a self-hosted CDN. |
+| `null` | The component **does not touch** `window.pdfWorkerSrc`: `ng2-pdf-viewer` falls back to its own default (the jsDelivr CDN), or keeps the value the app set itself. |
+
+```ts
+// app.config.ts — the worker lives elsewhere in this deployment
+providers: [
+  { provide: BILLY_FILE_SOURCE, useExisting: FichierSourceService },
+  provideBillyPdfWorker('/static/pdf/pdf.worker.min.mjs'),
+]
+```
+
+Two constraints on the value: pdf.js v4 instantiates the worker with `new Worker(src, { type: 'module' })`, so the file must be the **`.mjs`** build and must be served **same-origin** (a cross-origin URL makes pdf.js fall back to a generated wrapper) with a JavaScript MIME type.
 
 ---
 
@@ -221,7 +254,7 @@ Rounded bordered card (10 px), `#f9fafb` body with `overflow-x: auto`; compact `
 
 ### Pitfalls & notes
 
-- **Local pdf.js worker (`.mjs`)**: the constructor forces `(window as any).pdfWorkerSrc = '/assets/js/pdf.worker.min.mjs'` to avoid the jsDelivr CDN. pdf.js v4 (shipped with `ng2-pdf-viewer` v10) publishes the worker as an **ES module** — `pdf.worker.min.mjs`, not `pdf.worker.min.js` — and instantiates it with `new Worker(src, { type: 'module' })`. The host application must copy that file into its assets — cf. `angular.json`:
+- **Local pdf.js worker (`.mjs`)**: the constructor forces `(window as any).pdfWorkerSrc` to the value of `BILLY_PDF_WORKER_SRC` (default `/assets/js/pdf.worker.min.mjs` — see [§2 bis](#2-bis-billy_pdf_worker_src--location-of-the-pdfjs-worker) to change or disable it) to avoid the jsDelivr CDN. pdf.js v4 (shipped with `ng2-pdf-viewer` v10) publishes the worker as an **ES module** — `pdf.worker.min.mjs`, not `pdf.worker.min.js` — and instantiates it with `new Worker(src, { type: 'module' })`. The host application must copy that file into its assets — cf. `angular.json`:
   ```json
   { "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build/", "output": "/assets/js/" }
   ```

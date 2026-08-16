@@ -1,6 +1,7 @@
 import { Component, effect, inject, input, signal, viewChild } from '@angular/core';
 import { PDFDocumentProxy, PDFProgressData, PDFSource, PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
 import { BILLY_FILE_SOURCE, BillyViewerFile } from '../billy-file-source';
+import { BILLY_PDF_WORKER_SRC } from '../billy-pdf-worker';
 import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { FileViewerToolbarComponent } from '../file-viewer-toolbar/file-viewer-toolbar.component';
 import { NgTemplateOutlet } from '@angular/common';
@@ -14,6 +15,7 @@ import { NgTemplateOutlet } from '@angular/common';
 export class FileViewerPdfComponent {
 
   private readonly fileSource = inject(BILLY_FILE_SOURCE);
+  private readonly workerSrc = inject(BILLY_PDF_WORKER_SRC);
   protected readonly i18n = inject(BillyI18nService);
 
   readonly file = input<BillyViewerFile | null>(null);
@@ -34,11 +36,13 @@ export class FileViewerPdfComponent {
   btnZoomOutDisabled = false;
 
   constructor() {
-    // Load the webworker locally (to avoid the jsDelivr CDN).
-    // pdf.js v4 (ng2-pdf-viewer v10) ships the worker as an ES module: .mjs, loaded with `type: 'module'`.
-    const localAsset = '/assets/js/pdf.worker.min.mjs';
-    if((window as any).pdfWorkerSrc !== localAsset) {
-      (window as any).pdfWorkerSrc = localAsset;
+    // Load the webworker locally (to avoid the jsDelivr CDN), from the path given by
+    // BILLY_PDF_WORKER_SRC. pdf.js v4 (ng2-pdf-viewer v10) ships the worker as an ES
+    // module: .mjs, loaded with `type: 'module'`. A `null` token leaves the global
+    // untouched — ng2-pdf-viewer then falls back to its CDN default.
+    const workerSrc = this.workerSrc;
+    if(workerSrc && (window as any).pdfWorkerSrc !== workerSrc) {
+      (window as any).pdfWorkerSrc = workerSrc;
     }
     effect(() => {
       if(this.file()) {
