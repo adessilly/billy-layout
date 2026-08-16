@@ -1,6 +1,6 @@
 {
   "name": "billy-layout",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "description": "Angular design system & application shell: topbar/sidebar layout, SCSS design tokens, form fields (CVA), dialogs, feedback components and file viewers. Docs shipped in the package, AI-assistant ready.",
   "license": "MIT",
   "author": "Adrien Dessilly",
@@ -28,7 +28,7 @@
     "@angular/core": "^22.0.0",
     "@angular/forms": "^22.0.0",
     "@angular/router": "^22.0.0",
-    "ng2-pdf-viewer": "^9.0.0",
+    "ng2-pdf-viewer": "^10.0.0",
     "rxjs": "^7.8.0"
   },
   "dependencies": {

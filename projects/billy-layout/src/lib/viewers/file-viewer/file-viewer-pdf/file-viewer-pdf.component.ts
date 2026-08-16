@@ -1,5 +1,5 @@
 import { Component, effect, inject, input, signal, viewChild } from '@angular/core';
-import { PDFDocumentProxy, PDFProgressData, PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
+import { PDFDocumentProxy, PDFProgressData, PDFSource, PdfViewerComponent, PdfViewerModule } from 'ng2-pdf-viewer';
 import { BILLY_FILE_SOURCE, BillyViewerFile } from '../billy-file-source';
 import { BillyI18nService } from '../../../core/i18n/billy-i18n';
 import { FileViewerToolbarComponent } from '../file-viewer-toolbar/file-viewer-toolbar.component';
@@ -27,15 +27,16 @@ export class FileViewerPdfComponent {
   totalPages = 0;
   zoom = 1;
   maxZoom = 2;
-  urlObject: any;
+  urlObject: PDFSource | null = null;
   btnPrevDisabled = false;
   btnNextDisabled = false;
   btnZoomInDisabled = false;
   btnZoomOutDisabled = false;
 
   constructor() {
-    // Load the webworker locally (to avoid the Cloudflare CDN)
-    const localAsset = '/assets/js/pdf.worker.min.js';
+    // Load the webworker locally (to avoid the jsDelivr CDN).
+    // pdf.js v4 (ng2-pdf-viewer v10) ships the worker as an ES module: .mjs, loaded with `type: 'module'`.
+    const localAsset = '/assets/js/pdf.worker.min.mjs';
     if((window as any).pdfWorkerSrc !== localAsset) {
       (window as any).pdfWorkerSrc = localAsset;
     }

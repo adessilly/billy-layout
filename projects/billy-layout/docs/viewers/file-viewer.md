@@ -184,7 +184,7 @@ No output. Public state and methods:
 | `hide()` | `void` | Hides the viewer and resets `currentPage` to 0. |
 | `pdfComponent` | `viewChild<PdfViewerComponent>` | Access to the underlying `ng2-pdf-viewer` component. |
 
-The source passed to `<pdf-viewer [src]>` is a pdf.js object:
+The source passed to `<pdf-viewer [src]>` is a pdf.js object (`PDFSource`, i.e. pdf.js `DocumentInitParameters`):
 
 ```ts
 this.urlObject = {
@@ -221,11 +221,12 @@ Rounded bordered card (10 px), `#f9fafb` body with `overflow-x: auto`; compact `
 
 ### Pitfalls & notes
 
-- **Local pdf.js worker**: the constructor forces `(window as any).pdfWorkerSrc = '/assets/js/pdf.worker.min.js'` to avoid the Cloudflare CDN. The host application must therefore copy the worker into its assets — cf. `angular.json`:
+- **Local pdf.js worker (`.mjs`)**: the constructor forces `(window as any).pdfWorkerSrc = '/assets/js/pdf.worker.min.mjs'` to avoid the jsDelivr CDN. pdf.js v4 (shipped with `ng2-pdf-viewer` v10) publishes the worker as an **ES module** — `pdf.worker.min.mjs`, not `pdf.worker.min.js` — and instantiates it with `new Worker(src, { type: 'module' })`. The host application must copy that file into its assets — cf. `angular.json`:
   ```json
-  { "glob": "pdf.worker.min.js", "input": "node_modules/pdfjs-dist/build/", "output": "/assets/js/" }
+  { "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build/", "output": "/assets/js/" }
   ```
-- **npm dependency**: `ng2-pdf-viewer` (`^9.0.0`) is a dependency of the **application** (root `package.json`), not of the lib — it does not appear in the `peerDependencies` of `projects/billy-layout/package.json` (which only lists Angular + rxjs). Any consuming app must install it itself, and declare `ng2-pdf-viewer`, `pdfjs-dist/build/pdf` and `pdfjs-dist/web/pdf_viewer` in `allowedCommonJsDependencies` (`angular.json`) to avoid CommonJS warnings at build time.
+  Keeping the old `.js` glob (or the old path in a custom `pdfWorkerSrc`) yields a 404 at load time and the viewer silently stays empty. The web server must also serve `.mjs` with a JavaScript MIME type.
+- **npm dependency**: `ng2-pdf-viewer` (`^10.0.0`, which pulls `pdfjs-dist` 4.x) is a **peer dependency** of the lib and a real dependency of the **application** (root `package.json`). Any consuming app must install it itself. Since pdfjs-dist 4.x is pure ESM, no `allowedCommonJsDependencies` entry is needed any more — the `ng2-pdf-viewer`, `pdfjs-dist/build/pdf` and `pdfjs-dist/web/pdf_viewer` entries required by v9 can be removed from `angular.json`.
 - **Height recomputed on `pageRendered`**: `<pdf-viewer>` receives `style="height: {{pdfViewerHeight}}px"`, and that height is recomputed on every `(page-rendered)` event: the inner viewer's `clientHeight` + 30 px. The height therefore adapts to the current page (and zoom) *after* it renders — a debug `console.log('Page rendered: …')` is still present in this handler.
 - Internal pagination is 0-based (`currentPage`), display is 1-based (`[page]="currentPage + 1"`).
 - The pagination/zoom state (`currentPage`, `zoom`, `btn*Disabled`…) uses classic mutable fields, not signals: the rendering is refreshed by DOM events (zoneless app — see the "Billy zoneless" memory note if this component has to evolve).

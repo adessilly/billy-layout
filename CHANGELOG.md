@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **`ng2-pdf-viewer` peer dependency bumped to `^10.0.0`** (was `^9.0.0`), which
+  brings `pdfjs-dist` 4.x. Consuming applications must upgrade and adapt their
+  worker asset: pdf.js now ships the worker as an **ES module**, so
+  `<billy-file-viewer-pdf>` points `window.pdfWorkerSrc` at
+  `/assets/js/pdf.worker.min.mjs`. Update the copy rule in `angular.json`
+  (`"glob": "pdf.worker.min.mjs"` instead of `pdf.worker.min.js`) — otherwise the
+  worker 404s and the viewer stays blank. The `ng2-pdf-viewer`,
+  `pdfjs-dist/build/pdf` and `pdfjs-dist/web/pdf_viewer` entries in
+  `allowedCommonJsDependencies` are no longer needed (pdfjs-dist 4.x is pure ESM)
+  and can be dropped. Details in
+  [`docs/viewers/file-viewer.md`](projects/billy-layout/docs/viewers/file-viewer.md#pitfalls--notes).
+
 ### Fixed
 
 - **`<billy-input-line>` now names the field it wraps** (WCAG 4.1.2): the visible
