@@ -260,4 +260,47 @@ describe('Dialog', () => {
     expect(trigger.hasAttribute('inert')).toBe(true);
   });
 
+  // ── Fermeture immédiate ───────────────────────────────────────────────────
+  // Le composant Angular propriétaire du contenu vient d'être détruit : ses
+  // styles ont déjà quitté le document, et l'animation de sortie afficherait ce
+  // sous-arbre sans eux.
+
+  it('hideNow closes and notifies within the same tick, no transition awaited', () => {
+    const trigger = buildBackground();
+    trigger.focus();
+
+    const dialog = createDialog(host);
+    dialog.show();
+    vi.advanceTimersByTime(TRANSITION);
+
+    let closed = false;
+    dialog.listenClose().subscribe(() => { closed = true; });
+
+    dialog.hideNow();
+
+    // Aucun timer avancé : tout doit être fait.
+    expect(closed).toBe(true);
+    expect(host.style.display).toBe('none');
+    expect(host.classList.contains('is-open')).toBe(false);
+    expect(document.body.classList.contains('billy-dialog-open')).toBe(false);
+    expect(trigger.hasAttribute('inert')).toBe(false);
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it('hideNow on an already closed dialog does nothing and notifies once', () => {
+    const dialog = createDialog(host);
+    dialog.show();
+    vi.advanceTimersByTime(TRANSITION);
+
+    let fois = 0;
+    dialog.listenClose().subscribe(() => { fois++; });
+
+    dialog.hideNow();
+    dialog.hideNow();
+    dialog.hide();
+    vi.advanceTimersByTime(TRANSITION);
+
+    expect(fois).toBe(1);
+  });
+
 });

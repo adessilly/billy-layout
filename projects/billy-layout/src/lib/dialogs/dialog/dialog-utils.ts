@@ -159,6 +159,30 @@ export class Dialog {
     });
   }
 
+  /**
+   * Closes **without the exit animation**, and notifies at once.
+   *
+   * For the case where there is nothing left to animate: the Angular component
+   * that owns this content has been destroyed, so Angular has already removed
+   * its `<style>` elements from the document. Fading such a subtree out shows
+   * it *unstyled* for the whole transition — the layout collapses and every
+   * inline SVG falls back to `fill: black`, which reads as a large black glyph
+   * flashing over the page.
+   *
+   * The animation softens a close the user asked for; there is no one left to
+   * soften it for once the owner is gone. Same terminal contract as `hide()`:
+   * `listenClose()` fires, so the caller still removes the element and releases
+   * the scroll lock — only the delay is gone.
+   */
+  hideNow(): void {
+    if (this.state !== 'opening' && this.state !== 'open') { return; }
+
+    this.state = 'closing';
+    this.teardown();
+    this.hidden.next();
+    this.hidden.complete();
+  }
+
   /** Emits once, when the dialog is fully open. */
   listenShow(): Observable<void> {
     return this.shown.asObservable();

@@ -42,10 +42,27 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
     this.openDialog();
   }
 
+  /**
+   * The close was driven by the router (overlay replaced or cleared, browser
+   * Back, a redirect): the dialog must leave **at once**, without its exit
+   * animation.
+   *
+   * Angular removes a component's `<style>` elements as soon as its last
+   * instance is destroyed, but this shell keeps the markup under the `<body>`
+   * until the transition ends. Animating here would therefore fade out a
+   * subtree whose styles are already gone: collapsed layout, and inline SVGs
+   * back to their `fill: black` default — a large black glyph flashing over the
+   * page for the length of the transition.
+   *
+   * A close that came from a button (`askCloseDialog` / `closeThen`) is the
+   * opposite case: the component is still alive, its styles are still there,
+   * and the animation is played before anything is destroyed. That path is left
+   * untouched — and remains the one to use from a dialog button.
+   */
   ngOnDestroy(): void {
     this.destroyed = true;
     if(!this.closeFromButtonAction) {
-      this.hideDialog();
+      this.hideDialog({ immediate: true });
     }
   }
 
@@ -73,7 +90,11 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
         this.closed.emit();
       }
       this.dialogClosed = true;
-      document.body.removeChild(this.modalElement()?.nativeElement);
+      // `remove()` rather than `document.body.removeChild(...)`: this callback
+      // now also runs from `ngOnDestroy` (immediate close), and Angular detaches
+      // the view's DOM around its destroy hooks. `removeChild` throws on a node
+      // that is no longer a child; `remove()` is a no-op on a detached one.
+      (this.modalElement()?.nativeElement as HTMLElement | undefined)?.remove();
     });
   }
 
@@ -81,8 +102,11 @@ export class DialogFormComponent implements AfterViewInit, OnDestroy {
     this.dialogRouter?.closeOverlay();
   }
 
-  private hideDialog(): void {
-    if (!this.dialogClosed) {
+  private hideDialog(options: { immediate?: boolean } = {}): void {
+    if (this.dialogClosed) { return; }
+    if (options.immediate) {
+      this.modal?.hideNow();
+    } else {
       this.modal?.hide();
     }
   }
