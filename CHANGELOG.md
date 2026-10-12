@@ -22,6 +22,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A dialog destroyed by the router no longer flashes unstyled.** `billy-dialog-form`
+  kept its markup under the `<body>` for the length of the exit animation, but
+  Angular removes a component's `<style>` elements as soon as its last instance is
+  destroyed. Closing an overlay by navigating — which the documented `askCloseDialog`
+  / `closeThen` path avoids, but a router-driven close (overlay replaced or cleared)
+  cannot — therefore faded out a subtree whose styles were already gone: collapsed
+  layout and every inline SVG back to its `fill: black` default, i.e. large black
+  glyphs flashing over the page. Measured at ~140 ms on `compte-password`, where the
+  header badge grew from 42 to 319 px. `ngOnDestroy` now closes through the new
+  `Dialog.hideNow()`, which tears down and notifies within the same tick: there is
+  nothing left to animate for once the owner is gone. A close asked from a button
+  keeps its animation, unchanged.
+
 - **`<billy-input-line>` now names the field it wraps** (WCAG 4.1.2): the visible
   label is associated with the projected control (`for` + `aria-labelledby`,
   auto-detected, or targeted with the new `fieldId` input). `mandatory` is exposed
